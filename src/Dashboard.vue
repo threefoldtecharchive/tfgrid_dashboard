@@ -3,6 +3,7 @@
 
     <v-navigation-drawer
       app
+      permanent
       v-model="drawer"
       width="300"
       :mini-variant.sync="mini"
@@ -61,7 +62,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <router-view style="padding-left: 50px" />
+    <router-view style="padding-left: 70px" />
   </v-app>
 </template>
 
