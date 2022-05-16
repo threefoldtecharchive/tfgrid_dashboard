@@ -1,12 +1,11 @@
 <template>
-  <div>Farms</div>
+  <div>Iam a portal yay</div>
 </template>
-
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 
 @Component({
-  name: "FarmsView",
+  name: "PortalView",
 })
-export default class FarmsView extends Vue {}
+export default class PortalView extends Vue {}
 </script>
