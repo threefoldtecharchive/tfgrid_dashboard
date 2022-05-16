@@ -1,7 +1,28 @@
 <template>
-  <v-app style="padding-left: 300px">
-    <v-navigation-drawer app width="300">
+  <v-app>
+
+    <v-navigation-drawer
+      app
+      v-model="drawer"
+      width="300"
+      :mini-variant.sync="mini"
+    >
       <v-list>
+        <v-list-item class="px-2">
+          <v-list-item-avatar>
+            <v-img src="https://i.ibb.co/k39ThGn/3fold-logo.png"></v-img>
+          </v-list-item-avatar>
+
+          <v-list-item-title>THREEFOLD CHAIN</v-list-item-title>
+
+          <v-btn
+            icon
+            @click.stop="mini = !mini"
+          >
+            <v-icon>mdi-chevron-left</v-icon>
+          </v-btn>
+        </v-list-item>
+        <v-divider></v-divider>
         <v-list-group
           v-model="route.active"
           v-for="route in routes"
@@ -26,16 +47,21 @@
             :key="child.label"
             :to="route.prefix + child.path"
           >
-            <v-list-item-icon />
+            <v-list-item-icon>
+              <v-icon v-text="'mdi-' + child.icon" />
+            </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title v-text="child.label"></v-list-item-title>
+
+              <v-list-item-title v-text="child.label">
+              </v-list-item-title>
+
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
       </v-list>
     </v-navigation-drawer>
 
-    <router-view />
+    <router-view style="padding-left: 50px" />
   </v-app>
 </template>
 
@@ -50,6 +76,7 @@ interface SidenavItem {
   children: Array<{
     label: string;
     path: string;
+    icon: string;
   }>;
 }
 
@@ -57,17 +84,27 @@ interface SidenavItem {
   name: "Dashboard",
 })
 export default class Dashboard extends Vue {
+  collapseOnScroll = true;
+  mini = true;
+  drawer = true;
   routes: SidenavItem[] = [
     {
       label: "Portal",
       icon: "account-convert-outline",
       prefix: "/",
       children: [
-        { label: "Twin", path: "" },
-        { label: "Transfer", path: "transfer" },
-        { label: "Farms", path: "farms" },
-        { label: "Dedicated Nodes", path: "dedicated-nodes" },
-        { label: "Capacity", path: "capacity" },
+        { label: "Twin", path: "", icon: "account-multiple" },
+        {
+          label: "Transfer",
+          path: "transfer",
+          icon: "swap-horizontal",
+        },
+        { label: "Farms", path: "farms", icon: "silo" },
+        {
+          label: "Dedicated Nodes",
+          path: "dedicated-nodes",
+          icon: "resistor-nodes",
+        },
       ],
     },
     {
@@ -76,9 +113,13 @@ export default class Dashboard extends Vue {
       icon: "database-search-outline",
       prefix: "/explorer/",
       children: [
-        { label: "Statistics", path: "statistics" },
-        { label: "Nodes", path: "nodes" },
-        { label: "Farms", path: "farms" },
+        {
+          label: "Statistics",
+          path: "statistics",
+          icon: "chart-scatter-plot",
+        },
+        { label: "Nodes", path: "nodes", icon: "access-point" },
+        { label: "Farms", path: "farms", icon: "lan-connect" },
       ],
     },
     {
@@ -86,12 +127,16 @@ export default class Dashboard extends Vue {
       icon: "axis-arrow-info",
       prefix: "/hub/",
       children: [
-        { label: "Send To Cosmos", path: "send-to-cosmos" },
-        { label: "Send To BSC", path: "send-to-bsc" },
-        { label: "Pending BSC Transactions", path: "pending-bsc-transactions" },
-        { label: "Add Proposal", path: "add-proposal" },
-        { label: "Proposals", path: "proposals" },
-        { label: "Validators", path: "validators" },
+        { label: "Send To Cosmos", path: "send-to-cosmos", icon: "" },
+        { label: "Send To BSC", path: "send-to-bsc", icon: "" },
+        {
+          label: "Pending BSC Transactions",
+          path: "pending-bsc-transactions",
+          icon: "",
+        },
+        { label: "Add Proposal", path: "add-proposal", icon: "" },
+        { label: "Proposals", path: "proposals", icon: "" },
+        { label: "Validators", path: "validators", icon: "" },
       ],
     },
   ];
