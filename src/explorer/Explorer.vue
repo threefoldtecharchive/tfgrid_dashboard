@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <router-view />
+    {{ $store.state.explorer.name }}
   </v-container>
 </template>
 
