@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app style="padding-left: 300px">
     <v-navigation-drawer app width="300">
       <v-list>
         <v-list-group
@@ -34,6 +34,8 @@
         </v-list-group>
       </v-list>
     </v-navigation-drawer>
+
+    <router-view />
   </v-app>
 </template>
 
