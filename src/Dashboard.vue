@@ -76,7 +76,7 @@ export default class Dashboard extends Vue {
       icon: "database-search-outline",
       prefix: "/explorer/",
       children: [
-        { label: "Statistics", path: "statistics" },
+        { label: "Statistics", path: "" },
         { label: "Nodes", path: "nodes" },
         { label: "Farms", path: "farms" },
       ],
@@ -95,5 +95,9 @@ export default class Dashboard extends Vue {
       ],
     },
   ];
+
+  created() {
+    console.log(this.$store);
+  }
 }
 </script>
