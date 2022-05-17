@@ -15,8 +15,17 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon>
+        <v-btn
+          icon
+          v-if="$store.state.portal.accounts.length === 0"
+        >
           <v-icon>mdi-lan-disconnect</v-icon>
+        </v-btn>
+        <v-btn
+          icon
+          v-else
+        >
+          <v-icon>mdi-lan-connect</v-icon>
         </v-btn>
 
       </v-app-bar>
@@ -62,28 +71,71 @@
               </v-list-item-title>
             </v-list-item-content>
           </template>
+          <div v-if="route.prefix==='/'">
+            <v-list-group
+              :value="true"
+              no-action
+              sub-group
+              v-for="account in $store.state.portal.accounts"
+              :key="account.address"
+            >
+              <template v-slot:activator>
 
-          <v-list-item
-            active
-            v-for="child in route.children"
-            :key="child.label"
-            :to="route.prefix + child.path"
-          >
-            <v-list-item-icon>
-              <v-icon v-text="'mdi-' + child.icon" />
-            </v-list-item-icon>
-            <v-list-item-content>
+                <v-list-item-content>
 
-              <v-list-item-title v-text="child.label">
-              </v-list-item-title>
+                  <v-list-item-title v-text="account.meta.name">
+                  </v-list-item-title>
 
-            </v-list-item-content>
-          </v-list-item>
+                </v-list-item-content>
+                <v-list-item-icon>
+                  <v-icon v-text="'mdi-' + route.children[0].icon" />
+                </v-list-item-icon>
+
+              </template>
+              <v-list-item
+                v-for="subchild in route.children[0].children"
+                :key="subchild.label"
+                :to="route.prefix + account.address + '/'+ subchild.path"
+              >
+                <v-list-item-icon>
+                  <v-icon v-text="'mdi-' + subchild.icon" />
+                </v-list-item-icon>
+                <v-list-item-content>
+
+                  <v-list-item-title v-text="subchild.label">
+                  </v-list-item-title>
+
+                </v-list-item-content>
+
+              </v-list-item>
+
+            </v-list-group>
+          </div>
+          <div v-else>
+            <v-list-item
+              active
+              v-for="child in route.children"
+              :key="child.label"
+              :to="route.prefix + child.path"
+            >
+              <v-list-item-icon>
+                <v-icon v-text="'mdi-' + child.icon" />
+              </v-list-item-icon>
+              <v-list-item-content>
+
+                <v-list-item-title v-text="child.label">
+                </v-list-item-title>
+
+              </v-list-item-content>
+            </v-list-item>
+          </div>
+
         </v-list-group>
+
       </v-list>
     </v-navigation-drawer>
 
-    <router-view style="padding-left: 70px" />
+    <router-view style="padding-left: 70px; padding-top: 65px;" />
     <v-footer
       dark
       padless
@@ -112,9 +164,18 @@ interface SidenavItem {
   prefix: string;
   active?: boolean;
   children: Array<{
-    label: string;
-    path: string;
+    label?: string;
+    path?: string;
     icon: string;
+    active?: boolean;
+    showBeforeLogIn: boolean; //i.e loginto the polkadot.js
+    children?:
+      | Array<{
+          label: string;
+          icon: string;
+          path?: string;
+        }>
+      | [];
   }>;
 }
 
@@ -125,28 +186,41 @@ export default class Dashboard extends Vue {
   collapseOnScroll = true;
   mini = true;
   drawer = true;
+
   routes: SidenavItem[] = [
     {
+      //label and path will be retrieved from accounts fetched from store (polkadot)
+      active: true,
       label: "Portal",
       icon: "account-convert-outline",
       prefix: "/",
       children: [
-        { label: "Twin", path: "", icon: "account-multiple" },
         {
-          label: "Transfer",
-          path: "transfer",
-          icon: "swap-horizontal",
-        },
-        { label: "Farms", path: "farms", icon: "silo" },
-        {
-          label: "Dedicated Nodes",
-          path: "dedicated-nodes",
-          icon: "resistor-nodes",
+          icon: "account-multiple",
+          showBeforeLogIn: true,
+          active: true,
+          children: [
+            {
+              label: "Twin",
+              icon: "account-box-multiple-outline",
+              path: "twin",
+            },
+            {
+              label: "Transfer",
+              icon: "swap-horizontal",
+              path: "transfer",
+            },
+            { label: "Farms", icon: "silo", path: "farms" },
+            {
+              label: "Dedicated Nodes",
+              icon: "resistor-nodes",
+              path: "nodes",
+            },
+          ],
         },
       ],
     },
     {
-      active: true,
       label: "Explorer",
       icon: "database-search-outline",
       prefix: "/explorer/",
@@ -155,9 +229,20 @@ export default class Dashboard extends Vue {
           label: "Statistics",
           path: "statistics",
           icon: "chart-scatter-plot",
+          showBeforeLogIn: true,
         },
-        { label: "Nodes", path: "nodes", icon: "access-point" },
-        { label: "Farms", path: "farms", icon: "lan-connect" },
+        {
+          label: "Nodes",
+          path: "nodes",
+          icon: "access-point",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Farms",
+          path: "farms",
+          icon: "lan-connect",
+          showBeforeLogIn: true,
+        },
       ],
     },
     {
@@ -165,16 +250,42 @@ export default class Dashboard extends Vue {
       icon: "axis-arrow-info",
       prefix: "/hub/",
       children: [
-        { label: "Send To Cosmos", path: "send-to-cosmos", icon: "" },
-        { label: "Send To BSC", path: "send-to-bsc", icon: "" },
+        {
+          label: "Send To Cosmos",
+          path: "send-to-cosmos",
+          icon: "",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Send To BSC",
+          path: "send-to-bsc",
+          icon: "",
+          showBeforeLogIn: true,
+        },
         {
           label: "Pending BSC Transactions",
           path: "pending-bsc-transactions",
           icon: "",
+          showBeforeLogIn: true,
         },
-        { label: "Add Proposal", path: "add-proposal", icon: "" },
-        { label: "Proposals", path: "proposals", icon: "" },
-        { label: "Validators", path: "validators", icon: "" },
+        {
+          label: "Add Proposal",
+          path: "add-proposal",
+          icon: "",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Proposals",
+          path: "proposals",
+          icon: "",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Validators",
+          path: "validators",
+          icon: "",
+          showBeforeLogIn: true,
+        },
       ],
     },
   ];
