@@ -1,4 +1,5 @@
 import { PortalState } from "./state";
+import { GetterTree } from "vuex";
 export default {
-    accounts: (state) => state.accounts
+    accounts: (state: PortalState) => state.accounts
 }as GetterTree<PortalState, PortalState>;

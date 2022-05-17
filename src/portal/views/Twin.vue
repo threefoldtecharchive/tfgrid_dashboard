@@ -14,7 +14,7 @@
         >
           <v-card
             color="transparent"
-            height="800"
+            height="825"
           >
             <v-row
               class="fill-height"
@@ -133,6 +133,9 @@ export default class TwinView extends Vue {
   public prev() {
     this.onboarding =
       this.onboarding - 1 < 0 ? this.cards.length - 1 : this.onboarding - 1;
+  }
+  public mounted() {
+    this.$store.dispatch("getAccounts");
   }
 }
 </script>
