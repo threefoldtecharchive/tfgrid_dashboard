@@ -7,6 +7,7 @@
         dense
         dark
         fixed
+        height="65"
       >
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
@@ -86,6 +87,7 @@
     <v-footer
       dark
       padless
+      fixed
     >
       <v-card
         class="flex"

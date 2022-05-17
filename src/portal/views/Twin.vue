@@ -14,7 +14,7 @@
         >
           <v-card
             color="transparent"
-            height="825"
+            height="800"
           >
             <v-row
               class="fill-height"
@@ -87,12 +87,12 @@
         </v-btn>
       </v-card-actions>
     </v-card>
-
   </v-container>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+
 interface WelcomeCard {
   text: string;
   button: string;

@@ -1,14 +1,16 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import state, { PortalState }from "./state";
+import actions from "./actions";
+import mutations from "./mutations";
+import getters from "./getters";
+import { ModuleTree } from "vuex";
 
-interface PortalState {
-  name: string;
-}
 
-Vue.use(Vuex);
 
-export const portalStore = new Vuex.Store<PortalState>({
-  state: {
-    name: "hanafy",
-  },
-});
+export const portalStore =  ({
+    namespaced: true,
+    state,
+    mutations,
+    actions,
+    getters,
+}) as ModuleTree<PortalState>;
+
