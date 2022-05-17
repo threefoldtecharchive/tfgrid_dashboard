@@ -50,6 +50,7 @@
             </v-row>
           </v-card>
         </v-window-item>
+
       </v-window>
 
       <v-card-actions class="justify-space-between">

@@ -1,6 +1,26 @@
 <template>
   <v-app>
 
+    <div>
+      <v-app-bar
+        color="deep-purple accent-4"
+        dense
+        dark
+        fixed
+      >
+        <v-app-bar-nav-icon></v-app-bar-nav-icon>
+
+        <v-toolbar-title class="font-weight-bold">THREEFOLD CHAIN</v-toolbar-title>
+
+        <v-spacer></v-spacer>
+
+        <v-btn icon>
+          <v-icon>mdi-lan-disconnect</v-icon>
+        </v-btn>
+
+      </v-app-bar>
+    </div>
+
     <v-navigation-drawer
       app
       permanent
