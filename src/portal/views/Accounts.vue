@@ -176,11 +176,7 @@ export default class AccountsView extends Vue {
     this.onboarding =
       this.onboarding - 1 < 0 ? this.cards.length - 1 : this.onboarding - 1;
   }
-  public mounted() {
-    setInterval(() => {
-      this.$store.dispatch("portal/getAccounts");
-    }, 1000);
-  }
+
   public addAccountRoute(account: {
     address: string;
     meta: { genesisHash: string; name: string; source: string };
@@ -188,7 +184,7 @@ export default class AccountsView extends Vue {
   }) {
     this.$router.push({
       name: "Account",
-      params: { accountID: `${account.meta.name}${account.address}` },
+      params: { accountID: `${account.address}` },
     });
   }
 }

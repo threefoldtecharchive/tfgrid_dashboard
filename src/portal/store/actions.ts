@@ -7,7 +7,6 @@ import {
   
 export default{
     async getAccounts({ commit }: ActionContext<PortalState, PortalState>) {
-        console.log('dispatching get accounts')
         await web3Enable('TF Chain UI')
         const accounts = await web3Accounts()
         commit('setAccounts', { accounts: accounts })
