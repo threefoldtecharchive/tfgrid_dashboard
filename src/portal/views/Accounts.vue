@@ -111,6 +111,7 @@
         :key="account.address"
         color="#448AFF"
         @click="addAccountRoute(account)"
+        class="my-4"
       >
 
         <div class="d-flex justify-space-between">
@@ -184,7 +185,9 @@ export default class AccountsView extends Vue {
   }) {
     this.$router.push({
       name: "Account",
+      path: "account",
       params: { accountID: `${account.address}` },
+      query: { accountName: `${account.meta.name}` },
     });
   }
 }

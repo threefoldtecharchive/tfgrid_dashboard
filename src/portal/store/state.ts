@@ -1,6 +1,8 @@
 export interface PortalState{
-    accounts:[]
+    accounts:[],
+    api: undefined
 }
 export default{
-    accounts:[]
+    accounts:[],
+    api: undefined
 }

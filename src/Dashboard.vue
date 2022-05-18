@@ -144,7 +144,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <router-view style="padding:17.5%;" />
+    <router-view style="padding-top: 8.5%; padding-left: 10%; padding-right: 10%;" />
     <v-footer
       dark
       padless

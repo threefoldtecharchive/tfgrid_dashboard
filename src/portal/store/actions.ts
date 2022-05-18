@@ -11,17 +11,20 @@ export default{
         if(extensions.length === 0){
             console.log('sign into polkadot')
         }
-        else{
-
-            await web3AccountsSubscribe(( injectedAccounts ) => { 
-                commit('setAccounts', { accounts: injectedAccounts })
-                injectedAccounts.map(( account ) => {
-                    console.log(account.address);
-                })
-            });
-         
-        }
+        // this is the function of type `() => void` that should be called to unsubscribe
     
+        // we subscribe to any account change and log the new list.
+        // note that `web3AccountsSubscribe` returns the function to unsubscribe
+        await web3AccountsSubscribe(( injectedAccounts ) => { 
+            commit('setAccounts', { accounts: injectedAccounts })
+            injectedAccounts.map(( account ) => {
+                console.log(account.address);
+            })
+        });
+
+
+        // don't forget to unsubscribe when needed, e.g when unmounting a component
+     
 
     },
     async unsubscribeAccounts({commit}:ActionContext<PortalState, PortalState> ){

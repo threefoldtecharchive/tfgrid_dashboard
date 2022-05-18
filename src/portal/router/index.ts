@@ -10,7 +10,8 @@ export const portalRouter: RouteConfig[] = [
   component: AccountsView },
   { path: "/:accountID",
    name: "Account", 
-   component: AccountView },
+   component: AccountView 
+ },
   { path: "/:accountID/twin",
   name: "Twin", 
    component: TwinView },
