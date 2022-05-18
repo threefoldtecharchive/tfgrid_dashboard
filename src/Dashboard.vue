@@ -19,13 +19,22 @@
           icon
           v-if="$store.state.portal.accounts.length === 0"
         >
-          <v-icon>mdi-lan-disconnect</v-icon>
+          <v-icon
+            color="#F44336"
+            class="fa-solid fa-circle-dot pr-4"
+          ></v-icon>
+          <v-icon @click="$store.dispatch('portal/subscribeAccounts')">mdi-lan-connect</v-icon>
         </v-btn>
         <v-btn
           icon
           v-else
         >
-          <v-icon>mdi-lan-connect</v-icon>
+          <v-icon
+            color="#4CAF50"
+            class="fa-solid fa-circle-dot pr-4"
+          ></v-icon>
+          <v-icon @click="$store.dispatch('portal/unsubscribeAccounts')">mdi-lan-disconnect</v-icon>
+
         </v-btn>
 
       </v-app-bar>

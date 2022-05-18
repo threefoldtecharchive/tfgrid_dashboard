@@ -13,9 +13,10 @@ import { Component, Vue } from "vue-property-decorator";
 })
 export default class PortalView extends Vue {
   public mounted() {
-    setInterval(() => {
-      this.$store.dispatch("portal/getAccounts");
-    }, 1000);
+    this.$store.dispatch("portal/subscribeAccounts");
+  }
+  public unmounted() {
+    this.$store.dispatch("portal/unsubscribeAccounts");
   }
 }
 </script>

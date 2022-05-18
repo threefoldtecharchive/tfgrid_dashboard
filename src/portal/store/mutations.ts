@@ -7,4 +7,7 @@ export default{
   setAccounts (state: PortalState, payload: {accounts: []}) {
       state.accounts = payload.accounts
     },
+    removeAccounts (state: PortalState) {
+        state.accounts = []
+      },
 }
