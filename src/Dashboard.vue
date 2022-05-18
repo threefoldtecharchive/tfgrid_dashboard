@@ -196,7 +196,7 @@ export default class Dashboard extends Vue {
       prefix: "/",
       children: [
         {
-          icon: "account-multiple",
+          icon: "account",
           showBeforeLogIn: true,
           active: true,
           children: [
