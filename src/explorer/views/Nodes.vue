@@ -64,7 +64,7 @@
       </div>
       <v-data-table
         ref="table"
-        :loading="$store.getters.tableLoading"
+        :loading="$store.getters['explorer/tableLoading']"
         loading-text="Loading..."
         :headers="headers"
         :items="listNodes()"
@@ -249,7 +249,7 @@ export default class Nodes extends Vue {
   ];
 
   listNodes() {
-    let nodes: INode[] = this.$store.getters.listFilteredNodes;
+    let nodes: INode[] = this.$store.getters["explorer/listFilteredNodes"];
     if (this.withGateway) {
       nodes = nodes.filter(({ publicConfig }) => publicConfig?.domain !== "");
     }

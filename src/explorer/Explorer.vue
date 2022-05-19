@@ -1,11 +1,12 @@
 <template>
-  <v-app>
+  <!-- <v-app>
     <Sidenav :mini="mini" />
     <v-main>
       <Navbar :mini="mini" v-on:toggle-sidenav="mini = !mini" />
-      <!-- <router-view /> -->
+      <router-view />
     </v-main>
-  </v-app>
+  </v-app> -->
+  <router-view />
 </template>
 
 <script lang="ts">
@@ -25,9 +26,9 @@ export default class App extends Vue {
 
   created() {
     this.$store.dispatch(ActionTypes.INIT_POLICIES);
-    this.$store.dispatch("loadChainData");
+    this.$store.dispatch(ActionTypes.LOAD_CHAIN_DATA);
     this.$store.dispatch(ActionTypes.LOAD_DATA);
-    this.$store.dispatch("loadNodesData");
+    this.$store.dispatch(ActionTypes.LOAD_NODES_DATA);
     setInterval(() => {
       this.$store.dispatch(ActionTypes.LOAD_DATA);
     }, 5 * 60 * 1000);

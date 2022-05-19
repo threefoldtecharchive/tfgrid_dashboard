@@ -61,11 +61,11 @@ export default class Statistics extends Vue {
   onlyOnline = true;
 
   get statistics(): IStatistics[] {
-    return this.$store.getters.statistics;
+    return this.$store.getters["explorer/statistics"];
   }
 
   listNodes() {
-    let nodes: INode[] = this.$store.getters.listFilteredNodes;
+    let nodes: INode[] = this.$store.getters["explorer/listFilteredNodes"];
     if (this.withGateway) {
       nodes = nodes.filter(({ publicConfig }) => publicConfig?.domain !== "");
     }

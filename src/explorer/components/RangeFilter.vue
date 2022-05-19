@@ -70,7 +70,7 @@ export default class RangeFilter extends Vue {
   }
 
   get range(): [number, number] {
-    const { min, max } = this.$store.getters.getFilter(
+    const { min, max } = this.$store.getters["explorer/getFilter"](
       this.key1,
       this.key2
     ).value;

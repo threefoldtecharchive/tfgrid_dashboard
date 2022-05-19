@@ -7,6 +7,8 @@ export enum ActionTypes {
   INIT_POLICIES = "explorer/initPolicies",
   INIT_PRICING_POLICIES = "explorer/initPricingPolicies",
   LOAD_DATA = "explorer/loadData",
+  LOAD_CHAIN_DATA = "explorer/loadChainData",
+  LOAD_NODES_DATA = "explorer/loadNodesData",
 }
 
 export default {
@@ -24,7 +26,7 @@ export default {
   },
 
   async loadNodesData({ state, commit }: ActionContext<IState, IState>) {
-    commit("setTableLoad", true);
+    commit(MutationTypes.SET_TABLE_LOAD, true);
     const nodes = await paginated_fetcher(
       `${window.configs.proxy_url}/nodes`,
       1,
@@ -36,8 +38,8 @@ export default {
       50
     );
 
-    commit("loadNodesData", { nodes, farms });
-    commit("setTableLoad", false);
+    commit(MutationTypes.LOAD_NODES_DATA, { nodes, farms });
+    commit(MutationTypes.SET_TABLE_LOAD, false);
   },
 
   loadData({ state, commit }: ActionContext<IState, IState>) {

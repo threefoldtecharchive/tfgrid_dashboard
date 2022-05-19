@@ -25,7 +25,8 @@ export default class ComparisonFilter extends Vue {
   @Prop({ required: true }) prefix!: IOP;
 
   get value() {
-    return this.$store.getters.getFilter(this.key1, this.key2).value;
+    return this.$store.getters["explorer/getFilter"](this.key1, this.key2)
+      .value;
   }
 
   set value(value: number) {

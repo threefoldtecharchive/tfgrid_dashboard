@@ -9,7 +9,7 @@
       <span class="app-title"> TF Explorer </span>
     </v-app-bar-title>
     <v-spacer />
-    <template v-if="$store.getters.loading">
+    <template v-if="$store.getters['explorer/loading']">
       <v-progress-circular indeterminate />
       <v-divider vertical class="mr-4 ml-4" />
     </template>

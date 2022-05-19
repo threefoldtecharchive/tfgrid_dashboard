@@ -42,7 +42,7 @@ export default class InFilter extends Vue {
     if (this.value) {
       return this.value;
     }
-    return this.$store.getters[this.key1]
+    return this.$store.getters["explorer/" + this.key1]
       .filter((e: any) => {
         if (e[this.key2]) {
           return e[this.key2];
@@ -52,7 +52,8 @@ export default class InFilter extends Vue {
   }
 
   get items(): string[] {
-    return this.$store.getters.getFilter(this.key1, this.key2).value;
+    return this.$store.getters["explorer/getFilter"](this.key1, this.key2)
+      .value;
   }
 
   set items(value: string[]) {

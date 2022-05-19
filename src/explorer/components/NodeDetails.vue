@@ -271,7 +271,9 @@ export default class NodeDetails_ extends Vue {
       return 0;
     }
     const v = this.node[key];
-    const value = v ? +v / this.$store.getters.maxValueOf("nodes", key) : 0;
+    const value = v
+      ? +v / this.$store.getters["explorer/maxValueOf"]("nodes", key)
+      : 0;
 
     return Math.round(value * 10000) / 100;
   }

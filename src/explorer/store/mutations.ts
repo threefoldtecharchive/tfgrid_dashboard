@@ -5,12 +5,14 @@ import { IState } from "./state";
 
 export enum MutationTypes {
   SET_LOAD = "setLoad",
+  SET_TABLE_LOAD = "setTableLoad",
   SET_DATA = "setData",
   SET_FILTER_ENABLE = "setFilterEnable",
   SET_FILTER_VALUE = "setFilterValue",
   SET_POLICIES = "setPolicies",
   SET_NODES_STATUS = "setNodesStatus",
   SET_PRICING_POLICIES = "setPricingPolicies",
+  LOAD_NODES_DATA = "loadNodesData",
 }
 
 interface ISetNodeFilter {
