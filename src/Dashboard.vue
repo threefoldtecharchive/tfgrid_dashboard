@@ -21,7 +21,7 @@
         > {{$store.state.portal.balance.toFixed(2)}} TFT
           <v-btn
             @click="addTFT"
-            class="mx-1"
+            class="ml-3"
           >+</v-btn>
         </v-card>
         <v-card
