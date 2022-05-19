@@ -141,6 +141,11 @@ interface WelcomeCard {
   img: string;
   link: string;
 }
+interface accountInterface {
+  address: string;
+  meta: { genesisHash: string; name: string; source: string };
+  type: string;
+}
 @Component({
   name: "AccountsView",
 })
@@ -178,11 +183,7 @@ export default class AccountsView extends Vue {
       this.onboarding - 1 < 0 ? this.cards.length - 1 : this.onboarding - 1;
   }
 
-  public addAccountRoute(account: {
-    address: string;
-    meta: { genesisHash: string; name: string; source: string };
-    type: string;
-  }) {
+  public addAccountRoute(account: accountInterface) {
     this.$router.push({
       name: "Account",
       path: "account",

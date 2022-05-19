@@ -14,28 +14,48 @@
         <v-toolbar-title class="font-weight-bold">THREEFOLD CHAIN</v-toolbar-title>
 
         <v-spacer></v-spacer>
-
-        <v-btn
-          icon
+        <v-card
+          color="#0D47A1"
+          class="mx-3  pa-2 d-flex align-baseline font-weight-bold"
+          v-if="$store.state.portal.balance"
+        > {{$store.state.portal.balance.toFixed(2)}} TFT
+          <v-btn
+            @click="addTFT"
+            class="mx-1"
+          >+</v-btn>
+        </v-card>
+        <v-card
+          class="mx-2 px-1 "
           v-if="$store.state.portal.accounts.length === 0"
         >
           <v-icon
             color="#F44336"
-            class="fa-solid fa-circle-dot pr-4"
+            class="fa-solid fa-circle-dot px-2 "
           ></v-icon>
-          <v-icon @click="$store.dispatch('portal/subscribeAccounts')">mdi-lan-connect</v-icon>
-        </v-btn>
-        <v-btn
-          icon
+          <v-btn icon>
+            <v-icon
+              class=""
+              @click="$store.dispatch('portal/subscribeAccounts')"
+            >mdi-lan-connect</v-icon>
+          </v-btn>
+        </v-card>
+        <v-card
           v-else
+          class="mx-2 px-1 "
         >
           <v-icon
             color="#4CAF50"
-            class="fa-solid fa-circle-dot pr-4"
+            class="fa-solid fa-circle-dot px-2 "
           ></v-icon>
-          <v-icon @click="$store.dispatch('portal/unsubscribeAccounts')">mdi-lan-disconnect</v-icon>
+          <v-btn icon>
 
-        </v-btn>
+            <v-icon
+              class=""
+              @click="$store.dispatch('portal/unsubscribeAccounts')"
+            >mdi-lan-disconnect</v-icon>
+
+          </v-btn>
+        </v-card>
 
       </v-app-bar>
     </div>
@@ -195,7 +215,9 @@ export default class Dashboard extends Vue {
   collapseOnScroll = true;
   mini = true;
   drawer = true;
-
+  public addTFT() {
+    console.log("im adding tft");
+  }
   routes: SidenavItem[] = [
     {
       //label and path will be retrieved from accounts fetched from store (polkadot)

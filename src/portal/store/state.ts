@@ -1,8 +1,13 @@
+import { ApiPromise } from "@polkadot/api"
+
+
 export interface PortalState{
     accounts:[],
-    api: undefined
+    balance: number
+
 }
 export default{
     accounts:[],
-    api: undefined
+    balance: 0
+
 }
