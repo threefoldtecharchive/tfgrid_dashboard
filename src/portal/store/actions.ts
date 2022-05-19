@@ -25,16 +25,6 @@ export default{
     async setBalanceAction({commit}: ActionContext<PortalState, PortalState>, balance: number ){
         commit('setBalance', {balance})
     },
-    async updateAccountWithTCAccepted(context: ActionContext<PortalState, PortalState>, address: string){
-        const accountsWithTC = context.state.accounts.map((account)=> {
-            if (account.address === address){
-                return {...account, acceptedTC: true}
-            } 
-            return account
-        })
-        context.commit('setAccounts', { accounts: accountsWithTC })
-
   
-    },
 }
 

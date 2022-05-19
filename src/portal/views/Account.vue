@@ -28,6 +28,11 @@
 
     </v-dialog>
   </v-container>
+  <v-container v-else-if="$store.state.portal.accounts.length === 0">
+    <v-card>
+      <WelcomeWindow />
+    </v-card>
+  </v-container>
   <v-container v-else>
     <v-card
       color="#388E3C"
@@ -43,7 +48,7 @@
       color="#512DA8"
       class="text-center pa-5"
     >
-      <h3>Choose your preferred method : </h3>
+      <h3>Choose your preferred method to create a Twin: </h3>
     </v-card>
     <v-container fluid>
       <v-row>
@@ -51,26 +56,33 @@
         <v-col>
           <v-card
             class="pa-5 text-center"
-            height="150"
+            height="175"
           >
             <h3>
-              Create a Twin using Planetary
+              Planetary
               using Yggdrasil IPV6
             </h3>
             <v-text-field label="Twin IP ::1">
 
             </v-text-field>
+            <v-btn>create</v-btn>
           </v-card>
         </v-col>
         <v-col>
           <v-card
-            class="pa-5 text-center"
-            height="150"
+            class="pa-5 text-center d-flex align-center justify-center"
+            height="175"
           >
-            <h3>
-              Create a Twin automatically
-            </h3>
+            <v-btn>automatically</v-btn>
 
+          </v-card>
+        </v-col>
+
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-card class="pa-5 text-center d-flex align-center justify-center">
+            <v-btn>why do i even need a twin?</v-btn>
           </v-card>
         </v-col>
 
@@ -91,9 +103,11 @@ import {
   acceptTermsAndCondition,
   userAcceptedTermsAndConditions,
 } from "../lib/accepttc";
+import WelcomeWindow from "../../components/WelcomeWindow.vue";
 
 @Component({
   name: "AccountView",
+  components: { WelcomeWindow },
 })
 export default class AccountView extends Vue {
   documentLink = "https://library.threefold.me/info/legal/#/";
@@ -102,7 +116,7 @@ export default class AccountView extends Vue {
   address = "";
   api: any;
   activated = true;
-
+  components = ["WelcomeWindow"];
   async mounted() {
     this.address = this.$route.params.accountID;
     this.api = await connect();
@@ -144,10 +158,6 @@ export default class AccountView extends Vue {
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "system" && method === "ExtrinsicSuccess") {
-              this.$store.dispatch(
-                "portal/updateAccountWithTCAccepted",
-                this.address
-              );
               console.log("accepted!");
             } else if (section === "system" && method === "ExtrinsicFailed") {
               console.log("rejected");

@@ -4,8 +4,6 @@ import mutations from "./mutations";
 import getters from "./getters";
 import { ModuleTree } from "vuex";
 
-
-
 export const portalStore =  ({
     namespaced: true,
     state,
