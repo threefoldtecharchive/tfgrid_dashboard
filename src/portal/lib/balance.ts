@@ -1,4 +1,4 @@
-import { ApiPromise } from "@polkadot/api"
+
 
 
 export async function getBalance (api: any, address: string) {

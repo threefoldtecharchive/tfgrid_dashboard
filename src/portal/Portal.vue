@@ -15,6 +15,7 @@ export default class PortalView extends Vue {
   public mounted() {
     this.$store.dispatch("portal/subscribeAccounts");
   }
+
   public unmounted() {
     this.$store.dispatch("portal/unsubscribeAccounts");
   }

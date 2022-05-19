@@ -134,18 +134,14 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-
+import { accountInterface } from "../store/state";
 interface WelcomeCard {
   text: string;
   button: string;
   img: string;
   link: string;
 }
-interface accountInterface {
-  address: string;
-  meta: { genesisHash: string; name: string; source: string };
-  type: string;
-}
+
 @Component({
   name: "AccountsView",
 })
@@ -188,7 +184,9 @@ export default class AccountsView extends Vue {
       name: "Account",
       path: "account",
       params: { accountID: `${account.address}` },
-      query: { accountName: `${account.meta.name}` },
+      query: {
+        accountName: `${account.meta.name}`,
+      },
     });
   }
 }

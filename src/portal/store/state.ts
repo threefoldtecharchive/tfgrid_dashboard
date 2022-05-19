@@ -1,8 +1,12 @@
-import { ApiPromise } from "@polkadot/api"
 
+export interface accountInterface {
+    address: string;
+    meta: { genesisHash: string; name: string; source: string };
+    type: string;
+  }
 
 export interface PortalState{
-    accounts:[],
+    accounts:accountInterface[],
     balance: number
 
 }

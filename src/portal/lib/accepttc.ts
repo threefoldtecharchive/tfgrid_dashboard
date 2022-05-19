@@ -6,8 +6,8 @@ export async function acceptTermsAndCondition (api: any, address: string, docume
       .userAcceptTc(documentLink, documentHash)
       .signAndSend(address, { signer: injector.signer }, callback)
   }
-  export async function checkTCAcceptance (api:any, address: string) {
+  export async function userAcceptedTermsAndConditions (api: any, address: string) {
     const tcs = await api.query.tfgridModule.usersTermsAndConditions(address)
-    console.log(tcs)
-    return false
+    const parsedTcs = tcs.toJSON()
+    return parsedTcs.length > 0
   }

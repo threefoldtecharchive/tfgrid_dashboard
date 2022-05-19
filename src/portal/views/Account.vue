@@ -1,11 +1,11 @@
 <template>
   <v-container
     fluid
-    v-if="termsNotAccepted"
+    v-if="openDialog"
     height="100%"
   >
     <v-dialog
-      v-model="termsNotAccepted"
+      v-model="openDialog"
       persistent
       fullscreen
       hide-overlay
@@ -87,23 +87,29 @@ import { Component, Vue } from "vue-property-decorator";
 import { getBalance } from "../lib/balance";
 import { connect } from "../lib/connect";
 import blake from "blakejs";
-import { acceptTermsAndCondition, checkTCAcceptance } from "../lib/accepttc";
+import {
+  acceptTermsAndCondition,
+  userAcceptedTermsAndConditions,
+} from "../lib/accepttc";
+
 @Component({
   name: "AccountView",
 })
 export default class AccountView extends Vue {
-  dialog = false;
-  termsNotAccepted = true;
   documentLink = "https://library.threefold.me/info/legal/#/";
   documentHash = "";
-
+  openDialog = true;
   address = "";
   api: any;
   activated = true;
-  acceptedTC: boolean | undefined;
+
   async mounted() {
     this.address = this.$route.params.accountID;
     this.api = await connect();
+    this.openDialog = !(await userAcceptedTermsAndConditions(
+      this.api,
+      this.address
+    ));
     const balance = (await getBalance(this.api, this.address)) / 1e7;
     this.$store.dispatch("portal/setBalanceAction", balance);
     let document = await axios.get(this.documentLink);
@@ -138,7 +144,10 @@ export default class AccountView extends Vue {
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "system" && method === "ExtrinsicSuccess") {
-              this.termsNotAccepted = false;
+              this.$store.dispatch(
+                "portal/updateAccountWithTCAccepted",
+                this.address
+              );
               console.log("accepted!");
             } else if (section === "system" && method === "ExtrinsicFailed") {
               console.log("rejected");
