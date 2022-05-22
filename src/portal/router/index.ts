@@ -8,7 +8,7 @@ export const portalRouter: RouteConfig[] = [
   { path: "/", 
   name:"Accounts",
   component: AccountsView },
-  { path: "/:accountID",
+  { path: "/:accountID:accountName",
    name: "Account", 
    component: AccountView 
  },

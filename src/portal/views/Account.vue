@@ -45,7 +45,7 @@
       class="text-center py-5 my-3 "
     >
       <h2>
-        Welcome aboard {{$route.query.accountName}}, <br>
+        Welcome aboard {{$route.params.accountName}}, <br>
         Let’s get you connected to the TF Grid !
 
       </h2>

@@ -61,7 +61,10 @@
       <v-list>
         <v-list-item class="px-2">
           <v-list-item-avatar>
-            <v-img src="https://i.ibb.co/k39ThGn/3fold-logo.png"></v-img>
+            <v-img
+              @click="redirectToHomePage"
+              src="https://i.ibb.co/k39ThGn/3fold-logo.png"
+            ></v-img>
           </v-list-item-avatar>
 
           <v-list-item-title>THREEFOLD CHAIN</v-list-item-title>
@@ -211,14 +214,17 @@ export default class Dashboard extends Vue {
   collapseOnScroll = true;
   mini = true;
   drawer = true;
+  public redirectToHomePage() {
+    this.$router.push({
+      name: "Accounts",
+      path: "/",
+    });
+  }
   public routeToAccount(address: string, name: string) {
     this.$router.push({
       name: "Account",
       path: "account",
-      params: { accountID: `${address}` },
-      query: {
-        accountName: `${name}`,
-      },
+      params: { accountID: `${address}`, accountName: `${name}` },
     });
   }
   routes: SidenavItem[] = [
