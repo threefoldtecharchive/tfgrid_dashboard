@@ -213,12 +213,14 @@ export default class Dashboard extends Vue {
   drawer = true;
 
   public routeToAccount(address: string, name: string) {
-    this.$router.push({
-      name: "Account",
-      path: "account",
-      params: { accountID: `${address}` },
-      query: { accountName: `${name}` },
-    });
+    if (this.$route.params.accountID !== address) {
+      this.$router.push({
+        name: "Account",
+        path: "account",
+        params: { accountID: `${address}` },
+        query: { accountName: `${name}` },
+      });
+    }
   }
   routes: SidenavItem[] = [
     {
