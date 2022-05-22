@@ -38,10 +38,7 @@
   </v-container>
   <v-container v-else>
 
-    <FundsCard
-      :api="api"
-      :address="address"
-    />
+    <FundsCard :api="api" />
 
     <v-card
       color="#388E3C"
@@ -150,10 +147,7 @@ export default class AccountView extends Vue {
       : console.log("no twin ID available");
     console.log(this.twin);
   }
-  unmounted() {
-    this.$store.dispatch("portal/setBalanceAction", 0);
-    this.$store.dispatch("portal/setCurrentAccountIDAction", "");
-  }
+
   public async addAutoTwin() {
     await createTwin(
       this.address,

@@ -18,8 +18,14 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 })
 export default class FundsCard extends Vue {
   @Prop({ required: true }) api!: any;
-  @Prop({ required: true }) address!: string;
-  balance = this.$store.state.portal.currentAccountBalance;
+  address = "";
+  balance = 0;
+  async updated() {
+    this.address = this.$route.params.accountID;
+    this.balance = (await getBalance(this.api, this.address)) / 1e7;
+    this.$store.dispatch("portal/setBalanceAction", this.balance);
+    this.$store.dispatch("portal/setCurrentAccountIDAction", this.address);
+  }
 
   public async addTFT() {
     getMoreFunds(
