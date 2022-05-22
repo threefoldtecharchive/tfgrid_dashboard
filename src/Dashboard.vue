@@ -14,16 +14,7 @@
         <v-toolbar-title class="font-weight-bold">THREEFOLD CHAIN</v-toolbar-title>
 
         <v-spacer></v-spacer>
-        <v-card
-          color="#0D47A1"
-          class="mx-3  pa-2 d-flex align-baseline font-weight-bold"
-          v-if="$route.params.accountID"
-        > {{  balance.toFixed(2) }} TFT
-          <v-btn
-            @click="addTFT"
-            class="ml-3"
-          >+</v-btn>
-        </v-card>
+
         <v-card
           class="mx-2 px-1 "
           v-if="$store.state.portal.accounts.length === 0"
@@ -185,9 +176,8 @@
 </template>
 
 <script lang="ts">
-import { setInterval } from "timers/promises";
 import { Component, Vue } from "vue-property-decorator";
-import { getBalance, getMoreFunds } from "./portal/lib/balance";
+import FundsCard from "./components/FundsCard.vue";
 
 interface SidenavItem {
   label: string;
@@ -212,20 +202,12 @@ interface SidenavItem {
 
 @Component({
   name: "Dashboard",
+  components: { FundsCard },
 })
 export default class Dashboard extends Vue {
   collapseOnScroll = true;
   mini = true;
   drawer = true;
-  balance = 0;
-  async mounted() {
-    await setTimeout(() => {
-      this.balance = this.$store.state.portal.currentAccountBalance;
-    }, 1000);
-  }
-  public addTFT() {
-    console.log(this.$store.state.portal.api);
-  }
 
   routes: SidenavItem[] = [
     {

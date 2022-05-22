@@ -34,6 +34,12 @@
     </v-card>
   </v-container>
   <v-container v-else>
+
+    <FundsCard
+      :balance="balance"
+      :api="api"
+    />
+
     <v-card
       color="#388E3C"
       class="text-center py-5 my-3 "
@@ -106,10 +112,11 @@ import {
 } from "../lib/accepttc";
 import WelcomeWindow from "../../components/WelcomeWindow.vue";
 import { activateThroughActivationService } from "../lib/activation";
+import FundsCard from "../../components/FundsCard.vue";
 
 @Component({
   name: "AccountView",
-  components: { WelcomeWindow },
+  components: { WelcomeWindow, FundsCard },
 })
 export default class AccountView extends Vue {
   documentLink = "https://library.threefold.me/info/legal/#/";
@@ -120,7 +127,7 @@ export default class AccountView extends Vue {
   activated = true;
   balance = 0;
   twinID = 0;
-  components = ["WelcomeWindow"];
+
   async mounted() {
     this.address = this.$route.params.accountID;
     this.api = await connect();
