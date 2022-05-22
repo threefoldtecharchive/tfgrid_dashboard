@@ -1,4 +1,5 @@
 <template>
+
   <v-container
     fluid
     v-if="openDialog"
@@ -28,8 +29,9 @@
 
     </v-dialog>
   </v-container>
-  <v-container v-else-if="twinID">
+  <v-container v-else-if="twinID && $store.state.portal.accounts.length !== 0">
     there is a twin
+    <FundsCard :api="api" />
   </v-container>
   <v-container v-else-if="$store.state.portal.accounts.length === 0">
     <v-card>
@@ -38,9 +40,7 @@
   </v-container>
 
   <v-container v-else>
-
     <FundsCard :api="api" />
-
     <v-card
       color="#388E3C"
       class="text-center py-5 my-3 "
@@ -98,6 +98,7 @@
       </v-row>
 
     </v-container>
+
   </v-container>
 
 </template>
