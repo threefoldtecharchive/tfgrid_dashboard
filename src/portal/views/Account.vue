@@ -33,6 +33,9 @@
       <WelcomeWindow />
     </v-card>
   </v-container>
+  <v-container v-else-if="twinID">
+    there is a twin
+  </v-container>
   <v-container v-else>
 
     <FundsCard
@@ -45,9 +48,8 @@
       class="text-center py-5 my-3 "
     >
       <h2>
-        Welcome aboard {{$route.params.accountName}}, <br>
+        Welcome aboard {{$route.query.accountName}}, <br>
         Let’s get you connected to the TF Grid !
-
       </h2>
     </v-card>
     <v-card
@@ -127,6 +129,7 @@ export default class AccountView extends Vue {
   activated = true;
   balance = 0;
   twinID = 0;
+  twin: any;
 
   async mounted() {
     this.address = this.$route.params.accountID;
@@ -143,8 +146,9 @@ export default class AccountView extends Vue {
     this.documentHash = blake.blake2bHex(document.data);
     this.twinID = await getTwinID(this.api, this.address);
     this.twinID !== 0
-      ? getTwin(this.api, this.twinID)
+      ? (this.twin = await getTwin(this.api, this.twinID))
       : console.log("no twin ID available");
+    console.log(this.twin);
   }
   unmounted() {
     this.$store.dispatch("portal/setBalanceAction", 0);
