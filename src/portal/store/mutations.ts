@@ -17,8 +17,6 @@ export default{
     setCurrentAccountID(state: PortalState, payload: {address: string}){
       state.currentAccountID = payload.address
     },
-    setAPI(state: PortalState, payload: {api: any}){
-      state.api = payload.api
-    }, 
+
   
 }

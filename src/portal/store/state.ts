@@ -9,7 +9,6 @@ export interface PortalState{
     accounts:accountInterface[],
     currentAccountBalance: number, 
     currentAccountID: string, 
-    api: any
 
 }
 export default{

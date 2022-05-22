@@ -124,7 +124,6 @@ export default class AccountView extends Vue {
   async mounted() {
     this.address = this.$route.params.accountID;
     this.api = await connect();
-    this.$store.dispatch("portal/setAPIAction", this.api);
 
     this.openDialog = !(await userAcceptedTermsAndConditions(
       this.api,

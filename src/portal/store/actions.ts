@@ -28,9 +28,7 @@ export default{
     async setCurrentAccountIDAction({commit}: ActionContext<PortalState, PortalState>, address: string ){
         commit('setCurrentAccountID', {address})
     },
-    async setAPIAction({commit}: ActionContext<PortalState, PortalState>, api: any ){
-        commit('setBalance', {api})
-    },
+
   
 }
 

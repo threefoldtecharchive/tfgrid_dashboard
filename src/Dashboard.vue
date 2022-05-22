@@ -18,8 +18,7 @@
           color="#0D47A1"
           class="mx-3  pa-2 d-flex align-baseline font-weight-bold"
           v-if="$route.params.accountID"
-        > {{
-      balance !==0 ? balance.toFixed(2): balance}} TFT
+        > {{  balance.toFixed(2) }} TFT
           <v-btn
             @click="addTFT"
             class="ml-3"
@@ -186,6 +185,7 @@
 </template>
 
 <script lang="ts">
+import { setInterval } from "timers/promises";
 import { Component, Vue } from "vue-property-decorator";
 import { getBalance, getMoreFunds } from "./portal/lib/balance";
 
@@ -217,7 +217,12 @@ export default class Dashboard extends Vue {
   collapseOnScroll = true;
   mini = true;
   drawer = true;
-  balance = this.$store.state.portal.currentAccountBalance;
+  balance = 0;
+  async mounted() {
+    await setTimeout(() => {
+      this.balance = this.$store.state.portal.currentAccountBalance;
+    }, 1000);
+  }
   public addTFT() {
     console.log(this.$store.state.portal.api);
   }
