@@ -236,11 +236,6 @@ export default class Dashboard extends Vue {
           active: true,
           children: [
             {
-              label: "Twin",
-              icon: "account-box-multiple-outline",
-              path: "twin",
-            },
-            {
               label: "Transfer",
               icon: "swap-horizontal",
               path: "transfer",

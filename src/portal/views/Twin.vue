@@ -1,5 +1,9 @@
 <template>
-  <div style="padding-top:100ox">im a Twin</div>
+  <div style="padding-top:100ox">
+    <v-container>
+      <v-card>Congratulations ! You can now interact with the TF Grid</v-card>
+    </v-container>
+  </div>
 </template>
 
 <script lang="ts">

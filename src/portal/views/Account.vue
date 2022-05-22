@@ -30,7 +30,7 @@
     </v-dialog>
   </v-container>
   <v-container v-else-if="twinID && $store.state.portal.accounts.length !== 0">
-    there is a twin
+    <Twin />
     <FundsCard :api="api" />
   </v-container>
   <v-container v-else-if="$store.state.portal.accounts.length === 0">
@@ -117,10 +117,10 @@ import {
 import WelcomeWindow from "../../components/WelcomeWindow.vue";
 import { activateThroughActivationService } from "../lib/activation";
 import FundsCard from "../../components/FundsCard.vue";
-
+import Twin from "./Twin.vue";
 @Component({
   name: "AccountView",
-  components: { WelcomeWindow, FundsCard },
+  components: { WelcomeWindow, FundsCard, Twin },
 })
 export default class AccountView extends Vue {
   documentLink = "https://library.threefold.me/info/legal/#/";
