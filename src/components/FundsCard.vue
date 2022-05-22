@@ -1,7 +1,7 @@
 <template>
   <v-card
     color="#0D47A1"
-    class=" funds pa-2 d-flex align-baseline font-weight-bold"
+    class=" funds px-3 d-flex align-baseline font-weight-bold"
     v-if="$route.params.accountID"
   > {{$store.state.portal.currentAccountBalance }} TFT
     <v-btn
