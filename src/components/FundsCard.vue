@@ -1,7 +1,7 @@
 <template>
   <v-card
     color="#0D47A1"
-    class="mx-3  pa-2 d-flex align-baseline font-weight-bold"
+    class=" funds pa-2 d-flex align-baseline font-weight-bold"
     v-if="$route.params.accountID"
   > {{  balance.toFixed(2) }} TFT
     <v-btn
@@ -11,15 +11,66 @@
   </v-card>
 </template>
 <script lang="ts">
+import { getBalance, getMoreFunds } from "@/portal/lib/balance";
 import { Component, Prop, Vue } from "vue-property-decorator";
 @Component({
   name: "FundsCard",
 })
 export default class FundsCard extends Vue {
-  @Prop({ required: true }) balance!: number;
-
+  @Prop({ required: true }) accountBalance!: number;
+  @Prop({ required: true }) api!: any;
+  @Prop({ required: true }) accountId!: string;
+  balance = 0;
   public addTFT() {
-    console.log("adding tfts");
+    this.balance = this.accountBalance;
+    getMoreFunds(
+      this.accountId,
+      this.api,
+      (res: { events?: never[] | undefined; status: any }) => {
+        console.log(res);
+        if (res instanceof Error) {
+          console.log(res);
+          return;
+        }
+
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            console.log(`Transaction submitted`);
+        }
+
+        if (status.isFinalized) {
+          console.log(
+            `Transaction included at blockHash ${status.asFinalized}`
+          );
+
+          // Loop through Vec<EventRecord> to display all events
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            if (section === "balances" && method === "Transfer") {
+              console.log("Success!");
+
+              getBalance(this.api, this.accountId).then((balance) => {
+                this.balance = balance / 1e7;
+              });
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              console.log("Get more TFT failed!");
+            }
+          });
+        }
+      }
+    ).catch((err: { message: any }) => {
+      console.log(err.message);
+    });
   }
 }
 </script>
+<style scoped>
+.funds {
+  position: fixed;
+  bottom: 0;
+  z-index: 100;
+  right: 0;
+}
+</style>
