@@ -87,7 +87,10 @@
       <v-row>
         <v-col>
           <v-card class="pa-5 text-center d-flex align-center justify-center">
-            <v-btn>why do i even need a twin?</v-btn>
+            <v-btn
+              v-bind:target="'blank'"
+              :href="'https://library.threefold.me/info/manual/#/manual__yggdrasil_client'"
+            >why do i even need a twin?</v-btn>
           </v-card>
         </v-col>
 
