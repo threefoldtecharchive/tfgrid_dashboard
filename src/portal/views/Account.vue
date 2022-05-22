@@ -36,9 +36,8 @@
   <v-container v-else>
 
     <FundsCard
-      :accountBalance="balance"
       :api="api"
-      :accountId="address"
+      :address="address"
     />
 
     <v-card

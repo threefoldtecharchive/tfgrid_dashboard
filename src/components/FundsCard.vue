@@ -3,7 +3,7 @@
     color="#0D47A1"
     class=" funds pa-2 d-flex align-baseline font-weight-bold"
     v-if="$route.params.accountID"
-  > {{  balance.toFixed(2) }} TFT
+  > {{$store.state.portal.currentAccountBalance }} TFT
     <v-btn
       @click="addTFT"
       class="ml-3"
@@ -17,14 +17,13 @@ import { Component, Prop, Vue } from "vue-property-decorator";
   name: "FundsCard",
 })
 export default class FundsCard extends Vue {
-  @Prop({ required: true }) accountBalance!: number;
   @Prop({ required: true }) api!: any;
-  @Prop({ required: true }) accountId!: string;
-  balance = 0;
-  public addTFT() {
-    this.balance = this.accountBalance;
+  @Prop({ required: true }) address!: string;
+  balance = this.$store.state.portal.currentAccountBalance;
+
+  public async addTFT() {
     getMoreFunds(
-      this.accountId,
+      this.address,
       this.api,
       (res: { events?: never[] | undefined; status: any }) => {
         console.log(res);
@@ -51,8 +50,9 @@ export default class FundsCard extends Vue {
             if (section === "balances" && method === "Transfer") {
               console.log("Success!");
 
-              getBalance(this.api, this.accountId).then((balance) => {
-                this.balance = balance / 1e7;
+              getBalance(this.api, this.address).then((balance) => {
+                this.balance = (this.balance + balance) / 1e7;
+                this.$store.dispatch("portal/setBalanceAction", this.balance);
               });
             } else if (section === "system" && method === "ExtrinsicFailed") {
               console.log("Get more TFT failed!");
