@@ -28,14 +28,15 @@
 
     </v-dialog>
   </v-container>
+  <v-container v-else-if="twinID">
+    there is a twin
+  </v-container>
   <v-container v-else-if="$store.state.portal.accounts.length === 0">
     <v-card>
       <WelcomeWindow />
     </v-card>
   </v-container>
-  <v-container v-else-if="twinID">
-    there is a twin
-  </v-container>
+
   <v-container v-else>
 
     <FundsCard :api="api" />
@@ -88,7 +89,7 @@
         <v-col>
           <v-card class="pa-5 text-center d-flex align-center justify-center">
             <v-btn
-              v-bind:target="'blank'"
+              :target="'blank'"
               :href="'https://library.threefold.me/info/manual/#/manual__yggdrasil_client'"
             >why do i even need a twin?</v-btn>
           </v-card>
