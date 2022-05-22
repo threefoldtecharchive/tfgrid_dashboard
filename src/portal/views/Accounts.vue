@@ -58,6 +58,10 @@ import WelcomeWindow from "../../components/WelcomeWindow.vue";
 })
 export default class AccountsView extends Vue {
   searchAccount = "";
+  mounted() {
+    this.$store.dispatch("portal/setBalanceAction", 0);
+    this.$store.dispatch("portal/setCurrentAccountIDAction", "");
+  }
   public addAccountRoute(account: accountInterface) {
     this.$router.push({
       name: "Account",

@@ -73,7 +73,7 @@
             class="pa-5 text-center d-flex align-center justify-center"
             height="175"
           >
-            <v-btn>automatically</v-btn>
+            <v-btn @click="addAutoTwin">automatically</v-btn>
 
           </v-card>
         </v-col>
@@ -97,6 +97,7 @@
 import axios from "axios";
 import { Component, Vue } from "vue-property-decorator";
 import { getBalance } from "../lib/balance";
+import { createTwin, getTwin, getTwinID } from "../lib/twin";
 import { connect } from "../lib/connect";
 import blake from "blakejs";
 import {
@@ -104,6 +105,7 @@ import {
   userAcceptedTermsAndConditions,
 } from "../lib/accepttc";
 import WelcomeWindow from "../../components/WelcomeWindow.vue";
+import { activateThroughActivationService } from "../lib/activation";
 
 @Component({
   name: "AccountView",
@@ -116,21 +118,73 @@ export default class AccountView extends Vue {
   address = "";
   api: any;
   activated = true;
+  balance = 0;
+  twinID = 0;
   components = ["WelcomeWindow"];
   async mounted() {
     this.address = this.$route.params.accountID;
     this.api = await connect();
+    this.$store.dispatch("portal/setAPIAction", this.api);
+
     this.openDialog = !(await userAcceptedTermsAndConditions(
       this.api,
       this.address
     ));
-    const balance = (await getBalance(this.api, this.address)) / 1e7;
-    this.$store.dispatch("portal/setBalanceAction", balance);
+    this.balance = (await getBalance(this.api, this.address)) / 1e7;
+    this.$store.dispatch("portal/setBalanceAction", this.balance);
+    this.$store.dispatch("portal/setCurrentAccountIDAction", this.address);
     let document = await axios.get(this.documentLink);
     this.documentHash = blake.blake2bHex(document.data);
+    this.twinID = await getTwinID(this.api, this.address);
+    this.twinID !== 0
+      ? getTwin(this.api, this.twinID)
+      : console.log("no twin ID available");
   }
+  unmounted() {
+    this.$store.dispatch("portal/setBalanceAction", 0);
+    this.$store.dispatch("portal/setCurrentAccountIDAction", "");
+  }
+  public async addAutoTwin() {
+    await createTwin(
+      this.address,
+      this.api,
+      "::1",
+      (res: { events?: never[] | undefined; status: any }) => {
+        console.log(res);
+        if (res instanceof Error) {
+          console.log(res);
+          return;
+        }
 
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            console.log(`Transaction submitted`);
+        }
+
+        if (status.isFinalized) {
+          console.log(
+            `Transaction included at blockHash ${status.asFinalized}`
+          );
+
+          // Loop through Vec<EventRecord> to display all events
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            if (section === "tfgridModule" && method === "TwinStored") {
+              console.log("Twin created!");
+              const twinStoredEvent = data[0];
+              console.log(twinStoredEvent);
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              console.log("Twin creation failed!");
+            }
+          });
+        }
+      }
+    );
+  }
   public acceptTC() {
+    activateThroughActivationService(this.address);
     acceptTermsAndCondition(
       this.api,
       this.address,
@@ -159,6 +213,7 @@ export default class AccountView extends Vue {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "system" && method === "ExtrinsicSuccess") {
               console.log("accepted!");
+              this.openDialog = false;
             } else if (section === "system" && method === "ExtrinsicFailed") {
               console.log("rejected");
             }

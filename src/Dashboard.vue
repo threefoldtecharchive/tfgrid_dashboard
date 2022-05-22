@@ -17,8 +17,8 @@
         <v-card
           color="#0D47A1"
           class="mx-3  pa-2 d-flex align-baseline font-weight-bold"
-          v-if="$store.state.portal.balance"
-        > {{$store.state.portal.balance.toFixed(2)}} TFT
+          v-if="$route.params.accountID"
+        > {{$store.state.portal.currentAccountBalance !== 0 ? $store.state.portal.currentAccountBalance.toFixed(2): $store.state.portal.currentAccountBalance }} TFT
           <v-btn
             @click="addTFT"
             class="ml-3"
@@ -186,6 +186,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { getBalance, getMoreFunds } from "./portal/lib/balance";
 
 interface SidenavItem {
   label: string;
@@ -215,8 +216,49 @@ export default class Dashboard extends Vue {
   collapseOnScroll = true;
   mini = true;
   drawer = true;
+  balance = this.$store.state.portal.currentAccountBalance;
   public addTFT() {
-    console.log("im adding tft");
+    getMoreFunds(
+      this.$store.state.portal.currentAccountID,
+      this.$store.state.portal.api,
+      (res: { events?: never[] | undefined; status: any }) => {
+        console.log(res);
+        if (res instanceof Error) {
+          console.log(res);
+          return;
+        }
+
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            console.log(`Transaction submitted`);
+        }
+
+        if (status.isFinalized) {
+          console.log(
+            `Transaction included at blockHash ${status.asFinalized}`
+          );
+
+          // Loop through Vec<EventRecord> to display all events
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            if (section === "balances" && method === "Transfer") {
+              console.log("Success!");
+              getBalance(
+                this.$store.state.portal.api,
+                this.$store.state.portal.currentAccountID
+              ).then((balance) => {
+                this.balance = balance / 1e7;
+                this.$store.dispatch("portal/setBalanceAction", this.balance);
+              });
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              console.log("Get more TFT failed!");
+            }
+          });
+        }
+      }
+    );
   }
   routes: SidenavItem[] = [
     {
