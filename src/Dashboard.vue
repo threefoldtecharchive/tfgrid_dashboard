@@ -108,7 +108,10 @@
 
                 </v-list-item-content>
                 <v-list-item-icon>
-                  <v-icon v-text="'mdi-' + route.children[0].icon" />
+                  <v-icon
+                    @click="routeToAccount(account.address, account.meta.name)"
+                    v-text="'mdi-' + route.children[0].icon"
+                  />
                 </v-list-item-icon>
 
               </template>
@@ -208,7 +211,16 @@ export default class Dashboard extends Vue {
   collapseOnScroll = true;
   mini = true;
   drawer = true;
-
+  public routeToAccount(address: string, name: string) {
+    this.$router.push({
+      name: "Account",
+      path: "account",
+      params: { accountID: `${address}` },
+      query: {
+        accountName: `${name}`,
+      },
+    });
+  }
   routes: SidenavItem[] = [
     {
       //label and path will be retrieved from accounts fetched from store (polkadot)
