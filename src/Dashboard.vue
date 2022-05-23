@@ -248,7 +248,7 @@ export default class Dashboard extends Vue {
     if (this.twinID) {
       this.twin = await getTwin(this.$api, this.twinID);
       this.balance = (await getBalance(this.$api, address)) / 1e7;
-      if (!this.$route.path.includes(this.twinID)) {
+      if (!this.$route.path.includes(this.twinID) && label == "twin") {
         this.$router.push({
           name: `${label}`,
           path: `/:accountID/${label}`,
@@ -260,25 +260,27 @@ export default class Dashboard extends Vue {
             balance: `${this.balance}`,
           },
         });
+      } else {
+        this.$router.push({
+          name: `${label}`,
+          path: `/:accountID/${label}`,
+          params: { accountID: `${address}` },
+          query: {
+            accountName: `${name}`,
+            twinID: this.twinID,
+            balance: `${this.balance}`,
+          },
+        });
       }
-    } else if (!this.$route.path.includes(address)) {
-      this.$router.push({
-        name: "account",
-        path: "account",
-        params: { accountID: `${address}` },
-        query: { accountName: `${name}` },
-      });
     } else {
-      this.$router.push({
-        name: `${label}`,
-        path: `/:accountID/${label}`,
-        params: { accountID: `${address}` },
-        query: {
-          accountName: `${name}`,
-          twinID: this.twinID,
-          balance: `${this.balance}`,
-        },
-      });
+      if (!this.$route.path.includes(address)) {
+        this.$router.push({
+          name: "account",
+          path: "account",
+          params: { accountID: `${address}` },
+          query: { accountName: `${name}` },
+        });
+      }
     }
   }
 

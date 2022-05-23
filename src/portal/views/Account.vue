@@ -168,23 +168,6 @@ export default class AccountView extends Vue {
       this.$api,
       this.address
     ));
-    if (this.twinID !== 0) {
-      this.twin = await getTwin(this.$api, this.twinID);
-
-      this.$router.push({
-        name: "twin",
-        path: "/:accountID/twin",
-        params: { accountID: `${this.$route.params.accountID}` },
-        query: {
-          accountName: `${this.$route.query.accountName}`,
-          twinID: this.twin.id,
-          twinIP: this.twin.ip,
-          balance: `${this.balance}`,
-        },
-      });
-    } else {
-      console.log("no twin ID available");
-    }
 
     let document = await axios.get(this.documentLink);
     this.documentHash = blake.blake2bHex(document.data);
