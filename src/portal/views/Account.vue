@@ -128,6 +128,9 @@ export default class AccountView extends Vue {
   twinID = 0;
   twin: any;
   async updated() {
+    this.address = this.$route.params.accountID;
+    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+    this.twinID = await getTwinID(this.$api, this.address);
     this.openDialog = !(await userAcceptedTermsAndConditions(
       this.$api,
       this.address
