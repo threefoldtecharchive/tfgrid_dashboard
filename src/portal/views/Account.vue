@@ -36,7 +36,7 @@
     </v-card>
   </v-container>
 
-  <v-container v-else>
+  <v-container v-else-if="!twinCreated">
     <FundsCard :balance="balance" />
     <v-card
       color="#388E3C"
@@ -65,10 +65,13 @@
               Planetary
               using Yggdrasil IPV6
             </h3>
-            <v-text-field label="Twin IP ::1">
+            <v-text-field
+              label="Twin IP ::1"
+              v-model="ip"
+            >
 
             </v-text-field>
-            <v-btn>create</v-btn>
+            <v-btn @click="createTwinFunc(ip)">create</v-btn>
           </v-card>
         </v-col>
         <v-col>
@@ -76,7 +79,7 @@
             class="pa-5 text-center d-flex align-center justify-center"
             height="175"
           >
-            <v-btn @click="addAutoTwin">automatically</v-btn>
+            <v-btn @click="createTwinFunc('::1')">automatically</v-btn>
 
           </v-card>
         </v-col>
@@ -122,15 +125,33 @@ export default class AccountView extends Vue {
   documentLink = "https://library.threefold.me/info/legal/#/";
   documentHash = "";
   openDialog = true;
+  twinCreated = false;
   address = "";
   $api: any;
   balance = 0;
   twinID = 0;
+  ip = "";
   twin: any;
   async updated() {
     this.address = this.$route.params.accountID;
     this.balance = (await getBalance(this.$api, this.address)) / 1e7;
     this.twinID = await getTwinID(this.$api, this.address);
+    if (this.twinID) {
+      this.twinCreated = true;
+      this.twin = await getTwin(this.$api, this.twinID);
+
+      this.$router.push({
+        name: "twin",
+        path: "/:accountID/twin",
+        params: { accountID: `${this.$route.params.accountID}` },
+        query: {
+          accountName: `${this.$route.query.accountName}`,
+          twinID: this.twin.id,
+          twinIP: this.twin.ip,
+          balance: `${this.balance}`,
+        },
+      });
+    }
     this.openDialog = !(await userAcceptedTermsAndConditions(
       this.$api,
       this.address
@@ -140,6 +161,9 @@ export default class AccountView extends Vue {
     this.address = this.$route.params.accountID;
     this.balance = (await getBalance(this.$api, this.address)) / 1e7;
     this.twinID = await getTwinID(this.$api, this.address);
+    if (this.twinID) {
+      this.twinCreated = true;
+    }
     this.openDialog = !(await userAcceptedTermsAndConditions(
       this.$api,
       this.address
@@ -166,11 +190,11 @@ export default class AccountView extends Vue {
     this.documentHash = blake.blake2bHex(document.data);
   }
 
-  public async addAutoTwin() {
+  public async createTwinFunc(ip: string) {
     await createTwin(
       this.address,
       this.$api,
-      "::1",
+      ip,
       (res: { events?: never[] | undefined; status: any }) => {
         console.log(res);
         if (res instanceof Error) {
@@ -197,6 +221,7 @@ export default class AccountView extends Vue {
               console.log("Twin created!");
               const twinStoredEvent = data[0];
               console.log(twinStoredEvent);
+              this.twinCreated = true;
             } else if (section === "system" && method === "ExtrinsicFailed") {
               console.log("Twin creation failed!");
             }
