@@ -18,14 +18,17 @@ import { Component, Prop, Vue } from "vue-property-decorator";
   name: "FundsCard",
 })
 export default class FundsCard extends Vue {
-  @Prop({ required: true }) api!: any;
   address = "";
   balance = 0;
   balanceInUSD = 0;
+  $api: any;
+  public mounted() {
+    this.address = this.$route.params.accountID;
+  }
 
   async updated() {
     this.address = this.$route.params.accountID;
-    this.balance = (await getBalance(this.api, this.address)) / 1e7;
+    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
     this.$store.dispatch("portal/setBalanceAction", this.balance);
     this.$store.dispatch("portal/setCurrentAccountIDAction", this.address);
     if (config.network !== "dev") {
@@ -43,7 +46,7 @@ export default class FundsCard extends Vue {
     } else {
       getMoreFunds(
         this.address,
-        this.api,
+        this.$api,
         (res: { events?: never[] | undefined; status: any }) => {
           console.log(res);
           if (res instanceof Error) {
@@ -69,7 +72,7 @@ export default class FundsCard extends Vue {
               if (section === "balances" && method === "Transfer") {
                 console.log("Success!");
 
-                getBalance(this.api, this.address).then((balance) => {
+                getBalance(this.$api, this.address).then((balance) => {
                   this.balance = (this.balance + balance) / 1e7;
                   this.$store.dispatch("portal/setBalanceAction", this.balance);
                 });

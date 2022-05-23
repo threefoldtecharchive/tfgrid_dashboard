@@ -37,7 +37,7 @@
   </v-container>
 
   <v-container v-else>
-    <FundsCard :api="api" />
+    <FundsCard />
     <v-card
       color="#388E3C"
       class="text-center py-5 my-3 "
@@ -105,7 +105,6 @@ import axios from "axios";
 import { Component, Vue } from "vue-property-decorator";
 import { getBalance } from "../lib/balance";
 import { createTwin, getTwin, getTwinID } from "../lib/twin";
-import { connect } from "../lib/connect";
 import blake from "blakejs";
 import {
   acceptTermsAndCondition,
@@ -124,35 +123,42 @@ export default class AccountView extends Vue {
   documentHash = "";
   openDialog = true;
   address = "";
-  api: any;
+  $api: any;
   activated = true;
   balance = 0;
   twinID = 0;
   twin: any;
+
   async updated() {
     this.address = this.$route.params.accountID;
-    this.twinID = await getTwinID(this.api, this.address);
+    this.twinID = await getTwinID(this.$api, this.address);
     if (this.twinID !== 0) {
-      this.twin = await getTwin(this.api, this.twinID);
+      this.twin = await getTwin(this.$api, this.twinID);
       this.$router.push({
         name: "twin",
         path: "/:accountID/twin",
         params: { accountID: `${this.$route.params.accountID}` },
-        query: { accountName: `${this.$route.query.accountName}` },
+        query: {
+          accountName: `${this.$route.query.accountName}`,
+          twinID: this.twin.id,
+          twinIP: this.twin.ip,
+        },
       });
+    } else {
+      console.log("no twin ID available");
     }
-    console.log("no twin ID available");
+
     console.log(this.twin);
   }
+
   async mounted() {
     this.address = this.$route.params.accountID;
-    this.api = await connect();
 
     this.openDialog = !(await userAcceptedTermsAndConditions(
-      this.api,
+      this.$api,
       this.address
     ));
-    this.balance = (await getBalance(this.api, this.address)) / 1e7;
+    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
     this.$store.dispatch("portal/setBalanceAction", this.balance);
     this.$store.dispatch("portal/setCurrentAccountIDAction", this.address);
     let document = await axios.get(this.documentLink);
@@ -162,7 +168,7 @@ export default class AccountView extends Vue {
   public async addAutoTwin() {
     await createTwin(
       this.address,
-      this.api,
+      this.$api,
       "::1",
       (res: { events?: never[] | undefined; status: any }) => {
         console.log(res);
@@ -201,7 +207,7 @@ export default class AccountView extends Vue {
   public acceptTC() {
     activateThroughActivationService(this.address);
     acceptTermsAndCondition(
-      this.api,
+      this.$api,
       this.address,
       this.documentLink,
       this.documentHash,
@@ -229,6 +235,7 @@ export default class AccountView extends Vue {
             if (section === "system" && method === "ExtrinsicSuccess") {
               console.log("accepted!");
               this.openDialog = false;
+              window.location.reload();
             } else if (section === "system" && method === "ExtrinsicFailed") {
               console.log("rejected");
             }

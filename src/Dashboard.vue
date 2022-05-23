@@ -208,6 +208,7 @@ export default class Dashboard extends Vue {
   collapseOnScroll = true;
   mini = true;
   drawer = true;
+
   public redirectToHomePage() {
     if (this.$route.path !== "/") {
       this.$router.push({

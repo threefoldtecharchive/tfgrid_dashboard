@@ -28,6 +28,7 @@ export default{
     async setCurrentAccountIDAction({commit}: ActionContext<PortalState, PortalState>, address: string ){
         commit('setCurrentAccountID', {address})
     },
+ 
 
   
 }

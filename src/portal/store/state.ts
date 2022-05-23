@@ -10,6 +10,7 @@ export interface PortalState{
     currentAccountBalance: number, 
     currentAccountID: string, 
 
+
 }
 export default{
     accounts:[],

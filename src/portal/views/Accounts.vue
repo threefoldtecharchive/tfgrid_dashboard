@@ -51,16 +51,20 @@
 import { Component, Vue } from "vue-property-decorator";
 import { accountInterface } from "../store/state";
 import WelcomeWindow from "../../components/WelcomeWindow.vue";
-
+import Account from "./Account.vue";
+import { connect } from "../lib/connect";
+import FundsCard from "@/components/FundsCard.vue";
+import Twin from "./Twin.vue";
 @Component({
   name: "AccountsView",
-  components: { WelcomeWindow },
+  components: { WelcomeWindow, Account, FundsCard, Twin },
 })
 export default class AccountsView extends Vue {
   searchAccount = "";
-  mounted() {
+  async mounted() {
     this.$store.dispatch("portal/setBalanceAction", 0);
     this.$store.dispatch("portal/setCurrentAccountIDAction", "");
+    Vue.prototype.$api = await connect(); //declare global variable api
   }
   public addAccountRoute(account: accountInterface) {
     this.$router.push({
