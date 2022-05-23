@@ -217,6 +217,7 @@ export default class Dashboard extends Vue {
   $api: any;
   twin: any;
   balance = 0;
+
   public async mounted() {
     Vue.prototype.$api = await connect(); //declare global variable api
   }

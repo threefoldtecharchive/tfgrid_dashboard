@@ -31,10 +31,7 @@
             </div>
           </v-card-text>
           <v-card-actions class="justify-end">
-            <v-btn
-              @click="editingTwin = false"
-              text
-            >Close</v-btn>
+            <v-btn @click="editingTwin = false">Close</v-btn>
             <v-btn @click="updateTwin">Submit</v-btn>
           </v-card-actions>
         </v-card>
@@ -91,18 +88,18 @@
 import FundsCard from "@/components/FundsCard.vue";
 import WelcomeWindow from "@/components/WelcomeWindow.vue";
 import { Component, Vue } from "vue-property-decorator";
-import EditTwinPopUp from "../../components/EditTwinPopUp.vue";
 import { getBalance } from "../lib/balance";
 import { getTwin, getTwinID, updateTwinIP } from "../lib/twin";
 
 @Component({
   name: "Twin",
-  components: { WelcomeWindow, EditTwinPopUp, FundsCard },
+  components: { WelcomeWindow, FundsCard },
 })
 export default class TwinView extends Vue {
   $api: any;
   editingTwin = false;
   ip: any = [];
+
   id: any = [];
   address = "";
   twin: any;
@@ -111,11 +108,12 @@ export default class TwinView extends Vue {
   async updated() {
     this.address = this.$route.params.accountID;
     if (this.$route.query.twinIP && this.$route.query.twinID) {
-      this.ip = this.$route.query.twinIP;
       this.id = this.$route.query.twinID;
       this.accountName = this.$route.query.accountName;
     }
-    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+    if (this.$route.query.balance !== this.balance) {
+      this.balance = this.$route.query.balance;
+    }
   }
   async mounted() {
     this.address = this.$route.params.accountID;
@@ -132,7 +130,6 @@ export default class TwinView extends Vue {
     this.editingTwin = true;
   }
   public updateTwin() {
-    console.log(this.ip);
     updateTwinIP(
       this.$route.params.accountID,
       this.$api,
@@ -167,6 +164,7 @@ export default class TwinView extends Vue {
                   this.$api,
                   this.$route.params.accountID
                 );
+                this.balance = await getBalance(this.$api, this.address);
                 this.twin = await getTwin(this.$api, this.id);
                 this.ip = this.twin.ip;
                 this.editingTwin = false;
