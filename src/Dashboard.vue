@@ -42,7 +42,7 @@
 
             <v-icon
               class=""
-              @click="$store.dispatch('portal/unsubscribeAccounts')"
+              @click="disconnectWallet"
             >mdi-lan-disconnect</v-icon>
 
           </v-btn>
@@ -221,7 +221,15 @@ export default class Dashboard extends Vue {
   public async mounted() {
     Vue.prototype.$api = await connect(); //declare global variable api
   }
-
+  public disconnectWallet() {
+    this.$store.dispatch("portal/unsubscribeAccounts");
+    if (this.$route.path !== "/") {
+      this.$router.push({
+        name: "accounts",
+        path: `/`,
+      });
+    }
+  }
   public redirectToHomePage() {
     if (this.$route.path !== "/") {
       this.$router.push({
@@ -230,16 +238,17 @@ export default class Dashboard extends Vue {
       });
     }
   }
+
   public async redirectToSubchild(
     label: string,
     address: string,
     name: string
   ) {
     this.twinID = await getTwinID(this.$api, address);
-    if (this.twinID !== 0) {
+    if (this.twinID) {
       this.twin = await getTwin(this.$api, this.twinID);
       this.balance = (await getBalance(this.$api, address)) / 1e7;
-      if (!this.$route.path.includes(address)) {
+      if (!this.$route.path.includes(this.twinID)) {
         this.$router.push({
           name: `${label}`,
           path: `/:accountID/${label}`,
@@ -252,25 +261,27 @@ export default class Dashboard extends Vue {
           },
         });
       }
+    } else if (!this.$route.path.includes(address)) {
+      this.$router.push({
+        name: "account",
+        path: "account",
+        params: { accountID: `${address}` },
+        query: { accountName: `${name}` },
+      });
     } else {
       this.$router.push({
-        name: "account",
-        path: "account",
+        name: `${label}`,
+        path: `/:accountID/${label}`,
         params: { accountID: `${address}` },
-        query: { accountName: `${name}` },
+        query: {
+          accountName: `${name}`,
+          twinID: this.twinID,
+          balance: `${this.balance}`,
+        },
       });
     }
   }
-  public routeToAccount(address: string, name: string) {
-    if (this.$route.params.accountID !== address) {
-      this.$router.push({
-        name: "account",
-        path: "account",
-        params: { accountID: `${address}` },
-        query: { accountName: `${name}` },
-      });
-    }
-  }
+
   routes: SidenavItem[] = [
     {
       //label and path will be retrieved from accounts fetched from store (polkadot)

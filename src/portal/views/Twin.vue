@@ -78,6 +78,12 @@
         </v-card-actions>
 
       </v-card>
+      <h4 class="text-center my-5 pa-5">What do you wish to do?</h4>
+      <div class="d-flex row justify-center align-center">
+        <v-card class="pa-5 mx-3">Transfer TFT</v-card>
+        <v-card class="pa-5 mx-3">Manage Farms</v-card>
+        <v-card class="pa-5 mx-3">Reserve Nodes</v-card>
+      </div>
       <FundsCard :balance="balance" />
     </v-container>
   </div>
