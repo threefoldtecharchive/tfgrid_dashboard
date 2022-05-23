@@ -19,6 +19,22 @@
 
       </v-select>
     </v-card>
+    <v-container class="d-flex justify-center pa-5 my-2">
+
+      <v-btn
+        color="#512DA8"
+        class="mx-5 pa-5"
+      >deposit</v-btn>
+
+      <v-btn
+        color="#303F9F"
+        class="mx-5 pa-5"
+      >withdraw</v-btn>
+    </v-container>
+    <v-container class="d-flex justify-center pa-5 my-3">
+      <v-btn>why do we use bridges?</v-btn>
+    </v-container>
+
     <FundsCard :balance="balance" />
   </v-container>
 </template>
@@ -52,7 +68,7 @@ export default class TransferView extends Vue {
     this.balance = (await getBalance(this.$api, this.address)) / 1e7;
   }
   updated() {
-    console.log(this.selectedItem);
+    console.log(this.selectedItem.item_id);
     this.balance = this.$route.query.balance;
   }
 }

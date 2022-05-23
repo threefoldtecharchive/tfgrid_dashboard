@@ -80,9 +80,13 @@
       </v-card>
       <h4 class="text-center my-5 pa-5">What do you wish to do?</h4>
       <div class="d-flex row justify-center align-center">
-        <v-card class="pa-5 mx-3">Transfer TFT</v-card>
-        <v-card class="pa-5 mx-3">Manage Farms</v-card>
-        <v-card class="pa-5 mx-3">Reserve Nodes</v-card>
+        <v-card
+          v-for="link in links"
+          :key="link.label"
+          class="pa-5 mx-3"
+          @click="redirectToLabelRoute(link.path, address)"
+        >{{link.label.toUpperCase()}}</v-card>
+
       </div>
       <FundsCard :balance="balance" />
     </v-container>
@@ -111,6 +115,20 @@ export default class TwinView extends Vue {
   twin: any;
   accountName: any;
   balance: any = 0;
+  links = [
+    {
+      label: "transfer tft",
+      path: "transfer",
+    },
+    {
+      label: "manage farms",
+      path: "farms",
+    },
+    {
+      label: "manage nodes",
+      path: "nodes",
+    },
+  ];
   async updated() {
     this.address = this.$route.params.accountID;
     if (this.$route.query.twinIP && this.$route.query.twinID) {
@@ -130,7 +148,18 @@ export default class TwinView extends Vue {
     }
     this.balance = this.$route.query.balance;
   }
-
+  public redirectToLabelRoute(path: string, address: string) {
+    this.$router.push({
+      name: `${path}`,
+      path: `/:accountID/${path}`,
+      params: { accountID: `${address}` },
+      query: {
+        accountName: `${this.accountName}`,
+        twinID: this.id,
+        balance: `${this.balance}`,
+      },
+    });
+  }
   public editTwin() {
     console.log("editing a twin");
     this.editingTwin = true;
