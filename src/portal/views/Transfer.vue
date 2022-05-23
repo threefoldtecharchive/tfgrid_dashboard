@@ -1,5 +1,27 @@
 <template>
   <v-container>
+    <v-container v-if="openDepositDialog">
+      <v-dialog
+        transition="dialog-bottom-transition"
+        max-width="600"
+        v-model="openDepositDialog"
+      >
+
+        <v-card>
+          <v-toolbar
+            color="primary"
+            dark
+          >Deposit TFT</v-toolbar>
+          <v-card-text>
+
+          </v-card-text>
+          <v-card-actions class="justify-end">
+            <v-btn @click="openDepositDialog = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+
+      </v-dialog>
+    </v-container>
     <v-card
       color="#388E3C"
       class="pa-5 my-5"
@@ -24,6 +46,7 @@
       <v-btn
         color="#512DA8"
         class="mx-5 pa-5"
+        @click="openDepositDialog = true"
       >deposit</v-btn>
 
       <v-btn
@@ -48,6 +71,7 @@ import { Component, Vue } from "vue-property-decorator";
   name: "TransferView",
 })
 export default class TransferView extends Vue {
+  openDepositDialog = false;
   selectedItem = {
     item_id: 1,
   };
