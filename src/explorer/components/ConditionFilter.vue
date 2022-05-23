@@ -31,11 +31,11 @@ export default class ConditionFilter extends Vue {
   set value(value: boolean) {
     const { key1, key2 } = this;
     const data = { key1, key2, value };
-    this.$store.commit(MutationTypes.SET_FILTER_VALUE, data);
+    this.$store.commit("explorer/" + MutationTypes.SET_FILTER_VALUE, data);
   }
 
   created() {
-    this.$store.commit(MutationTypes.SET_FILTER_ENABLE, {
+    this.$store.commit("explorer/" + MutationTypes.SET_FILTER_ENABLE, {
       key1: this.key1,
       key2: this.key2,
       value: true,
@@ -43,7 +43,7 @@ export default class ConditionFilter extends Vue {
   }
 
   destroyed() {
-    this.$store.commit(MutationTypes.SET_FILTER_ENABLE, {
+    this.$store.commit("explorer/" + MutationTypes.SET_FILTER_ENABLE, {
       key1: this.key1,
       key2: this.key2,
       value: false,

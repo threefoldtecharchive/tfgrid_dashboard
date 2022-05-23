@@ -78,7 +78,7 @@ export default class RangeFilter extends Vue {
   }
 
   set range([min, max]: [number, number]) {
-    this.$store.commit(MutationTypes.SET_FILTER_VALUE, {
+    this.$store.commit("explorer/" + MutationTypes.SET_FILTER_VALUE, {
       key1: this.key1,
       key2: this.key2,
       value: { min, max },
@@ -99,7 +99,7 @@ export default class RangeFilter extends Vue {
   }
 
   created() {
-    this.$store.commit(MutationTypes.SET_FILTER_ENABLE, {
+    this.$store.commit("explorer/" + MutationTypes.SET_FILTER_ENABLE, {
       key1: this.key1,
       key2: this.key2,
       value: true,
@@ -107,7 +107,7 @@ export default class RangeFilter extends Vue {
   }
 
   destroyed() {
-    this.$store.commit(MutationTypes.SET_FILTER_ENABLE, {
+    this.$store.commit("explorer/" + MutationTypes.SET_FILTER_ENABLE, {
       key1: this.key1,
       key2: this.key2,
       value: false,

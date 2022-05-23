@@ -57,7 +57,7 @@ export default class InFilter extends Vue {
   }
 
   set items(value: string[]) {
-    this.$store.commit(MutationTypes.SET_FILTER_VALUE, {
+    this.$store.commit("explorer/" + MutationTypes.SET_FILTER_VALUE, {
       key1: this.key1,
       key2: this.key2,
       value,
@@ -74,7 +74,7 @@ export default class InFilter extends Vue {
   }
 
   created() {
-    this.$store.commit(MutationTypes.SET_FILTER_ENABLE, {
+    this.$store.commit("explorer/" + MutationTypes.SET_FILTER_ENABLE, {
       key1: this.key1,
       key2: this.key2,
       value: true,
@@ -82,7 +82,7 @@ export default class InFilter extends Vue {
   }
 
   destroyed() {
-    this.$store.commit(MutationTypes.SET_FILTER_ENABLE, {
+    this.$store.commit("explorer/" + MutationTypes.SET_FILTER_ENABLE, {
       key1: this.key1,
       key2: this.key2,
       value: false,
