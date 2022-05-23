@@ -173,6 +173,7 @@
           {{ new Date().getFullYear() }} — <strong>ThreeFoldTech</strong>
         </v-card-text>
       </v-card>
+      <FundsCard :balance='balance' />
     </v-footer>
   </v-app>
 </template>
@@ -217,7 +218,10 @@ export default class Dashboard extends Vue {
   $api: any;
   twin: any;
   balance = 0;
-
+  public async updated() {
+    console.log(this.twin);
+    console.log(this.balance);
+  }
   public async mounted() {
     Vue.prototype.$api = await connect(); //declare global variable api
   }
@@ -245,10 +249,13 @@ export default class Dashboard extends Vue {
     name: string
   ) {
     this.twinID = await getTwinID(this.$api, address);
+    this.balance = (await getBalance(this.$api, address)) / 1e7;
     if (this.twinID) {
       this.twin = await getTwin(this.$api, this.twinID);
-      this.balance = (await getBalance(this.$api, address)) / 1e7;
-      if (!this.$route.path.includes(this.twinID) && label == "twin") {
+      if (
+        !this.$route.path.includes(label) ||
+        this.$route.params.accountID !== address
+      ) {
         this.$router.push({
           name: `${label}`,
           path: `/:accountID/${label}`,
@@ -257,17 +264,6 @@ export default class Dashboard extends Vue {
             accountName: `${name}`,
             twinID: this.twin.id,
             twinIP: this.twin.ip,
-            balance: `${this.balance}`,
-          },
-        });
-      } else {
-        this.$router.push({
-          name: `${label}`,
-          path: `/:accountID/${label}`,
-          params: { accountID: `${address}` },
-          query: {
-            accountName: `${name}`,
-            twinID: this.twinID,
             balance: `${this.balance}`,
           },
         });

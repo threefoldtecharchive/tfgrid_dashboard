@@ -88,7 +88,7 @@
         >{{link.label.toUpperCase()}}</v-card>
 
       </div>
-      <FundsCard :balance="balance" />
+
     </v-container>
   </div>
 
@@ -147,6 +147,10 @@ export default class TwinView extends Vue {
       this.accountName = this.$route.query.accountName;
     }
     this.balance = this.$route.query.balance;
+  }
+  unmounted() {
+    this.balance = 0;
+    this.address = "";
   }
   public redirectToLabelRoute(path: string, address: string) {
     this.$router.push({

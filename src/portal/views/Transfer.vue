@@ -32,17 +32,18 @@
       >withdraw</v-btn>
     </v-container>
     <v-container class="d-flex justify-center pa-5 my-3">
-      <v-btn>why do we use bridges?</v-btn>
+      <v-btn
+        :target="'blank'"
+        :href="'https://library.threefold.me/info/manual/#/manual__tfchain_portal_home?id=transfer-tft'"
+      >why do we use bridges?</v-btn>
     </v-container>
 
-    <FundsCard :balance="balance" />
   </v-container>
 </template>
 
 <script lang="ts">
 import FundsCard from "@/components/FundsCard.vue";
 import { Component, Vue } from "vue-property-decorator";
-import { getBalance } from "../lib/balance";
 
 @Component({
   name: "TransferView",
@@ -63,13 +64,31 @@ export default class TransferView extends Vue {
   balance: any = 0;
   $api: any;
   address = "";
+  ip: any = [];
+  accountName: any;
+  id: any = [];
   async mounted() {
     this.address = this.$route.params.accountID;
-    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+    if (this.$route.query.twinIP && this.$route.query.twinID) {
+      this.ip = this.$route.query.twinIP;
+      this.id = this.$route.query.twinID;
+      this.accountName = this.$route.query.accountName;
+    }
+    this.balance = this.$route.query.balance;
   }
   updated() {
-    console.log(this.selectedItem.item_id);
-    this.balance = this.$route.query.balance;
+    this.address = this.$route.params.accountID;
+    if (this.$route.query.twinIP && this.$route.query.twinID) {
+      this.id = this.$route.query.twinID;
+      this.accountName = this.$route.query.accountName;
+    }
+    if (this.$route.query.balance !== this.balance) {
+      this.balance = this.$route.query.balance;
+    }
+  }
+  unmounted() {
+    this.balance = 0;
+    this.address = "";
   }
 }
 </script>

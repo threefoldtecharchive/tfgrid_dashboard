@@ -37,7 +37,7 @@
   </v-container>
 
   <v-container v-else-if="!twinCreated">
-    <FundsCard :balance="balance" />
+
     <v-card
       color="#388E3C"
       class="text-center py-5 my-3 "
@@ -172,7 +172,11 @@ export default class AccountView extends Vue {
     let document = await axios.get(this.documentLink);
     this.documentHash = blake.blake2bHex(document.data);
   }
-
+  unmounted() {
+    this.address = "";
+    this.balance = 0;
+    this.twinID = 0;
+  }
   public async createTwinFunc(ip: string) {
     await createTwin(
       this.address,

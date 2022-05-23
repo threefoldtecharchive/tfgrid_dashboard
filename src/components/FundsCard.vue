@@ -1,6 +1,16 @@
 <template>
-
   <v-card
+    v-if="currentBalance"
+    color="#0D47A1"
+    class=" funds px-3 d-flex align-baseline font-weight-bold"
+  > {{currentBalance}} TFT
+    <v-btn
+      @click="addTFT"
+      class="ml-3"
+    >+</v-btn>
+  </v-card>
+  <v-card
+    v-else
     color="#0D47A1"
     class=" funds px-3 d-flex align-baseline font-weight-bold"
   > {{balance }} TFT
@@ -24,10 +34,14 @@ export default class FundsCard extends Vue {
   balanceInUSD = 0;
   $api: any;
   currentBalance: any = 0;
-  @Prop({ default: 0 }) balance!: number;
+  @Prop({ required: true }) balance!: number;
+  async updated() {
+    console.log(this.currentBalance);
+    console.log(this.address);
+  }
   async mounted() {
     this.address = this.$route.params.accountID;
-    this.currentBalance = this.$route.query.balance;
+    this.currentBalance = this.balance;
 
     if (config.network !== "dev") {
       const res = await axios.get(
@@ -36,6 +50,10 @@ export default class FundsCard extends Vue {
       this.balanceInUSD = res.data.USD * this.currentBalance;
       //don't forget to display this
     }
+  }
+  unmounted() {
+    this.currentBalance = 0;
+    this.address = "";
   }
 
   public async addTFT() {
