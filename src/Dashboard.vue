@@ -173,15 +173,24 @@
           {{ new Date().getFullYear() }} — <strong>ThreeFoldTech</strong>
         </v-card-text>
       </v-card>
-      <FundsCard :balance='balance' />
+      <v-card
+        v-if="$route.path !=='/'"
+        color="#0D47A1"
+        class=" funds px-3 d-flex align-baseline font-weight-bold"
+      > {{balance }} TFT
+        <v-btn
+          @click="addTFT"
+          class="ml-3"
+        >+</v-btn>
+      </v-card>
     </v-footer>
   </v-app>
 </template>
 
 <script lang="ts">
+import config from "@/portal/config";
 import { Component, Vue } from "vue-property-decorator";
-import FundsCard from "./components/FundsCard.vue";
-import { getBalance } from "./portal/lib/balance";
+import { getBalance, getMoreFunds } from "./portal/lib/balance";
 import { connect } from "./portal/lib/connect";
 import { getTwin, getTwinID } from "./portal/lib/twin";
 
@@ -208,7 +217,6 @@ interface SidenavItem {
 
 @Component({
   name: "Dashboard",
-  components: { FundsCard },
 })
 export default class Dashboard extends Vue {
   collapseOnScroll = true;
@@ -219,11 +227,59 @@ export default class Dashboard extends Vue {
   twin: any;
   balance = 0;
   address = "";
-  unmounted() {
-    this.balance = 0;
-  }
+
   public async mounted() {
     Vue.prototype.$api = await connect(); //declare global variable api
+    if (this.$route.path !== "/") {
+      this.address = this.$route.params.accountID;
+      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+    }
+  }
+  public async addTFT() {
+    if (config.network !== "dev") {
+      //redirect to https://gettft.com/auth/login?next_url=/gettft/shop/#/buy
+    } else {
+      getMoreFunds(
+        this.address,
+        this.$api,
+        (res: { events?: never[] | undefined; status: any }) => {
+          console.log(res);
+          if (res instanceof Error) {
+            console.log(res);
+            return;
+          }
+
+          const { events = [], status } = res;
+          console.log(`Current status is ${status.type}`);
+          switch (status.type) {
+            case "Ready":
+              console.log(`Transaction submitted`);
+          }
+
+          if (status.isFinalized) {
+            console.log(
+              `Transaction included at blockHash ${status.asFinalized}`
+            );
+
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "balances" && method === "Transfer") {
+                console.log("Success!");
+
+                getBalance(this.$api, this.address).then((balance) => {
+                  this.balance = balance / 1e7;
+                });
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                console.log("Get more TFT failed!");
+              }
+            });
+          }
+        }
+      ).catch((err: { message: any }) => {
+        console.log(err.message);
+      });
+    }
   }
   public disconnectWallet() {
     this.$store.dispatch("portal/unsubscribeAccounts");

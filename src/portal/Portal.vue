@@ -7,7 +7,6 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { connect } from "./lib/connect";
 
 @Component({
   name: "PortalView",

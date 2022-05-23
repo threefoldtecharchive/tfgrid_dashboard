@@ -42,12 +42,10 @@
 </template>
 
 <script lang="ts">
-import FundsCard from "@/components/FundsCard.vue";
 import { Component, Vue } from "vue-property-decorator";
 
 @Component({
   name: "TransferView",
-  components: { FundsCard },
 })
 export default class TransferView extends Vue {
   selectedItem = {
@@ -85,6 +83,7 @@ export default class TransferView extends Vue {
     if (this.$route.query.balance !== this.balance) {
       this.balance = this.$route.query.balance;
     }
+    console.log(this.selectedItem.item_id);
   }
   unmounted() {
     this.balance = 0;

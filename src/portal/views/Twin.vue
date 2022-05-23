@@ -95,7 +95,6 @@
 </template>
 
 <script lang="ts">
-import FundsCard from "@/components/FundsCard.vue";
 import WelcomeWindow from "@/components/WelcomeWindow.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { getBalance } from "../lib/balance";
@@ -103,7 +102,7 @@ import { getTwin, getTwinID, updateTwinIP } from "../lib/twin";
 
 @Component({
   name: "Twin",
-  components: { WelcomeWindow, FundsCard },
+  components: { WelcomeWindow },
 })
 export default class TwinView extends Vue {
   $api: any;
