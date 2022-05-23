@@ -12,7 +12,7 @@ import { Component, Vue } from "vue-property-decorator";
   name: "PortalView",
 })
 export default class PortalView extends Vue {
-  public mounted() {
+  async mounted() {
     this.$store.dispatch("portal/subscribeAccounts");
   }
 

@@ -64,7 +64,7 @@ export default class AccountsView extends Vue {
   }
   public addAccountRoute(account: accountInterface) {
     this.$router.push({
-      name: "Account",
+      name: "account",
       path: "account",
       params: { accountID: `${account.address}` },
       query: { accountName: `${account.meta.name}` },

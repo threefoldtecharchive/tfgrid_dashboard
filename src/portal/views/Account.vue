@@ -29,10 +29,7 @@
 
     </v-dialog>
   </v-container>
-  <v-container v-else-if="twinID && $store.state.portal.accounts.length !== 0">
-    <Twin />
-    <FundsCard :api="api" />
-  </v-container>
+
   <v-container v-else-if="$store.state.portal.accounts.length === 0">
     <v-card>
       <WelcomeWindow />
@@ -132,7 +129,21 @@ export default class AccountView extends Vue {
   balance = 0;
   twinID = 0;
   twin: any;
-
+  async updated() {
+    this.address = this.$route.params.accountID;
+    this.twinID = await getTwinID(this.api, this.address);
+    if (this.twinID !== 0) {
+      this.twin = await getTwin(this.api, this.twinID);
+      this.$router.push({
+        name: "twin",
+        path: "/:accountID/twin",
+        params: { accountID: `${this.$route.params.accountID}` },
+        query: { accountName: `${this.$route.query.accountName}` },
+      });
+    }
+    console.log("no twin ID available");
+    console.log(this.twin);
+  }
   async mounted() {
     this.address = this.$route.params.accountID;
     this.api = await connect();
@@ -146,11 +157,6 @@ export default class AccountView extends Vue {
     this.$store.dispatch("portal/setCurrentAccountIDAction", this.address);
     let document = await axios.get(this.documentLink);
     this.documentHash = blake.blake2bHex(document.data);
-    this.twinID = await getTwinID(this.api, this.address);
-    this.twinID !== 0
-      ? (this.twin = await getTwin(this.api, this.twinID))
-      : console.log("no twin ID available");
-    console.log(this.twin);
   }
 
   public async addAutoTwin() {

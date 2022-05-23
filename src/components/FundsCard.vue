@@ -2,7 +2,6 @@
   <v-card
     color="#0D47A1"
     class=" funds px-3 d-flex align-baseline font-weight-bold"
-    v-if="$route.params.accountID"
   > {{$store.state.portal.currentAccountBalance }} TFT
     <v-btn
       @click="addTFT"
@@ -23,7 +22,12 @@ export default class FundsCard extends Vue {
   address = "";
   balance = 0;
   balanceInUSD = 0;
-  async mounted() {
+
+  async updated() {
+    this.address = this.$route.params.accountID;
+    this.balance = (await getBalance(this.api, this.address)) / 1e7;
+    this.$store.dispatch("portal/setBalanceAction", this.balance);
+    this.$store.dispatch("portal/setCurrentAccountIDAction", this.address);
     if (config.network !== "dev") {
       const res = await axios.get(
         "https://min-api.cryptocompare.com/data/price?fsym=3ft&tsyms=USD"
@@ -31,12 +35,6 @@ export default class FundsCard extends Vue {
       this.balanceInUSD = res.data.USD * this.balance;
       //don't forget to display this
     }
-  }
-  async updated() {
-    this.address = this.$route.params.accountID;
-    this.balance = (await getBalance(this.api, this.address)) / 1e7;
-    this.$store.dispatch("portal/setBalanceAction", this.balance);
-    this.$store.dispatch("portal/setCurrentAccountIDAction", this.address);
   }
 
   public async addTFT() {

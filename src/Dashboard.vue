@@ -64,7 +64,7 @@
             <v-img src="https://i.ibb.co/k39ThGn/3fold-logo.png"></v-img>
           </v-list-item-avatar>
 
-          <v-list-item-title>THREEFOLD CHAIN</v-list-item-title>
+          <v-list-item-title @click="redirectToHomePage">THREEFOLD CHAIN</v-list-item-title>
 
           <v-btn
             icon
@@ -108,17 +108,14 @@
 
                 </v-list-item-content>
                 <v-list-item-icon>
-                  <v-icon
-                    @click="routeToAccount(account.address, account.meta.name)"
-                    v-text="'mdi-' + route.children[0].icon"
-                  />
+                  <v-icon v-text="'mdi-' + route.children[0].icon" />
                 </v-list-item-icon>
 
               </template>
               <v-list-item
                 v-for="subchild in route.children[0].children"
                 :key="subchild.label"
-                :to="route.prefix + account.address + '/'+ subchild.path"
+                @click="redirectToSubchild(subchild.label, account.address, account.meta.name)"
               >
                 <v-list-item-icon>
                   <v-icon v-text="'mdi-' + subchild.icon" />
@@ -211,11 +208,28 @@ export default class Dashboard extends Vue {
   collapseOnScroll = true;
   mini = true;
   drawer = true;
-
+  public redirectToHomePage() {
+    if (this.$route.path !== "/") {
+      this.$router.push({
+        name: "accounts",
+        path: "/",
+      });
+    }
+  }
+  public redirectToSubchild(label: string, address: string, name: string) {
+    if (!this.$route.path.includes(label)) {
+      this.$router.push({
+        name: `${label}`,
+        path: `${label}`,
+        params: { accountID: `${address}` },
+        query: { accountName: `${name}` },
+      });
+    }
+  }
   public routeToAccount(address: string, name: string) {
     if (this.$route.params.accountID !== address) {
       this.$router.push({
-        name: "Account",
+        name: "account",
         path: "account",
         params: { accountID: `${address}` },
         query: { accountName: `${name}` },
@@ -236,13 +250,18 @@ export default class Dashboard extends Vue {
           active: true,
           children: [
             {
-              label: "Transfer",
+              label: "twin",
+              icon: "account-supervisor-outline",
+              path: "twin",
+            },
+            {
+              label: "transfer",
               icon: "swap-horizontal",
               path: "transfer",
             },
-            { label: "Farms", icon: "silo", path: "farms" },
+            { label: "farms", icon: "silo", path: "farms" },
             {
-              label: "Dedicated Nodes",
+              label: "nodes",
               icon: "resistor-nodes",
               path: "nodes",
             },
