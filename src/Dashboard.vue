@@ -86,7 +86,7 @@
             <v-list-item-content>
               <v-list-item-title>
                 <strong>
-                  {{ route.label }}
+                  {{ route.label.toUpperCase() }}
                 </strong>
               </v-list-item-title>
             </v-list-item-content>
@@ -103,7 +103,7 @@
 
                 <v-list-item-content>
 
-                  <v-list-item-title v-text="account.meta.name">
+                  <v-list-item-title v-text="account.meta.name.toUpperCase()">
                   </v-list-item-title>
 
                 </v-list-item-content>
@@ -112,17 +112,19 @@
                 </v-list-item-icon>
 
               </template>
+
               <v-list-item
                 v-for="subchild in route.children[0].children"
                 :key="subchild.label"
                 @click="redirectToSubchild(subchild.label, account.address, account.meta.name)"
               >
+
                 <v-list-item-icon>
                   <v-icon v-text="'mdi-' + subchild.icon" />
                 </v-list-item-icon>
                 <v-list-item-content>
 
-                  <v-list-item-title v-text="subchild.label">
+                  <v-list-item-title v-text="subchild.label.toUpperCase()">
                   </v-list-item-title>
 
                 </v-list-item-content>
@@ -178,6 +180,9 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import FundsCard from "./components/FundsCard.vue";
+import { getBalance } from "./portal/lib/balance";
+import { connect } from "./portal/lib/connect";
+import { getTwin, getTwinID } from "./portal/lib/twin";
 
 interface SidenavItem {
   label: string;
@@ -208,6 +213,13 @@ export default class Dashboard extends Vue {
   collapseOnScroll = true;
   mini = true;
   drawer = true;
+  twinID: any;
+  $api: any;
+  twin: any;
+  balance = 0;
+  public async mounted() {
+    Vue.prototype.$api = await connect(); //declare global variable api
+  }
 
   public redirectToHomePage() {
     if (this.$route.path !== "/") {
@@ -217,11 +229,32 @@ export default class Dashboard extends Vue {
       });
     }
   }
-  public redirectToSubchild(label: string, address: string, name: string) {
-    if (!this.$route.path.includes(label)) {
+  public async redirectToSubchild(
+    label: string,
+    address: string,
+    name: string
+  ) {
+    this.twinID = await getTwinID(this.$api, address);
+    if (this.twinID !== 0) {
+      this.twin = await getTwin(this.$api, this.twinID);
+      this.balance = (await getBalance(this.$api, address)) / 1e7;
+      if (!this.$route.path.includes(address)) {
+        this.$router.push({
+          name: `${label}`,
+          path: `/:accountID/${label}`,
+          params: { accountID: `${address}` },
+          query: {
+            accountName: `${name}`,
+            twinID: this.twin.id,
+            twinIP: this.twin.ip,
+            balance: `${this.balance}`,
+          },
+        });
+      }
+    } else {
       this.$router.push({
-        name: `${label}`,
-        path: `${label}`,
+        name: "account",
+        path: "account",
         params: { accountID: `${address}` },
         query: { accountName: `${name}` },
       });
@@ -248,7 +281,6 @@ export default class Dashboard extends Vue {
         {
           icon: "account",
           showBeforeLogIn: true,
-          active: true,
           children: [
             {
               label: "twin",

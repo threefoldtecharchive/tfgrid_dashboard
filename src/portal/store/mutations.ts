@@ -11,12 +11,7 @@ export default{
     removeAccounts (state: PortalState) {
         state.accounts = []
     },
-    setBalance(state: PortalState, payload: {balance: number}){
-      state.currentAccountBalance = payload.balance
-    }, 
-    setCurrentAccountID(state: PortalState, payload: {address: string}){
-      state.currentAccountID = payload.address
-    },
+   
 
 
   

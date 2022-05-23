@@ -1,13 +1,15 @@
 <template>
+
   <v-card
     color="#0D47A1"
     class=" funds px-3 d-flex align-baseline font-weight-bold"
-  > {{$store.state.portal.currentAccountBalance }} TFT
+  > {{balance }} TFT
     <v-btn
       @click="addTFT"
       class="ml-3"
     >+</v-btn>
   </v-card>
+
 </template>
 <script lang="ts">
 import config from "@/portal/config";
@@ -19,23 +21,19 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 })
 export default class FundsCard extends Vue {
   address = "";
-  balance = 0;
   balanceInUSD = 0;
   $api: any;
-  public mounted() {
+  currentBalance: any = 0;
+  @Prop({ default: 0 }) balance!: number;
+  async mounted() {
     this.address = this.$route.params.accountID;
-  }
+    this.currentBalance = this.$route.query.balance;
 
-  async updated() {
-    this.address = this.$route.params.accountID;
-    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
-    this.$store.dispatch("portal/setBalanceAction", this.balance);
-    this.$store.dispatch("portal/setCurrentAccountIDAction", this.address);
     if (config.network !== "dev") {
       const res = await axios.get(
         "https://min-api.cryptocompare.com/data/price?fsym=3ft&tsyms=USD"
       );
-      this.balanceInUSD = res.data.USD * this.balance;
+      this.balanceInUSD = res.data.USD * this.currentBalance;
       //don't forget to display this
     }
   }
@@ -73,8 +71,7 @@ export default class FundsCard extends Vue {
                 console.log("Success!");
 
                 getBalance(this.$api, this.address).then((balance) => {
-                  this.balance = (this.balance + balance) / 1e7;
-                  this.$store.dispatch("portal/setBalanceAction", this.balance);
+                  this.currentBalance = balance / 1e7;
                 });
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 console.log("Get more TFT failed!");

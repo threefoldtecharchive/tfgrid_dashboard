@@ -17,3 +17,9 @@ export async function createTwin (address:string, api: any, ip:string, callback:
     console.log
     return twin.toJSON()
   }
+  export async function updateTwinIP (address: string, api:any, ip: string, callback: any, errc?: any) {
+    const injector = await web3FromAddress(address)
+    return api.tx.tfgridModule
+      .updateTwin(ip)
+      .signAndSend(address, { signer: injector.signer }, callback, errc)
+  }

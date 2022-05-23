@@ -37,7 +37,7 @@
   </v-container>
 
   <v-container v-else>
-    <FundsCard />
+    <FundsCard :balance="balance" />
     <v-card
       color="#388E3C"
       class="text-center py-5 my-3 "
@@ -124,16 +124,26 @@ export default class AccountView extends Vue {
   openDialog = true;
   address = "";
   $api: any;
-  activated = true;
   balance = 0;
   twinID = 0;
   twin: any;
-
   async updated() {
+    this.openDialog = !(await userAcceptedTermsAndConditions(
+      this.$api,
+      this.address
+    ));
+  }
+  async mounted() {
     this.address = this.$route.params.accountID;
+    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
     this.twinID = await getTwinID(this.$api, this.address);
+    this.openDialog = !(await userAcceptedTermsAndConditions(
+      this.$api,
+      this.address
+    ));
     if (this.twinID !== 0) {
       this.twin = await getTwin(this.$api, this.twinID);
+
       this.$router.push({
         name: "twin",
         path: "/:accountID/twin",
@@ -142,25 +152,13 @@ export default class AccountView extends Vue {
           accountName: `${this.$route.query.accountName}`,
           twinID: this.twin.id,
           twinIP: this.twin.ip,
+          balance: `${this.balance}`,
         },
       });
     } else {
       console.log("no twin ID available");
     }
 
-    console.log(this.twin);
-  }
-
-  async mounted() {
-    this.address = this.$route.params.accountID;
-
-    this.openDialog = !(await userAcceptedTermsAndConditions(
-      this.$api,
-      this.address
-    ));
-    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
-    this.$store.dispatch("portal/setBalanceAction", this.balance);
-    this.$store.dispatch("portal/setCurrentAccountIDAction", this.address);
     let document = await axios.get(this.documentLink);
     this.documentHash = blake.blake2bHex(document.data);
   }
@@ -235,7 +233,6 @@ export default class AccountView extends Vue {
             if (section === "system" && method === "ExtrinsicSuccess") {
               console.log("accepted!");
               this.openDialog = false;
-              window.location.reload();
             } else if (section === "system" && method === "ExtrinsicFailed") {
               console.log("rejected");
             }
