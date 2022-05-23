@@ -10,7 +10,7 @@
     >+</v-btn>
   </v-card>
   <v-card
-    v-else
+    v-else-if="$route.path !=='/'"
     color="#0D47A1"
     class=" funds px-3 d-flex align-baseline font-weight-bold"
   > {{balance }} TFT
@@ -35,13 +35,12 @@ export default class FundsCard extends Vue {
   $api: any;
   currentBalance: any = 0;
   @Prop({ required: true }) balance!: number;
-  async updated() {
-    console.log(this.currentBalance);
-    console.log(this.address);
-  }
+
   async mounted() {
-    this.address = this.$route.params.accountID;
-    this.currentBalance = this.balance;
+    if (this.$route.path !== "/") {
+      this.address = this.$route.params.accountID;
+      this.currentBalance = this.balance;
+    }
 
     if (config.network !== "dev") {
       const res = await axios.get(
