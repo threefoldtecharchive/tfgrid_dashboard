@@ -53,10 +53,9 @@ import { accountInterface } from "../store/state";
 import WelcomeWindow from "../../components/WelcomeWindow.vue";
 import Account from "./Account.vue";
 
-import Twin from "./Twin.vue";
 @Component({
   name: "AccountsView",
-  components: { WelcomeWindow, Account, Twin },
+  components: { WelcomeWindow, Account },
 })
 export default class AccountsView extends Vue {
   searchAccount = "";

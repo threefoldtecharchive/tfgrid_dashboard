@@ -227,7 +227,12 @@ export default class Dashboard extends Vue {
   twin: any;
   balance = 0;
   address = "";
-
+  async updated() {
+    if (this.$route.path !== "/") {
+      this.address = this.$route.params.accountID;
+      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+    }
+  }
   public async mounted() {
     Vue.prototype.$api = await connect(); //declare global variable api
     if (this.$route.path !== "/") {
