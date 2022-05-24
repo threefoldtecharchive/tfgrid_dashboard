@@ -9,7 +9,7 @@
         <v-simple-table class="table">
           <template v-slot:top>
             <v-toolbar flat>
-              <v-spacer></v-spacer>
+
               <CreateIP
                 :loadingCreate="loadingCreate"
                 @create="createPublicIP"

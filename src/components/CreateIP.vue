@@ -7,11 +7,10 @@
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           color="primary"
-          dark
           v-bind="attrs"
           v-on="on"
           :loading="loadingCreate"
-          small
+          x-small
         >
           Add IP
         </v-btn>
@@ -19,7 +18,7 @@
 
       <v-card>
         <v-card-title class="text-h5">
-          Add a public ip to your Farm
+          Add Public IP to Farm
         </v-card-title>
 
         <v-card-text class="text">
