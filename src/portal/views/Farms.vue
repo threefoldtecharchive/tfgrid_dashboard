@@ -1,5 +1,6 @@
 <template>
-  <div class="main">
+  <v-container fluid>
+
     <h3>Farms</h3>
     <v-data-table
       :headers="headers"
@@ -20,75 +21,121 @@
       </template>
       <template v-slot:expanded-item="{ item }">
         <td :colspan="headers.length">
-          <v-col>
-            <v-container fluid>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Farm ID</v-flex>
+
+          <v-container
+            fluid
+            class="text-left"
+          >
+            <v-row>
+              <v-col>
+                <v-flex class="text-left pr-2">Farm ID</v-flex>
+              </v-col>
+              <v-col>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.id }}</span>
                 </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Farm Name</v-flex>
+              </v-col>
+
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-flex class="text-left pr-2">Farm Name</v-flex>
+              </v-col>
+              <v-col>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.name }}</span>
                 </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Linked Twin ID</v-flex>
+              </v-col>
+
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-flex class="text-left pr-2">Linked Twin ID</v-flex>
+              </v-col>
+              <v-col>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.twin_id }}</span>
                 </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Certification Type</v-flex>
+              </v-col>
+
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-flex class="text-left pr-2">Certification Type</v-flex>
+              </v-col>
+              <v-col>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.certification_type }}</span>
                 </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left"
-                >Linked pricing Policy ID</v-flex>
+              </v-col>
+
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-flex class="text-left">Linked Pricing Policy ID</v-flex>
+              </v-col>
+              <v-col>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.pricing_policy_id }}</span>
                 </v-flex>
-              </v-row>
+              </v-col>
 
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left"
-                >Bootstrap node image</v-flex>
-                <v-flex xs3>
-                  <a
-                    class="link"
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-flex class="text-left">Stellar Payout Address</v-flex>
+              </v-col>
+              <v-col>
+                <v-flex v-if="item.v2address">
+
+                  <span class="stellarv2address">
+                    {{ item.v2address }}
+
+                  </span>
+
+                </v-flex>
+                <v-dialog>
+
+                </v-dialog>
+                <v-flex else>
+                  <v-btn
+                    x-small
+                    @click="openV2AddressDialog = true"
+                  >Add V2 Address</v-btn>
+                </v-flex>
+
+                <v-flex>
+                  <span>
+                    {{ item.v2address }}
+                  </span>
+                </v-flex>
+              </v-col>
+
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-flex class="text-left">Bootstrap Node Image</v-flex>
+              </v-col>
+              <v-col>
+                <v-flex>
+                  <v-btn
+                    x-small
                     v-bind:href="'https://v3.bootstrap.grid.tf/'"
                     target="blank"
-                  >Take me to bootstrap page</a>
-                </v-flex>
-              </v-row>
+                  >view bootstrap</v-btn>
 
-            </v-container>
-          </v-col>
+                </v-flex>
+              </v-col>
+
+            </v-row>
+
+          </v-container>
+
         </td>
       </template>
     </v-data-table>
 
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -106,15 +153,17 @@ export default class FarmsView extends Vue {
     { text: "Certification type", value: "certification_type" },
     { text: "Pricing Policy ID", value: "pricing_policy_id" },
   ];
-  farms = [];
+  farms: any = [];
   id: any = [];
 
   singleExpand = true;
   expanded = [];
+  $api: any;
+  openV2AddressDialog = false;
   async mounted() {
     this.id = this.$route.query.twinID;
 
-    this.farms = await getFarm(this.$store.state.api, this.id);
+    this.farms = await getFarm(this.$api, this.id);
   }
   async updated() {
     this.id = this.$route.query.twinID;

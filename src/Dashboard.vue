@@ -235,24 +235,18 @@ export default class Dashboard extends Vue {
   async mounted() {
     if (this.$route.path !== "/") {
       if (this.$route.params.accountID) {
-        console.log("im in an account yal");
         this.address = await this.$route.params.accountID;
         this.balance = this.$route.query.balance;
       }
-    } else {
-      console.log("not in an account");
     }
   }
   async updated() {
     Vue.prototype.$api = await connect(); //declare global variable api
     if (this.$route.path !== "/") {
       if (this.$route.params.accountID) {
-        console.log("im in an account yal");
         this.address = await this.$route.params.accountID;
         this.balance = (await getBalance(this.$api, this.address)) / 1e7;
       }
-    } else {
-      console.log("not in an account");
     }
   }
 
