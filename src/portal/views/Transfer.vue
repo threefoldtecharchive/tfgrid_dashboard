@@ -17,7 +17,7 @@
 
               <v-row>
                 <v-col>
-                  Send a {{items.filter(item => item.id ===selectedItem.item_id)[0].name}} transaction with your TFT's to deposit to:
+                  Send a {{selectedName.toUpperCase()}} transaction with your TFT's to deposit to:
                   <ul>
                     <li>Destination: <b>{{ depositWallet }}</b></li>
                     <li>Memo Text: <b>twin_{{id}}</b></li>
@@ -47,6 +47,43 @@
           <v-card-actions class="justify-end">
             <v-btn @click="openDepositDialog = false">Close</v-btn>
           </v-card-actions>
+        </v-card>
+
+      </v-dialog>
+    </v-container>
+    <v-container v-if="openWithdrawDialog">
+      <v-dialog
+        transition="dialog-bottom-transition"
+        max-width="900"
+        v-model="openWithdrawDialog"
+      >
+
+        <v-card>
+          <v-toolbar
+            color="primary"
+            dark
+          >Withdraw TFT</v-toolbar>
+          <v-card-title> Interact with the bridge in order to withdraw your TFT to {{selectedName.toUpperCase()}} (withdraw fee is: {{withdrawFee}} TFT)
+          </v-card-title>
+          <v-card-text>
+
+            <v-text-field
+              v-model="target"
+              :label="selectedName.toUpperCase() + ' Target Wallet Address'"
+            >
+
+            </v-text-field>
+            <v-text-field
+              label="Amount"
+              v-model="amount"
+            ></v-text-field>
+
+          </v-card-text>
+          <v-card-actions class="justify-end">
+            <v-btn @click="openWithdrawDialog = false">Close</v-btn>
+            <v-btn @click="withdrawTFT(target, amount)">Submit</v-btn>
+          </v-card-actions>
+
         </v-card>
 
       </v-dialog>
@@ -81,6 +118,7 @@
       <v-btn
         color="#303F9F"
         class="mx-5 pa-5"
+        @click="openWithdrawDialog = true"
       >withdraw</v-btn>
     </v-container>
     <v-container class="d-flex justify-center pa-5 my-3">
@@ -96,17 +134,20 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import config from "../config";
-import { getDepositFee } from "../lib/transfer";
+import { getDepositFee, getWithdrawFee, withdraw } from "../lib/transfer";
 import QrcodeVue from "qrcode.vue";
+import { getBalance } from "../lib/balance";
 @Component({
   name: "TransferView",
   components: { QrcodeVue },
 })
 export default class TransferView extends Vue {
   openDepositDialog = false;
+  openWithdrawDialog = false;
   selectedItem = {
     item_id: 1,
   };
+  selectedName = "";
 
   items = [
     { id: 1, name: "stellar" },
@@ -124,7 +165,9 @@ export default class TransferView extends Vue {
   depositWallet = "";
   depositFee = 0;
   qrCodeText = "";
-  value = "";
+  withdrawFee = 0;
+  amount = 0;
+  target = "";
   async mounted() {
     this.address = this.$route.params.accountID;
     if (this.$route.query.twinIP && this.$route.query.twinID) {
@@ -135,7 +178,11 @@ export default class TransferView extends Vue {
     this.balance = this.$route.query.balance;
     this.depositWallet = config.bridgeTftAddress;
     this.depositFee = await getDepositFee(this.$api);
+    this.withdrawFee = await getWithdrawFee(this.$api);
     this.qrCodeText = `TFT:${this.depositWallet}?message=twin_${this.id}&sender=me`;
+    this.selectedName = this.items.filter(
+      (item) => item.id === this.selectedItem.item_id
+    )[0].name;
   }
   async updated() {
     this.id = this.$route.query.twinID;
@@ -144,10 +191,62 @@ export default class TransferView extends Vue {
       this.balance = this.$route.query.balance;
     }
     console.log(this.selectedItem.item_id);
+    this.selectedName = this.items.filter(
+      (item) => item.id === this.selectedItem.item_id
+    )[0].name;
+    this.target;
+    this.amount;
   }
   unmounted() {
     this.balance = 0;
     this.address = "";
+  }
+  public async withdrawTFT(target: string, amount: number) {
+    withdraw(
+      this.address,
+      this.$api,
+      target,
+      amount,
+      (res: { events?: never[] | undefined; status: any }) => {
+        console.log(res);
+        if (res instanceof Error) {
+          console.log(res);
+          return;
+        }
+
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            console.log(`Transaction submitted`);
+        }
+
+        if (status.isFinalized) {
+          console.log(
+            `Transaction included at blockHash ${status.asFinalized}`
+          );
+
+          // Loop through Vec<EventRecord> to display all events
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            if (
+              section === "tftBridgeModule" &&
+              method === "BurnTransactionCreated"
+            ) {
+              console.log("Withdraw sumbitted!");
+              this.openWithdrawDialog = false;
+              getBalance(this.$api, this.address).then((balance: number) => {
+                this.balance = balance / 1e7;
+              });
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              console.log("Withdraw failed!");
+            }
+          });
+        }
+      }
+    ).catch((err) => {
+      console.log(err.message);
+    });
   }
 }
 </script>
