@@ -221,7 +221,9 @@ import {
   createFarm,
   createIP,
   deleteIP,
+  deleteNode,
   getFarm,
+  getNodesByFarmID,
   setFarmPayoutV2Address,
 } from "../lib/farms";
 
@@ -250,6 +252,11 @@ export default class FarmsView extends Vue {
   farmNameErrorMessage = "";
   loadingCreateIP = false;
   loadingDeleteIP = false;
+
+  nodes: any;
+  loadingNodes = false;
+  loadingNodeDelete = false;
+  loadingAddNodePublicConfig = false;
   async mounted() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
@@ -265,6 +272,57 @@ export default class FarmsView extends Vue {
 
     this.v2_address;
     this.farmName;
+  }
+  async getNodes() {
+    console.log("getting nodes again");
+    this.nodes = await getNodesByFarmID(this.$store.state.api, this.farms);
+    console.log(this.nodes);
+  }
+  deleteNodeFarm(nodeID: any) {
+    this.loadingNodeDelete = true;
+    deleteNode(
+      this.$route.params.accountID,
+      this.$api,
+      nodeID,
+      (res: { events?: never[] | undefined; status: any }) => {
+        console.log(res);
+        if (res instanceof Error) {
+          console.log(res);
+          return;
+        }
+
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            console.log(`Transaction submitted`);
+        }
+
+        if (status.isFinalized) {
+          console.log(
+            `Transaction included at blockHash ${status.asFinalized}`
+          );
+
+          // Loop through Vec<EventRecord> to display all events
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            if (section === "tfgridModule" && method === "NodeDeleted") {
+              console.log("Node deleted from farm!");
+              this.loadingNodeDelete = false;
+              getNodesByFarmID(this.$api, this.farms).then(
+                (nodes) => (this.nodes = nodes)
+              );
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              console.log("Node deletion failed");
+              this.loadingNodeDelete = false;
+            }
+          });
+        }
+      }
+    ).catch((err) => {
+      console.log(err.message);
+      this.loadingNodeDelete = false;
+    });
   }
   deletePublicIP(publicIP: any) {
     this.loadingDeleteIP = true;
