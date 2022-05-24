@@ -17,7 +17,7 @@
 
               <v-row>
                 <v-col>
-                  Send a Stellar transaction with your TFT's to deposit to:
+                  Send a {{items.filter(item => item.id ===selectedItem.item_id)[0].name}} transaction with your TFT's to deposit to:
                   <ul>
                     <li>Destination: <b>{{ depositWallet }}</b></li>
                     <li>Memo Text: <b>twin_{{id}}</b></li>
@@ -31,7 +31,7 @@
                   Or use Threefold connect to scan this qr code:
                   <div class="d-flex justify-center">
                     <qrcode-vue
-                      :value="value"
+                      :value="qrCodeText"
                       :size="200"
                       level="M"
                       render-as="svg"
@@ -135,7 +135,6 @@ export default class TransferView extends Vue {
     this.balance = this.$route.query.balance;
     this.depositWallet = config.bridgeTftAddress;
     this.depositFee = await getDepositFee(this.$api);
-    this.value = "https://example.com";
     this.qrCodeText = `TFT:${this.depositWallet}?message=twin_${this.id}&sender=me`;
   }
   async updated() {
