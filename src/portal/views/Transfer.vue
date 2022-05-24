@@ -3,7 +3,7 @@
     <v-container v-if="openDepositDialog">
       <v-dialog
         transition="dialog-bottom-transition"
-        max-width="600"
+        max-width="900"
         v-model="openDepositDialog"
       >
 
@@ -13,7 +13,36 @@
             dark
           >Deposit TFT</v-toolbar>
           <v-card-text>
+            <v-container>
 
+              <v-row>
+                <v-col>
+                  Send a Stellar transaction with your TFT's to deposit to:
+                  <ul>
+                    <li>Destination: <b>{{ depositWallet }}</b></li>
+                    <li>Memo Text: <b>twin_{{id}}</b></li>
+                  </ul>
+                </v-col>
+                <v-divider
+                  class="mx-4"
+                  vertical
+                ></v-divider>
+                <v-col>
+                  Or use Threefold connect to scan this qr code:
+                  <div class="d-flex justify-center">
+                    <qrcode-vue
+                      :value="value"
+                      :size="200"
+                      level="M"
+                      render-as="svg"
+                    />
+                  </div>
+
+                </v-col>
+              </v-row>
+              <v-row class="d-flex row justify-center">Amount: should be larger than {{depositFee}}TFT
+                (deposit fee is: {{depositFee}}TFT)</v-row>
+            </v-container>
           </v-card-text>
           <v-card-actions class="justify-end">
             <v-btn @click="openDepositDialog = false">Close</v-btn>
@@ -66,9 +95,12 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-
+import config from "../config";
+import { getDepositFee } from "../lib/transfer";
+import QrcodeVue from "qrcode.vue";
 @Component({
   name: "TransferView",
+  components: { QrcodeVue },
 })
 export default class TransferView extends Vue {
   openDepositDialog = false;
@@ -89,6 +121,10 @@ export default class TransferView extends Vue {
   ip: any = [];
   accountName: any;
   id: any = [];
+  depositWallet = "";
+  depositFee = 0;
+  qrCodeText = "";
+  value = "";
   async mounted() {
     this.address = this.$route.params.accountID;
     if (this.$route.query.twinIP && this.$route.query.twinID) {
@@ -97,13 +133,14 @@ export default class TransferView extends Vue {
       this.accountName = this.$route.query.accountName;
     }
     this.balance = this.$route.query.balance;
+    this.depositWallet = config.bridgeTftAddress;
+    this.depositFee = await getDepositFee(this.$api);
+    this.value = "https://example.com";
+    this.qrCodeText = `TFT:${this.depositWallet}?message=twin_${this.id}&sender=me`;
   }
-  updated() {
-    this.address = this.$route.params.accountID;
-    if (this.$route.query.twinIP && this.$route.query.twinID) {
-      this.id = this.$route.query.twinID;
-      this.accountName = this.$route.query.accountName;
-    }
+  async updated() {
+    this.id = this.$route.query.twinID;
+    this.ip = this.$route.query.twinID;
     if (this.$route.query.balance !== this.balance) {
       this.balance = this.$route.query.balance;
     }
