@@ -225,21 +225,37 @@ export default class Dashboard extends Vue {
   twinID: any;
   $api: any;
   twin: any;
-  balance = 0;
+  balance: any = 0;
   address = "";
-  async updated() {
-    if (this.$route.path !== "/") {
-      this.address = this.$route.params.accountID;
-      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+  async created() {
+    if (this.$route.path === "/") {
+      Vue.prototype.$api = await connect(); //declare global variable api
     }
   }
-  public async mounted() {
+  async mounted() {
+    if (this.$route.path !== "/") {
+      if (this.$route.params.accountID) {
+        console.log("im in an account yal");
+        this.address = await this.$route.params.accountID;
+        this.balance = this.$route.query.balance;
+      }
+    } else {
+      console.log("not in an account");
+    }
+  }
+  async updated() {
     Vue.prototype.$api = await connect(); //declare global variable api
     if (this.$route.path !== "/") {
-      this.address = this.$route.params.accountID;
-      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+      if (this.$route.params.accountID) {
+        console.log("im in an account yal");
+        this.address = await this.$route.params.accountID;
+        this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+      }
+    } else {
+      console.log("not in an account");
     }
   }
+
   public async addTFT() {
     if (config.network !== "dev") {
       //redirect to https://gettft.com/auth/login?next_url=/gettft/shop/#/buy

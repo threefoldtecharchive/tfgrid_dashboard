@@ -168,17 +168,17 @@ export default class TransferView extends Vue {
   withdrawFee = 0;
   amount = 0;
   target = "";
-  async mounted() {
+
+  mounted() {
     this.address = this.$route.params.accountID;
-    if (this.$route.query.twinIP && this.$route.query.twinID) {
+    if (this.$route !== undefined) {
       this.ip = this.$route.query.twinIP;
       this.id = this.$route.query.twinID;
       this.accountName = this.$route.query.accountName;
     }
     this.balance = this.$route.query.balance;
     this.depositWallet = config.bridgeTftAddress;
-    this.depositFee = await getDepositFee(this.$api);
-    this.withdrawFee = await getWithdrawFee(this.$api);
+
     this.qrCodeText = `TFT:${this.depositWallet}?message=twin_${this.id}&sender=me`;
     this.selectedName = this.items.filter(
       (item) => item.id === this.selectedItem.item_id
@@ -186,7 +186,7 @@ export default class TransferView extends Vue {
   }
   async updated() {
     this.id = this.$route.query.twinID;
-    this.ip = this.$route.query.twinID;
+    this.ip = this.$route.query.twinIP;
     if (this.$route.query.balance !== this.balance) {
       this.balance = this.$route.query.balance;
     }
@@ -196,6 +196,8 @@ export default class TransferView extends Vue {
     )[0].name;
     this.target;
     this.amount;
+    this.depositFee = await getDepositFee(this.$api);
+    this.withdrawFee = await getWithdrawFee(this.$api);
   }
   unmounted() {
     this.balance = 0;
