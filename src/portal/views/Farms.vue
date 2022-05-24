@@ -207,6 +207,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { connect } from "../lib/connect";
 import { createFarm, getFarm, setFarmPayoutV2Address } from "../lib/farms";
 
 @Component({
@@ -229,15 +230,28 @@ export default class FarmsView extends Vue {
   openCreateFarmDialog = false;
   v2_address = "";
   farmName = "";
+  address = "";
   farmNameErrorMessage = "";
-  async mounted() {
+
+  mounted() {
+    this.address = this.$route.params.accountID;
+    this.id = this.$route.query.twinID;
+    console.log(this.id);
+    console.log(this.$api);
+  }
+
+  async updated() {
+    this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
     this.farms = await getFarm(this.$api, this.id);
-  }
-  async updated() {
-    this.id = this.$route.query.twinID;
+
     this.v2_address;
     this.farmName;
+  }
+  unmounted() {
+    this.farms = [];
+    this.id = 0;
+    this.farmName = "";
   }
   public farmNameCheck() {
     const nameRegex = new RegExp("^[a-zA-Z0-9_-]*$");
@@ -252,7 +266,7 @@ export default class FarmsView extends Vue {
   }
   public createFarmFromName() {
     createFarm(
-      this.$route.params.accountID,
+      this.address,
       this.$api,
       this.farmName,
       (res: { events?: never[] | undefined; status: any }) => {

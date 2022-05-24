@@ -235,7 +235,7 @@ export default class Dashboard extends Vue {
   async mounted() {
     if (this.$route.path !== "/") {
       if (this.$route.params.accountID) {
-        this.address = await this.$route.params.accountID;
+        this.address = this.$route.params.accountID;
         this.balance = this.$route.query.balance;
       }
     }
