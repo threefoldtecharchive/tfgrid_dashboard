@@ -38,3 +38,10 @@ export async function getFarm (api: any, twinID:number) {
       .createFarm(name, [])
       .signAndSend(address, { signer: injector.signer }, callback)
   }
+  export async function createIP (address: string, api: any, farmID: number, ip: string, gateway: string, callback: any) {
+    const injector = await web3FromAddress(address)
+  
+    return api.tx.tfgridModule
+      .addFarmIp(farmID, ip, gateway)
+      .signAndSend(address, { signer: injector.signer }, callback)
+  }

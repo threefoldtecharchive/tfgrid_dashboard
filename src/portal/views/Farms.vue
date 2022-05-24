@@ -195,6 +195,14 @@
               </v-col>
 
             </v-row>
+            <v-row>
+              <PublicIPTable
+                :ips="item.public_ips"
+                :deleteIP="deletePublicIP"
+                :createIP="createPublicIP"
+                :loadingCreate="loadingCreateIP"
+              />
+            </v-row>
 
           </v-container>
 
@@ -206,12 +214,18 @@
 </template>
 
 <script lang="ts">
+import PublicIPTable from "@/components/PublicIPTable.vue";
 import { Component, Vue } from "vue-property-decorator";
-import { connect } from "../lib/connect";
-import { createFarm, getFarm, setFarmPayoutV2Address } from "../lib/farms";
+import {
+  createFarm,
+  createIP,
+  getFarm,
+  setFarmPayoutV2Address,
+} from "../lib/farms";
 
 @Component({
   name: "FarmsView",
+  components: { PublicIPTable },
 })
 export default class FarmsView extends Vue {
   headers = [
@@ -232,6 +246,7 @@ export default class FarmsView extends Vue {
   farmName = "";
   address = "";
   farmNameErrorMessage = "";
+  loadingCreateIP = false;
 
   async mounted() {
     this.address = this.$route.params.accountID;
@@ -249,10 +264,54 @@ export default class FarmsView extends Vue {
     this.v2_address;
     this.farmName;
   }
-  unmounted() {
-    this.farms = [];
-    this.id = 0;
-    this.farmName = "";
+  public deletePublicIP() {
+    console.log("deleting public ip");
+  }
+  public createPublicIP(publicIP: string, gateway: string) {
+    this.loadingCreateIP = true;
+    createIP(
+      this.$route.params.accountID,
+      this.$api,
+      this.expanded[0].id,
+      publicIP,
+      gateway,
+      (res: { events?: never[] | undefined; status: any }) => {
+        console.log(res);
+        if (res instanceof Error) {
+          console.log(res);
+          return;
+        }
+
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            console.log(`Transaction submitted`);
+        }
+
+        if (status.isFinalized) {
+          console.log(
+            `Transaction included at blockHash ${status.asFinalized}`
+          );
+
+          // Loop through Vec<EventRecord> to display all events
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            if (section === "tfgridModule" && method === "FarmUpdated") {
+              console.log("IP created!");
+              getFarm(this.$api, this.id).then((farms) => {
+                this.farms = farms;
+                this.loadingCreateIP = false;
+              });
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              console.log("Adding an IP failed!");
+            }
+          });
+        }
+      }
+    ).catch((err) => {
+      console.log(err.message);
+    });
   }
   public farmNameCheck() {
     const nameRegex = new RegExp("^[a-zA-Z0-9_-]*$");
