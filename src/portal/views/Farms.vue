@@ -233,11 +233,12 @@ export default class FarmsView extends Vue {
   address = "";
   farmNameErrorMessage = "";
 
-  mounted() {
+  async mounted() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
     console.log(this.id);
     console.log(this.$api);
+    this.farms = await getFarm(this.$api, this.id);
   }
 
   async updated() {

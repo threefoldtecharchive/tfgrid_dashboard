@@ -128,7 +128,7 @@ export default class TwinView extends Vue {
       path: "nodes",
     },
   ];
-  async updated() {
+  updated() {
     this.address = this.$route.params.accountID;
     if (this.$route.query.twinIP && this.$route.query.twinID) {
       this.id = this.$route.query.twinID;
@@ -138,7 +138,7 @@ export default class TwinView extends Vue {
       this.balance = this.$route.query.balance;
     }
   }
-  async mounted() {
+  mounted() {
     this.address = this.$route.params.accountID;
     if (this.$route.query.twinIP && this.$route.query.twinID) {
       this.ip = this.$route.query.twinIP;
