@@ -45,3 +45,10 @@ export async function getFarm (api: any, twinID:number) {
       .addFarmIp(farmID, ip, gateway)
       .signAndSend(address, { signer: injector.signer }, callback)
   }
+  export async function deleteIP (address:string, api:any, farmID:number, ip:any, callback:any) {
+    const injector = await web3FromAddress(address)
+  
+    return api.tx.tfgridModule
+      .removeFarmIp(farmID, ip.ip)
+      .signAndSend(address, { signer: injector.signer }, callback)
+  }

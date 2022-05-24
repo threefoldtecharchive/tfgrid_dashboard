@@ -41,8 +41,18 @@
                 <td>{{ decodeHex(ip.ip) }}</td>
                 <td>{{ decodeHex(ip.gateway) }}</td>
                 <td>{{ ip.contract_id }}</td>
-                <td>
 
+                <td>
+                  <v-progress-circular
+                    v-if="loadingDelete"
+                    indeterminate
+                    color="primary"
+                  ></v-progress-circular>
+                  <DeleteIP
+                    v-else
+                    :ip="ip"
+                    @delete="deletePublicIP(ip)"
+                  />
                 </td>
               </tr>
             </tbody>
@@ -54,30 +64,30 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import CreateIP from "./createIP.vue";
 import { hex2a } from "@/portal/lib/util";
+import CreateIP from "./CreateIP.vue";
+import DeleteIP from "./DeleteIP.vue";
+
 @Component({
   name: "PublicIPTable",
-  components: { CreateIP },
+  components: { CreateIP, DeleteIP },
 })
 export default class PublicIPTable extends Vue {
   panel = [0];
   disabled = false;
-
-  publicIP = "";
-  gateway = "";
-  ipErrorMessage = "";
-  gatewayErrorMessage = "";
-
   @Prop({ required: true }) ips!: any;
-  @Prop({ required: true }) deleteIP!: any;
   @Prop({ required: true }) createIP!: any;
   @Prop({ required: true }) loadingCreate!: boolean;
+  @Prop({ required: true }) deleteIP!: any;
+  @Prop({ required: true }) loadingDelete!: boolean;
   public decodeHex(input: string) {
     return hex2a(input);
   }
   createPublicIP(ip: string, gateway: string) {
     this.createIP(ip, gateway);
+  }
+  deletePublicIP(ip: any) {
+    this.deleteIP(ip);
   }
 }
 </script>

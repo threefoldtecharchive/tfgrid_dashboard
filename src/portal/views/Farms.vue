@@ -199,6 +199,7 @@
               <PublicIPTable
                 :ips="item.public_ips"
                 :deleteIP="deletePublicIP"
+                :loadingDelete="loadingDeleteIP"
                 :createIP="createPublicIP"
                 :loadingCreate="loadingCreateIP"
               />
@@ -219,6 +220,7 @@ import { Component, Vue } from "vue-property-decorator";
 import {
   createFarm,
   createIP,
+  deleteIP,
   getFarm,
   setFarmPayoutV2Address,
 } from "../lib/farms";
@@ -247,7 +249,7 @@ export default class FarmsView extends Vue {
   address = "";
   farmNameErrorMessage = "";
   loadingCreateIP = false;
-
+  loadingDeleteIP = false;
   async mounted() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
@@ -264,8 +266,52 @@ export default class FarmsView extends Vue {
     this.v2_address;
     this.farmName;
   }
-  public deletePublicIP() {
-    console.log("deleting public ip");
+  deletePublicIP(publicIP: any) {
+    this.loadingDeleteIP = true;
+    deleteIP(
+      this.$route.params.accountID,
+      this.$api,
+      this.expanded[0].id,
+      publicIP,
+      (res: { events?: never[] | undefined; status: any }) => {
+        console.log(res);
+        if (res instanceof Error) {
+          console.log(res);
+          return;
+        }
+
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            console.log(`Transaction submitted`);
+        }
+
+        if (status.isFinalized) {
+          console.log(
+            `Transaction included at blockHash ${status.asFinalized}`
+          );
+
+          // Loop through Vec<EventRecord> to display all events
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            if (section === "tfgridModule" && method === "FarmUpdated") {
+              console.log("IP deleted!");
+              getFarm(this.$api, this.id).then((farms) => {
+                this.farms = farms;
+                this.loadingDeleteIP = false;
+              });
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              console.log("IP deletion failed!");
+              this.loadingDeleteIP = false;
+            }
+          });
+        }
+      }
+    ).catch((err) => {
+      console.log(err.message);
+      this.loadingDeleteIP = false;
+    });
   }
   public createPublicIP(publicIP: string, gateway: string) {
     this.loadingCreateIP = true;
