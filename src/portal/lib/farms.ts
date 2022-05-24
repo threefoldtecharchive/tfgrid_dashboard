@@ -28,6 +28,13 @@ export async function getFarm (api: any, twinID:number) {
     const injector = await web3FromAddress(address)
   
     return api.tx.tfgridModule
-      .addStellarPayoutV2Address(id, v2address)
+      .addStellarPayoutV2address(id, v2address)
+      .signAndSend(address, { signer: injector.signer }, callback)
+  }
+  export async function createFarm (address: string, api: any, name: string, callback: any) {
+    const injector = await web3FromAddress(address)
+  
+    return api.tx.tfgridModule
+      .createFarm(name, [])
       .signAndSend(address, { signer: injector.signer }, callback)
   }
