@@ -260,9 +260,15 @@ export default class FarmsView extends Vue {
   async mounted() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
-    console.log(this.id);
-    console.log(this.$api);
-    this.farms = await getFarm(this.$api, this.id);
+
+    if (this.$api) {
+      this.farms = await getFarm(this.$api, this.id);
+    } else {
+      this.$router.push({
+        name: "accounts",
+        path: "/",
+      });
+    }
   }
 
   async updated() {
