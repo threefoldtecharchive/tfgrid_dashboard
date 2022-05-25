@@ -95,9 +95,5 @@ export default class Dashboard extends Vue {
       ],
     },
   ];
-
-  created() {
-    console.log(this.$store);
-  }
 }
 </script>
