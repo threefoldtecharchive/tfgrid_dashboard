@@ -289,7 +289,7 @@ export default class FarmsView extends Vue {
   }
   async getNodes() {
     console.log("getting nodes again");
-    this.nodes = await getNodesByFarmID(this.$store.state.api, this.farms);
+    this.nodes = await getNodesByFarmID(this.$api, this.farms);
     console.log(this.nodes);
   }
   deleteNodeFarm(nodeID: any) {
@@ -471,7 +471,7 @@ export default class FarmsView extends Vue {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "tfgridModule" && method === "FarmStored") {
               console.log("Farm created!");
-              getFarm(this.$store.state.api, this.id).then((farms) => {
+              getFarm(this.$api, this.id).then((farms) => {
                 this.farms = farms;
                 this.openCreateFarmDialog = false;
               });
