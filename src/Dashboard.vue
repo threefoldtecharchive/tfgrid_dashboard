@@ -91,12 +91,28 @@
               </v-list-item-title>
             </v-list-item-content>
           </template>
+          <div class="px-5 d-flex row justify-center">
+
+            <v-text-field
+              v-model="searchTerm"
+              color="purple darken-2"
+              class="px-5"
+              label="Account name/address"
+            >
+
+            </v-text-field>
+            <v-icon
+              class="px-2"
+              v-text="'mdi-account-search'"
+            > </v-icon>
+          </div>
+
           <div v-if="route.prefix==='/'">
             <v-list-group
-              :value="true"
+              :value="false"
               no-action
               sub-group
-              v-for="account in $store.state.portal.accounts"
+              v-for="account in filteredAccounts()"
               :key="account.address"
             >
               <template v-slot:activator>
@@ -193,6 +209,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { getBalance, getMoreFunds } from "./portal/lib/balance";
 import { connect } from "./portal/lib/connect";
 import { getTwin, getTwinID } from "./portal/lib/twin";
+import { accountInterface } from "./portal/store/state";
 
 interface SidenavItem {
   label: string;
@@ -227,12 +244,16 @@ export default class Dashboard extends Vue {
   twin: any;
   balance: any = 0;
   address = "";
+  accounts: accountInterface[] = [];
+  searchTerm = "";
   async created() {
     if (this.$route.path === "/") {
       Vue.prototype.$api = await connect(); //declare global variable api
     }
   }
   async mounted() {
+    this.accounts = this.$store.state.portal.accounts;
+
     if (this.$route.path !== "/") {
       if (this.$route.params.accountID) {
         this.address = this.$route.params.accountID;
@@ -241,6 +262,7 @@ export default class Dashboard extends Vue {
     }
   }
   async updated() {
+    this.accounts = this.$store.state.portal.accounts;
     Vue.prototype.$api = await connect(); //declare global variable api
     if (this.$route.path !== "/") {
       if (this.$route.params.accountID) {
@@ -249,7 +271,18 @@ export default class Dashboard extends Vue {
       }
     }
   }
-
+  public filteredAccounts() {
+    if (this.searchTerm.length !== 0) {
+      return this.accounts.filter(
+        (account) =>
+          account.meta.name
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase()) ||
+          account.address.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+    return this.accounts;
+  }
   public async addTFT() {
     if (config.network !== "dev") {
       //redirect to https://gettft.com/auth/login?next_url=/gettft/shop/#/buy
@@ -354,7 +387,6 @@ export default class Dashboard extends Vue {
   routes: SidenavItem[] = [
     {
       //label and path will be retrieved from accounts fetched from store (polkadot)
-      active: true,
       label: "Portal",
       icon: "account-convert-outline",
       prefix: "/",

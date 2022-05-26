@@ -64,14 +64,20 @@ export default class AccountsView extends Vue {
   mounted() {
     this.accounts = this.$store.state.portal.accounts;
   }
+  updated() {
+    this.accounts = this.$store.state.portal.accounts;
+  }
   public filteredAccounts() {
-    return this.accounts.filter(
-      (account) =>
-        account.meta.name
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase()) ||
-        account.address.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
+    if (this.searchTerm.length !== 0) {
+      return this.accounts.filter(
+        (account) =>
+          account.meta.name
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase()) ||
+          account.address.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+    return this.accounts;
   }
   public addAccountRoute(account: accountInterface) {
     this.$router.push({
