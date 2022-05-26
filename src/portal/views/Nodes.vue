@@ -4,7 +4,7 @@
       color="#388E3C"
       class="text-center py-5 my-3 "
     >
-      <h3>You can now reserve nodes from other's farms!</h3>
+      <h3>Howdy {{accountName}}! You can now reserve nodes from other's farms!</h3>
     </v-card>
     <v-text-field
       v-model="searchTerm"
@@ -108,8 +108,10 @@ export default class NodesView extends Vue {
   loading = false;
   address = "";
   searchTerm = "";
+  accountName: any = "";
   async mounted() {
     this.address = this.$route.params.accountID;
+    this.accountName = this.$route.query.accountName;
     if (this.$api) {
       this.nodes = await getDNodes(this.$api, this.address);
     } else {
@@ -147,3 +149,8 @@ export default class NodesView extends Vue {
   }
 }
 </script>
+<style scoped>
+.v-tooltip__content {
+  pointer-events: initial;
+}
+</style>
