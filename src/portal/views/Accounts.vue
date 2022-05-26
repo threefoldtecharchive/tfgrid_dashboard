@@ -16,8 +16,9 @@
           <v-text-field
             v-model="searchTerm"
             color="purple darken-2"
-            label="Search by account name"
+            label="Search by account name or address"
           ></v-text-field>
+
         </v-col>
       </v-row>
 
@@ -64,8 +65,12 @@ export default class AccountsView extends Vue {
     this.accounts = this.$store.state.portal.accounts;
   }
   public filteredAccounts() {
-    return this.accounts.filter((account) =>
-      account.meta.name.includes(this.searchTerm)
+    return this.accounts.filter(
+      (account) =>
+        account.meta.name
+          .toLowerCase()
+          .includes(this.searchTerm.toLowerCase()) ||
+        account.address.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
   }
   public addAccountRoute(account: accountInterface) {
