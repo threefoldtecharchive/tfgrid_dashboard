@@ -72,7 +72,6 @@
           <NodeDetails
             :node="item"
             :byteToGB="byteToGB"
-            class="sheet"
           />
         </td>
       </template>
