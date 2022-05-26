@@ -136,9 +136,12 @@
                 <v-flex class="text-left">Stellar Payout Address</v-flex>
               </v-col>
               <v-col v-if="item.v2address">
-                <v-row>
+                <v-row
+                  class="d-flex align-baseline justify-between"
+                  style=" text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"
+                >
 
-                  <span>
+                  <span style="font-size: small;">
                     {{ item.v2address }}
                   </span>
                   <v-btn

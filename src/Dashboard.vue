@@ -250,7 +250,11 @@ export default class Dashboard extends Vue {
   accounts: accountInterface[] = [];
   searchTerm = "";
   @Watch("address") async onPropertyChanged(value: string, oldValue: string) {
-    console.log(`removing account ${oldValue}, putting in account ${value}`);
+    if (oldValue.length) {
+      console.log(`removing account ${oldValue}, putting in account ${value}`);
+    } else {
+      console.log(`putting in account ${value}`);
+    }
   }
   async created() {
     if (this.$route.path === "/") {
