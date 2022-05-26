@@ -216,7 +216,7 @@
 
 <script lang="ts">
 import PublicIPTable from "@/components/PublicIPTable.vue";
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import {
   createFarm,
   createIP,
@@ -270,18 +270,19 @@ export default class FarmsView extends Vue {
       });
     }
   }
+  @Watch("$route.query.twinID") async onPropertyChanged(
+    value: number,
+    oldValue: number
+  ) {
+    console.log(
+      `switching from account ${oldValue} farms to account ${value} farms`
+    );
 
-  async updated() {
-    this.address = this.$route.params.accountID;
-    this.id = this.$route.query.twinID;
-    if (this.$api) {
-      this.farms = await getFarm(this.$api, this.id);
-    } else {
-      this.$router.push({
-        name: "accounts",
-        path: "/",
-      });
-    }
+    this.farms = await getFarm(this.$api, value);
+  }
+  updated() {
+    this.address;
+    this.id;
 
     this.v2_address;
     this.farmName;

@@ -205,7 +205,7 @@
 
 <script lang="ts">
 import config from "@/portal/config";
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { getBalance, getMoreFunds } from "./portal/lib/balance";
 import { connect } from "./portal/lib/connect";
 import { getTwin, getTwinID } from "./portal/lib/twin";
@@ -246,6 +246,9 @@ export default class Dashboard extends Vue {
   address = "";
   accounts: accountInterface[] = [];
   searchTerm = "";
+  @Watch("address") async onPropertyChanged(value: string, oldValue: string) {
+    console.log(`removing account ${oldValue}, putting in account ${value}`);
+  }
   async created() {
     if (this.$route.path === "/") {
       Vue.prototype.$api = await connect(); //declare global variable api

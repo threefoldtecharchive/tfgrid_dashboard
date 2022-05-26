@@ -55,6 +55,9 @@
                 </v-flex>
               </v-col>
             </v-row>
+            <v-row>
+
+            </v-row>
 
           </v-container>
 
@@ -67,7 +70,7 @@
 
 <script lang="ts">
 import NodeActionBtn from "@/components/NodeActionBtn.vue";
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { getDNodes } from "../lib/nodes";
 
 @Component({
@@ -82,7 +85,8 @@ export default class NodesView extends Vue {
     { text: "HRU (GB)", value: "resources.hru" },
     { text: "MRU (GB)", value: "resources.mru" },
     { text: "SRU (GB)", value: "resources.sru" },
-    { text: "Actions", value: "actions", sortable: false },
+    { text: "Price (USD)", value: "discount" },
+    { text: "Actions", value: "actions" },
   ];
   nodes: any = [];
   $api: any;
@@ -100,10 +104,16 @@ export default class NodesView extends Vue {
         path: "/",
       });
     }
-    console.log(this.nodes);
   }
   updated() {
-    this.address = this.$route.params.accountID;
+    this.address;
+  }
+  @Watch("$route.params.accountID") async onPropertyChanged(
+    value: string,
+    oldValue: string
+  ) {
+    console.log(`removing nodes of ${oldValue}, putting in nodes of ${value}`);
+    this.nodes = await getDNodes(this.$api, value);
   }
   byteToGB(capacity: number) {
     return (capacity / 1024 / 1024 / 1024).toFixed(0);
