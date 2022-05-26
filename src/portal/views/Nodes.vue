@@ -6,9 +6,14 @@
     >
       <h3>You can now reserve nodes from other's farms!</h3>
     </v-card>
+    <v-text-field
+      v-model="searchTerm"
+      color="purple darken-2"
+      label="Search by node location or ID"
+    ></v-text-field>
     <v-data-table
       :headers="headers"
-      :items="nodes"
+      :items="filteredNodes()"
       :single-expand="singleExpand"
       :expanded.sync="expanded"
       item-key="nodeId"
@@ -94,6 +99,7 @@ export default class NodesView extends Vue {
   expanded: any = [];
   loading = false;
   address = "";
+  searchTerm = "";
   async mounted() {
     this.address = this.$route.params.accountID;
     if (this.$api) {
@@ -114,6 +120,19 @@ export default class NodesView extends Vue {
   ) {
     console.log(`removing nodes of ${oldValue}, putting in nodes of ${value}`);
     this.nodes = await getDNodes(this.$api, value);
+    console.log(this.nodes);
+  }
+  public filteredNodes() {
+    if (this.searchTerm.length !== 0) {
+      return this.nodes.filter(
+        (node: { location: { country: string }; nodeId: any }) =>
+          node.location.country
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase()) ||
+          `${node.nodeId}`.includes(this.searchTerm)
+      );
+    }
+    return this.nodes;
   }
   byteToGB(capacity: number) {
     return (capacity / 1024 / 1024 / 1024).toFixed(0);
