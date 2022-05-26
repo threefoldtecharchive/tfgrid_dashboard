@@ -47,9 +47,14 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-text-field
+      v-model="searchTerm"
+      color="purple darken-2"
+      label="Search by farm name or ID"
+    ></v-text-field>
     <v-data-table
       :headers="headers"
-      :items="farms"
+      :items="filteredFarms()"
       :single-expand="singleExpand"
       :expanded.sync="expanded"
       item-key="name"
@@ -252,11 +257,11 @@ export default class FarmsView extends Vue {
   farmNameErrorMessage = "";
   loadingCreateIP = false;
   loadingDeleteIP = false;
-
   nodes: any;
   loadingNodes = false;
   loadingNodeDelete = false;
   loadingAddNodePublicConfig = false;
+  searchTerm = "";
   async mounted() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
@@ -286,6 +291,16 @@ export default class FarmsView extends Vue {
 
     this.v2_address;
     this.farmName;
+  }
+  public filteredFarms() {
+    if (this.searchTerm.length !== 0) {
+      return this.farms.filter(
+        (farm: { name: string; id: any }) =>
+          farm.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+          `${farm.id}`.includes(this.searchTerm)
+      );
+    }
+    return this.farms;
   }
   async getNodes() {
     console.log("getting nodes again");
