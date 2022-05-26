@@ -40,32 +40,40 @@
           <v-toolbar-title>Your Nodes</v-toolbar-title>
         </v-toolbar>
       </template>
-      <template v-slot:expanded-item="{ item }">
-        <td
-          :colspan="headers.length"
-          key="item.nodeId"
+      <template v-slot:[`item.discount`]="{ item }">
+        <v-tooltip
+          bottom
+          color="primary"
+          close-delay="700"
         >
-          <v-container
-            fluid
-            class="text-left"
-          >
-            <v-row>
-              <v-col>
-                <v-flex class="text-left pr-2">Node ID</v-flex>
-
-              </v-col>
-              <v-col>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.nodeId }}</span>
-                </v-flex>
-              </v-col>
-            </v-row>
-            <v-row>
-
-            </v-row>
-
-          </v-container>
-
+          <template v-slot:activator="{ on, attrs }">
+            <span
+              v-bind="attrs"
+              v-on="on"
+            >{{ item.discount }} *</span>
+          </template>
+          <span>Discounts: <br />
+            <ul>
+              <li>{{item.applyedDiscount.first}}% for the dedicated node</li>
+              <li>{{item.applyedDiscount.second}}% for the twin balance</li>
+            </ul>
+            See
+            <a
+              target="_blank"
+              href="https://library.threefold.me/info/threefold/#/tfgrid/grid/pricing?id=discount-levels"
+            >
+              <p style="color: blue; display: inline">discount levels</p>
+            </a>
+          </span>
+        </v-tooltip>
+      </template>
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">
+          <NodeDetails
+            :node="item"
+            :byteToGB="byteToGB"
+            class="sheet"
+          />
         </td>
       </template>
 
@@ -75,12 +83,13 @@
 
 <script lang="ts">
 import NodeActionBtn from "@/components/NodeActionBtn.vue";
+import NodeDetails from "@/components/NodeDetails.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { getDNodes } from "../lib/nodes";
 
 @Component({
   name: "NodesView",
-  components: { NodeActionBtn },
+  components: { NodeActionBtn, NodeDetails },
 })
 export default class NodesView extends Vue {
   headers = [
