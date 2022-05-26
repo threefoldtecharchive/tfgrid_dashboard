@@ -5,7 +5,8 @@
       class="my-3 pa-3 text-center"
       color="#512DA8"
     >
-      <h2>Greetings {{$route.query.accountName}}, you can now manage your farms!</h2>
+      <h2>Greetings {{$route.query.accountName}}, you can now manage your farms & their nodes!</h2>
+      <small>How cool is that?</small>
     </v-card>
     <v-card
       color="#388E3C"
@@ -218,11 +219,12 @@
         </td>
       </template>
     </v-data-table>
-
+    <FarmNodesTable :nodes="nodes" />
   </v-container>
 </template>
 
 <script lang="ts">
+import FarmNodesTable from "@/components/FarmNodesTable.vue";
 import PublicIPTable from "@/components/PublicIPTable.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import {
@@ -237,7 +239,7 @@ import {
 
 @Component({
   name: "FarmsView",
-  components: { PublicIPTable },
+  components: { PublicIPTable, FarmNodesTable },
 })
 export default class FarmsView extends Vue {
   headers = [
@@ -260,7 +262,7 @@ export default class FarmsView extends Vue {
   farmNameErrorMessage = "";
   loadingCreateIP = false;
   loadingDeleteIP = false;
-  nodes: any;
+  nodes: any = [];
   loadingNodes = false;
   loadingNodeDelete = false;
   loadingAddNodePublicConfig = false;
@@ -271,6 +273,8 @@ export default class FarmsView extends Vue {
 
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
+      this.nodes = await getNodesByFarmID(this.$api, this.farms);
+      console.log(this.nodes);
     } else {
       this.$router.push({
         name: "accounts",
@@ -287,11 +291,11 @@ export default class FarmsView extends Vue {
     );
 
     this.farms = await getFarm(this.$api, value);
+    this.nodes = await getNodesByFarmID(this.$api, this.farms);
   }
   updated() {
     this.address;
     this.id;
-
     this.v2_address;
     this.farmName;
   }
