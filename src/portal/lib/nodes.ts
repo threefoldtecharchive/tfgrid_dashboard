@@ -3,7 +3,9 @@ import { web3FromAddress } from "@polkadot/extension-dapp";
 import axios from "axios";
 import config from "../config";
 import { getBalance } from "./balance";
-
+export function byteToGB(capacity: number) {
+  return (capacity / 1024 / 1024 / 1024).toFixed(0);
+}
 export async function createRentContract(api: { tx: { smartContractModule: { createRentContract: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, address: string, nodeId: any, callback: any) {
   const injector = await web3FromAddress(address);
   return api.tx.smartContractModule

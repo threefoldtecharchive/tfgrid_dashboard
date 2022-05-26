@@ -85,7 +85,7 @@ import NodeActionBtn from "@/components/NodeActionBtn.vue";
 import NodeDetails from "@/components/NodeDetails.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { getDNodes } from "../lib/nodes";
-
+import { byteToGB } from "../lib/nodes";
 @Component({
   name: "NodesView",
   components: { NodeActionBtn, NodeDetails },
@@ -109,6 +109,7 @@ export default class NodesView extends Vue {
   address = "";
   searchTerm = "";
   accountName: any = "";
+
   async mounted() {
     this.address = this.$route.params.accountID;
     this.accountName = this.$route.query.accountName;
@@ -145,7 +146,7 @@ export default class NodesView extends Vue {
     return this.nodes;
   }
   byteToGB(capacity: number) {
-    return (capacity / 1024 / 1024 / 1024).toFixed(0);
+    return byteToGB(capacity);
   }
 }
 </script>
