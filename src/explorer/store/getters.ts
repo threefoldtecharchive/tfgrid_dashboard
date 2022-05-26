@@ -219,4 +219,5 @@ export default {
   },
 
   statistics: getStatistics,
+  nodesDistribution: (state) => state.nodesDistribution,
 } as GetterTree<IState, IState>;

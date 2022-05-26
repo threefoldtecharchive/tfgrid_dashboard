@@ -114,10 +114,9 @@
       />
     </template>
 
-    <template v-slot:default>
+    <!-- <template v-slot:default>
       <NodesDistribution :nodes="listNodes()" />
-      <!-- v-if="$store.getters.nodes.length > 0" -->
-    </template>
+    </template> -->
   </Layout>
 </template>
 
@@ -128,7 +127,6 @@ import { INode } from "../graphql/api";
 import Layout from "../components/Layout.vue";
 import InFilter from "../components/InFilter.vue";
 import RangeFilter from "../components/RangeFilter.vue";
-import NodesDistribution from "../components/NodesDistribution.vue";
 import ConditionFilter from "../components/ConditionFilter.vue";
 import ComparisonFilter from "../components/ComparisonFilter.vue";
 import LayoutFilters from "../components/LayoutFilters.vue";
@@ -140,7 +138,6 @@ import gql from "graphql-tag";
     DetailsV2,
     InFilter,
     RangeFilter,
-    NodesDistribution,
     ConditionFilter,
     ComparisonFilter,
     LayoutFilters,

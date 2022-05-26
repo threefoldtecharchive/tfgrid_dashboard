@@ -14,7 +14,6 @@
   </v-card>
 </template>
 <script lang="ts">
-import { INode } from "../graphql/api";
 import { Component, Vue, Watch, Prop } from "vue-property-decorator";
 import Map from "./Map.vue";
 import { createPopper, Instance } from "@popperjs/core/lib/popper-lite";
@@ -31,6 +30,10 @@ function generateGetBoundingClientRect(x = 0, y = 0) {
   });
 }
 
+interface INodesDistribution {
+  [key: string]: number;
+}
+
 @Component({
   components: {
     Map,
@@ -38,12 +41,12 @@ function generateGetBoundingClientRect(x = 0, y = 0) {
 })
 export default class NodesDistribution extends Vue {
   display: "none" | "block" = "none";
-  @Prop({ required: true }) nodes!: INode[];
+  @Prop({ required: true }) nodes!: INodesDistribution;
   country = "";
   value = "";
 
   @Watch("nodes", { immediate: true })
-  onNodeChange(nodes: INode[]) {
+  onNodeChange(nodes: INodesDistribution) {
     if (!this.map) return;
     for (const path of this.map.querySelectorAll("path")) {
       path.removeAttribute("fill");
@@ -80,38 +83,18 @@ export default class NodesDistribution extends Vue {
     this._instance.update();
   }
 
-  private _getNodesPerCountry(nodes: INode[]) {
-    const ids = nodes
-      .map((n) => {
-        return n.country && n.country?.length > 2
-          ? byCountry(n.country)?.internet
-          : n.country;
-      })
-      .filter((c) => !!c) as string[];
-    const counter = {} as { [key: string]: number };
-    for (const id of ids) {
-      if (!counter[id]) {
-        counter[id] = 0;
-      }
-
-      counter[id]++;
-    }
-    return counter;
-  }
-
-  private _colorizeMap(nodes: INode[]) {
+  private _colorizeMap(counter: INodesDistribution) {
     if (!this.map) return;
 
-    const counter = this._getNodesPerCountry(nodes);
-
     const max = Math.max(...Object.values(counter));
+    console.log({ max }, Object.values(counter));
 
     // Range: [0, 1]
     // value / max = opacity
     // color = rgb(255 82 82)
 
     for (const key in counter) {
-      const path = this.map.querySelector(`path[id='${key}']`);
+      const path = this.map.querySelector(`path[title='${key}']`);
 
       if (!path) continue;
       path.setAttribute(

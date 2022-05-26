@@ -60,6 +60,7 @@ export default {
           totalHru,
           totalMru,
           totalSru,
+          nodesDistribution,
         } = data;
         state.nodeContractsNo = contracts;
         state.twinsNo = twins;
@@ -73,6 +74,7 @@ export default {
         state.totalHru = totalHru;
         state.totalMru = totalMru;
         state.totalSru = totalSru;
+        state.nodesDistribution = nodesDistribution;
 
         return {
           nodes: nodes,

@@ -35,7 +35,7 @@
           />
         </div>
       </div>
-      <NodesDistribution :nodes="listNodes()" />
+      <NodesDistribution :nodes="nodesDistribution" />
     </v-container>
   </Layout>
 </template>
@@ -62,6 +62,10 @@ export default class Statistics extends Vue {
 
   get statistics(): IStatistics[] {
     return this.$store.getters["explorer/statistics"];
+  }
+
+  get nodesDistribution(): { [key: string]: number } {
+    return this.$store.getters["explorer/nodesDistribution"];
   }
 
   listNodes() {

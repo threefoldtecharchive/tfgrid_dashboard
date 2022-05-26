@@ -61,6 +61,7 @@ export interface IState {
   nodesNo: number;
   twinsNo: number;
   publicIpsNo: number;
+  nodesDistribution: { [key: string]: number };
   versions: Array<{ name: string; value: any }>;
   filters: {
     nodes: {
@@ -102,6 +103,7 @@ export default {
   loading: false,
   tableLoading: false,
   nodes_status: {},
+  nodesDistribution: {},
   nodeContractsNo: 0,
   accessNodesNo: 0,
   countriesNo: 0,
