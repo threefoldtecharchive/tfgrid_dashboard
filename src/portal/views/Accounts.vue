@@ -14,7 +14,7 @@
       <v-row>
         <v-col>
           <v-text-field
-            v-model=" searchAccount"
+            v-model="searchTerm"
             color="purple darken-2"
             label="Search by account name"
           ></v-text-field>
@@ -22,7 +22,7 @@
       </v-row>
 
       <v-card
-        v-for="account in $store.state.portal.accounts"
+        v-for="account in filteredAccounts()"
         :key="account.address"
         color="#448AFF"
         @click="addAccountRoute(account)"
@@ -58,8 +58,16 @@ import Account from "./Account.vue";
   components: { WelcomeWindow, Account },
 })
 export default class AccountsView extends Vue {
-  searchAccount = "";
-
+  searchTerm = "";
+  accounts: accountInterface[] = [];
+  mounted() {
+    this.accounts = this.$store.state.portal.accounts;
+  }
+  public filteredAccounts() {
+    return this.accounts.filter((account) =>
+      account.meta.name.includes(this.searchTerm)
+    );
+  }
   public addAccountRoute(account: accountInterface) {
     this.$router.push({
       name: "account",
