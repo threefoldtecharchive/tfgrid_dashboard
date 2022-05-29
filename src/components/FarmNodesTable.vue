@@ -445,7 +445,7 @@ export default class FarmNodesTable extends Vue {
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
-            console.log(`Transaction submitted`);
+            this.$toasted.show(`Transaction submitted`);
         }
 
         if (status.isFinalized) {
@@ -460,11 +460,11 @@ export default class FarmNodesTable extends Vue {
               section === "tfgridModule" &&
               method === "NodePublicConfigStored"
             ) {
-              console.log("Node public config added!");
+              this.$toasted.show("Node public config added!");
               this.loadingPublicConfig = false;
               this.openPublicConfigDialog = false;
             } else if (section === "system" && method === "ExtrinsicFailed") {
-              console.log("Adding Node public config failed");
+              this.$toasted.show("Adding Node public config failed");
               this.loadingPublicConfig = false;
             }
           });
@@ -597,7 +597,7 @@ export default class FarmNodesTable extends Vue {
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
-            console.log(`Transaction submitted`);
+            this.$toasted.show(`Transaction submitted`);
         }
 
         if (status.isFinalized) {
@@ -609,12 +609,12 @@ export default class FarmNodesTable extends Vue {
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "tfgridModule" && method === "NodeDeleted") {
-              console.log("Node deleted!");
+              this.$toasted.show("Node deleted!");
               this.loadingDelete = false;
               this.openDeleteDialog = false;
               this.$emit("on:delete", this.nodeToDelete.nodeID);
             } else if (section === "system" && method === "ExtrinsicFailed") {
-              console.log("Deleting a node failed");
+              this.$toasted.show("Deleting a node failed");
               this.loadingDelete = false;
             }
           });

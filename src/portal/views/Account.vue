@@ -235,7 +235,7 @@ export default class AccountView extends Vue {
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
-            console.log(`Transaction submitted`);
+            this.$toasted.show(`Transaction submitted`);
         }
 
         if (status.isFinalized) {
@@ -246,10 +246,10 @@ export default class AccountView extends Vue {
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "system" && method === "ExtrinsicSuccess") {
-              console.log("accepted!");
+              this.$toasted.show("Accepted!");
               this.openDialog = false;
             } else if (section === "system" && method === "ExtrinsicFailed") {
-              console.log("rejected");
+              this.$toasted.show("rejected");
             }
           });
         }

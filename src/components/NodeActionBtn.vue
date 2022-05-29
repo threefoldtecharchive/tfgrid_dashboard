@@ -72,10 +72,14 @@ export default class NodeActionBtn extends Vue {
         console.log(res);
         switch (res.status.type) {
           case "Ready":
-            console.log(`Transaction submitted: Reserving node ${nodeId}`);
+            this.$toasted.show(
+              `Transaction submitted: Reserving node ${nodeId}`
+            );
             break;
           case "Finalized":
-            console.log(`Transaction successed: Node ${nodeId} reserved`);
+            this.$toasted.show(
+              `Transaction successed: Node ${nodeId} reserved`
+            );
             this.getStatus().then((status) => {
               this.status = status;
               this.loading = false;
@@ -94,14 +98,16 @@ export default class NodeActionBtn extends Vue {
 
   async unReserveNode(nodeId: any) {
     this.loading = true;
-    console.log(`check for contracts on node ${nodeId}`);
+    this.$toasted.show(`check for contracts on node ${nodeId}`);
 
     const contracts = await getActiveContracts(this.$api, nodeId);
     if (contracts.length > 0) {
-      console.log(`node ${nodeId} has ${contracts.length} active contracts`);
+      this.$toasted.show(
+        `node ${nodeId} has ${contracts.length} active contracts`
+      );
       this.loading = false;
     } else {
-      console.log(`unreserving node ${nodeId}`);
+      this.$toasted.show(`unreserving node ${nodeId}`);
       const rentContractID = await getRentContractID(this.$api, nodeId);
       cancelRentContract(
         this.$api,
@@ -111,10 +117,14 @@ export default class NodeActionBtn extends Vue {
           console.log(res);
           switch (res.status.type) {
             case "Ready":
-              console.log(`Transaction submitted: Unreserving node ${nodeId}`);
+              this.$toasted.show(
+                `Transaction submitted: Unreserving node ${nodeId}`
+              );
               break;
             case "Finalized":
-              console.log(`Transaction successed: Node ${nodeId} Unreserved`);
+              this.$toasted.show(
+                `Transaction successed: Node ${nodeId} Unreserved`
+              );
               this.getStatus().then((status) => {
                 this.status = status;
                 this.loading = false;
@@ -124,7 +134,7 @@ export default class NodeActionBtn extends Vue {
         }
       ).catch((err: { message: any }) => {
         console.log(err.message);
-        console.log(`Error:  ${err.message}`, {
+        this.$toasted.show(`Error:  ${err.message}`, {
           type: "error",
         });
         this.loading = false;
