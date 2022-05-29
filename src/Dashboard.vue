@@ -200,6 +200,7 @@
         <v-btn
           @click="addTFT"
           class="ml-3"
+          :loading="loadingAddTFT"
         >+</v-btn>
       </v-card>
     </v-footer>
@@ -249,6 +250,7 @@ export default class Dashboard extends Vue {
   address = "";
   accounts: accountInterface[] = [];
   searchTerm = "";
+  loadingAddTFT = false;
   @Watch("address") async onPropertyChanged(value: string, oldValue: string) {
     if (oldValue.length) {
       console.log(`removing account ${oldValue}, putting in account ${value}`);
@@ -297,6 +299,7 @@ export default class Dashboard extends Vue {
     if (config.network !== "dev") {
       //redirect to https://gettft.com/auth/login?next_url=/gettft/shop/#/buy
     } else {
+      this.loadingAddTFT = true;
       getMoreFunds(
         this.address,
         this.$api,
@@ -311,7 +314,7 @@ export default class Dashboard extends Vue {
           console.log(`Current status is ${status.type}`);
           switch (status.type) {
             case "Ready":
-              console.log(`Transaction submitted`);
+              this.$toasted.show(`Transaction submitted`);
           }
 
           if (status.isFinalized) {
@@ -323,13 +326,15 @@ export default class Dashboard extends Vue {
             events.forEach(({ phase, event: { data, method, section } }) => {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
               if (section === "balances" && method === "Transfer") {
-                console.log("Success!");
+                this.$toasted.show("Success!");
 
                 getBalance(this.$api, this.address).then((balance) => {
                   this.balance = balance / 1e7;
                 });
+                this.loadingAddTFT = false;
               } else if (section === "system" && method === "ExtrinsicFailed") {
-                console.log("Get more TFT failed!");
+                this.$toasted.show("Get more TFT failed!");
+                this.loadingAddTFT = false;
               }
             });
           }
