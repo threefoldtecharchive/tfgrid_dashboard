@@ -193,7 +193,7 @@ export default class AccountView extends Vue {
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
-            console.log(`Transaction submitted`);
+            this.$toasted.show(`Transaction submitted`);
         }
 
         if (status.isFinalized) {
@@ -205,12 +205,12 @@ export default class AccountView extends Vue {
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "tfgridModule" && method === "TwinStored") {
-              console.log("Twin created!");
+              this.$toasted.show("Twin created!");
               const twinStoredEvent = data[0];
               console.log(twinStoredEvent);
               this.twinCreated = true;
             } else if (section === "system" && method === "ExtrinsicFailed") {
-              console.log("Twin creation failed!");
+              this.$toasted.show("Twin creation failed!");
             }
           });
         }

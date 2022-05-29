@@ -273,10 +273,16 @@ export default class TwinView extends Vue {
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "tfgridModule" && method === "FarmDeleted") {
+            if (section === "tfgridModule" && method === "TwinDeleted") {
               this.$toasted.show("Twin deleted!");
               this.loadingDeleteTwin = false;
               this.openDeleteTwinDialog = false;
+              this.$router.push({
+                name: "account",
+                path: "account",
+                params: { accountID: `${this.address}` },
+                query: { accountName: `${this.accountName}` },
+              });
             } else if (section === "system" && method === "ExtrinsicFailed") {
               this.$toasted.show("Deleting a twin failed");
               this.loadingDeleteTwin = false;
