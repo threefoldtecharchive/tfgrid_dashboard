@@ -72,7 +72,8 @@
             color="#388E3C"
           >Edit</v-btn>
           <v-btn
-            @click="deleteTwin"
+            @click="openDeleteTwin"
+            :loading="loadingDeleteTwin"
             color="red"
           >Delete</v-btn>
         </v-card-actions>
@@ -90,6 +91,29 @@
       </div>
 
     </v-container>
+    <v-dialog
+      max-width="600"
+      v-model="openDeleteTwinDialog"
+    >
+      <v-card>
+        <v-card-title class="text-h5">Are you certain you want to delete this twin?</v-card-title>
+        <v-card-text>This will delete the twin on the chain, this action is irreversible</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="openDeleteTwinDialog = false"
+          >Cancel</v-btn>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="callDeleteTwin()"
+          >OK</v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 
 </template>
@@ -98,7 +122,7 @@
 import WelcomeWindow from "@/components/WelcomeWindow.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { getBalance } from "../lib/balance";
-import { getTwin, getTwinID, updateTwinIP } from "../lib/twin";
+import { deleteTwin, getTwin, getTwinID, updateTwinIP } from "../lib/twin";
 
 @Component({
   name: "Twin",
@@ -114,6 +138,8 @@ export default class TwinView extends Vue {
   twin: any;
   accountName: any;
   balance: any = 0;
+  loadingDeleteTwin = false;
+  openDeleteTwinDialog = false;
   links = [
     {
       label: "transfer tft",
@@ -182,7 +208,7 @@ export default class TwinView extends Vue {
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
-            console.log(`Transaction submitted`);
+            this.$toasted.show(`Transaction submitted`);
         }
 
         if (status.isFinalized) {
@@ -195,7 +221,7 @@ export default class TwinView extends Vue {
             async ({ phase, event: { data, method, section } }) => {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
               if (section === "tfgridModule" && method === "TwinUpdated") {
-                console.log("Twin updated!");
+                this.$toasted.show("Twin updated!");
                 const twinStoredEvent = data[0];
                 console.log(twinStoredEvent);
                 this.id = await getTwinID(
@@ -207,7 +233,7 @@ export default class TwinView extends Vue {
                 this.ip = this.twin.ip;
                 this.editingTwin = false;
               } else if (section === "system" && method === "ExtrinsicFailed") {
-                console.log("Twin creation failed!");
+                this.$toasted.show("Twin creation/update failed!");
               }
             }
           );
@@ -215,8 +241,53 @@ export default class TwinView extends Vue {
       }
     );
   }
-  public deleteTwin() {
-    console.log("deleting a twin");
+  openDeleteTwin() {
+    this.openDeleteTwinDialog = true;
+  }
+  public callDeleteTwin() {
+    this.loadingDeleteTwin = true;
+    this.openDeleteTwinDialog = false;
+    deleteTwin(
+      this.address,
+      this.$api,
+      this.id,
+      (res: { events?: never[] | undefined; status: any }) => {
+        console.log(res);
+        if (res instanceof Error) {
+          console.log(res);
+          return;
+        }
+
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            this.$toasted.show(`Transaction submitted`);
+        }
+
+        if (status.isFinalized) {
+          console.log(
+            `Transaction included at blockHash ${status.asFinalized}`
+          );
+
+          // Loop through Vec<EventRecord> to display all events
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            if (section === "tfgridModule" && method === "FarmDeleted") {
+              this.$toasted.show("Twin deleted!");
+              this.loadingDeleteTwin = false;
+              this.openDeleteTwinDialog = false;
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              this.$toasted.show("Deleting a twin failed");
+              this.loadingDeleteTwin = false;
+            }
+          });
+        }
+      }
+    ).catch((err: { message: any }) => {
+      this.$toasted.show(err.message);
+      this.loadingDeleteTwin = false;
+    });
   }
 }
 </script>

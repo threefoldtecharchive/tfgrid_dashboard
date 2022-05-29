@@ -23,3 +23,9 @@ export async function createTwin (address:string, api: any, ip:string, callback:
       .updateTwin(ip)
       .signAndSend(address, { signer: injector.signer }, callback, errc)
   }
+  export async function deleteTwin (address:string, api: any, twinID: any, callback:any) {
+    const injector = await web3FromAddress(address)
+    return api.tx.tfgridModule
+      .deleteTwin(twinID)
+      .signAndSend(address, { signer: injector.signer }, callback)
+  }

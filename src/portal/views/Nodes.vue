@@ -131,7 +131,6 @@ export default class NodesView extends Vue {
   ) {
     console.log(`removing nodes of ${oldValue}, putting in nodes of ${value}`);
     this.nodes = await getDNodes(this.$api, value);
-    console.log(this.nodes);
   }
   public filteredNodes() {
     if (this.searchTerm.length !== 0) {

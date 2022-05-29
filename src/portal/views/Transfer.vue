@@ -220,7 +220,7 @@ export default class TransferView extends Vue {
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
-            console.log(`Transaction submitted`);
+            this.$toasted.show(`Transaction submitted`);
         }
 
         if (status.isFinalized) {
@@ -235,13 +235,13 @@ export default class TransferView extends Vue {
               section === "tftBridgeModule" &&
               method === "BurnTransactionCreated"
             ) {
-              console.log("Withdraw sumbitted!");
+              this.$toasted.show("Withdraw sumbitted!");
               this.openWithdrawDialog = false;
               getBalance(this.$api, this.address).then((balance: number) => {
                 this.balance = balance / 1e7;
               });
             } else if (section === "system" && method === "ExtrinsicFailed") {
-              console.log("Withdraw failed!");
+              this.$toasted.show("Withdraw failed!");
             }
           });
         }

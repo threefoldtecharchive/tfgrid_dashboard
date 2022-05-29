@@ -283,7 +283,6 @@ import {
   createIP,
   deleteFarm,
   deleteIP,
-  deleteNode,
   getFarm,
   getNodesByFarmID,
   setFarmPayoutV2Address,
@@ -330,7 +329,7 @@ export default class FarmsView extends Vue {
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
       this.nodes = await getNodesByFarmID(this.$api, this.farms);
-      console.log(this.nodes);
+      this.$toasted.show(this.nodes);
     } else {
       this.$router.push({
         name: "accounts",
@@ -396,7 +395,7 @@ export default class FarmsView extends Vue {
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
-            console.log(`Transaction submitted`);
+            this.$toasted.show(`Transaction submitted`);
         }
 
         if (status.isFinalized) {
@@ -408,18 +407,18 @@ export default class FarmsView extends Vue {
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "tfgridModule" && method === "FarmDeleted") {
-              console.log("Farm deleted!");
+              this.$toasted.show("Farm deleted!");
               this.loadingDeleteFarm = false;
               this.openDeleteFarmDialog = false;
             } else if (section === "system" && method === "ExtrinsicFailed") {
-              console.log("Deleting a farm failed");
+              this.$toasted.show("Deleting a farm failed");
               this.loadingDeleteFarm = false;
             }
           });
         }
       }
     ).catch((err: { message: any }) => {
-      console.log(err.message);
+      this.$toasted.show(err.message);
       this.loadingDeleteFarm = false;
     });
   }
@@ -442,7 +441,7 @@ export default class FarmsView extends Vue {
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
-            console.log(`Transaction submitted`);
+            this.$toasted.show(`Transaction submitted`);
         }
 
         if (status.isFinalized) {
@@ -454,20 +453,20 @@ export default class FarmsView extends Vue {
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "tfgridModule" && method === "FarmUpdated") {
-              console.log("IP deleted!");
+              this.$toasted.show("IP deleted!");
               getFarm(this.$api, this.id).then((farms) => {
                 this.farms = farms;
                 this.loadingDeleteIP = false;
               });
             } else if (section === "system" && method === "ExtrinsicFailed") {
-              console.log("IP deletion failed!");
+              this.$toasted.show("IP deletion failed!");
               this.loadingDeleteIP = false;
             }
           });
         }
       }
     ).catch((err) => {
-      console.log(err.message);
+      this.$toasted.show(err.message);
       this.loadingDeleteIP = false;
     });
   }
@@ -490,7 +489,7 @@ export default class FarmsView extends Vue {
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
-            console.log(`Transaction submitted`);
+            this.$toasted.show(`Transaction submitted`);
         }
 
         if (status.isFinalized) {
@@ -502,19 +501,19 @@ export default class FarmsView extends Vue {
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "tfgridModule" && method === "FarmUpdated") {
-              console.log("IP created!");
+              this.$toasted.show("IP created!");
               getFarm(this.$api, this.id).then((farms) => {
                 this.farms = farms;
                 this.loadingCreateIP = false;
               });
             } else if (section === "system" && method === "ExtrinsicFailed") {
-              console.log("Adding an IP failed!");
+              this.$toasted.show("Adding an IP failed!");
             }
           });
         }
       }
     ).catch((err) => {
-      console.log(err.message);
+      this.$toasted.show(err.message);
     });
   }
   public farmNameCheck() {
@@ -544,7 +543,8 @@ export default class FarmsView extends Vue {
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
-            console.log(`Transaction submitted`);
+            this.$toasted.show(`Transaction submitted`);
+            this.openCreateFarmDialog = false;
         }
 
         if (status.isFinalized) {
@@ -556,19 +556,19 @@ export default class FarmsView extends Vue {
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "tfgridModule" && method === "FarmStored") {
-              console.log("Farm created!");
+              this.$toasted.show("Farm created!");
               getFarm(this.$api, this.id).then((farms) => {
                 this.farms = farms;
-                this.openCreateFarmDialog = false;
               });
             } else if (section === "system" && method === "ExtrinsicFailed") {
-              console.log("Farm creation failed!");
+              this.$toasted.show("Farm creation failed!");
+              this.openCreateFarmDialog = false;
             }
           });
         }
       }
     ).catch((err) => {
-      console.log(err.message);
+      this.$toasted.show(err.message);
     });
   }
   public addV2Address() {
@@ -588,7 +588,7 @@ export default class FarmsView extends Vue {
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
-            console.log(`Transaction submitted`);
+            this.$toasted.show(`Transaction submitted`);
         }
 
         if (status.isFinalized) {
@@ -603,19 +603,19 @@ export default class FarmsView extends Vue {
               section === "tfgridModule" &&
               method === "FarmPayoutV2AddressRegistered"
             ) {
-              console.log("Address added!");
+              this.$toasted.show("Address added!");
               getFarm(this.$api, this.id).then((farms) => {
                 this.farms = farms;
               });
               this.openV2AddressDialog = false;
             } else if (section === "system" && method === "ExtrinsicFailed") {
-              console.log("Adding a V2 address failed!");
+              this.$toasted.show("Adding a V2 address failed!");
             }
           });
         }
       }
     ).catch((err) => {
-      console.log(err.message);
+      this.$toasted.show(err.message);
     });
   }
 }
