@@ -1,8 +1,8 @@
 <template>
-  <Layout pageName="Statistics" v-if="statistics" :noFilter="true">
+  <Layout pageName="Statistics" v-if="stats" :noFilter="true">
     <v-container>
       <section class="items" v-if="statistics.length > 0">
-        <div v-for="item of statistics" :key="item.id">
+        <div v-for="item of statistics" :key="item.title">
           <StatisticsCard :item="item" />
         </div>
       </section>
@@ -10,75 +10,90 @@
       <section class="loader" v-if="statistics.length === 0">
         <v-progress-circular size="150" indeterminate />
       </section>
-    </v-container>
 
-    <v-container>
-      <v-divider />
-      <div
-        style="
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-          justify-content: center;
-        "
-      >
-        <div>
-          <v-switch
-            v-model="withGateway"
-            style="margin-bottom: -30px"
-            label="Gateways"
-          />
-          <v-switch
-            v-model="onlyOnline"
-            label="Online"
-            style="margin-bottom: -30px"
-          />
-        </div>
-      </div>
-      <NodesDistribution :nodes="nodesDistribution" />
+      <v-divider class="mt-2 mb-2" />
+
+      <h2>Nodes Distribution</h2>
+      <tf-map :nodes="nodesDistribution"></tf-map>
     </v-container>
   </Layout>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { IStatistics } from "../store/getters";
+import { req } from "../plugins/axios";
+import toTeraOrGigaOrPeta from "../filters/toTeraOrGigaOrPeta";
+
 import Layout from "../components/Layout.vue";
 import StatisticsCard from "../components/StatisticsCard.vue";
-import NodesDistribution from "../components/NodesDistribution.vue";
-import { INode } from "../graphql/api";
+
+interface Stats {
+  nodes: number;
+  farms: number;
+  countries: number;
+  totalCru: number;
+  totalSru: number;
+  totalMru: number;
+  totalHru: number;
+  publicIps: number;
+  accessNodes: number;
+  gateways: number;
+  twins: number;
+  contracts: number;
+  nodesDistribution: { [key: string]: number };
+}
+
+interface IStatistics {
+  data: number | string;
+  title: string;
+  icon: string;
+}
 
 @Component({
   name: "Statistics",
   components: {
     Layout,
     StatisticsCard,
-    NodesDistribution,
   },
 })
 export default class Statistics extends Vue {
-  withGateway = false;
-  onlyOnline = true;
+  loading = true;
+  stats: Stats | null = null;
 
   get statistics(): IStatistics[] {
-    return this.$store.getters["explorer/statistics"];
+    const { loading, stats } = this;
+    if (loading || !stats) return [];
+
+    // prettier-ignore
+    return [
+      { data: stats.nodes, title: "Nodes Online", icon: "mdi-laptop" },
+      { data: stats.farms, title: "Farms", icon: "mdi-tractor" },
+      { data: stats.countries, title: "Countries", icon: "mdi-earth" },
+      { data: stats.totalCru, title: "CPUs Online", icon: "mdi-cpu-64-bit" },
+      { data: toTeraOrGigaOrPeta(stats.totalSru.toString()), title: "SSD Storage", icon: "mdi-nas" },
+      { data: toTeraOrGigaOrPeta(stats.totalHru.toString()), title: "HDD Storage", icon: "mdi-harddisk" },
+      { data: toTeraOrGigaOrPeta(stats.totalMru.toString()), title: "RAM Online", icon: "mdi-memory" },
+      { data: stats.accessNodes, title: "Access Nodes", icon: "mdi-gate" },
+      { data: stats.gateways, title: "Gateways Online", icon: "mdi-boom-gate-outline" },
+      { data: stats.twins, title: "Twins", icon: "mdi-brain" },
+      { data: stats.publicIps, title: "Public IPs", icon: "mdi-access-point" },
+      { data: stats.contracts, title: "Contracts", icon: "mdi-file-document-edit-outline" },
+    ];
   }
 
-  get nodesDistribution(): { [key: string]: number } {
-    return this.$store.getters["explorer/nodesDistribution"];
+  get nodesDistribution(): string {
+    const { loading, stats } = this;
+    if (loading || !stats) return "{}";
+
+    return JSON.stringify(stats.nodesDistribution);
   }
 
-  listNodes() {
-    let nodes: INode[] = this.$store.getters["explorer/listFilteredNodes"];
-    if (this.withGateway) {
-      nodes = nodes.filter(({ publicConfig }) => publicConfig?.domain !== "");
-    }
-
-    if (this.onlyOnline) {
-      nodes = nodes.filter(({ status }) => status === "up");
-    }
-
-    return nodes;
+  created() {
+    req
+      .get("/stats")
+      .then(({ data }) => (this.stats = data))
+      .catch(console.log)
+      .finally(() => (this.loading = false));
   }
 }
 </script>
@@ -104,11 +119,5 @@ export default class Statistics extends Vue {
       width: 100%;
     }
   }
-}
-
-.loader {
-  display: flex;
-  justify-content: center;
-  padding: 150px 0;
 }
 </style>
