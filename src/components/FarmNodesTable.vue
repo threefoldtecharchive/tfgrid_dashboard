@@ -1,8 +1,13 @@
 <template>
   <v-container>
+    <v-text-field
+      v-model="searchTerm"
+      color="purple darken-2"
+      label="Search by node ID"
+    ></v-text-field>
     <v-data-table
       :headers="headers"
-      :items="nodes"
+      :items="filteredNodes()"
       :single-expand="singleExpand"
       :expanded.sync="expanded"
       item-key="nodeID"
@@ -391,7 +396,7 @@ export default class FarmNodesTable extends Vue {
   nodeToDelete: any = {};
   openPublicConfigDialog = false;
   @Prop({ required: true }) nodes!: any;
-
+  searchTerm = "";
   ip4 = "";
   gw4 = "";
   ip6 = "";
@@ -404,7 +409,14 @@ export default class FarmNodesTable extends Vue {
   domainErrorMessage = "";
   loadingPublicConfig = false;
   $api: any;
-
+  public filteredNodes() {
+    if (this.searchTerm.length !== 0) {
+      return this.nodes.filter((node: { nodeID: any }) =>
+        `${node.nodeID}`.includes(this.searchTerm)
+      );
+    }
+    return this.nodes;
+  }
   byteToGB(capacity: number) {
     return byteToGB(capacity);
   }

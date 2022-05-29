@@ -17,6 +17,7 @@
       <v-btn
         @click="openCreateFarmDialog = true"
         class="my-3 mx-5"
+        :loading="loadingCreateFarm"
       >Create farm</v-btn>
     </v-card>
     <v-dialog
@@ -44,7 +45,10 @@
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn @click="openCreateFarmDialog = false">Close</v-btn>
-          <v-btn @click="createFarmFromName">Submit</v-btn>
+          <v-btn
+            @click="createFarmFromName"
+            :loading="loadingCreateFarm"
+          >Submit</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -322,6 +326,7 @@ export default class FarmsView extends Vue {
   openDeleteFarmDialog = false;
   farmToDelete: any = {};
   searchTerm = "";
+  loadingCreateFarm = false;
   async mounted() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
@@ -329,7 +334,6 @@ export default class FarmsView extends Vue {
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
       this.nodes = await getNodesByFarmID(this.$api, this.farms);
-      this.$toasted.show(this.nodes);
     } else {
       this.$router.push({
         name: "accounts",
@@ -528,6 +532,7 @@ export default class FarmsView extends Vue {
     }
   }
   public createFarmFromName() {
+    this.loadingCreateFarm = true;
     createFarm(
       this.address,
       this.$api,
@@ -557,12 +562,15 @@ export default class FarmsView extends Vue {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "tfgridModule" && method === "FarmStored") {
               this.$toasted.show("Farm created!");
+              this.loadingCreateFarm = false;
+              this.farmName = "";
               getFarm(this.$api, this.id).then((farms) => {
                 this.farms = farms;
               });
             } else if (section === "system" && method === "ExtrinsicFailed") {
               this.$toasted.show("Farm creation failed!");
               this.openCreateFarmDialog = false;
+              this.loadingCreateFarm = false;
             }
           });
         }
