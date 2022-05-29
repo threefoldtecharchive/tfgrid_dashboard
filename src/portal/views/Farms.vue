@@ -219,7 +219,10 @@
         </td>
       </template>
     </v-data-table>
-    <FarmNodesTable :nodes="nodes" />
+    <FarmNodesTable
+      :nodes="nodes"
+      :getNodes="getNodes"
+    />
   </v-container>
 </template>
 
@@ -274,7 +277,6 @@ export default class FarmsView extends Vue {
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
       this.nodes = await getNodesByFarmID(this.$api, this.farms);
-      console.log(this.nodes);
     } else {
       this.$router.push({
         name: "accounts",
