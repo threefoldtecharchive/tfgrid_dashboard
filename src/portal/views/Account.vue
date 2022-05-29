@@ -12,6 +12,7 @@
       hide-overlay
       transition="dialog-bottom-transition"
       style="background-color: black"
+      :loading="loadingTC"
     >
 
       <iframe
@@ -71,7 +72,10 @@
             >
 
             </v-text-field>
-            <v-btn @click="createTwinFunc(ip)">create</v-btn>
+            <v-btn
+              :loading="loadingTwinCreate"
+              @click="createTwinFunc(ip)"
+            >create</v-btn>
           </v-card>
         </v-col>
         <v-col>
@@ -79,7 +83,10 @@
             class="pa-5 text-center d-flex align-center justify-center"
             height="175"
           >
-            <v-btn @click="createTwinFunc('::1')">automatically</v-btn>
+            <v-btn
+              :loading="loadingTwinCreate"
+              @click="createTwinFunc('::1')"
+            >automatically</v-btn>
 
           </v-card>
         </v-col>
@@ -132,6 +139,8 @@ export default class AccountView extends Vue {
   twinID = 0;
   ip = "";
   twin: any;
+  loadingTC = true;
+  loadingTwinCreate = false;
   async updated() {
     this.address = this.$route.params.accountID;
     this.balance = (await getBalance(this.$api, this.address)) / 1e7;
@@ -178,6 +187,7 @@ export default class AccountView extends Vue {
     this.twinID = 0;
   }
   public async createTwinFunc(ip: string) {
+    this.loadingTwinCreate = true;
     await createTwin(
       this.address,
       this.$api,
@@ -205,9 +215,8 @@ export default class AccountView extends Vue {
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "tfgridModule" && method === "TwinStored") {
+              this.loadingTwinCreate = false;
               this.$toasted.show("Twin created!");
-              const twinStoredEvent = data[0];
-              console.log(twinStoredEvent);
               this.twinCreated = true;
             } else if (section === "system" && method === "ExtrinsicFailed") {
               this.$toasted.show("Twin creation failed!");
@@ -236,6 +245,7 @@ export default class AccountView extends Vue {
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
+            this.openDialog = false;
         }
 
         if (status.isFinalized) {
@@ -247,7 +257,8 @@ export default class AccountView extends Vue {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "system" && method === "ExtrinsicSuccess") {
               this.$toasted.show("Accepted!");
-              this.openDialog = false;
+
+              this.loadingTC = false;
             } else if (section === "system" && method === "ExtrinsicFailed") {
               this.$toasted.show("rejected");
             }
