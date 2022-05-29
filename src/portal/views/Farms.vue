@@ -70,6 +70,31 @@
 
         </v-toolbar>
       </template>
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-progress-circular
+          v-if="loadingDeleteFarm"
+          indeterminate
+          color="primary"
+        ></v-progress-circular>
+        <!--delete node-->
+        <v-tooltip
+          bottom
+          v-else
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+              medium
+              v-on="on"
+              v-bind="attrs"
+              @click="openDeleteFarm(item)"
+            >
+              mdi-delete
+            </v-icon>
+          </template>
+          <span>Delete a farm</span>
+        </v-tooltip>
+
+      </template>
       <template v-slot:expanded-item="{ item }">
         <td :colspan="headers.length">
 
@@ -204,15 +229,14 @@
               </v-col>
 
             </v-row>
-            <v-row>
-              <PublicIPTable
-                :ips="item.public_ips"
-                :deleteIP="deletePublicIP"
-                :loadingDelete="loadingDeleteIP"
-                :createIP="createPublicIP"
-                :loadingCreate="loadingCreateIP"
-              />
-            </v-row>
+
+            <PublicIPTable
+              :ips="item.public_ips"
+              :deleteIP="deletePublicIP"
+              :loadingDelete="loadingDeleteIP"
+              :createIP="createPublicIP"
+              :loadingCreate="loadingCreateIP"
+            />
 
           </v-container>
 
@@ -221,9 +245,32 @@
     </v-data-table>
     <FarmNodesTable
       :nodes="nodes"
-      :getNodes="getNodes"
-      v-on:rerender-nodes="getNodes()"
+      @on:delete="getNodes()"
     />
+    <v-dialog
+      v-model="openDeleteFarmDialog"
+      max-width="700px"
+    >
+      <v-card>
+        <v-card-title class="text-h5">Are you certain you want to delete this farm?</v-card-title>
+        <v-card-text>This will delete the farm on the chain, this action is irreversible</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="openDeleteFarmDialog = false"
+          >Cancel</v-btn>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="callDeleteFarm()"
+          >OK</v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-container>
 </template>
 
@@ -234,6 +281,7 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 import {
   createFarm,
   createIP,
+  deleteFarm,
   deleteIP,
   deleteNode,
   getFarm,
@@ -252,6 +300,7 @@ export default class FarmsView extends Vue {
     { text: "Linked Twin ID", value: "twin_id" },
     { text: "Certification type", value: "certification_type" },
     { text: "Pricing Policy ID", value: "pricing_policy_id" },
+    { text: "Actions", value: "actions" },
   ];
   farms: any = [];
   id: any = [];
@@ -270,6 +319,9 @@ export default class FarmsView extends Vue {
   loadingNodes = false;
   loadingNodeDelete = false;
   loadingAddNodePublicConfig = false;
+  loadingDeleteFarm = false;
+  openDeleteFarmDialog = false;
+  farmToDelete: any = {};
   searchTerm = "";
   async mounted() {
     this.address = this.$route.params.accountID;
@@ -299,6 +351,7 @@ export default class FarmsView extends Vue {
   }
   @Watch("nodes.length") async onNodeDeleted(value: number, oldValue: number) {
     console.log(`there were ${oldValue} nodes, now there is ${value} nodes`);
+    this.getNodes();
   }
   async updated() {
     this.address;
@@ -319,16 +372,19 @@ export default class FarmsView extends Vue {
     return this.farms;
   }
   async getNodes() {
-    console.log("getting nodes again");
     this.nodes = await getNodesByFarmID(this.$api, this.farms);
-    console.log(this.nodes);
   }
-  deleteNodeFarm(nodeID: any) {
-    this.loadingNodeDelete = true;
-    deleteNode(
-      this.$route.params.accountID,
+  openDeleteFarm(farm: any) {
+    this.farmToDelete = farm;
+    this.openDeleteFarmDialog = true;
+  }
+  callDeleteFarm() {
+    this.openDeleteFarmDialog = false;
+    this.loadingDeleteFarm = true;
+    deleteFarm(
+      this.address,
       this.$api,
-      nodeID,
+      this.farmToDelete.id,
       (res: { events?: never[] | undefined; status: any }) => {
         console.log(res);
         if (res instanceof Error) {
@@ -351,24 +407,23 @@ export default class FarmsView extends Vue {
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "tfgridModule" && method === "NodeDeleted") {
-              console.log("Node deleted from farm!");
-              this.loadingNodeDelete = false;
-              getNodesByFarmID(this.$api, this.farms).then(
-                (nodes) => (this.nodes = nodes)
-              );
+            if (section === "tfgridModule" && method === "FarmDeleted") {
+              console.log("Farm deleted!");
+              this.loadingDeleteFarm = false;
+              this.openDeleteFarmDialog = false;
             } else if (section === "system" && method === "ExtrinsicFailed") {
-              console.log("Node deletion failed");
-              this.loadingNodeDelete = false;
+              console.log("Deleting a farm failed");
+              this.loadingDeleteFarm = false;
             }
           });
         }
       }
-    ).catch((err) => {
+    ).catch((err: { message: any }) => {
       console.log(err.message);
-      this.loadingNodeDelete = false;
+      this.loadingDeleteFarm = false;
     });
   }
+
   deletePublicIP(publicIP: any) {
     this.loadingDeleteIP = true;
     deleteIP(

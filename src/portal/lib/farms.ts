@@ -63,6 +63,13 @@ export async function getFarm (api: any, twinID:number) {
       .deleteNodeFarm(nodeId)
       .signAndSend(address, { signer: injector.signer }, callback)
   }
+  export async function deleteFarm (address: string, api: any, farmId: any, callback: any) {
+    const injector = await web3FromAddress(address)
+  
+    return api.tx.tfgridModule
+      .deleteFarm(farmId)
+      .signAndSend(address, { signer: injector.signer }, callback)
+  }
   export async function getNodesByFarmID(api: any, farms: any[]) {
     const farmIDs = farms.map((farm: { id: any; }) => farm.id);
   

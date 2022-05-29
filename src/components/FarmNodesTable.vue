@@ -354,7 +354,7 @@
           <v-btn
             color="blue darken-1"
             text
-            @click="deleteItem(nodeToDelete)"
+            @click="deleteItem()"
           >OK</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
@@ -363,7 +363,7 @@
   </v-container>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Emit } from "vue-property-decorator";
 import moment from "moment";
 import { byteToGB } from "@/portal/lib/nodes";
 import { addNodePublicConfig, deleteNode } from "@/portal/lib/farms";
@@ -391,7 +391,7 @@ export default class FarmNodesTable extends Vue {
   nodeToDelete: any = {};
   openPublicConfigDialog = false;
   @Prop({ required: true }) nodes!: any;
-  @Prop({ required: true }) getNodes!: any;
+
   ip4 = "";
   gw4 = "";
   ip6 = "";
@@ -575,13 +575,17 @@ export default class FarmNodesTable extends Vue {
       return { color: "orange", status: "likely down" };
     } else return { color: "red", status: "down" };
   }
+  get getFarmNodes() {
+    return this.nodes;
+  }
 
-  deleteItem(item: any) {
+  deleteItem() {
     this.loadingDelete = true;
+    this.openDeleteDialog = false;
     deleteNode(
       this.$route.params.accountID,
       this.$api,
-      item.nodeID,
+      this.nodeToDelete.nodeID,
       (res: { events?: never[] | undefined; status: any }) => {
         console.log(res);
         if (res instanceof Error) {
@@ -605,12 +609,12 @@ export default class FarmNodesTable extends Vue {
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "tfgridModule" && method === "NodeDeleted") {
-              console.log("Node public config added!");
+              console.log("Node deleted!");
               this.loadingDelete = false;
               this.openDeleteDialog = false;
-              this.$emit("rerender-nodes");
+              this.$emit("on:delete", this.nodeToDelete.nodeID);
             } else if (section === "system" && method === "ExtrinsicFailed") {
-              console.log("Adding Node public config failed");
+              console.log("Deleting a node failed");
               this.loadingDelete = false;
             }
           });
