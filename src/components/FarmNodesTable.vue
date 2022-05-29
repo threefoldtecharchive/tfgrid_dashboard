@@ -38,9 +38,10 @@
           <template v-slot:activator="{ on, attrs }">
             <v-icon
               medium
-              @click="deleteItem(item)"
+              @click="openDelete(item)"
               v-on="on"
               v-bind="attrs"
+              :loading='loadingDelete'
             >
               mdi-delete
             </v-icon>
@@ -312,6 +313,7 @@
           <v-btn
             text
             color="error"
+            @click="removeConfig()"
           >
             Remove config
           </v-btn>
@@ -325,6 +327,8 @@
           <v-btn
             text
             color="primary"
+            :loading="loadingPublicConfig"
+            @click="saveConfig()"
           >
             Save
           </v-btn>
@@ -332,12 +336,37 @@
       </v-card>
 
     </v-dialog>
+    <!-- delete item dialog-->
+    <v-dialog
+      v-model="openDeleteDialog"
+      max-width="700px"
+    >
+      <v-card>
+        <v-card-title class="text-h5">Are you certain you want to delete this node from your farm?</v-card-title>
+        <v-card-text>This will delete the node on chain, this action is irreversible</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="openDeleteDialog = false"
+          >Cancel</v-btn>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="deleteItem(nodeToDelete)"
+          >OK</v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import moment from "moment";
 import { byteToGB } from "@/portal/lib/nodes";
+import { addNodePublicConfig, deleteNode } from "@/portal/lib/farms";
 
 @Component({
   name: "FarmNodesTable",
@@ -355,10 +384,11 @@ export default class FarmNodesTable extends Vue {
     { text: "Actions", value: "actions", sortable: false },
   ];
   loadingDelete = false;
-  dialogDelete = false;
+  openDeleteDialog = false;
   editedIndex = -1;
   editedItem: any;
   nodeToEdit: any = {};
+  nodeToDelete: any = {};
   openPublicConfigDialog = false;
   @Prop({ required: true }) nodes!: any;
   @Prop({ required: true }) getNodes!: any;
@@ -372,13 +402,110 @@ export default class FarmNodesTable extends Vue {
   ip6ErrorMessage = "";
   gw6ErrorMessage = "";
   domainErrorMessage = "";
+  loadingPublicConfig = false;
+  $api: any;
+
   byteToGB(capacity: number) {
     return byteToGB(capacity);
+  }
+  saveConfig() {
+    const config = {
+      ipv4: this.ip4,
+      gw4: this.gw4,
+      ipv6: this.ip6,
+      gw6: this.gw6,
+      domain: this.domain,
+    };
+    this.save(config);
+  }
+  save(config: {
+    ipv4: string;
+    gw4: string;
+    ipv6: string;
+    gw6: string;
+    domain: string;
+  }) {
+    this.loadingPublicConfig = true;
+    console.log(this.nodeToEdit.nodeId);
+    console.log(this.nodeToEdit.farmId);
+    addNodePublicConfig(
+      this.$route.params.accountID,
+      this.$store.state.api,
+      this.nodeToEdit.farmId,
+      this.nodeToEdit.nodeId,
+      config,
+      (res: { events?: never[] | undefined; status: any }) => {
+        console.log(res);
+        if (res instanceof Error) {
+          console.log(res);
+          return;
+        }
+
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            console.log(`Transaction submitted`);
+        }
+
+        if (status.isFinalized) {
+          console.log(
+            `Transaction included at blockHash ${status.asFinalized}`
+          );
+
+          // Loop through Vec<EventRecord> to display all events
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            if (
+              section === "tfgridModule" &&
+              method === "NodePublicConfigStored"
+            ) {
+              console.log("Node public config added!");
+              this.loadingPublicConfig = false;
+              this.openPublicConfigDialog = false;
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              console.log("Adding Node public config failed");
+              this.loadingPublicConfig = false;
+            }
+          });
+        }
+      }
+    ).catch((err: { message: any }) => {
+      console.log(err.message);
+      this.loadingPublicConfig = false;
+    });
+  }
+  removeConfig() {
+    this.ip4 = "";
+    this.gw4 = "";
+    this.ip6 = "";
+    this.gw6 = "";
+    this.domain = "";
+    const config = {
+      ipv4: "",
+      ipv6: "",
+      gw4: "",
+      gw6: "",
+      domain: "",
+    };
+    this.save(config);
   }
   openPublicConfig(node: any) {
     this.nodeToEdit = node;
     console.log(this.nodeToEdit);
+    if (this.nodeToEdit.publicConfig) {
+      this.ip4 = this.nodeToEdit.publicConfig.ipv4;
+      this.gw4 = this.nodeToEdit.publicConfig.gw4;
+      this.ip6 = this.nodeToEdit.publicConfig.ipv6;
+      this.gw6 = this.nodeToEdit.publicConfig.gw6;
+      this.domain = this.nodeToEdit.publicConfig.domain;
+    }
+
     this.openPublicConfigDialog = true;
+  }
+  openDelete(node: any) {
+    this.nodeToDelete = node;
+    this.openDeleteDialog = true;
   }
   ip4check() {
     if (this.ip4 === "") return true;
@@ -450,10 +577,51 @@ export default class FarmNodesTable extends Vue {
   }
 
   deleteItem(item: any) {
-    this.editedIndex = this.nodes.indexOf(item);
-    this.editedItem = Object.assign({}, item);
-    this.dialogDelete = true;
+    this.loadingDelete = true;
+    deleteNode(
+      this.$route.params.accountID,
+      this.$api,
+      item.nodeID,
+      (res: { events?: never[] | undefined; status: any }) => {
+        console.log(res);
+        if (res instanceof Error) {
+          console.log(res);
+          return;
+        }
+
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            console.log(`Transaction submitted`);
+        }
+
+        if (status.isFinalized) {
+          console.log(
+            `Transaction included at blockHash ${status.asFinalized}`
+          );
+
+          // Loop through Vec<EventRecord> to display all events
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            if (section === "tfgridModule" && method === "NodeDeleted") {
+              console.log("Node public config added!");
+              this.loadingDelete = false;
+              this.openDeleteDialog = false;
+              this.$emit("rerender-nodes");
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              console.log("Adding Node public config failed");
+              this.loadingDelete = false;
+            }
+          });
+        }
+      }
+    ).catch((err: { message: any }) => {
+      console.log(err.message);
+      this.loadingDelete = false;
+    });
   }
+
   getPercentage(type: any) {
     if (!this.expanded[0].resourcesUsed) return 0;
     const reservedResources = this.expanded[0].resourcesUsed[type];

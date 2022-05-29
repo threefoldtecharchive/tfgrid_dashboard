@@ -222,6 +222,7 @@
     <FarmNodesTable
       :nodes="nodes"
       :getNodes="getNodes"
+      v-on:rerender-nodes="getNodes()"
     />
   </v-container>
 </template>
@@ -277,6 +278,7 @@ export default class FarmsView extends Vue {
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
       this.nodes = await getNodesByFarmID(this.$api, this.farms);
+      console.log(this.nodes);
     } else {
       this.$router.push({
         name: "accounts",
@@ -295,9 +297,14 @@ export default class FarmsView extends Vue {
     this.farms = await getFarm(this.$api, value);
     this.nodes = await getNodesByFarmID(this.$api, this.farms);
   }
-  updated() {
+  @Watch("nodes.length") async onNodeDeleted(value: number, oldValue: number) {
+    console.log(`there were ${oldValue} nodes, now there is ${value} nodes`);
+  }
+  async updated() {
     this.address;
     this.id;
+    this.farms;
+    this.nodes;
     this.v2_address;
     this.farmName;
   }

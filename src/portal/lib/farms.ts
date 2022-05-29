@@ -1,3 +1,4 @@
+import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios from 'axios';
 import config from '../config';
@@ -105,3 +106,18 @@ export async function getFarm (api: any, twinID:number) {
   
     return res.data.data.nodes;
   }
+  export async function addNodePublicConfig(
+    address: string,
+    api: { tx: { tfgridModule: { addNodePublicConfig: (arg0: any, arg1: any, arg2: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; },
+    farmID: any,
+    nodeID: any,
+    config: any,
+    callback: any
+  ) {
+    const injector = await web3FromAddress(address);
+  
+    return api.tx.tfgridModule
+      .addNodePublicConfig(farmID, nodeID, config)
+      .signAndSend(address, { signer: injector.signer }, callback);
+  }
+ 
