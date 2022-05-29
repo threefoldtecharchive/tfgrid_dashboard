@@ -334,6 +334,7 @@ export default class FarmsView extends Vue {
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
       this.nodes = await getNodesByFarmID(this.$api, this.farms);
+      console.log(this.nodes);
     } else {
       this.$router.push({
         name: "accounts",

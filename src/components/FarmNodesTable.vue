@@ -3,7 +3,7 @@
     <v-text-field
       v-model="searchTerm"
       color="purple darken-2"
-      label="Search by node ID"
+      label="Search by node ID, serial number, certification type, farming policy ID"
     ></v-text-field>
     <v-data-table
       :headers="headers"
@@ -18,7 +18,7 @@
     >
       <template v-slot:top>
         <v-toolbar flat>
-          <v-toolbar-title>Your Nodes</v-toolbar-title>
+          <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
         </v-toolbar>
       </template>
       <template v-slot:[`item.status`]="{ item }">
@@ -156,6 +156,15 @@
                 >City</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.city }}</span>
+                </v-flex>
+              </v-row>
+              <v-row>
+                <v-flex
+                  xs3
+                  class="text-left pr-2"
+                >Serial Number</v-flex>
+                <v-flex class="text-truncate font-weight-bold">
+                  <span>{{ item.serialNumber }}</span>
                 </v-flex>
               </v-row>
               <v-row>
@@ -384,7 +393,7 @@ export default class FarmNodesTable extends Vue {
     { text: "Node ID", value: "nodeID" },
     { text: "Farm ID", value: "farmID" },
     { text: "Country", value: "country" },
-    { text: "City", value: "city" },
+    { text: "Serial Number", value: "serialNumber" },
     { text: "Status", value: "status" },
     { text: "Actions", value: "actions", sortable: false },
   ];
@@ -411,8 +420,21 @@ export default class FarmNodesTable extends Vue {
   $api: any;
   public filteredNodes() {
     if (this.searchTerm.length !== 0) {
-      return this.nodes.filter((node: { nodeID: any }) =>
-        `${node.nodeID}`.includes(this.searchTerm)
+      return this.nodes.filter(
+        (node: {
+          nodeID: any;
+          serialNumber: string;
+          certificationType: string;
+          farmingPolicyId: number;
+        }) =>
+          `${node.nodeID}`.includes(this.searchTerm) ||
+          node.serialNumber
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase()) ||
+          node.certificationType
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase()) ||
+          `${node.farmingPolicyId}`.includes(this.searchTerm)
       );
     }
     return this.nodes;
