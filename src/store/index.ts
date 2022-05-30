@@ -1,17 +1,13 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { explorerStore } from "@/explorer/store";
+import { portalStore} from "@/portal/store";
+import Vue from "vue";
+import Vuex from "vuex";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {
-  },
-  getters: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
   modules: {
-  }
-})
+    explorer: explorerStore,
+    portal: portalStore
+  },
+});
