@@ -94,7 +94,10 @@
               </v-list-item-title>
             </v-list-item-content>
           </template>
-          <div class="px-5 d-flex row justify-center" v-if="route.label.toLocaleLowerCase() === 'portal'">
+          <div
+            class="px-5 d-flex row justify-center"
+            v-if="route.label.toLocaleLowerCase() === 'portal'"
+          >
             <v-text-field
               append-icon="mdi-account-search"
               v-model="searchTerm"
@@ -187,7 +190,7 @@
         </v-card-text>
       </v-card>
       <v-card
-        v-if="$route.path !=='/'"
+        v-if="$route.path !=='/' && !$route.path.includes('explorer') && !$route.path.includes('hub')"
         color="#0D47A1"
         class=" funds px-3 d-flex align-baseline font-weight-bold"
       > {{balance }} TFT
