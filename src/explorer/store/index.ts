@@ -1,14 +1,14 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import state from "./state";
+import actions from "./actions";
+import mutations from "./mutations";
+import getters from "./getters";
+import { IState } from "./state";
+import { ModuleTree } from "vuex";
 
-interface ExplorerState {
-  name: string;
-}
-
-Vue.use(Vuex);
-
-export const explorerStore = new Vuex.Store<ExplorerState>({
-  state: {
-    name: "Mohamed & Amira",
-  },
-});
+export const explorerStore = {
+  namespaced: true,
+  state,
+  mutations,
+  actions,
+  getters,
+} as ModuleTree<IState>;

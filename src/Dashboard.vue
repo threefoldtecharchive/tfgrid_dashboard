@@ -94,20 +94,14 @@
               </v-list-item-title>
             </v-list-item-content>
           </template>
-          <div class="px-5 d-flex row justify-center">
-
+          <div class="px-5 d-flex row justify-center" v-if="route.label.toLocaleLowerCase() === 'portal'">
             <v-text-field
+              append-icon="mdi-account-search"
               v-model="searchTerm"
               color="purple darken-2"
               class="px-5"
               label="Account name/address"
-            >
-
-            </v-text-field>
-            <v-icon
-              class="px-2"
-              v-text="'mdi-account-search'"
-            > </v-icon>
+            />
           </div>
 
           <div v-if="route.prefix==='/'">
@@ -437,7 +431,7 @@ export default class Dashboard extends Vue {
       children: [
         {
           label: "Statistics",
-          path: "statistics",
+          path: "",
           icon: "chart-scatter-plot",
           showBeforeLogIn: true,
         },
