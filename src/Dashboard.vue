@@ -344,7 +344,7 @@ export default class Dashboard extends Vue {
   }
   public disconnectWallet() {
     this.$store.dispatch("portal/unsubscribeAccounts");
-    if (this.$route.path !== "/") {
+    if (this.$route.query.twinID) {
       this.$router.push({
         name: "accounts",
         path: `/`,
