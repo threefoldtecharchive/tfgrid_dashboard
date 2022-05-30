@@ -3,7 +3,7 @@
 A unified application where users can do the following and so much more !
 
 - View and search their connected polkadot.js accounts
-- Connect/Disconnectf from polkadot.js
+- Connect/Disconnect from polkadot.js
 - View balances on the TF Chain
 - Buy TFT
 - Transfer TFT to and from Cosmos and Stellar
