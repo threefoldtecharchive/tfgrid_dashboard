@@ -35,6 +35,18 @@
                 {{card.text}}
               </v-card-subtitle>
               <v-btn
+                v-if="card.button.toLowerCase().includes('capacity')"
+                color="primary"
+                x-large
+                style="margin-top:1.25rem"
+                @click="redirectToExplorer()"
+                v-bind:target="blank"
+              >
+                {{card.button}}
+
+              </v-btn>
+              <v-btn
+                v-else
                 color="primary"
                 x-large
                 style="margin-top:1.25rem"
@@ -88,6 +100,8 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { component } from "vue/types/umd";
+import ExplorerView from "@/explorer/Explorer.vue";
 interface WelcomeCard {
   text: string;
   button: string;
@@ -129,6 +143,11 @@ export default class WelcomeWindow extends Vue {
   public prev() {
     this.onboarding =
       this.onboarding - 1 < 0 ? this.cards.length - 1 : this.onboarding - 1;
+  }
+  redirectToExplorer() {
+    this.$router.push({
+      path: "/explorer/statistics",
+    });
   }
 }
 </script>
