@@ -1,11 +1,4 @@
 <template>
-  <!-- <v-app>
-    <Sidenav :mini="mini" />
-    <v-main>
-      <Navbar :mini="mini" v-on:toggle-sidenav="mini = !mini" />
-      <router-view />
-    </v-main>
-  </v-app> -->
   <router-view />
 </template>
 

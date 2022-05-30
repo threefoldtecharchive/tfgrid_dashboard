@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <h1>
       {{ pageName }}
     </h1>

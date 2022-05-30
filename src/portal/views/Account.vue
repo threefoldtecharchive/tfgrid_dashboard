@@ -1,0 +1,273 @@
+<template>
+
+  <v-container
+    fluid
+    v-if="openDialog"
+    height="100%"
+  >
+    <v-dialog
+      v-model="openDialog"
+      persistent
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+      style="background-color: black"
+      :loading="loadingTC"
+    >
+
+      <iframe
+        :src="documentLink"
+        frameborder="0"
+        style="background-color: white"
+        allow="fullscreen"
+        height="95%"
+        width="100px"
+        sandbox="allow-forms allow-modals allow-scripts allow-popups allow-same-origin "
+      ></iframe>
+      <v-btn @click="acceptTC">
+        accept terms and conditions
+      </v-btn>
+
+    </v-dialog>
+  </v-container>
+
+  <v-container v-else-if="$store.state.portal.accounts.length === 0">
+    <v-card>
+      <WelcomeWindow />
+    </v-card>
+  </v-container>
+
+  <v-container v-else-if="!twinCreated">
+
+    <v-card
+      color="#388E3C"
+      class="text-center py-5 my-3 "
+    >
+      <h2>
+        Welcome aboard {{$route.query.accountName}}, <br>
+        Let’s get you connected to the TF Grid !
+      </h2>
+    </v-card>
+    <v-card
+      color="#512DA8"
+      class="text-center pa-5"
+    >
+      <h3>Choose your preferred method to create a Twin: </h3>
+    </v-card>
+    <v-container fluid>
+      <v-row>
+
+        <v-col>
+          <v-card
+            class="pa-5 text-center"
+            height="175"
+          >
+            <h3>
+              Planetary
+              using Yggdrasil IPV6
+            </h3>
+            <v-text-field
+              label="Twin IP ::1"
+              v-model="ip"
+            >
+
+            </v-text-field>
+            <v-btn
+              :loading="loadingTwinCreate"
+              @click="createTwinFunc(ip)"
+            >create</v-btn>
+          </v-card>
+        </v-col>
+        <v-col>
+          <v-card
+            class="pa-5 text-center d-flex align-center justify-center"
+            height="175"
+          >
+            <v-btn
+              :loading="loadingTwinCreate"
+              @click="createTwinFunc('::1')"
+            >automatically</v-btn>
+
+          </v-card>
+        </v-col>
+
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-card class="pa-5 text-center d-flex align-center justify-center">
+            <v-btn
+              :target="'blank'"
+              :href="'https://library.threefold.me/info/manual/#/manual__yggdrasil_client'"
+            >why do i even need a twin?</v-btn>
+          </v-card>
+        </v-col>
+
+      </v-row>
+
+    </v-container>
+
+  </v-container>
+
+</template>
+
+<script lang="ts">
+import axios from "axios";
+import { Component, Vue } from "vue-property-decorator";
+import { getBalance } from "../lib/balance";
+import { createTwin, getTwin, getTwinID } from "../lib/twin";
+import blake from "blakejs";
+import {
+  acceptTermsAndCondition,
+  userAcceptedTermsAndConditions,
+} from "../lib/accepttc";
+import WelcomeWindow from "../../components/WelcomeWindow.vue";
+import { activateThroughActivationService } from "../lib/activation";
+
+import Twin from "./Twin.vue";
+@Component({
+  name: "AccountView",
+  components: { WelcomeWindow, Twin },
+})
+export default class AccountView extends Vue {
+  documentLink = "https://library.threefold.me/info/legal/#/";
+  documentHash = "";
+  openDialog = true;
+  twinCreated = false;
+  address = "";
+  $api: any;
+  balance = 0;
+  twinID = 0;
+  ip = "";
+  twin: any;
+  loadingTC = true;
+  loadingTwinCreate = false;
+  async updated() {
+    this.address = this.$route.params.accountID;
+    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+    this.twinID = await getTwinID(this.$api, this.address);
+    if (this.twinID) {
+      this.twinCreated = true;
+      this.twin = await getTwin(this.$api, this.twinID);
+
+      this.$router.push({
+        name: "account-twin",
+        path: "/:accountID/account-twin",
+        params: { accountID: `${this.$route.params.accountID}` },
+        query: {
+          accountName: `${this.$route.query.accountName}`,
+          twinID: this.twin.id,
+          twinIP: this.twin.ip,
+          balance: `${this.balance}`,
+        },
+      });
+    }
+    this.openDialog = !(await userAcceptedTermsAndConditions(
+      this.$api,
+      this.address
+    ));
+  }
+  async mounted() {
+    this.address = this.$route.params.accountID;
+    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+    this.twinID = await getTwinID(this.$api, this.address);
+    if (this.twinID) {
+      this.twinCreated = true;
+    }
+    this.openDialog = !(await userAcceptedTermsAndConditions(
+      this.$api,
+      this.address
+    ));
+
+    let document = await axios.get(this.documentLink);
+    this.documentHash = blake.blake2bHex(document.data);
+  }
+  unmounted() {
+    this.address = "";
+    this.balance = 0;
+    this.twinID = 0;
+  }
+  public async createTwinFunc(ip: string) {
+    this.loadingTwinCreate = true;
+    await createTwin(
+      this.address,
+      this.$api,
+      ip,
+      (res: { events?: never[] | undefined; status: any }) => {
+        console.log(res);
+        if (res instanceof Error) {
+          console.log(res);
+          return;
+        }
+
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            this.$toasted.show(`Transaction submitted`);
+        }
+
+        if (status.isFinalized) {
+          console.log(
+            `Transaction included at blockHash ${status.asFinalized}`
+          );
+
+          // Loop through Vec<EventRecord> to display all events
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            if (section === "tfgridModule" && method === "TwinStored") {
+              this.loadingTwinCreate = false;
+              this.$toasted.show("Twin created!");
+              this.twinCreated = true;
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              this.$toasted.show("Twin creation failed!");
+            }
+          });
+        }
+      }
+    );
+  }
+  public acceptTC() {
+    activateThroughActivationService(this.address);
+    acceptTermsAndCondition(
+      this.$api,
+      this.address,
+      this.documentLink,
+      this.documentHash,
+      (res: { events?: never[] | undefined; status: any }) => {
+        console.log(res);
+        if (res instanceof Error) {
+          console.log(res);
+          return;
+        }
+
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            this.$toasted.show(`Transaction submitted`);
+            this.openDialog = false;
+        }
+
+        if (status.isFinalized) {
+          console.log(
+            `Transaction included at blockHash ${status.asFinalized}`
+          );
+
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            if (section === "system" && method === "ExtrinsicSuccess") {
+              this.$toasted.show("Accepted!");
+
+              this.loadingTC = false;
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              this.$toasted.show("rejected");
+            }
+          });
+        }
+      }
+    );
+  }
+}
+</script>
+<style scoped>
+</style>

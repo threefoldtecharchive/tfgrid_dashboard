@@ -16,6 +16,10 @@ declare global {
     interface IntrinsicElements {
       [elem: string]: any;
     }
+    interface WindowInterface extends Window{
+      [url: URL]
+    }
+   
   }
 
   interface Window {

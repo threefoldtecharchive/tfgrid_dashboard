@@ -1,21 +1,19 @@
 <template>
   <Layout pageName="Statistics" v-if="stats" :noFilter="true">
-    <v-container>
-      <section class="items" v-if="statistics.length > 0">
-        <div v-for="item of statistics" :key="item.title">
-          <StatisticsCard :item="item" />
-        </div>
-      </section>
+    <section class="items" v-if="statistics.length > 0">
+      <div v-for="item of statistics" :key="item.title">
+        <StatisticsCard :item="item" />
+      </div>
+    </section>
 
-      <section class="loader" v-if="statistics.length === 0">
-        <v-progress-circular size="150" indeterminate />
-      </section>
+    <section class="loader" v-if="statistics.length === 0">
+      <v-progress-circular size="150" indeterminate />
+    </section>
 
-      <v-divider class="mt-2 mb-2" />
+    <v-divider class="mt-2 mb-2" />
 
-      <h2>Nodes Distribution</h2>
-      <tf-map :nodes="nodesDistribution"></tf-map>
-    </v-container>
+    <h2>Nodes Distribution</h2>
+    <tf-map :nodes="nodesDistribution"></tf-map>
   </Layout>
 </template>
 
