@@ -96,7 +96,7 @@
           </template>
           <div
             class="px-5 d-flex row justify-center"
-            v-if="route.label.toLocaleLowerCase() === 'portal'"
+            v-if="route.label.toLocaleLowerCase() === 'portal' && $store.state.portal.accounts.length !== 0"
           >
             <v-text-field
               append-icon="mdi-account-search"
@@ -344,7 +344,7 @@ export default class Dashboard extends Vue {
   }
   public disconnectWallet() {
     this.$store.dispatch("portal/unsubscribeAccounts");
-    if (this.$route.path !== "/") {
+    if (this.$route.query.twinID) {
       this.$router.push({
         name: "accounts",
         path: `/`,
