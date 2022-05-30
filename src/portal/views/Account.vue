@@ -1,10 +1,5 @@
 <template>
-
-  <v-container
-    fluid
-    v-if="openDialog"
-    height="100%"
-  >
+  <v-container fluid v-if="openDialog" height="100%">
     <v-dialog
       v-model="openDialog"
       persistent
@@ -14,7 +9,6 @@
       style="background-color: black"
       :loading="loadingTC"
     >
-
       <iframe
         :src="documentLink"
         frameborder="0"
@@ -24,10 +18,7 @@
         width="100px"
         sandbox="allow-forms allow-modals allow-scripts allow-popups allow-same-origin "
       ></iframe>
-      <v-btn @click="acceptTC">
-        accept terms and conditions
-      </v-btn>
-
+      <v-btn @click="acceptTC"> accept terms and conditions </v-btn>
     </v-dialog>
   </v-container>
 
@@ -38,44 +29,24 @@
   </v-container>
 
   <v-container v-else-if="!twinCreated">
-
-    <v-card
-      color="#388E3C"
-      class="text-center py-5 my-3 "
-    >
+    <v-card class="text-center primary white--text py-5 my-3">
       <h2>
-        Welcome aboard {{$route.query.accountName}}, <br>
+        Welcome aboard {{ $route.query.accountName }}, <br />
         Let’s get you connected to the TF Grid !
       </h2>
     </v-card>
-    <v-card
-      color="#512DA8"
-      class="text-center pa-5"
-    >
-      <h3>Choose your preferred method to create a Twin: </h3>
+    <v-card class="text-center pa-5">
+      <h3>Choose your preferred method to create a Twin:</h3>
     </v-card>
     <v-container fluid>
       <v-row>
-
         <v-col>
-          <v-card
-            class="pa-5 text-center"
-            height="175"
-          >
-            <h3>
-              Planetary
-              using Yggdrasil IPV6
-            </h3>
-            <v-text-field
-              label="Twin IP ::1"
-              v-model="ip"
+          <v-card class="pa-5 text-center" height="175">
+            <h3>Planetary using Yggdrasil IPV6</h3>
+            <v-text-field label="Twin IP ::1" v-model="ip"> </v-text-field>
+            <v-btn :loading="loadingTwinCreate" @click="createTwinFunc(ip)"
+              >create</v-btn
             >
-
-            </v-text-field>
-            <v-btn
-              :loading="loadingTwinCreate"
-              @click="createTwinFunc(ip)"
-            >create</v-btn>
           </v-card>
         </v-col>
         <v-col>
@@ -83,14 +54,11 @@
             class="pa-5 text-center d-flex align-center justify-center"
             height="175"
           >
-            <v-btn
-              :loading="loadingTwinCreate"
-              @click="createTwinFunc('::1')"
-            >automatically</v-btn>
-
+            <v-btn :loading="loadingTwinCreate" @click="createTwinFunc('::1')"
+              >automatically</v-btn
+            >
           </v-card>
         </v-col>
-
       </v-row>
       <v-row>
         <v-col>
@@ -98,16 +66,13 @@
             <v-btn
               :target="'blank'"
               :href="'https://library.threefold.me/info/manual/#/manual__yggdrasil_client'"
-            >why do i even need a twin?</v-btn>
+              >why do i even need a twin?</v-btn
+            >
           </v-card>
         </v-col>
-
       </v-row>
-
     </v-container>
-
   </v-container>
-
 </template>
 
 <script lang="ts">

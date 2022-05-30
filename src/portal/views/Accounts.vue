@@ -25,9 +25,8 @@
       <v-card
         v-for="account in filteredAccounts()"
         :key="account.address"
-        color="#448AFF"
         @click="addAccountRoute(account)"
-        class="my-4"
+        class="my-4 primary white--text"
       >
 
         <div class="d-flex justify-space-between">
