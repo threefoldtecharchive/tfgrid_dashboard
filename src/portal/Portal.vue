@@ -1,7 +1,7 @@
 <template>
 
   <v-container>
-    <router-view />
+    <router-view style="padding: 13.5% 5% 5% 10%" />
   </v-container>
 
 </template>
