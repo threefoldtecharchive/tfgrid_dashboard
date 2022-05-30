@@ -102,9 +102,10 @@
               append-icon="mdi-account-search"
               v-model="searchTerm"
               color="purple darken-2"
-              class="px-5"
+              class="pl-3 pr-2 mr-2"
               label="Account name/address"
             />
+
           </div>
 
           <div v-if="route.prefix==='/'">
