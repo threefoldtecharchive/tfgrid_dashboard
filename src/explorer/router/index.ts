@@ -2,7 +2,7 @@ import { RouteConfig } from "vue-router";
 
 export const explorerRouter: RouteConfig[] = [
   {
-    path: "/explorer",
+    path: "/explorer/statistics",
     name: "Statistics",
     component: () => import("../views/Statistics.vue"),
   },

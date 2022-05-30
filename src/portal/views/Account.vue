@@ -150,8 +150,8 @@ export default class AccountView extends Vue {
       this.twin = await getTwin(this.$api, this.twinID);
 
       this.$router.push({
-        name: "twin",
-        path: "/:accountID/twin",
+        name: "account-twin",
+        path: "/:accountID/account-twin",
         params: { accountID: `${this.$route.params.accountID}` },
         query: {
           accountName: `${this.$route.query.accountName}`,

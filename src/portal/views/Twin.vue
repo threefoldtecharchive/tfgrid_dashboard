@@ -143,15 +143,15 @@ export default class TwinView extends Vue {
   links = [
     {
       label: "transfer tft",
-      path: "transfer",
+      path: "account-transfer",
     },
     {
       label: "manage farms",
-      path: "farms",
+      path: "account-farms",
     },
     {
       label: "manage nodes",
-      path: "nodes",
+      path: "account-nodes",
     },
   ];
   updated() {

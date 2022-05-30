@@ -408,20 +408,17 @@ export default class Dashboard extends Vue {
           showBeforeLogIn: true,
           children: [
             {
-              label: "twin",
+              label: "account-twin",
               icon: "account-supervisor-outline",
-              path: "twin",
             },
             {
-              label: "transfer",
+              label: "account-transfer",
               icon: "swap-horizontal",
-              path: "transfer",
             },
-            { label: "farms", icon: "silo", path: "farms" },
+            { label: "account-farms", icon: "silo" },
             {
-              label: "nodes",
+              label: "account-nodes",
               icon: "resistor-nodes",
-              path: "nodes",
             },
           ],
         },
@@ -434,7 +431,7 @@ export default class Dashboard extends Vue {
       children: [
         {
           label: "Statistics",
-          path: "",
+          path: "statistics",
           icon: "chart-scatter-plot",
           showBeforeLogIn: true,
         },
