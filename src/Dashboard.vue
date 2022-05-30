@@ -96,7 +96,7 @@
           </template>
           <div
             class="px-5 d-flex row justify-center"
-            v-if="route.label.toLocaleLowerCase() === 'portal'"
+            v-if="route.label.toLocaleLowerCase() === 'portal' && $store.state.portal.accounts.length !== 0"
           >
             <v-text-field
               append-icon="mdi-account-search"
