@@ -281,6 +281,10 @@ export default class Dashboard extends Vue {
       }
     }
   }
+  async unmounted() {
+    console.log(`disconnecting from api`);
+    await this.$api.disconnect();
+  }
   public filteredAccounts() {
     if (this.searchTerm.length !== 0) {
       return this.accounts.filter(
