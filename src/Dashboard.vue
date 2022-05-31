@@ -257,8 +257,9 @@ export default class Dashboard extends Vue {
     }
   }
   async created() {
-    if (this.$route.path === "/") {
+    if (this.$route.path === "/" && !this.$api) {
       Vue.prototype.$api = await connect(); //declare global variable api
+      console.log(`connecting to api`);
     }
   }
   async mounted() {
@@ -273,7 +274,6 @@ export default class Dashboard extends Vue {
   }
   async updated() {
     this.accounts = this.$store.state.portal.accounts;
-    Vue.prototype.$api = await connect(); //declare global variable api
     if (this.$route.path !== "/") {
       if (this.$route.params.accountID) {
         this.address = await this.$route.params.accountID;
