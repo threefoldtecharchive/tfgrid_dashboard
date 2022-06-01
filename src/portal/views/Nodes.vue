@@ -133,7 +133,7 @@ export default class NodesView extends Vue {
     this.nodes = await getDNodes(this.$api, value);
   }
   public filteredNodes() {
-    if (this.searchTerm.length !== 0) {
+    if (this.searchTerm.length !== 0 && this.nodes.length !== 0) {
       return this.nodes.filter(
         (node: { location: { country: string }; nodeId: any }) =>
           node.location.country
