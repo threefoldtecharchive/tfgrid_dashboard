@@ -2,8 +2,18 @@ apiVersion: v1
 entries:
   tfgrid-dashboard:
   - apiVersion: v2
+    appVersion: v1.0.0-rc1
+    created: "2022-06-01T13:54:19.937703062+02:00"
+    description: A Helm chart for Kubernetes
+    digest: c06b07a3388879961aaf9d82f69c120cca244ce85c7182a1f59115ed1e20450c
+    name: tfgrid-dashboard
+    type: application
+    urls:
+    - tfgrid-dashboard-v1.0.0-rc1.tgz
+    version: v1.0.0-rc1
+  - apiVersion: v2
     appVersion: v0.0.1
-    created: "2022-06-01T13:43:22.226142638+02:00"
+    created: "2022-06-01T13:54:19.936903105+02:00"
     description: A Helm chart for Kubernetes
     digest: f3162c7ac676848a8de4b4f997927d29b011db1ed141db65b71ad6ffa17864b3
     name: tfgrid-dashboard
@@ -11,4 +21,4 @@ entries:
     urls:
     - tfgrid-dashboard-v0.0.1.tgz
     version: v0.0.1
-generated: "2022-06-01T13:43:22.225258278+02:00"
+generated: "2022-06-01T13:54:19.935895836+02:00"
