@@ -419,7 +419,7 @@ export default class FarmNodesTable extends Vue {
   loadingPublicConfig = false;
   $api: any;
   public filteredNodes() {
-    if (this.searchTerm.length !== 0) {
+    if (this.searchTerm.length !== 0 && this.nodes.length !== 0) {
       return this.nodes.filter(
         (node: {
           nodeID: any;

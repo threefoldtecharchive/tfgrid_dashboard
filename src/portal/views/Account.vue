@@ -69,6 +69,11 @@
             <v-text-field
               label="Twin IP ::1"
               v-model="ip"
+              :error-messages="ipErrorMessage"
+              :rules="[
+              () => !!ip || 'This field is required',
+              ipcheck
+            ]"
             >
 
             </v-text-field>
@@ -141,6 +146,7 @@ export default class AccountView extends Vue {
   twin: any;
   loadingTC = true;
   loadingTwinCreate = false;
+  ipErrorMessage = "";
   async updated() {
     this.address = this.$route.params.accountID;
     this.balance = (await getBalance(this.$api, this.address)) / 1e7;
@@ -170,6 +176,7 @@ export default class AccountView extends Vue {
     this.address = this.$route.params.accountID;
     this.balance = (await getBalance(this.$api, this.address)) / 1e7;
     this.twinID = await getTwinID(this.$api, this.address);
+
     if (this.twinID) {
       this.twinCreated = true;
     }
@@ -185,6 +192,26 @@ export default class AccountView extends Vue {
     this.address = "";
     this.balance = 0;
     this.twinID = 0;
+  }
+  ipcheck() {
+    if (this.ip === "") return true;
+
+    const ip4Regex = new RegExp(
+      "^([0-9]{1,3}.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))$"
+    );
+    const ip6Regex = new RegExp(
+      "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
+    );
+    if (ip4Regex.test(this.ip)) {
+      this.ipErrorMessage = "";
+      return true;
+    } else if (ip6Regex.test(this.ip)) {
+      this.ipErrorMessage = "";
+      return true;
+    } else {
+      this.ipErrorMessage = "IP address is not formatted correctly";
+      return false;
+    }
   }
   public async createTwinFunc(ip: string) {
     this.loadingTwinCreate = true;
@@ -220,11 +247,15 @@ export default class AccountView extends Vue {
               this.twinCreated = true;
             } else if (section === "system" && method === "ExtrinsicFailed") {
               this.$toasted.show("Twin creation failed!");
+              this.loadingTwinCreate = false;
             }
           });
         }
       }
-    );
+    ).catch((err: { message: any }) => {
+      this.$toasted.show(err.message);
+      this.loadingTwinCreate = false;
+    });
   }
   public acceptTC() {
     activateThroughActivationService(this.address);

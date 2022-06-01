@@ -334,7 +334,6 @@ export default class FarmsView extends Vue {
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
       this.nodes = await getNodesByFarmID(this.$api, this.farms);
-      console.log(this.nodes);
     } else {
       this.$router.push({
         name: "accounts",
@@ -366,7 +365,7 @@ export default class FarmsView extends Vue {
     this.farmName;
   }
   public filteredFarms() {
-    if (this.searchTerm.length !== 0) {
+    if (this.searchTerm.length !== 0 && this.farms.length !== 0) {
       return this.farms.filter(
         (farm: { name: string; id: any }) =>
           farm.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
@@ -415,6 +414,7 @@ export default class FarmsView extends Vue {
               this.$toasted.show("Farm deleted!");
               this.loadingDeleteFarm = false;
               this.openDeleteFarmDialog = false;
+              this.farms = getFarm(this.$api, this.id);
             } else if (section === "system" && method === "ExtrinsicFailed") {
               this.$toasted.show("Deleting a farm failed");
               this.loadingDeleteFarm = false;

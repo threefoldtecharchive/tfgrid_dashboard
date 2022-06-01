@@ -25,14 +25,22 @@
           <v-card-text>
             <div class="text-h2 pa-12">
               <v-text-field
-                v-model="ip"
+                v-model="ipv"
                 label="Twin IP ::1"
+                :error-messages="ipErrorMessage"
+                :rules="[
+              () => !!ip || 'This field is required',
+              ipcheck
+            ]"
               ></v-text-field>
             </div>
           </v-card-text>
           <v-card-actions class="justify-end">
             <v-btn @click="editingTwin = false">Close</v-btn>
-            <v-btn @click="updateTwin">Submit</v-btn>
+            <v-btn
+              @click="updateTwin"
+              :loading="loadingEditTwin"
+            >Submit</v-btn>
           </v-card-actions>
         </v-card>
 
@@ -59,7 +67,7 @@
           </v-list-item>
 
           <v-list-item>
-            IP: {{ip}}
+            IP: {{decodeHex(ip)}}
           </v-list-item>
 
           <v-list-item>
@@ -123,7 +131,7 @@ import WelcomeWindow from "@/components/WelcomeWindow.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { getBalance } from "../lib/balance";
 import { deleteTwin, getTwin, getTwinID, updateTwinIP } from "../lib/twin";
-
+import { hex2a } from "@/portal/lib/util";
 @Component({
   name: "Twin",
   components: { WelcomeWindow },
@@ -132,7 +140,7 @@ export default class TwinView extends Vue {
   $api: any;
   editingTwin = false;
   ip: any = [];
-
+  ipv = "";
   id: any = [];
   address = "";
   twin: any;
@@ -140,6 +148,8 @@ export default class TwinView extends Vue {
   balance: any = 0;
   loadingDeleteTwin = false;
   openDeleteTwinDialog = false;
+  ipErrorMessage = "";
+  loadingEditTwin = false;
   links = [
     {
       label: "transfer tft",
@@ -177,6 +187,29 @@ export default class TwinView extends Vue {
     this.balance = 0;
     this.address = "";
   }
+  ipcheck() {
+    if (this.ipv === "") return true;
+
+    const ip4Regex = new RegExp(
+      "^([0-9]{1,3}.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))$"
+    );
+    const ip6Regex = new RegExp(
+      "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
+    );
+    if (ip4Regex.test(this.ipv)) {
+      this.ipErrorMessage = "";
+      return true;
+    } else if (ip6Regex.test(this.ipv)) {
+      this.ipErrorMessage = "";
+      return true;
+    } else {
+      this.ipErrorMessage = "IP address is not formatted correctly";
+      return false;
+    }
+  }
+  decodeHex(input: string) {
+    return hex2a(input);
+  }
   public redirectToLabelRoute(path: string, address: string) {
     this.$router.push({
       name: `${path}`,
@@ -194,6 +227,7 @@ export default class TwinView extends Vue {
     this.editingTwin = true;
   }
   public updateTwin() {
+    this.loadingEditTwin = true;
     updateTwinIP(
       this.$route.params.accountID,
       this.$api,
@@ -221,9 +255,9 @@ export default class TwinView extends Vue {
             async ({ phase, event: { data, method, section } }) => {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
               if (section === "tfgridModule" && method === "TwinUpdated") {
+                this.loadingEditTwin = false;
                 this.$toasted.show("Twin updated!");
-                const twinStoredEvent = data[0];
-                console.log(twinStoredEvent);
+
                 this.id = await getTwinID(
                   this.$api,
                   this.$route.params.accountID
@@ -234,12 +268,16 @@ export default class TwinView extends Vue {
                 this.editingTwin = false;
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Twin creation/update failed!");
+                this.loadingEditTwin = false;
               }
             }
           );
         }
       }
-    );
+    ).catch((err: { message: any }) => {
+      this.$toasted.show(err.message);
+      this.loadingEditTwin = false;
+    });
   }
   openDeleteTwin() {
     this.openDeleteTwinDialog = true;
