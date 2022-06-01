@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: threefolddev/tfgrid-dashboard
+  repository: elmdary/tfgrid_dashboard
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.0.0"
+  tag: latest
 
 imagePullSecrets: []
 nameOverride: ""
@@ -44,9 +44,8 @@ service:
 
 ingress:
   # from https://github.com/threefoldtech/vdc-solutions-charts/blob/master/charts/taiga/values.yaml
-  enabled: false
+  enabled: true
   annotations:
-    kubernetes.io/ingress.class: traefik
     ingress.kubernetes.io/ssl-passthrough: "true"
     traefik.ingress.kubernetes.io/router.tls.certresolver: gridca
   host: dashboard.com # replaced when installing chart by --set ingress.host=<domain>
