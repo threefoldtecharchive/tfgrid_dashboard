@@ -1,13 +1,8 @@
 <template>
   <v-container v-if="$store.state.portal.accounts.length === 0">
-
     <WelcomeWindow />
-
   </v-container>
-  <v-container
-    v-else
-    style=""
-  >
+  <v-container v-else style="">
     <h1 class="text-center">Connected Accounts</h1>
 
     <v-container fluid>
@@ -15,10 +10,9 @@
         <v-col>
           <v-text-field
             v-model="searchTerm"
-            color="purple darken-2"
+            color="primary darken-2"
             label="Search by account name or address"
           ></v-text-field>
-
         </v-col>
       </v-row>
 
@@ -28,23 +22,18 @@
         @click="addAccountRoute(account)"
         class="my-4 primary white--text"
       >
-
         <div class="d-flex justify-space-between">
           <div class="d-inline-block text-truncate">
-            <v-card-title>{{account.meta.name.toUpperCase()}}</v-card-title>
+            <v-card-title>{{ account.meta.name.toUpperCase() }}</v-card-title>
             <v-card-subtitle>
-              {{account.address}}
+              {{ account.address }}
             </v-card-subtitle>
           </div>
           <v-icon>mdi-chevron-right</v-icon>
         </div>
-
       </v-card>
-
     </v-container>
-
   </v-container>
-
 </template>
 
 <script lang="ts">

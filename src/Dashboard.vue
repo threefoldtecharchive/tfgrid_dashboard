@@ -50,7 +50,7 @@
       <v-list>
         <v-list-item class="px-2">
           <v-list-item-avatar>
-            <v-img src="./assets/tfgrid_icon.svg"></v-img>
+            <v-img src="./assets/logo.png"></v-img>
           </v-list-item-avatar>
 
           <v-list-item-title class="white--text" @click="redirectToHomePage"
@@ -93,6 +93,7 @@
               color="primary darken-2"
               class="white--text pl-3 pr-2 mr-2"
               label="Account name/address"
+              dark
             />
           </div>
 
@@ -105,7 +106,7 @@
               :key="account.address"
             >
               <template v-slot:activator>
-                <v-list-item-content>
+                <v-list-item-content dark>
                   <v-list-item-title
                     class="white--text"
                     v-text="account.meta.name.toUpperCase()"
@@ -514,8 +515,11 @@ export default class Dashboard extends Vue {
 .v-card {
   cursor: pointer;
 }
-.v-icon.v-icon,
-.v-text-field .v-label {
+
+.v-list-item__icon .theme--light.fa-chevron-down,
+.v-list-item__icon .theme--light.fa-caret-down,
+.v-list-item__icon .theme--light.fa-chevron-up,
+.v-list-item__icon .theme--light.fa-caret-up {
   color: white !important;
 }
 </style>

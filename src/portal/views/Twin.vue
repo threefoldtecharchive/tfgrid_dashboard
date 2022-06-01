@@ -1,121 +1,96 @@
 <template>
-
   <v-container v-if="$store.state.portal.accounts.length === 0">
     <v-card>
       <WelcomeWindow />
     </v-card>
   </v-container>
 
-  <div
-    style="padding-top:100ox"
-    v-else
-  >
+  <div style="padding-top: 100ox" v-else>
     <v-container v-if="editingTwin">
       <v-dialog
         transition="dialog-bottom-transition"
         max-width="600"
         v-model="editingTwin"
       >
-
         <v-card>
-          <v-toolbar
-            color="primary"
-            dark
-          >Edit Twin</v-toolbar>
+          <v-toolbar color="primary" dark>Edit Twin</v-toolbar>
           <v-card-text>
             <div class="text-h2 pa-12">
-              <v-text-field
-                v-model="ip"
-                label="Twin IP ::1"
-              ></v-text-field>
+              <v-text-field v-model="ip" label="Twin IP ::1"></v-text-field>
             </div>
           </v-card-text>
           <v-card-actions class="justify-end">
+            <v-btn class="primary white--text" @click="updateTwin"
+              >Submit</v-btn
+            >
             <v-btn @click="editingTwin = false">Close</v-btn>
-            <v-btn @click="updateTwin">Submit</v-btn>
           </v-card-actions>
         </v-card>
-
       </v-dialog>
     </v-container>
     <v-container>
-      <v-card
-        color="#388E3C"
-        class="my-3 pa-3 text-center"
-      >
-        <h2> Congratulations {{$route.query.accountName}} on creating a twin! <br />
-          You can now interact with the TF Grid</h2>
-
+      <v-card color="primary white--text" class="my-3 pa-3 text-center">
+        <h2>
+          Congratulations {{ $route.query.accountName }} on creating a twin!
+          <br />
+          You can now interact with the TF Grid
+        </h2>
       </v-card>
-      <v-card
-        color="#512DA8"
-        class="my-3 pa-3 text-center"
-      >
+      <v-card class="my-3 pa-3 text-center">
         <h3>Twin Details</h3>
 
         <v-list>
-          <v-list-item>
-            ID: {{id}}
-          </v-list-item>
+          <v-list-item> ID: {{ id }} </v-list-item>
 
-          <v-list-item>
-            IP: {{ip}}
-          </v-list-item>
+          <v-list-item> IP: {{ ip }} </v-list-item>
 
-          <v-list-item>
-            ADDRESS: {{address}}
-          </v-list-item>
+          <v-list-item> ADDRESS: {{ address }} </v-list-item>
         </v-list>
         <v-card-actions class="justify-end">
-          <v-btn
-            @click="editTwin"
-            color="#388E3C"
-          >Edit</v-btn>
+          <v-btn @click="editTwin" color="primary">Edit</v-btn>
           <v-btn
             @click="openDeleteTwin"
             :loading="loadingDeleteTwin"
             color="red"
-          >Delete</v-btn>
+            class="white--text"
+            >Delete</v-btn
+          >
         </v-card-actions>
-
       </v-card>
       <h4 class="text-center my-5 pa-5">What do you wish to do?</h4>
       <div class="d-flex row justify-center align-center">
         <v-card
           v-for="link in links"
           :key="link.label"
-          class="pa-5 mx-3"
+          class="primary white--text pa-5 mx-3"
           @click="redirectToLabelRoute(link.path, address)"
-        >{{link.label.toUpperCase()}}</v-card>
-
+          >{{ link.label.toUpperCase() }}</v-card
+        >
       </div>
-
     </v-container>
-    <v-dialog
-      max-width="600"
-      v-model="openDeleteTwinDialog"
-    >
+    <v-dialog max-width="600" v-model="openDeleteTwinDialog">
       <v-card>
-        <v-card-title class="text-h5">Are you certain you want to delete this twin?</v-card-title>
-        <v-card-text>This will delete the twin on the chain, this action is irreversible</v-card-text>
+        <v-card-title class="text-h5"
+          >Are you certain you want to delete this twin?</v-card-title
+        >
+        <v-card-text
+          >This will delete the twin on the chain, this action is
+          irreversible</v-card-text
+        >
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
             color="blue darken-1"
             text
             @click="openDeleteTwinDialog = false"
-          >Cancel</v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="callDeleteTwin()"
-          >OK</v-btn>
+            >Cancel</v-btn
+          >
+          <v-btn color="blue darken-1" text @click="callDeleteTwin()">OK</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
-
 </template>
 
 <script lang="ts">
