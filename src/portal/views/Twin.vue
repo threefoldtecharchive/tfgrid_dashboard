@@ -67,7 +67,7 @@
           </v-list-item>
 
           <v-list-item>
-            IP: {{ip}}
+            IP: {{decodeHex(ip)}}
           </v-list-item>
 
           <v-list-item>
@@ -131,7 +131,7 @@ import WelcomeWindow from "@/components/WelcomeWindow.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { getBalance } from "../lib/balance";
 import { deleteTwin, getTwin, getTwinID, updateTwinIP } from "../lib/twin";
-
+import { hex2a } from "@/portal/lib/util";
 @Component({
   name: "Twin",
   components: { WelcomeWindow },
@@ -206,6 +206,9 @@ export default class TwinView extends Vue {
       this.ipErrorMessage = "IP address is not formatted correctly";
       return false;
     }
+  }
+  decodeHex(input: string) {
+    return hex2a(input);
   }
   public redirectToLabelRoute(path: string, address: string) {
     this.$router.push({
