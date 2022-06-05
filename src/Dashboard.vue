@@ -417,8 +417,12 @@ export default class Dashboard extends Vue {
               icon: "account-supervisor-outline",
             },
             {
-              label: "account-transfer",
+              label: "account-swap",
               icon: "swap-horizontal",
+            },
+            {
+              label: "account-transfer",
+              icon: "account-arrow-right-outline",
             },
             { label: "account-farms", icon: "silo" },
             {

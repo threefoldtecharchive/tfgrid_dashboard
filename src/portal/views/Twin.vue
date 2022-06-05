@@ -152,6 +152,10 @@ export default class TwinView extends Vue {
   loadingEditTwin = false;
   links = [
     {
+      label: "swap tft",
+      path: "account-swap",
+    },
+    {
       label: "transfer tft",
       path: "account-transfer",
     },

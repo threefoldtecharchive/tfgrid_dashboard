@@ -3,6 +3,7 @@ import AccountsView from '@/portal/views/Accounts.vue';
 import AccountView from '@/portal/views/Account.vue'
 import TwinView from "@/portal/views/Twin.vue";
 import TransferView from "@/portal/views/Transfer.vue";
+import SwapView from "@/portal/views/Swap.vue";
 import FarmsView from "@/portal/views/Farms.vue";
 import NodesView from "@/portal/views/Nodes.vue";
 export const portalRouter: RouteConfig[] = [
@@ -16,6 +17,9 @@ export const portalRouter: RouteConfig[] = [
  { path: "/:accountID/account-twin", 
  name: "account-twin", 
  component: TwinView },
+ { path: "/:accountID/account-swap", 
+ name: "account-swap", 
+ component: SwapView },
  { path: "/:accountID/account-transfer", 
  name: "account-transfer", 
  component: TransferView },
