@@ -256,6 +256,20 @@ export default class Dashboard extends Vue {
       console.log(`putting in account ${value}`);
     }
   }
+  @Watch("balance") async onBalanceUpdate(value: number, oldValue: number) {
+    console.log(`balance went from ${oldValue}, to ${value}`);
+    this.$router.push({
+      name: `${this.$route.name}`,
+      path: `${this.$route.path}`,
+      params: { accountID: `${this.$route.params.accountID}` },
+      query: {
+        accountName: `${this.$route.query.accountName}`,
+        twinID: `${this.$route.query.twinID}`,
+        twinIP: `${this.$route.query.twinIP}`,
+        balance: `${value}`,
+      },
+    });
+  }
   async created() {
     if (this.$route.path === "/" && !this.$api) {
       Vue.prototype.$api = await connect(); //declare global variable api

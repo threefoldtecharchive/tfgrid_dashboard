@@ -11,7 +11,7 @@
       </v-card>
       <v-card class="pa-5 my-5">
 
-        <v-autocomplete
+        <v-combobox
           v-model="receipientAddress"
           :items="accountsAddresses"
           dense
@@ -22,7 +22,22 @@
             () => !!receipientAddress || 'This field is required',
             addressCheck()
           ]"
-        ></v-autocomplete>
+        ></v-combobox>
+        <v-text-field
+          v-model="amount"
+          label="Amount (TFT)"
+          type="number"
+          :rules="[
+            () => !!amount || 'This field is required',
+            () => amount < balance || 'Amount cannot exceed balance',
+          ]"
+        >
+
+        </v-text-field>
+        <v-btn
+          @click="transferTFT"
+          :loading="loadingTransfer"
+        >Submit</v-btn>
       </v-card>
     </v-container>
 
@@ -30,10 +45,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { checkAddress } from "../lib/transfer";
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { checkAddress, transfer } from "../lib/transfer";
 import QrcodeVue from "qrcode.vue";
 import { accountInterface } from "../store/state";
+import { getBalance } from "../lib/balance";
 @Component({
   name: "TransferView",
   components: { QrcodeVue },
@@ -50,9 +66,8 @@ export default class TransferView extends Vue {
   ip: any = [];
   accountName: any;
   id: any = [];
-
   amount = 0;
-  target = "";
+  loadingTransfer = false;
 
   mounted() {
     this.address = this.$route.params.accountID;
@@ -61,26 +76,20 @@ export default class TransferView extends Vue {
       this.id = this.$route.query.twinID;
       this.accountName = this.$route.query.accountName;
     }
-    this.balance = this.$route.query.balance;
+    this.balance = +this.$route.query.balance;
 
     this.accountsAddresses = this.$store.state.portal.accounts
       .filter((account: accountInterface) => account.address !== this.address)
-      .map(
-        (account: accountInterface) =>
-          `${account.meta.name}: ${account.address}`
-      );
-    console.log(this.accountsAddresses);
+      .map((account: accountInterface) => `${account.address}`);
   }
   async updated() {
     this.id = this.$route.query.twinID;
     this.ip = this.$route.query.twinIP;
     if (this.$route.query.balance !== this.balance) {
-      this.balance = this.$route.query.balance;
+      this.balance = +this.$route.query.balance;
     }
-
-    this.target;
-    this.amount;
   }
+
   unmounted() {
     this.balance = 0;
     this.address = "";
@@ -91,9 +100,57 @@ export default class TransferView extends Vue {
       this.addressErrorMessages = "";
       return true;
     } else {
-      this.addressErrorMessages = "incorrect format";
+      this.addressErrorMessages = "invalid address";
       return false;
     }
+  }
+
+  transferTFT() {
+    if (this.amount === 0 || this.receipientAddress === "") {
+      this.addressErrorMessages = "No target specified";
+      return;
+    }
+    transfer(
+      this.address,
+      this.$api,
+      this.receipientAddress,
+      this.amount,
+      (res: { events?: never[] | undefined; status: any }) => {
+        this.loadingTransfer = true;
+        if (res instanceof Error) {
+          console.log(res);
+          return;
+        }
+
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            this.$toasted.show(`Transaction submitted`);
+        }
+
+        if (status.isFinalized) {
+          console.log(
+            `Transaction included at blockHash ${status.asFinalized}`
+          );
+
+          // Loop through Vec<EventRecord> to display all events
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            if (section === "balances" && method === "Transfer") {
+              this.$toasted.show("Transfer succeeded!");
+              this.loadingTransfer = false;
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              this.$toasted.show("Transfer failed!");
+              this.loadingTransfer = false;
+            }
+          });
+        }
+      }
+    ).catch((err) => {
+      this.$toasted.show(err.message);
+      this.loadingTransfer = false;
+    });
   }
 }
 </script>
