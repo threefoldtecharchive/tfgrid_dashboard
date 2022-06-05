@@ -6,24 +6,24 @@ import { getBalance } from "./balance";
 export function byteToGB(capacity: number) {
   return (capacity / 1024 / 1024 / 1024).toFixed(0);
 }
-export async function createRentContract(api: { tx: { smartContractModule: { createRentContract: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, address: string, nodeId: any, callback: any) {
+export async function createRentContract(api: { tx: { smartContractModule: { createRentContract: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, address: string, nodeId: string, callback: any) {
   const injector = await web3FromAddress(address);
   return api.tx.smartContractModule
     .createRentContract(nodeId)
     .signAndSend(address, { signer: injector.signer }, callback);
 }
-export async function cancelRentContract(api: { tx: { smartContractModule: { cancelContract: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, address: string, contractId: any, callback: any) {
+export async function cancelRentContract(api: { tx: { smartContractModule: { cancelContract: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, address: string, contractId: string, callback: any) {
   const injector = await web3FromAddress(address);
   return api.tx.smartContractModule
     .cancelContract(contractId)
     .signAndSend(address, { signer: injector.signer }, callback);
 }
-export async function getRentContractID(api: { query: { smartContractModule: { activeRentContractForNode: (arg0: any) => any; }; }; }, nodeID: any) {
+export async function getRentContractID(api: { query: { smartContractModule: { activeRentContractForNode: (arg0: any) => any; }; }; }, nodeID: string) {
   const rentContractID =
     await api.query.smartContractModule.activeRentContractForNode(nodeID);
   return rentContractID.toJSON().contract_id;
 }
-export async function getActiveContracts(api: { query: { smartContractModule: { activeNodeContracts: (arg0: any) => any; }; }; }, nodeID: any) {
+export async function getActiveContracts(api: { query: { smartContractModule: { activeNodeContracts: (arg0: any) => any; }; }; }, nodeID: string) {
   return await api.query.smartContractModule.activeNodeContracts(nodeID);
 }
 export async function getRentStatus(api: { query: { smartContractModule: { activeRentContractForNode: (arg0: string) => any; }; }; }, nodeID: string, currentTwinID: string) {
@@ -44,7 +44,7 @@ export async function getRentStatus(api: { query: { smartContractModule: { activ
   }
 }
 
-export async function getNodeUsedResources(nodeId: any) {
+export async function getNodeUsedResources(nodeId: string) {
     const res = await axios.get(`${config.gridproxyUrl}nodes/${nodeId}`, {
       timeout: 1000,
     });
@@ -58,7 +58,7 @@ export async function getNodeUsedResources(nodeId: any) {
     }
   }
   ////
-  export async function getIpsForFarm(farmID: any) {
+  export async function getIpsForFarm(farmID: string) {
     const res = await axios.post(
       config.graphqlUrl,
       {
@@ -115,7 +115,7 @@ export async function getDedicatedFarms() {
     },
     { timeout: 1000 }
   );
-  return res.data.data.farms.map((farm: { farmID: any; }) => farm.farmID);
+  return res.data.data.farms.map((farm: { farmID: string; }) => farm.farmID);
 }
 
   export function countPrice(prices: { cu: { value: number; }; su: { value: number; }; }, node: { resourcesTotal: { sru: number; hru: number; mru: number; cru: any; }; }) {
@@ -136,7 +136,7 @@ export async function getDedicatedFarms() {
   
     return usdPrice.toFixed(2);
   }
-  export async function calDiscount(api: any, address: string, pricing: { discount_for_dedicated_nodes: any; }, price: any) {
+  export async function calDiscount(api: { query: { system: { account: (arg0: string) => { data: any; }; }; }; }, address: string, pricing: { discount_for_dedicated_nodes: any; }, price: any) {
     // discount for Dedicated Nodes
     const discount = pricing.discount_for_dedicated_nodes;
   
@@ -181,7 +181,7 @@ export async function getDedicatedFarms() {
   
     return [totalPrice.toFixed(2), discountPackages[selectedPackage].discount];
   }
-  export async function getDedicatedNodes(farmID: any) {
+  export async function getDedicatedNodes(farmID: string) {
     const res = await axios.post(
       config.graphqlUrl,
       {
@@ -220,7 +220,7 @@ export async function getDedicatedFarms() {
     }
   
     const pricing = await getPrices(api);
-    const dNodes: { nodeId: any; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; }[] = [];
+    const dNodes: { nodeId: string; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; }[] = [];
     nodes.forEach(async (node) => {
       const price = countPrice(pricing, node);
       const [discount, discountLevel] = await calDiscount(api, address, pricing, price);

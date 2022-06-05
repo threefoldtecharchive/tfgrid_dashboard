@@ -249,12 +249,15 @@ export default class Dashboard extends Vue {
   accounts: accountInterface[] = [];
   searchTerm = "";
   loadingAddTFT = false;
-  @Watch("address") async onPropertyChanged(value: string, oldValue: string) {
+  @Watch("address") async onAddressChanged(value: string, oldValue: string) {
     if (oldValue.length) {
       console.log(`removing account ${oldValue}, putting in account ${value}`);
     } else {
       console.log(`putting in account ${value}`);
     }
+  }
+  @Watch("balance") async onBalanceUpdate(value: number, oldValue: number) {
+    console.log(`balance went from ${oldValue}, to ${value}`);
   }
   async created() {
     if (this.$route.path === "/" && !this.$api) {
@@ -305,7 +308,10 @@ export default class Dashboard extends Vue {
       getMoreFunds(
         this.address,
         this.$api,
-        (res: { events?: never[] | undefined; status: any }) => {
+        (res: {
+          events?: never[] | undefined;
+          status: { type: string; asFinalized: string; isFinalized: string };
+        }) => {
           console.log(res);
           if (res instanceof Error) {
             console.log(res);
@@ -341,7 +347,7 @@ export default class Dashboard extends Vue {
             });
           }
         }
-      ).catch((err: { message: any }) => {
+      ).catch((err: { message: string }) => {
         console.log(err.message);
       });
     }
@@ -417,8 +423,12 @@ export default class Dashboard extends Vue {
               icon: "account-supervisor-outline",
             },
             {
-              label: "account-transfer",
+              label: "account-swap",
               icon: "swap-horizontal",
+            },
+            {
+              label: "account-transfer",
+              icon: "account-arrow-right-outline",
             },
             { label: "account-farms", icon: "silo" },
             {

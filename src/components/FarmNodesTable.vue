@@ -468,7 +468,10 @@ export default class FarmNodesTable extends Vue {
       this.nodeToEdit.farmId,
       this.nodeToEdit.nodeId,
       config,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -504,7 +507,7 @@ export default class FarmNodesTable extends Vue {
           });
         }
       }
-    ).catch((err: { message: any }) => {
+    ).catch((err: { message: string }) => {
       console.log(err.message);
       this.loadingPublicConfig = false;
     });
@@ -620,7 +623,10 @@ export default class FarmNodesTable extends Vue {
       this.$route.params.accountID,
       this.$api,
       this.nodeToDelete.nodeID,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -654,7 +660,7 @@ export default class FarmNodesTable extends Vue {
           });
         }
       }
-    ).catch((err: { message: any }) => {
+    ).catch((err: { message: string }) => {
       console.log(err.message);
       this.loadingDelete = false;
     });

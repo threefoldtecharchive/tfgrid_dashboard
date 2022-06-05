@@ -152,6 +152,10 @@ export default class TwinView extends Vue {
   loadingEditTwin = false;
   links = [
     {
+      label: "swap tft",
+      path: "account-swap",
+    },
+    {
       label: "transfer tft",
       path: "account-transfer",
     },
@@ -175,13 +179,20 @@ export default class TwinView extends Vue {
     }
   }
   mounted() {
-    this.address = this.$route.params.accountID;
-    if (this.$route.query.twinIP && this.$route.query.twinID) {
-      this.ip = this.$route.query.twinIP;
-      this.id = this.$route.query.twinID;
-      this.accountName = this.$route.query.accountName;
+    if (this.$api) {
+      this.address = this.$route.params.accountID;
+      if (this.$route.query.twinIP && this.$route.query.twinID) {
+        this.ip = this.$route.query.twinIP;
+        this.id = this.$route.query.twinID;
+        this.accountName = this.$route.query.accountName;
+      }
+      this.balance = this.$route.query.balance;
+    } else {
+      this.$router.push({
+        name: "accounts",
+        path: "/",
+      });
     }
-    this.balance = this.$route.query.balance;
   }
   unmounted() {
     this.balance = 0;
@@ -232,7 +243,10 @@ export default class TwinView extends Vue {
       this.$route.params.accountID,
       this.$api,
       this.ip,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         if (res instanceof Error) {
           console.log(res);
           return;
@@ -274,7 +288,7 @@ export default class TwinView extends Vue {
           );
         }
       }
-    ).catch((err: { message: any }) => {
+    ).catch((err: { message: string }) => {
       this.$toasted.show(err.message);
       this.loadingEditTwin = false;
     });
@@ -289,7 +303,10 @@ export default class TwinView extends Vue {
       this.address,
       this.$api,
       this.id,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -328,7 +345,7 @@ export default class TwinView extends Vue {
           });
         }
       }
-    ).catch((err: { message: any }) => {
+    ).catch((err: { message: string }) => {
       this.$toasted.show(err.message);
       this.loadingDeleteTwin = false;
     });
