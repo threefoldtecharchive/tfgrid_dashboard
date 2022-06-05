@@ -179,13 +179,20 @@ export default class TwinView extends Vue {
     }
   }
   mounted() {
-    this.address = this.$route.params.accountID;
-    if (this.$route.query.twinIP && this.$route.query.twinID) {
-      this.ip = this.$route.query.twinIP;
-      this.id = this.$route.query.twinID;
-      this.accountName = this.$route.query.accountName;
+    if (this.$api) {
+      this.address = this.$route.params.accountID;
+      if (this.$route.query.twinIP && this.$route.query.twinID) {
+        this.ip = this.$route.query.twinIP;
+        this.id = this.$route.query.twinID;
+        this.accountName = this.$route.query.accountName;
+      }
+      this.balance = this.$route.query.balance;
+    } else {
+      this.$router.push({
+        name: "accounts",
+        path: "/",
+      });
     }
-    this.balance = this.$route.query.balance;
   }
   unmounted() {
     this.balance = 0;

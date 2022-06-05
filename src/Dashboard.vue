@@ -249,7 +249,7 @@ export default class Dashboard extends Vue {
   accounts: accountInterface[] = [];
   searchTerm = "";
   loadingAddTFT = false;
-  @Watch("address") async onPropertyChanged(value: string, oldValue: string) {
+  @Watch("address") async onAddressChanged(value: string, oldValue: string) {
     if (oldValue.length) {
       console.log(`removing account ${oldValue}, putting in account ${value}`);
     } else {
@@ -258,17 +258,6 @@ export default class Dashboard extends Vue {
   }
   @Watch("balance") async onBalanceUpdate(value: number, oldValue: number) {
     console.log(`balance went from ${oldValue}, to ${value}`);
-    this.$router.push({
-      name: `${this.$route.name}`,
-      path: `${this.$route.path}`,
-      params: { accountID: `${this.$route.params.accountID}` },
-      query: {
-        accountName: `${this.$route.query.accountName}`,
-        twinID: `${this.$route.query.twinID}`,
-        twinIP: `${this.$route.query.twinIP}`,
-        balance: `${value}`,
-      },
-    });
   }
   async created() {
     if (this.$route.path === "/" && !this.$api) {

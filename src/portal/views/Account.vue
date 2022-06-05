@@ -148,45 +148,58 @@ export default class AccountView extends Vue {
   loadingTwinCreate = false;
   ipErrorMessage = "";
   async updated() {
-    this.address = this.$route.params.accountID;
-    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
-    this.twinID = await getTwinID(this.$api, this.address);
-    if (this.twinID) {
-      this.twinCreated = true;
-      this.twin = await getTwin(this.$api, this.twinID);
+    if (this.$api) {
+      this.address = this.$route.params.accountID;
+      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+      this.twinID = await getTwinID(this.$api, this.address);
+      if (this.twinID) {
+        this.twinCreated = true;
+        this.twin = await getTwin(this.$api, this.twinID);
 
-      this.$router.push({
-        name: "account-twin",
-        path: "/:accountID/account-twin",
-        params: { accountID: `${this.$route.params.accountID}` },
-        query: {
-          accountName: `${this.$route.query.accountName}`,
-          twinID: this.twin.id,
-          twinIP: this.twin.ip,
-          balance: `${this.balance}`,
-        },
-      });
+        this.$router.push({
+          name: "account-twin",
+          path: "/:accountID/account-twin",
+          params: { accountID: `${this.$route.params.accountID}` },
+          query: {
+            accountName: `${this.$route.query.accountName}`,
+            twinID: this.twin.id,
+            twinIP: this.twin.ip,
+            balance: `${this.balance}`,
+          },
+        });
+      }
     }
+
     this.openDialog = !(await userAcceptedTermsAndConditions(
       this.$api,
       this.address
     ));
   }
   async mounted() {
-    this.address = this.$route.params.accountID;
-    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
-    this.twinID = await getTwinID(this.$api, this.address);
+    if (this.$api) {
+      this.address = this.$route.params.accountID;
+      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+      this.twinID = await getTwinID(this.$api, this.address);
 
-    if (this.twinID) {
-      this.twinCreated = true;
+      if (this.twinID) {
+        this.twinCreated = true;
+      }
+      this.openDialog = !(await userAcceptedTermsAndConditions(
+        this.$api,
+        this.address
+      ));
+
+      let document = await axios.get(this.documentLink);
+      this.documentHash = blake.blake2bHex(document.data);
+    } else {
+      this.$toasted.show(
+        `can't connect to Polkadot API right now, please try again later`
+      );
+      this.$router.push({
+        name: "accounts",
+        path: "/",
+      });
     }
-    this.openDialog = !(await userAcceptedTermsAndConditions(
-      this.$api,
-      this.address
-    ));
-
-    let document = await axios.get(this.documentLink);
-    this.documentHash = blake.blake2bHex(document.data);
   }
   unmounted() {
     this.address = "";

@@ -174,19 +174,26 @@ export default class TransferView extends Vue {
   target = "";
 
   mounted() {
-    this.address = this.$route.params.accountID;
-    if (this.$route !== undefined) {
-      this.ip = this.$route.query.twinIP;
-      this.id = this.$route.query.twinID;
-      this.accountName = this.$route.query.accountName;
-    }
-    this.balance = this.$route.query.balance;
-    this.depositWallet = config.bridgeTftAddress;
+    if (this.$api) {
+      this.address = this.$route.params.accountID;
+      if (this.$route !== undefined) {
+        this.ip = this.$route.query.twinIP;
+        this.id = this.$route.query.twinID;
+        this.accountName = this.$route.query.accountName;
+      }
+      this.balance = this.$route.query.balance;
+      this.depositWallet = config.bridgeTftAddress;
 
-    this.qrCodeText = `TFT:${this.depositWallet}?message=twin_${this.id}&sender=me`;
-    this.selectedName = this.items.filter(
-      (item) => item.id === this.selectedItem.item_id
-    )[0].name;
+      this.qrCodeText = `TFT:${this.depositWallet}?message=twin_${this.id}&sender=me`;
+      this.selectedName = this.items.filter(
+        (item) => item.id === this.selectedItem.item_id
+      )[0].name;
+    } else {
+      this.$router.push({
+        name: "accounts",
+        path: "/",
+      });
+    }
   }
   async updated() {
     this.id = this.$route.query.twinID;

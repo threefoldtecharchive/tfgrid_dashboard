@@ -70,17 +70,24 @@ export default class TransferView extends Vue {
   loadingTransfer = false;
 
   mounted() {
-    this.address = this.$route.params.accountID;
-    if (this.$route !== undefined) {
-      this.ip = this.$route.query.twinIP;
-      this.id = this.$route.query.twinID;
-      this.accountName = this.$route.query.accountName;
-    }
-    this.balance = +this.$route.query.balance;
+    if (this.$api) {
+      this.address = this.$route.params.accountID;
+      if (this.$route !== undefined) {
+        this.ip = this.$route.query.twinIP;
+        this.id = this.$route.query.twinID;
+        this.accountName = this.$route.query.accountName;
+      }
+      this.balance = +this.$route.query.balance;
 
-    this.accountsAddresses = this.$store.state.portal.accounts
-      .filter((account: accountInterface) => account.address !== this.address)
-      .map((account: accountInterface) => `${account.address}`);
+      this.accountsAddresses = this.$store.state.portal.accounts
+        .filter((account: accountInterface) => account.address !== this.address)
+        .map((account: accountInterface) => `${account.address}`);
+    } else {
+      this.$router.push({
+        name: "accounts",
+        path: "/",
+      });
+    }
   }
   async updated() {
     this.id = this.$route.query.twinID;
