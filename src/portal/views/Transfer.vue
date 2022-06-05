@@ -1,47 +1,58 @@
 <template>
   <v-container>
 
-    <v-container>
-      <v-card
-        color="#388E3C"
-        class="pa-5 my-5"
-      >
-        <h3 class="text-center">You can also transfer from one account to another on the TFCHAIN:</h3>
+    <v-card
+      color="#388E3C"
+      class="pa-5 my-5"
+    >
+      <h2 class="text-center"> Howdy {{accountName}}, want to transfer TFTs? </h2>
+    </v-card>
 
-      </v-card>
-      <v-card class="pa-5 my-5">
+    <v-card
+      color="#388E3C"
+      class="pa-5 my-5"
+    >
+      <h3 class="text-center">You can also transfer from one account to another on the TFCHAIN:</h3>
 
-        <v-combobox
-          v-model="receipientAddress"
-          :items="accountsAddresses"
-          dense
-          filled
-          label="Receipient:"
-          :error-messages="addressErrorMessages"
-          :rules="[
+    </v-card>
+    <v-card class="pa-5 my-5">
+
+      <v-combobox
+        v-model="receipientAddress"
+        :items="accountsAddresses"
+        dense
+        filled
+        label="Receipient:"
+        :error-messages="addressErrorMessages"
+        :rules="[
             () => !!receipientAddress || 'This field is required',
             addressCheck()
           ]"
-        ></v-combobox>
-        <v-text-field
-          v-model="amount"
-          label="Amount (TFT)"
-          type="number"
-          :rules="[
+      ></v-combobox>
+      <v-text-field
+        v-model="amount"
+        label="Amount (TFT)"
+        type="number"
+        :rules="[
             () => !!amount || 'This field is required',
             () => amount < balance || 'Amount cannot exceed balance',
           ]"
-        >
+      >
 
-        </v-text-field>
+      </v-text-field>
+      <v-card-actions>
+        <v-spacer>
+        </v-spacer>
+        <v-btn @click="clearInput">Clear</v-btn>
         <v-btn
           @click="transferTFT"
           :loading="loadingTransfer"
         >Submit</v-btn>
-      </v-card>
-    </v-container>
+      </v-card-actions>
 
+    </v-card>
   </v-container>
+
 </template>
 
 <script lang="ts">
@@ -57,14 +68,12 @@ import { getBalance } from "../lib/balance";
 export default class TransferView extends Vue {
   receipientAddress = "";
   accountsAddresses: any = [];
-
   addressErrorMessages = "";
-
   balance: any = 0;
   $api: any;
   address = "";
   ip: any = [];
-  accountName: any;
+  accountName: any = "";
   id: any = [];
   amount = 0;
   loadingTransfer = false;
@@ -111,7 +120,10 @@ export default class TransferView extends Vue {
       return false;
     }
   }
-
+  clearInput() {
+    this.receipientAddress = "";
+    this.amount = 0;
+  }
   transferTFT() {
     if (this.amount === 0 || this.receipientAddress === "") {
       this.addressErrorMessages = "No target specified";
