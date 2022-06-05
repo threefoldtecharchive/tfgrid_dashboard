@@ -135,7 +135,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import config from "../config";
-import { getDepositFee, getWithdrawFee, withdraw } from "../lib/transfer";
+import { getDepositFee, getWithdrawFee, withdraw } from "../lib/swap";
 import QrcodeVue from "qrcode.vue";
 import { getBalance } from "../lib/balance";
 
