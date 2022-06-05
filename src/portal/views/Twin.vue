@@ -243,7 +243,10 @@ export default class TwinView extends Vue {
       this.$route.params.accountID,
       this.$api,
       this.ip,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         if (res instanceof Error) {
           console.log(res);
           return;
@@ -285,7 +288,7 @@ export default class TwinView extends Vue {
           );
         }
       }
-    ).catch((err: { message: any }) => {
+    ).catch((err: { message: string }) => {
       this.$toasted.show(err.message);
       this.loadingEditTwin = false;
     });
@@ -300,7 +303,10 @@ export default class TwinView extends Vue {
       this.address,
       this.$api,
       this.id,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -339,7 +345,7 @@ export default class TwinView extends Vue {
           });
         }
       }
-    ).catch((err: { message: any }) => {
+    ).catch((err: { message: string }) => {
       this.$toasted.show(err.message);
       this.loadingDeleteTwin = false;
     });

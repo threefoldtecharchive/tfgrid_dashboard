@@ -308,7 +308,10 @@ export default class Dashboard extends Vue {
       getMoreFunds(
         this.address,
         this.$api,
-        (res: { events?: never[] | undefined; status: any }) => {
+        (res: {
+          events?: never[] | undefined;
+          status: { type: string; asFinalized: string; isFinalized: string };
+        }) => {
           console.log(res);
           if (res instanceof Error) {
             console.log(res);
@@ -344,7 +347,7 @@ export default class Dashboard extends Vue {
             });
           }
         }
-      ).catch((err: { message: any }) => {
+      ).catch((err: { message: string }) => {
         console.log(err.message);
       });
     }

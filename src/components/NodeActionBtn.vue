@@ -68,7 +68,9 @@ export default class NodeActionBtn extends Vue {
       this.$api,
       this.$route.params.accountID,
       nodeId,
-      (res: { status: { type: any } }) => {
+      (res: {
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         switch (res.status.type) {
           case "Ready":
@@ -87,7 +89,7 @@ export default class NodeActionBtn extends Vue {
             break;
         }
       }
-    ).catch((err: { message: any }) => {
+    ).catch((err: { message: string }) => {
       console.log(err.message);
       console.log(`Error:  ${err.message}`, {
         type: "error",
@@ -113,7 +115,9 @@ export default class NodeActionBtn extends Vue {
         this.$api,
         this.$route.params.accountID,
         rentContractID,
-        (res: { status: { type: any } }) => {
+        (res: {
+          status: { type: string; asFinalized: string; isFinalized: string };
+        }) => {
           console.log(res);
           switch (res.status.type) {
             case "Ready":
@@ -132,7 +136,7 @@ export default class NodeActionBtn extends Vue {
               break;
           }
         }
-      ).catch((err: { message: any }) => {
+      ).catch((err: { message: string }) => {
         console.log(err.message);
         this.$toasted.show(`Error:  ${err.message}`, {
           type: "error",

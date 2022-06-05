@@ -232,7 +232,10 @@ export default class AccountView extends Vue {
       this.address,
       this.$api,
       ip,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -265,7 +268,7 @@ export default class AccountView extends Vue {
           });
         }
       }
-    ).catch((err: { message: any }) => {
+    ).catch((err: { message: string }) => {
       this.$toasted.show(err.message);
       this.loadingTwinCreate = false;
     });
@@ -277,7 +280,10 @@ export default class AccountView extends Vue {
       this.address,
       this.documentLink,
       this.documentHash,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -309,7 +315,9 @@ export default class AccountView extends Vue {
           });
         }
       }
-    );
+    ).catch((err: { message: string }) => {
+      this.$toasted.show(err.message);
+    });
   }
 }
 </script>

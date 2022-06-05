@@ -56,11 +56,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { checkAddress, transfer } from "../lib/transfer";
 import QrcodeVue from "qrcode.vue";
 import { accountInterface } from "../store/state";
-import { getBalance } from "../lib/balance";
+
 @Component({
   name: "TransferView",
   components: { QrcodeVue },
@@ -134,7 +134,10 @@ export default class TransferView extends Vue {
       this.$api,
       this.receipientAddress,
       this.amount,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         this.loadingTransfer = true;
         if (res instanceof Error) {
           console.log(res);

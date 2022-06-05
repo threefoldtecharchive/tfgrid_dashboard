@@ -333,7 +333,7 @@ export default class FarmsView extends Vue {
 
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
-      this.nodes = await getNodesByFarmID(this.$api, this.farms);
+      this.nodes = await getNodesByFarmID(this.farms);
     } else {
       this.$router.push({
         name: "accounts",
@@ -350,7 +350,7 @@ export default class FarmsView extends Vue {
     );
 
     this.farms = await getFarm(this.$api, value);
-    this.nodes = await getNodesByFarmID(this.$api, this.farms);
+    this.nodes = await getNodesByFarmID(this.farms);
   }
   @Watch("nodes.length") async onNodeDeleted(value: number, oldValue: number) {
     console.log(`there were ${oldValue} nodes, now there is ${value} nodes`);
@@ -375,7 +375,7 @@ export default class FarmsView extends Vue {
     return this.farms;
   }
   async getNodes() {
-    this.nodes = await getNodesByFarmID(this.$api, this.farms);
+    this.nodes = await getNodesByFarmID(this.farms);
   }
   openDeleteFarm(farm: any) {
     this.farmToDelete = farm;
@@ -388,7 +388,10 @@ export default class FarmsView extends Vue {
       this.address,
       this.$api,
       this.farmToDelete.id,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -422,7 +425,7 @@ export default class FarmsView extends Vue {
           });
         }
       }
-    ).catch((err: { message: any }) => {
+    ).catch((err: { message: string }) => {
       this.$toasted.show(err.message);
       this.loadingDeleteFarm = false;
     });
@@ -435,7 +438,10 @@ export default class FarmsView extends Vue {
       this.$api,
       this.expanded[0].id,
       publicIP,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -483,7 +489,10 @@ export default class FarmsView extends Vue {
       this.expanded[0].id,
       publicIP,
       gateway,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -538,7 +547,10 @@ export default class FarmsView extends Vue {
       this.address,
       this.$api,
       this.farmName,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -586,7 +598,10 @@ export default class FarmsView extends Vue {
       this.$api,
       this.expanded[0].id, //farm ID
       this.v2_address,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
