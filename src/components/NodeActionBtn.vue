@@ -4,7 +4,7 @@
       small
       outlined
       :loading="loading"
-      color="green"
+      color="#064663"
       v-if="status === 'free'"
       @click="reserveNode(nodeId)"
     >

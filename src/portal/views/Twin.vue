@@ -5,7 +5,7 @@
     </v-card>
   </v-container>
 
-  <div style="padding-top: 100ox" v-else>
+  <div style="padding-top: 100px" v-else>
     <v-container v-if="editingTwin">
       <v-dialog
         transition="dialog-bottom-transition"
@@ -62,7 +62,7 @@
         <v-card
           v-for="link in links"
           :key="link.label"
-          class="primary white--text pa-5 mx-3"
+          class="primary white--text pa-2 mx-3"
           @click="redirectToLabelRoute(link.path, address)"
           >{{ link.label.toUpperCase() }}</v-card
         >

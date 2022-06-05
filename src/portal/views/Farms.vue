@@ -34,7 +34,7 @@
       max-width="500"
     >
       <v-card>
-        <v-toolbar color="primary">Create Farm</v-toolbar>
+        <v-toolbar color="primary" class="white--text">Create Farm</v-toolbar>
         <v-card-text>
           <v-text-field
             label="Farm Name"
@@ -48,10 +48,13 @@
           ></v-text-field>
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn @click="openCreateFarmDialog = false">Close</v-btn>
-          <v-btn @click="createFarmFromName" :loading="loadingCreateFarm"
+          <v-btn
+            color="primary"
+            @click="createFarmFromName"
+            :loading="loadingCreateFarm"
             >Submit</v-btn
           >
+          <v-btn @click="openCreateFarmDialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
