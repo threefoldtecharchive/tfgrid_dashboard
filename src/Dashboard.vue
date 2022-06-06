@@ -512,9 +512,6 @@ export default class Dashboard extends Vue {
 .v-navigation-drawer {
   background-color: #333;
 }
-.v-card {
-  cursor: pointer;
-}
 
 .v-list-item__icon .theme--light.fa-chevron-down,
 .v-list-item__icon .theme--light.fa-caret-down,

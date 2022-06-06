@@ -111,12 +111,13 @@
       >
     </v-container>
     <v-container class="d-flex justify-center pa-5 my-3">
-      <v-btn
-        class="primary white--text"
+      <a
+        class="white--text"
         :target="'blank'"
         :href="'https://library.threefold.me/info/manual/#/manual__tfchain_portal_home?id=transfer-tft'"
-        >why do we use bridges?</v-btn
       >
+        Why do we use bridges?
+      </a>
     </v-container>
   </v-container>
 </template>

@@ -1,9 +1,7 @@
 <template>
-
   <v-container>
-    <router-view style="padding: 13.5% 5% 5% 10%" />
+    <router-view style="padding: 6% 5% 5% 10%" />
   </v-container>
-
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
