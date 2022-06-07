@@ -242,3 +242,9 @@ export default class TransferView extends Vue {
   }
 }
 </script>
+
+<style scoped>
+.theme--dark.v-application a {
+  color: white;
+}
+</style>

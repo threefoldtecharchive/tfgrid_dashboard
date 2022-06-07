@@ -519,4 +519,9 @@ export default class Dashboard extends Vue {
 .v-list-item__icon .theme--light.fa-caret-up {
   color: white !important;
 }
+
+.v-list .v-list-item--link:hover,
+.v-list-item--link:before {
+  background-color: #1982b1 !important;
+}
 </style>
