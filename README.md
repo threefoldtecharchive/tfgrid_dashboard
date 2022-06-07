@@ -6,7 +6,8 @@ A unified application where users can do the following and so much more !
 - Connect/Disconnect from polkadot.js
 - View balances on the TF Chain
 - Buy TFT
-- Transfer TFT to and from Cosmos and Stellar
+- Transfer TFT within the TFChain
+- Swap TFT to and from Cosmos and Stellar 
 - Create/delete/edit/view/search twins, farms, farm public IPs, farm nodes and farm nodes public        configuration. 
 - Add Stellar payout to farms
 - Reserve/Unreserve dedicated nodes. 
