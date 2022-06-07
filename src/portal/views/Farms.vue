@@ -614,4 +614,8 @@ export default class FarmsView extends Vue {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.theme--dark.v-btn.v-btn--has-bg {
+  background-color: #064663;
+}
 </style>

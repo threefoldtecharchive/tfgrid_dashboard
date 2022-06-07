@@ -5,6 +5,7 @@
       outlined
       :loading="loading"
       color="#064663"
+      style="background: white"
       v-if="status === 'free'"
       @click="reserveNode(nodeId)"
     >
@@ -14,19 +15,14 @@
       small
       outlined
       color="red"
+      style="background: white"
       :loading="loading"
       v-if="status === 'yours'"
       @click="unReserveNode(nodeId)"
     >
       Unreserve
     </v-btn>
-    <v-btn
-      small
-      outlined
-      disabled
-      color="gray"
-      v-if="status === 'taken'"
-    >
+    <v-btn small outlined disabled color="gray" v-if="status === 'taken'">
       Taken
     </v-btn>
   </div>

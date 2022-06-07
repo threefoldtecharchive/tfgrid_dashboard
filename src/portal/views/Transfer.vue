@@ -112,7 +112,6 @@
     </v-container>
     <v-container class="d-flex justify-center pa-5 my-3">
       <a
-        class="white--text"
         :target="'blank'"
         :href="'https://library.threefold.me/info/manual/#/manual__tfchain_portal_home?id=transfer-tft'"
       >
