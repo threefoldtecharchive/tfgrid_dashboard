@@ -18,20 +18,19 @@
           outlined="false"
           v-if="$store.state.portal.accounts.length === 0"
         >
-          <v-icon color="#F44336" class="fa-solid fa-circle-dot px-2"></v-icon>
           <v-btn icon>
             <v-icon
               class=""
+              color="#F44336"
               @click="$store.dispatch('portal/subscribeAccounts')"
-              >mdi-lan-connect</v-icon
+              >mdi-lan-disconnect</v-icon
             >
           </v-btn>
         </v-card>
         <v-card v-else color="transparent" outlined="false" class="mx-2 px-1">
-          <v-icon color="#4CAF50" class="fa-solid fa-circle-dot px-2"></v-icon>
           <v-btn icon>
-            <v-icon class="" @click="disconnectWallet"
-              >mdi-lan-disconnect</v-icon
+            <v-icon color="#4CAF50" class="" @click="disconnectWallet"
+              >mdi-lan-connect</v-icon
             >
           </v-btn>
         </v-card>
