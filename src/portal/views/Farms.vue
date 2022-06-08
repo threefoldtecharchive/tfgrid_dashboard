@@ -38,7 +38,8 @@
             :error-messages="farmNameErrorMessage"
             :rules="[
                 () => !!farmName || 'This field is required',
-                farmNameCheck
+                farmNameCheck, 
+                () => farmName.length < 20 || 'Name too long, only 20 characters permitted'
               ]"
           ></v-text-field>
 
@@ -75,16 +76,9 @@
         </v-toolbar>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <v-progress-circular
-          v-if="loadingDeleteFarm"
-          indeterminate
-          color="primary"
-        ></v-progress-circular>
+
         <!--delete node-->
-        <v-tooltip
-          bottom
-          v-else
-        >
+        <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-icon
               medium
@@ -268,6 +262,7 @@
           <v-btn
             color="blue darken-1"
             text
+            :loading="loadingDeleteFarm"
             @click="callDeleteFarm()"
           >OK</v-btn>
           <v-spacer></v-spacer>
@@ -359,8 +354,15 @@ export default class FarmsView extends Vue {
   async updated() {
     this.address;
     this.id;
-    this.farms;
-    this.nodes;
+    if (this.$api) {
+      this.farms = await getFarm(this.$api, this.id);
+      this.nodes = await getNodesByFarmID(this.farms);
+    } else {
+      this.$router.push({
+        name: "accounts",
+        path: "/",
+      });
+    }
     this.v2_address;
     this.farmName;
   }
@@ -382,7 +384,6 @@ export default class FarmsView extends Vue {
     this.openDeleteFarmDialog = true;
   }
   callDeleteFarm() {
-    this.openDeleteFarmDialog = false;
     this.loadingDeleteFarm = true;
     deleteFarm(
       this.address,
