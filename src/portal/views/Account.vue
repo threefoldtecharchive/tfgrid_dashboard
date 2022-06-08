@@ -193,7 +193,7 @@ export default class AccountView extends Vue {
       this.documentHash = blake.blake2bHex(document.data);
     } else {
       this.$toasted.show(
-        `can't connect to Polkadot API right now, please try again later`
+        `Can't connect to Polkadot API right now, please refresh the page or try again later`
       );
       this.$router.push({
         name: "accounts",
