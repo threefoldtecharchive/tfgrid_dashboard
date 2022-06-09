@@ -16,13 +16,20 @@ declare global {
     interface IntrinsicElements {
       [elem: string]: any;
     }
-    interface WindowInterface extends Window{
-      [url: URL]
+    interface WindowInterface extends Window {
+      [url: URL];
     }
-   
   }
 
   interface Window {
+    keplr: any;
+    ethereum: any;
+    config: any;
     configs: AppConfigs;
+  }
+
+  declare module "*.json" {
+    let value: any;
+    return value;
   }
 }

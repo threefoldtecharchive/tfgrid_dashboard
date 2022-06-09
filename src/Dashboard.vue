@@ -1,56 +1,36 @@
 <template>
   <v-app>
-
     <div>
-      <v-app-bar
-        color="deep-purple accent-4"
-        dense
-        dark
-        fixed
-        height="65"
-      >
+      <v-app-bar color="deep-purple accent-4" dense dark fixed height="65">
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
-        <v-toolbar-title
-          class="font-weight-bold"
-          @click="redirectToHomePage"
-        >THREEFOLD CHAIN</v-toolbar-title>
+        <v-toolbar-title class="font-weight-bold" @click="redirectToHomePage"
+          >THREEFOLD CHAIN</v-toolbar-title
+        >
 
         <v-spacer></v-spacer>
 
         <v-card
-          class="mx-2 px-1 "
+          class="mx-2 px-1"
           v-if="$store.state.portal.accounts.length === 0"
         >
-          <v-icon
-            color="#F44336"
-            class="fa-solid fa-circle-dot px-2 "
-          ></v-icon>
+          <v-icon color="#F44336" class="fa-solid fa-circle-dot px-2"></v-icon>
           <v-btn icon>
             <v-icon
               class=""
               @click="$store.dispatch('portal/subscribeAccounts')"
-            >mdi-lan-connect</v-icon>
+              >mdi-lan-connect</v-icon
+            >
           </v-btn>
         </v-card>
-        <v-card
-          v-else
-          class="mx-2 px-1 "
-        >
-          <v-icon
-            color="#4CAF50"
-            class="fa-solid fa-circle-dot px-2 "
-          ></v-icon>
+        <v-card v-else class="mx-2 px-1">
+          <v-icon color="#4CAF50" class="fa-solid fa-circle-dot px-2"></v-icon>
           <v-btn icon>
-
-            <v-icon
-              class=""
-              @click="disconnectWallet"
-            >mdi-lan-disconnect</v-icon>
-
+            <v-icon class="" @click="disconnectWallet"
+              >mdi-lan-disconnect</v-icon
+            >
           </v-btn>
         </v-card>
-
       </v-app-bar>
     </div>
 
@@ -67,12 +47,11 @@
             <v-img src="https://i.ibb.co/k39ThGn/3fold-logo.png"></v-img>
           </v-list-item-avatar>
 
-          <v-list-item-title @click="redirectToHomePage">THREEFOLD CHAIN</v-list-item-title>
-
-          <v-btn
-            icon
-            @click.stop="mini = !mini"
+          <v-list-item-title @click="redirectToHomePage"
+            >THREEFOLD CHAIN</v-list-item-title
           >
+
+          <v-btn icon @click.stop="mini = !mini">
             <v-icon>mdi-chevron-left</v-icon>
           </v-btn>
         </v-list-item>
@@ -96,7 +75,10 @@
           </template>
           <div
             class="px-5 d-flex row justify-center"
-            v-if="route.label.toLocaleLowerCase() === 'portal' && $store.state.portal.accounts.length !== 0"
+            v-if="
+              route.label.toLocaleLowerCase() === 'portal' &&
+              $store.state.portal.accounts.length !== 0
+            "
           >
             <v-text-field
               append-icon="mdi-account-search"
@@ -105,10 +87,9 @@
               class="pl-3 pr-2 mr-2"
               label="Account name/address"
             />
-
           </div>
 
-          <div v-if="route.prefix==='/'">
+          <div v-if="route.prefix === '/'">
             <v-list-group
               :value="false"
               no-action
@@ -117,37 +98,34 @@
               :key="account.address"
             >
               <template v-slot:activator>
-
                 <v-list-item-content>
-
                   <v-list-item-title v-text="account.meta.name.toUpperCase()">
                   </v-list-item-title>
-
                 </v-list-item-content>
                 <v-list-item-icon>
                   <v-icon v-text="'mdi-' + route.children[0].icon" />
                 </v-list-item-icon>
-
               </template>
 
               <v-list-item
                 v-for="subchild in route.children[0].children"
                 :key="subchild.label"
-                @click="redirectToSubchild(subchild.label, account.address, account.meta.name)"
+                @click="
+                  redirectToSubchild(
+                    subchild.label,
+                    account.address,
+                    account.meta.name
+                  )
+                "
               >
-
                 <v-list-item-icon>
                   <v-icon v-text="'mdi-' + subchild.icon" />
                 </v-list-item-icon>
                 <v-list-item-content>
-
                   <v-list-item-title v-text="subchild.label.toUpperCase()">
                   </v-list-item-title>
-
                 </v-list-item-content>
-
               </v-list-item>
-
             </v-list-group>
           </div>
           <div v-else>
@@ -161,45 +139,32 @@
                 <v-icon v-text="'mdi-' + child.icon" />
               </v-list-item-icon>
               <v-list-item-content>
-
-                <v-list-item-title v-text="child.label">
-                </v-list-item-title>
-
+                <v-list-item-title v-text="child.label"> </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </div>
-
         </v-list-group>
-
       </v-list>
     </v-navigation-drawer>
 
     <router-view />
-    <v-footer
-      dark
-      padless
-      fixed
-    >
-      <v-card
-        class="flex"
-        flat
-        tile
-      >
-
+    <v-footer dark padless fixed>
+      <v-card class="flex" flat tile>
         <v-card-text class="py-2 white--text text-center">
           {{ new Date().getFullYear() }} — <strong>ThreeFoldTech</strong>
         </v-card-text>
       </v-card>
       <v-card
-        v-if="$route.path !=='/' && !$route.path.includes('explorer') && !$route.path.includes('hub')"
+        v-if="
+          $route.path !== '/' &&
+          !$route.path.includes('explorer') &&
+          !$route.path.includes('hub')
+        "
         color="#0D47A1"
-        class=" funds px-3 d-flex align-baseline font-weight-bold"
-      > {{balance }} TFT
-        <v-btn
-          @click="addTFT"
-          class="ml-3"
-          :loading="loadingAddTFT"
-        >+</v-btn>
+        class="funds px-3 d-flex align-baseline font-weight-bold"
+      >
+        {{ balance }} TFT
+        <v-btn @click="addTFT" class="ml-3" :loading="loadingAddTFT">+</v-btn>
       </v-card>
     </v-footer>
   </v-app>
@@ -470,20 +435,20 @@ export default class Dashboard extends Vue {
       prefix: "/hub/",
       children: [
         {
-          label: "Send To Cosmos",
-          path: "send-to-cosmos",
+          label: "Send to Threefold Hub",
+          path: "/",
           icon: "",
           showBeforeLogIn: true,
         },
         {
           label: "Send To BSC",
-          path: "send-to-bsc",
+          path: "bsc",
           icon: "",
           showBeforeLogIn: true,
         },
         {
           label: "Pending BSC Transactions",
-          path: "pending-bsc-transactions",
+          path: "list-bsc",
           icon: "",
           showBeforeLogIn: true,
         },
@@ -495,7 +460,7 @@ export default class Dashboard extends Vue {
         },
         {
           label: "Proposals",
-          path: "proposals",
+          path: "list-proposals",
           icon: "",
           showBeforeLogIn: true,
         },
