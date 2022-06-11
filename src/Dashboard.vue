@@ -431,6 +431,7 @@ export default class Dashboard extends Vue {
               icon: "account-arrow-right-outline",
             },
             { label: "account-farms", icon: "silo" },
+            { label: "account-dao", icon: "note-check-outline" },
             {
               label: "account-nodes",
               icon: "resistor-nodes",

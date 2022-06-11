@@ -164,6 +164,10 @@ export default class TwinView extends Vue {
       path: "account-farms",
     },
     {
+      label: "vote on proposals",
+      path: "account-dao",
+    },
+    {
       label: "manage nodes",
       path: "account-nodes",
     },
