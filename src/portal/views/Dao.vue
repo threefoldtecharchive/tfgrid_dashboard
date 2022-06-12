@@ -22,24 +22,37 @@
         </span>
       </v-tooltip>
     </v-card>
-    <v-container v-if="proposals.length === 0">
+
+    <v-container v-if="proposals.length > 0">
+      <v-card
+        class="my-3 pa-3"
+        v-for="(proposal,i) in proposals"
+        :key="i"
+      >
+        <v-card-title>
+          {{proposal.action.toUpperCase()}}
+        </v-card-title>
+        <v-card-subtitle>
+          {{proposal.hash}}
+        </v-card-subtitle>
+        <v-card-text>
+          {{proposal.description}}
+        </v-card-text>
+        <v-card-actions>
+          <a
+            v-bind:href="proposal.link"
+            v-bind:target="'blank'"
+          >View</a>
+          <v-btn>Vote</v-btn>
+
+        </v-card-actions>
+      </v-card>
+
+    </v-container>
+    <v-container v-else>
       <v-card class="my-3 pa-3 d-flex justify-center">
         <h3>No Active proposals at this time</h3>
       </v-card>
-    </v-container>
-    <v-container v-else>
-      <v-card
-        v-for="proposal in proposals"
-        :key="proposal.hash"
-      >
-        <v-title>
-          {{proposal.hash}}
-        </v-title>
-        <v-text>
-          {{proposals.description}}
-        </v-text>
-      </v-card>
-
     </v-container>
 
   </v-container>
