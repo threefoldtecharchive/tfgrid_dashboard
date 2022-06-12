@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Actions, Keplr } from "./store";
+import { Actions } from "./store";
 import { checkKeplr } from "./utils/checkKeplr";
 import { ensureChain } from "./utils/keplr";
 
@@ -14,20 +14,20 @@ import { ensureChain } from "./utils/keplr";
   name: "Hub",
 })
 export default class Hub extends Vue {
-  error: string | null = null;
+  // error: string | null = null;
 
-  routes = [
-    { label: "Send to Threefold Hub", path: "/", keplr: false },
-    { label: "Send to BSC", path: "/bsc", keplr: true },
-    { label: "Pending BSC transactions", path: "/list-bsc", keplr: true },
-    { label: "Add proposal", path: "/add-proposal", keplr: true },
-    { label: "Proposals", path: "/list-proposals", keplr: false },
-    { label: "Validators", path: "/validators", keplr: false },
-  ];
+  // routes = [
+  //   { label: "Send to Threefold Hub", path: "/", keplr: false },
+  //   { label: "Send to BSC", path: "/bsc", keplr: true },
+  //   { label: "Pending BSC transactions", path: "/list-bsc", keplr: true },
+  //   { label: "Add proposal", path: "/add-proposal", keplr: true },
+  //   { label: "Proposals", path: "/list-proposals", keplr: false },
+  //   { label: "Validators", path: "/validators", keplr: false },
+  // ];
 
-  get keplr(): Keplr {
-    return this.$store.state.keplr;
-  }
+  // get keplr(): Keplr {
+  //   return this.$store.state.keplr;
+  // }
 
   created() {
     this.$store.dispatch(Actions.CHECK_KEPLR);
@@ -38,9 +38,10 @@ export default class Hub extends Vue {
         this.$store.state.hub.config.tendermint_rpc,
         this.$store.state.hub.config.cosmos_rest
       ).catch((e) => {
-        this.error =
-          "Couldn't check whether keplr installed or not (refresh to try again): " +
-          e.message;
+        console.log(e.message);
+        // this.error =
+        //   "Couldn't check whether keplr installed or not (refresh to try again): " +
+        //   e.message;
       });
     });
   }

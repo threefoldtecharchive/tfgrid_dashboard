@@ -23,7 +23,7 @@ function requireKeplr(_: unknown, __: unknown, next: any) {
 
 export const hubRoutes: Array<RouteConfig> = [
   {
-    path: "/hub/",
+    path: "/hub/threefold-hub",
     name: "Cosmos",
     component: Cosmos,
     beforeEnter: requireKeplr,

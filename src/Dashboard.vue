@@ -108,7 +108,7 @@
               </template>
 
               <v-list-item
-                v-for="subchild in route.children[0].children"
+                v-for="subchild in getRouteSubChildren(route)"
                 :key="subchild.label"
                 @click="
                   redirectToSubchild(
@@ -147,7 +147,9 @@
       </v-list>
     </v-navigation-drawer>
 
-    <router-view />
+    <div :style="{ paddingLeft: (mini ? 0 : 300) + 'px' }">
+      <router-view />
+    </div>
     <v-footer dark padless fixed>
       <v-card class="flex" flat tile>
         <v-card-text class="py-2 white--text text-center">
@@ -436,7 +438,7 @@ export default class Dashboard extends Vue {
       children: [
         {
           label: "Send to Threefold Hub",
-          path: "/",
+          path: "threefold-hub",
           icon: "",
           showBeforeLogIn: true,
         },
@@ -473,5 +475,9 @@ export default class Dashboard extends Vue {
       ],
     },
   ];
+
+  getRouteSubChildren(route: SidenavItem) {
+    return route.children[0].children || [];
+  }
 }
 </script>

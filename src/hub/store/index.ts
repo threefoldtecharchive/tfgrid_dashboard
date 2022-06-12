@@ -21,7 +21,7 @@ interface IState {
 }
 
 export const hubStore = {
-  namespace: true,
+  namespaced: true,
   state: {
     config: loadConfig(),
     keplr: Keplr.LOADING,
