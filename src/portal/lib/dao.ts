@@ -19,19 +19,23 @@ export async function getProposals(api: any) {
         const daoProposal = await getDaoProposal(api, hash)
         const proposal = await getProposal(api, hash)
         const proposalVotes = await getProposalVotes(api, hash)
+        const nowBlock = await api.query.system.number()
+        const timeUntilEnd = (proposalVotes.end - nowBlock.toJSON()) * 6
+
 
         proposals.push({
             threshold: proposalVotes.threshold,
             ayes: proposalVotes.ayes,
             nayes: proposalVotes.nayes,
             vetos: proposalVotes.vetos,
-            end: proposalVotes.end,
+            end: moment().add('second', timeUntilEnd),
             hash: hash,
             action: hex2a(proposal.args._remark),
             description: hex2a(daoProposal.description),
             link: hex2a(daoProposal.link)
         })
     })
+    console.log(proposals)
     return proposals
 }
 

@@ -43,70 +43,32 @@
           >More details</a>
 
         </v-card-text>
-        <v-card-actions class="d-flex justify-end">
-          <v-btn @click="openVoteDialog = true">Vote</v-btn>
 
-        </v-card-actions>
-        <v-dialog
-          v-model="openVoteDialog"
-          transition="dialog-bottom-transition"
-          max-width="600"
-        >
-          <v-card>
-            <v-toolbar
-              color="primary"
-              dark
+        <v-container>
+          <div class="d-flex justify-center py-5 ">
+            <v-btn
+              color="green"
+              class="mx-5 "
+              style="padding:2.5% 5%"
+            >Yes <br>{{ proposal.ayes.length}}</v-btn>
+            <v-btn
+              color="red"
+              class=" mx-5"
+              style="padding:2.5% 5%"
+            >No <br>{{proposal.nayes.length}}</v-btn>
+          </div>
+          <div>
+            <v-progress-linear
+              height="25"
+              v-bind:value="getProgress(proposal.hash)"
             >
-              Vote on {{proposal.action}}
-            </v-toolbar>
-            <v-card-text>
-              <v-container
-                fluid
-                class="mt-5"
-              >
-                <v-row>
-                  ID: {{proposal.hash}}
-                </v-row>
-                <v-row>
-                  Description: {{proposal.description}}
-                </v-row>
-                <v-row>
-                  <a
-                    v-bind:href="proposal.link"
-                    v-bind:target="'blank'"
-                  >More details</a>
-                </v-row>
-              </v-container>
+              <strong>{{ getProgress(proposal.hash)  }}%</strong>
+            </v-progress-linear>
+            <p>You can vote until: {{proposal.end}}</p>
+          </div>
 
-            </v-card-text>
-            <v-container>
-              <div class="d-flex justify-center pa-5">
-                <v-btn
-                  color="green"
-                  class="mx-5"
-                  style="padding:7.5%"
-                >Yes <br>{{ proposal.ayes.length}}</v-btn>
-                <v-btn
-                  color="red"
-                  class=" mx-5"
-                  style="padding:7.5%"
-                >No <br>{{proposal.nayes.length}}</v-btn>
-              </div>
-              <div>
-                <v-progress-linear
-                  height="25"
-                  v-bind:value="getProgress(proposal.hash)"
-                >
-                  <strong>{{ getProgress(proposal.hash)  }}%</strong>
-                </v-progress-linear>
+        </v-container>
 
-              </div>
-
-            </v-container>
-
-          </v-card>
-
-        </v-dialog>
       </v-card>
 
     </v-container>
@@ -130,7 +92,7 @@ export default class DaoView extends Vue {
   openInfoModal = false;
   proposals: any = [];
   $api: any;
-  openVoteDialog = false;
+
   percentageVoted = 0;
   async mounted() {
     if (this.$api) {
