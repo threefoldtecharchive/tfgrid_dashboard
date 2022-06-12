@@ -522,5 +522,6 @@ export default class Dashboard extends Vue {
 .v-list .v-list-item--link:hover,
 .v-list-item--link:before {
   background-color: #1982b1 !important;
+  color: white !important;
 }
 </style>
