@@ -12,7 +12,7 @@
       <template v-slot:[`item.details`]="{ item }">
         <v-btn
           color="primary"
-          @click="$router.push('/delegate/' + item.operatorAddress)"
+          @click="$router.push('/hub/delegate/' + item.operatorAddress)"
         >
           Delegate
         </v-btn>

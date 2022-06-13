@@ -105,7 +105,7 @@
       <template v-slot:[`item.details`]="{ item }">
         <v-btn
           color="primary"
-          @click="$router.push('/proposal/' + item.proposalId)"
+          @click="$router.push('/hub/proposal/' + item.proposalId)"
         >
           View Details
         </v-btn>

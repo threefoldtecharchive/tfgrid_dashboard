@@ -1,18 +1,20 @@
 <template>
   <v-container>
-    <v-row class="mb-5">
+    <v-row class="mb-5 mt-5">
       <v-btn
-        :color="$route.fullPath === '/add-proposal' ? 'primary' : undefined"
+        :color="$route.fullPath === '/hub/add-proposal' ? 'primary' : undefined"
         class="mr-2"
-        @click="$router.push('/add-proposal')"
+        @click="$router.push('/hub/add-proposal')"
       >
         Text
       </v-btn>
       <v-btn
         :color="
-          $route.fullPath === '/add-proposal/software' ? 'primary' : undefined
+          $route.fullPath === '/hub/add-proposal/software'
+            ? 'primary'
+            : undefined
         "
-        @click="$router.push('/add-proposal/software')"
+        @click="$router.push('/hub/add-proposal/software')"
       >
         Software
       </v-btn>
