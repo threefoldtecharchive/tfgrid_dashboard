@@ -182,7 +182,9 @@ export default class TransferView extends Vue {
         this.accountName = this.$route.query.accountName;
       }
       this.balance = this.$route.query.balance;
-      this.depositWallet = config.bridgeTftAddress;
+      if (config.bridgeTftAddress) {
+        this.depositWallet = config.bridgeTftAddress;
+      }
 
       this.qrCodeText = `TFT:${this.depositWallet}?message=twin_${this.id}&sender=me`;
       this.selectedName = this.items.filter(
