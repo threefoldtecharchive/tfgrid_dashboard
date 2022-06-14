@@ -58,8 +58,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { component } from "vue/types/umd";
-import ExplorerView from "@/explorer/Explorer.vue";
+
 interface WelcomeCard {
   text: string;
   button: string;

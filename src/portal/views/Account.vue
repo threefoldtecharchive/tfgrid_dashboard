@@ -43,7 +43,13 @@
         <v-col>
           <v-card class="pa-5 text-center" height="175">
             <h3>Planetary using Yggdrasil IPV6</h3>
-            <v-text-field label="Twin IP ::1" v-model="ip"> </v-text-field>
+            <v-text-field
+              label="Twin IP ::1"
+              v-model="ip"
+              :error-messages="ipErrorMessage"
+              :rules="[() => !!ip || 'This field is required', ipcheck]"
+            >
+            </v-text-field>
             <v-btn
               class="primary"
               :loading="loadingTwinCreate"
@@ -113,50 +119,85 @@ export default class AccountView extends Vue {
   twin: any;
   loadingTC = true;
   loadingTwinCreate = false;
+  ipErrorMessage = "";
   async updated() {
-    this.address = this.$route.params.accountID;
-    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
-    this.twinID = await getTwinID(this.$api, this.address);
-    if (this.twinID) {
-      this.twinCreated = true;
-      this.twin = await getTwin(this.$api, this.twinID);
+    if (this.$api) {
+      this.address = this.$route.params.accountID;
+      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+      this.twinID = await getTwinID(this.$api, this.address);
+      if (this.twinID) {
+        this.twinCreated = true;
+        this.twin = await getTwin(this.$api, this.twinID);
 
-      this.$router.push({
-        name: "account-twin",
-        path: "/:accountID/account-twin",
-        params: { accountID: `${this.$route.params.accountID}` },
-        query: {
-          accountName: `${this.$route.query.accountName}`,
-          twinID: this.twin.id,
-          twinIP: this.twin.ip,
-          balance: `${this.balance}`,
-        },
-      });
+        this.$router.push({
+          name: "account-twin",
+          path: "/:accountID/account-twin",
+          params: { accountID: `${this.$route.params.accountID}` },
+          query: {
+            accountName: `${this.$route.query.accountName}`,
+            twinID: this.twin.id,
+            twinIP: this.twin.ip,
+            balance: `${this.balance}`,
+          },
+        });
+      }
     }
+
     this.openDialog = !(await userAcceptedTermsAndConditions(
       this.$api,
       this.address
     ));
   }
   async mounted() {
-    this.address = this.$route.params.accountID;
-    this.balance = (await getBalance(this.$api, this.address)) / 1e7;
-    this.twinID = await getTwinID(this.$api, this.address);
-    if (this.twinID) {
-      this.twinCreated = true;
-    }
-    this.openDialog = !(await userAcceptedTermsAndConditions(
-      this.$api,
-      this.address
-    ));
+    if (this.$api) {
+      this.address = this.$route.params.accountID;
+      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+      this.twinID = await getTwinID(this.$api, this.address);
 
-    let document = await axios.get(this.documentLink);
-    this.documentHash = blake.blake2bHex(document.data);
+      if (this.twinID) {
+        this.twinCreated = true;
+      }
+      this.openDialog = !(await userAcceptedTermsAndConditions(
+        this.$api,
+        this.address
+      ));
+
+      let document = await axios.get(this.documentLink);
+      this.documentHash = blake.blake2bHex(document.data);
+    } else {
+      this.$toasted.show(
+        `Can't connect to Polkadot API right now, please refresh the page or try again later`
+      );
+      this.$router.push({
+        name: "accounts",
+        path: "/",
+      });
+    }
   }
   unmounted() {
     this.address = "";
     this.balance = 0;
     this.twinID = 0;
+  }
+  ipcheck() {
+    if (this.ip === "") return true;
+
+    const ip4Regex = new RegExp(
+      "^([0-9]{1,3}.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))$"
+    );
+    const ip6Regex = new RegExp(
+      "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
+    );
+    if (ip4Regex.test(this.ip)) {
+      this.ipErrorMessage = "";
+      return true;
+    } else if (ip6Regex.test(this.ip)) {
+      this.ipErrorMessage = "";
+      return true;
+    } else {
+      this.ipErrorMessage = "IP address is not formatted correctly";
+      return false;
+    }
   }
   public async createTwinFunc(ip: string) {
     this.loadingTwinCreate = true;
@@ -164,7 +205,10 @@ export default class AccountView extends Vue {
       this.address,
       this.$api,
       ip,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -192,11 +236,15 @@ export default class AccountView extends Vue {
               this.twinCreated = true;
             } else if (section === "system" && method === "ExtrinsicFailed") {
               this.$toasted.show("Twin creation failed!");
+              this.loadingTwinCreate = false;
             }
           });
         }
       }
-    );
+    ).catch((err: { message: string }) => {
+      this.$toasted.show(err.message);
+      this.loadingTwinCreate = false;
+    });
   }
   public acceptTC() {
     activateThroughActivationService(this.address);
@@ -205,7 +253,10 @@ export default class AccountView extends Vue {
       this.address,
       this.documentLink,
       this.documentHash,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -237,7 +288,9 @@ export default class AccountView extends Vue {
           });
         }
       }
-    );
+    ).catch((err: { message: string }) => {
+      this.$toasted.show(err.message);
+    });
   }
 }
 </script>

@@ -344,7 +344,7 @@ export default class FarmNodesTable extends Vue {
   loadingPublicConfig = false;
   $api: any;
   public filteredNodes() {
-    if (this.searchTerm.length !== 0) {
+    if (this.searchTerm.length !== 0 && this.nodes.length !== 0) {
       return this.nodes.filter(
         (node: {
           nodeID: any;
@@ -393,7 +393,10 @@ export default class FarmNodesTable extends Vue {
       this.nodeToEdit.farmId,
       this.nodeToEdit.nodeId,
       config,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -429,7 +432,7 @@ export default class FarmNodesTable extends Vue {
           });
         }
       }
-    ).catch((err: { message: any }) => {
+    ).catch((err: { message: string }) => {
       console.log(err.message);
       this.loadingPublicConfig = false;
     });
@@ -545,7 +548,10 @@ export default class FarmNodesTable extends Vue {
       this.$route.params.accountID,
       this.$api,
       this.nodeToDelete.nodeID,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -579,7 +585,7 @@ export default class FarmNodesTable extends Vue {
           });
         }
       }
-    ).catch((err: { message: any }) => {
+    ).catch((err: { message: string }) => {
       console.log(err.message);
       this.loadingDelete = false;
     });

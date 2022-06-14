@@ -42,9 +42,10 @@
             required
             :error-messages="farmNameErrorMessage"
             :rules="[
-              () => !!farmName || 'This field is required',
-              farmNameCheck,
-            ]"
+                () => !!farmName || 'This field is required',
+                farmNameCheck, 
+                () => farmName.length < 20 || 'Name too long, only 20 characters permitted'
+              ]"
           ></v-text-field>
         </v-card-text>
         <v-card-actions class="justify-end">
@@ -79,13 +80,9 @@
         </v-toolbar>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <v-progress-circular
-          v-if="loadingDeleteFarm"
-          indeterminate
-          color="primary"
-        ></v-progress-circular>
+
         <!--delete node-->
-        <v-tooltip bottom v-else>
+        <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-icon
               medium
@@ -246,11 +243,13 @@
             color="primary darken-1"
             text
             @click="openDeleteFarmDialog = false"
-            >Cancel</v-btn
-          >
-          <v-btn color="primary darken-1" text @click="callDeleteFarm()"
-            >OK</v-btn
-          >
+          >Cancel</v-btn>
+          <v-btn
+            color="primary darken-1"
+            text
+            :loading="loadingDeleteFarm"
+            @click="callDeleteFarm()"
+          >OK</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
@@ -313,8 +312,7 @@ export default class FarmsView extends Vue {
 
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
-      this.nodes = await getNodesByFarmID(this.$api, this.farms);
-      console.log(this.nodes);
+      this.nodes = await getNodesByFarmID(this.farms);
     } else {
       this.$router.push({
         name: "accounts",
@@ -331,7 +329,7 @@ export default class FarmsView extends Vue {
     );
 
     this.farms = await getFarm(this.$api, value);
-    this.nodes = await getNodesByFarmID(this.$api, this.farms);
+    this.nodes = await getNodesByFarmID(this.farms);
   }
   @Watch("nodes.length") async onNodeDeleted(value: number, oldValue: number) {
     console.log(`there were ${oldValue} nodes, now there is ${value} nodes`);
@@ -340,13 +338,20 @@ export default class FarmsView extends Vue {
   async updated() {
     this.address;
     this.id;
-    this.farms;
-    this.nodes;
+    if (this.$api) {
+      this.farms = await getFarm(this.$api, this.id);
+      this.nodes = await getNodesByFarmID(this.farms);
+    } else {
+      this.$router.push({
+        name: "accounts",
+        path: "/",
+      });
+    }
     this.v2_address;
     this.farmName;
   }
   public filteredFarms() {
-    if (this.searchTerm.length !== 0) {
+    if (this.searchTerm.length !== 0 && this.farms.length !== 0) {
       return this.farms.filter(
         (farm: { name: string; id: any }) =>
           farm.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
@@ -356,20 +361,22 @@ export default class FarmsView extends Vue {
     return this.farms;
   }
   async getNodes() {
-    this.nodes = await getNodesByFarmID(this.$api, this.farms);
+    this.nodes = await getNodesByFarmID(this.farms);
   }
   openDeleteFarm(farm: any) {
     this.farmToDelete = farm;
     this.openDeleteFarmDialog = true;
   }
   callDeleteFarm() {
-    this.openDeleteFarmDialog = false;
     this.loadingDeleteFarm = true;
     deleteFarm(
       this.address,
       this.$api,
       this.farmToDelete.id,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -395,6 +402,7 @@ export default class FarmsView extends Vue {
               this.$toasted.show("Farm deleted!");
               this.loadingDeleteFarm = false;
               this.openDeleteFarmDialog = false;
+              this.farms = getFarm(this.$api, this.id);
             } else if (section === "system" && method === "ExtrinsicFailed") {
               this.$toasted.show("Deleting a farm failed");
               this.loadingDeleteFarm = false;
@@ -402,7 +410,7 @@ export default class FarmsView extends Vue {
           });
         }
       }
-    ).catch((err: { message: any }) => {
+    ).catch((err: { message: string }) => {
       this.$toasted.show(err.message);
       this.loadingDeleteFarm = false;
     });
@@ -415,7 +423,10 @@ export default class FarmsView extends Vue {
       this.$api,
       this.expanded[0].id,
       publicIP,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -463,7 +474,10 @@ export default class FarmsView extends Vue {
       this.expanded[0].id,
       publicIP,
       gateway,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -518,7 +532,10 @@ export default class FarmsView extends Vue {
       this.address,
       this.$api,
       this.farmName,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -566,7 +583,10 @@ export default class FarmsView extends Vue {
       this.$api,
       this.expanded[0].id, //farm ID
       this.v2_address,
-      (res: { events?: never[] | undefined; status: any }) => {
+      (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
