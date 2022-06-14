@@ -23,7 +23,6 @@ export async function createClient(address: string) {
     try {
         await client.init()
         console.log('client created')
-        console.log(client)
         return client
     } catch (err) {
         return err

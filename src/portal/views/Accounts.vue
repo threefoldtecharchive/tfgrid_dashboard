@@ -64,6 +64,8 @@ import { createClient } from "../lib/connect";
 export default class AccountsView extends Vue {
   searchTerm = "";
   accounts: accountInterface[] = [];
+  $clients: any;
+  $client: any;
   mounted() {
     this.accounts = this.$store.state.portal.accounts;
   }
@@ -83,7 +85,21 @@ export default class AccountsView extends Vue {
     return this.accounts;
   }
   async addAccountRoute(account: accountInterface) {
-    Vue.prototype.$client = await createClient(account.address);
+    if (
+      this.$clients.filter((c: any) => c.address === account.address).length ===
+      0
+    ) {
+      this.$client = await createClient(account.address);
+      this.$clients.push(this.$client);
+    } else {
+      this.$clients.map((c: any) => {
+        if (c.address === account.address) {
+          Vue.prototype.$client = c;
+        }
+      });
+    }
+    console.log(this.$clients);
+    console.log(this.$client.address);
 
     this.$router.push({
       name: "account",

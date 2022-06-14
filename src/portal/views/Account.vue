@@ -151,7 +151,7 @@ export default class AccountView extends Vue {
   loadingTwinCreate = false;
   ipErrorMessage = "";
   loadingAcceptedTC = false;
-  $client: any;
+
   async updated() {
     if (this.$api) {
       this.address = this.$route.params.accountID;

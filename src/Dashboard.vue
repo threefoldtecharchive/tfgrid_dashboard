@@ -197,6 +197,7 @@
 
 <script lang="ts">
 import { throwServerError } from "apollo-link-http-common";
+import { ClientRequest } from "http";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { getBalance } from "./portal/lib/balance";
 import { connect, createClient } from "./portal/lib/connect";
@@ -236,6 +237,7 @@ export default class Dashboard extends Vue {
   twin: any;
   balance: any = 0;
   $client: any;
+  $clients: any; // a clients dictionary key: account address, value: client of that account address
   accounts: accountInterface[] = [];
   searchTerm = "";
 
@@ -243,6 +245,7 @@ export default class Dashboard extends Vue {
     if (this.$route.path === "/" && !this.$api) {
       Vue.prototype.$api = await connect(); //declare global variable api
       console.log(`connecting to api`);
+      Vue.prototype.$clients = [];
     }
   }
   mounted() {
@@ -292,9 +295,19 @@ export default class Dashboard extends Vue {
     address: string,
     name: string
   ) {
-    if (this.$client.address !== address) {
-      Vue.prototype.$client = await createClient(address);
+    //
+    if (this.$clients.filter((c: any) => c.address === address).length === 0) {
+      this.$client = await createClient(address);
+      this.$clients.push(this.$client);
+    } else {
+      this.$clients.map((c: any) => {
+        if (c.address === address) {
+          this.$client = c;
+        }
+      });
     }
+    console.log(this.$clients);
+    console.log(this.$client.address);
 
     this.twinID = await getTwinID(this.$api, address);
     this.balance = (await getBalance(this.$api, address)) / 1e7;
@@ -318,7 +331,20 @@ export default class Dashboard extends Vue {
       }
     } else {
       if (!this.$route.path.includes(address)) {
-        Vue.prototype.$client = await createClient(address);
+        if (
+          this.$clients.filter((c: any) => c.address === address).length === 0
+        ) {
+          this.$client = await createClient(address);
+          this.$clients.push(this.$client);
+        } else {
+          this.$clients.map((c: any) => {
+            if (c.address === address) {
+              Vue.prototype.$client = c;
+            }
+          });
+        }
+        console.log(this.$clients);
+        console.log(this.$client.address);
 
         this.$router.push({
           name: "account",
