@@ -1,119 +1,124 @@
 <template>
+  <div>
 
-  <v-container
-    fluid
-    v-if="openDialog"
-    height="100%"
-  >
-    <v-dialog
-      v-model="openDialog"
-      persistent
-      fullscreen
-      hide-overlay
-      transition="dialog-bottom-transition"
-      style="background-color: black"
-      :loading="loadingTC"
+    <v-container
+      v-if="openDialog"
+      fluid
+      height="100%"
     >
+      <v-dialog
+        v-model="openDialog"
+        persistent
+        fullscreen
+        hide-overlay
+        transition="dialog-bottom-transition"
+        style="background-color: black"
+        :loading="loadingTC"
+      >
 
-      <iframe
-        :src="documentLink"
-        frameborder="0"
-        style="background-color: white"
-        allow="fullscreen"
-        height="95%"
-        width="100px"
-        sandbox="allow-forms allow-modals allow-scripts allow-popups allow-same-origin "
-      ></iframe>
-      <v-btn @click="acceptTC">
-        accept terms and conditions
-      </v-btn>
+        <iframe
+          :src="documentLink"
+          frameborder="0"
+          style="background-color: white"
+          allow="fullscreen"
+          height="95%"
+          width="100px"
+          sandbox="allow-forms allow-modals allow-scripts allow-popups allow-same-origin "
+        ></iframe>
+        <v-btn
+          @click="acceptTC"
+          :loading="loadingAcceptedTC"
+        >
+          accept terms and conditions
+        </v-btn>
 
-    </v-dialog>
-  </v-container>
+      </v-dialog>
+    </v-container>
+    <v-container v-else-if="$store.state.portal.accounts.length === 0">
+      <v-card>
+        <WelcomeWindow />
+      </v-card>
+    </v-container>
+    <v-container v-else-if="!twinCreated">
+      <v-container>
+        <FundsCard :balance="balance" />
+      </v-container>
+      <v-card
+        color="#388E3C"
+        class="text-center py-5 my-3 "
+      >
+        <h2>
+          Welcome aboard {{$route.query.accountName}}, <br>
+          Let’s get you connected to the TF Grid !
+        </h2>
+      </v-card>
+      <v-card
+        color="#512DA8"
+        class="text-center pa-5"
+      >
+        <h3>Choose your preferred method to create a Twin: </h3>
+      </v-card>
+      <v-container fluid>
 
-  <v-container v-else-if="$store.state.portal.accounts.length === 0">
-    <v-card>
-      <WelcomeWindow />
-    </v-card>
-  </v-container>
+        <v-row>
 
-  <v-container v-else-if="!twinCreated">
-
-    <v-card
-      color="#388E3C"
-      class="text-center py-5 my-3 "
-    >
-      <h2>
-        Welcome aboard {{$route.query.accountName}}, <br>
-        Let’s get you connected to the TF Grid !
-      </h2>
-    </v-card>
-    <v-card
-      color="#512DA8"
-      class="text-center pa-5"
-    >
-      <h3>Choose your preferred method to create a Twin: </h3>
-    </v-card>
-    <v-container fluid>
-      <v-row>
-
-        <v-col>
-          <v-card
-            class="pa-5 text-center"
-            height="175"
-          >
-            <h3>
-              Planetary
-              using Yggdrasil IPV6
-            </h3>
-            <v-text-field
-              label="Twin IP ::1"
-              v-model="ip"
-              :error-messages="ipErrorMessage"
-              :rules="[
+          <v-col>
+            <v-card
+              class="pa-5 text-center"
+              height="175"
+            >
+              <h3>
+                Planetary
+                using Yggdrasil IPV6
+              </h3>
+              <v-text-field
+                label="Twin IP ::1"
+                v-model="ip"
+                :error-messages="ipErrorMessage"
+                :rules="[
               () => !!ip || 'This field is required',
               ipcheck
             ]"
+              >
+
+              </v-text-field>
+              <v-btn
+                :loading="loadingTwinCreate"
+                @click="createTwinFunc(ip)"
+              >create</v-btn>
+            </v-card>
+          </v-col>
+          <v-col>
+            <v-card
+              class="pa-5 text-center d-flex align-center justify-center"
+              height="175"
             >
+              <v-btn
+                :loading="loadingTwinCreate"
+                @click="createTwinFunc('::1')"
+              >automatically</v-btn>
 
-            </v-text-field>
-            <v-btn
-              :loading="loadingTwinCreate"
-              @click="createTwinFunc(ip)"
-            >create</v-btn>
-          </v-card>
-        </v-col>
-        <v-col>
-          <v-card
-            class="pa-5 text-center d-flex align-center justify-center"
-            height="175"
-          >
-            <v-btn
-              :loading="loadingTwinCreate"
-              @click="createTwinFunc('::1')"
-            >automatically</v-btn>
+            </v-card>
+          </v-col>
 
-          </v-card>
-        </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-card class="pa-5 text-center d-flex align-center justify-center">
+              <v-btn
+                :target="'blank'"
+                :href="'https://library.threefold.me/info/manual/#/manual__yggdrasil_client'"
+              >why do i even need a twin?</v-btn>
+            </v-card>
+          </v-col>
 
-      </v-row>
-      <v-row>
-        <v-col>
-          <v-card class="pa-5 text-center d-flex align-center justify-center">
-            <v-btn
-              :target="'blank'"
-              :href="'https://library.threefold.me/info/manual/#/manual__yggdrasil_client'"
-            >why do i even need a twin?</v-btn>
-          </v-card>
-        </v-col>
+        </v-row>
 
-      </v-row>
+      </v-container>
 
     </v-container>
-    <FundsCard :balance="balance" />
 
-  </v-container>
-
+  </div>
 </template>
 
 <script lang="ts">
@@ -148,27 +153,13 @@ export default class AccountView extends Vue {
   loadingTC = true;
   loadingTwinCreate = false;
   ipErrorMessage = "";
+  loadingAcceptedTC = false;
+
   async updated() {
     if (this.$api) {
       this.address = this.$route.params.accountID;
       this.balance = (await getBalance(this.$api, this.address)) / 1e7;
       this.twinID = await getTwinID(this.$api, this.address);
-      if (this.twinID) {
-        this.twinCreated = true;
-        this.twin = await getTwin(this.$api, this.twinID);
-
-        this.$router.push({
-          name: "account-twin",
-          path: "/:accountID/account-twin",
-          params: { accountID: `${this.$route.params.accountID}` },
-          query: {
-            accountName: `${this.$route.query.accountName}`,
-            twinID: this.twin.id,
-            twinIP: this.twin.ip,
-            balance: `${this.balance}`,
-          },
-        });
-      }
     }
 
     this.openDialog = !(await userAcceptedTermsAndConditions(
@@ -192,6 +183,22 @@ export default class AccountView extends Vue {
 
       let document = await axios.get(this.documentLink);
       this.documentHash = blake.blake2bHex(document.data);
+      if (this.twinID) {
+        this.twinCreated = true;
+        this.twin = await getTwin(this.$api, this.twinID);
+
+        this.$router.push({
+          name: "account-twin",
+          path: "/:accountID/account-twin",
+          params: { accountID: `${this.$route.params.accountID}` },
+          query: {
+            accountName: `${this.$route.query.accountName}`,
+            twinID: this.twin.id,
+            twinIP: this.twin.ip,
+            balance: `${this.balance}`,
+          },
+        });
+      }
     } else {
       this.$toasted.show(
         `Can't connect to Polkadot API right now, please refresh the page or try again later`
@@ -275,6 +282,7 @@ export default class AccountView extends Vue {
     });
   }
   public acceptTC() {
+    this.loadingAcceptedTC = true;
     activateThroughActivationService(this.address);
     acceptTermsAndCondition(
       this.$api,
@@ -308,16 +316,17 @@ export default class AccountView extends Vue {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
             if (section === "system" && method === "ExtrinsicSuccess") {
               this.$toasted.show("Accepted!");
-
-              this.loadingTC = false;
+              this.loadingAcceptedTC = false;
             } else if (section === "system" && method === "ExtrinsicFailed") {
               this.$toasted.show("rejected");
+              this.loadingAcceptedTC = false;
             }
           });
         }
       }
     ).catch((err: { message: string }) => {
       this.$toasted.show(err.message);
+      this.loadingAcceptedTC = false;
     });
   }
 }

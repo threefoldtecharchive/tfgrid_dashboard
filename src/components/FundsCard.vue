@@ -1,8 +1,7 @@
 <template>
   <v-card
     color="#0D47A1"
-    style="display:block"
-    class=" funds px-3 d-flex align-baseline font-weight-bold"
+    class="fund px-3 d-flex align-baseline font-weight-bold"
   > {{balance }} TFT
     <v-btn
       @click="addTFT"
@@ -91,3 +90,10 @@ export default class FundsCard extends Vue {
   }
 }
 </script>
+<style scoped>
+.fund {
+  position: fixed;
+  top: 14%;
+  right: 0;
+}
+</style>
