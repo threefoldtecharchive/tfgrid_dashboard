@@ -5,8 +5,13 @@
         <v-card color="transparent">
           <v-row class="fill-height" align="center" justify="center">
             <v-card-text class="text-center" style="font-size: 2rem">
-              <v-img width="450" style="margin: auto" :src="card.img"> </v-img>
-              <v-card-subtitle style="font-size: 1.5rem">
+              <v-img
+                width="450"
+                style="margin: auto; margin-bottom: 20px"
+                :src="card.img"
+              >
+              </v-img>
+              <v-card-subtitle style="font-size: 1.5rem; padding: 5px">
                 {{ card.text }}
               </v-card-subtitle>
               <v-btn
@@ -75,7 +80,7 @@ export default class WelcomeWindow extends Vue {
   cards: WelcomeCard[] = [
     {
       text: "The Decentralized Cloud Awaits!",
-      button: "Sign in to your polkadot{.js} account to access the Portal",
+      button: "Download polkadot{.js} extension to access the Portal",
       link: "https://polkadot.js.org/extension/",
       img: require("../assets/decentralized.png"),
     },

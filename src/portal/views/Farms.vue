@@ -2,22 +2,14 @@
   <v-container fluid>
     <v-card class="white--text my-3 pa-3 text-center" color="primary">
       <h2>
-        Greetings {{ $route.query.accountName }}, you can now manage your farms
-        & their nodes!
+        Greetings {{ $route.query.accountName.toUpperCase() }}, you can now
+        manage your farms & their nodes!
       </h2>
       <small>How cool is that?</small>
     </v-card>
     <v-card
       color="primary"
-      class="
-        white--text
-        my-3
-        pa-3
-        text-center
-        d-flex
-        justify-center
-        align-baseline
-      "
+      class="white--text my-3 pa-3 text-center d-flex justify-center align-baseline"
     >
       <h3>Don't have any farms? Start by creating one:</h3>
 
@@ -42,10 +34,12 @@
             required
             :error-messages="farmNameErrorMessage"
             :rules="[
-                () => !!farmName || 'This field is required',
-                farmNameCheck, 
-                () => farmName.length < 20 || 'Name too long, only 20 characters permitted'
-              ]"
+              () => !!farmName || 'This field is required',
+              farmNameCheck,
+              () =>
+                farmName.length < 20 ||
+                'Name too long, only 20 characters permitted',
+            ]"
           ></v-text-field>
         </v-card-text>
         <v-card-actions class="justify-end">
@@ -80,7 +74,6 @@
         </v-toolbar>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-
         <!--delete node-->
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -243,13 +236,15 @@
             color="primary darken-1"
             text
             @click="openDeleteFarmDialog = false"
-          >Cancel</v-btn>
+            >Cancel</v-btn
+          >
           <v-btn
             color="primary darken-1"
             text
             :loading="loadingDeleteFarm"
             @click="callDeleteFarm()"
-          >OK</v-btn>
+            >OK</v-btn
+          >
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>

@@ -2,7 +2,8 @@
   <v-container>
     <v-card color="primary" class="white--text text-center py-5 my-3">
       <h3>
-        Howdy {{ accountName }}! You can now reserve nodes from other's farms!
+        Howdy {{ accountName.toUpperCase() }}! You can now reserve nodes from
+        other's farms!
       </h3>
     </v-card>
     <v-text-field

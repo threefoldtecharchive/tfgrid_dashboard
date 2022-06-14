@@ -39,7 +39,8 @@
     <v-container>
       <v-card color="primary white--text" class="my-3 pa-3 text-center">
         <h2>
-          Congratulations {{ $route.query.accountName }} on creating a twin!
+          Congratulations {{ $route.query.accountName.toUpperCase() }} on
+          creating a twin!
           <br />
           You can now interact with the TF Grid
         </h2>
@@ -67,13 +68,28 @@
       </v-card>
       <h4 class="text-center my-5 pa-5">What do you wish to do?</h4>
       <div class="d-flex row justify-center align-center">
-        <v-card
+        <!-- <v-card
           v-for="link in links"
           :key="link.label"
           class="primary white--text pa-2 mx-3"
           @click="redirectToLabelRoute(link.path, address)"
-          >{{ link.label.toUpperCase() }}</v-card
+          >{{ link.label.replace(/^\w/, (c) => c.toUpperCase()) }}</v-card
+        > -->
+
+        <!-- <button type="button"
+         class="v-btn v-btn--is-elevated v-btn--has-bg theme--dark v-size--default primary"><span class="v-btn__content">Edit</span></button> -->
+
+        <button
+          type="button"
+          v-for="link in links"
+          :key="link.label"
+          class="v-btn v-btn--is-elevated v-btn--has-bg theme--dark v-size--default primary"
+          @click="redirectToLabelRoute(link.path, address)"
         >
+          <span class="v-btn__content">
+            {{ link.label }}
+          </span>
+        </button>
       </div>
     </v-container>
     <v-dialog max-width="600" v-model="openDeleteTwinDialog">
@@ -127,11 +143,11 @@ export default class TwinView extends Vue {
   loadingEditTwin = false;
   links = [
     {
-      label: "swap tft",
+      label: "swap TFT",
       path: "account-swap",
     },
     {
-      label: "transfer tft",
+      label: "transfer TFT",
       path: "account-transfer",
     },
     {

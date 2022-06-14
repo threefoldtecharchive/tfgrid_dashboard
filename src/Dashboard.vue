@@ -74,7 +74,7 @@
             <v-list-item-content>
               <v-list-item-title class="white--text">
                 <strong>
-                  {{ route.label.toUpperCase() }}
+                  {{ route.label }}
                 </strong>
               </v-list-item-title>
             </v-list-item-content>

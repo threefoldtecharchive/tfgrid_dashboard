@@ -2,7 +2,7 @@
   <v-container>
     <v-card color="primary" class="white--text pa-5 my-5">
       <h2 class="text-center">
-        Howdy {{ accountName }}, want to transfer TFTs?
+        Howdy {{ accountName.toUpperCase() }}, want to transfer TFTs?
       </h2>
     </v-card>
 
