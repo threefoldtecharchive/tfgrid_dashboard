@@ -1,8 +1,5 @@
 <template>
   <v-container fluid>
-    <v-container>
-      <FundsCard :balance="balance" />
-    </v-container>
 
     <v-card
       class="my-3 pa-3 text-center"
@@ -278,7 +275,6 @@
 
 <script lang="ts">
 import FarmNodesTable from "@/components/FarmNodesTable.vue";
-import FundsCard from "@/components/FundsCard.vue";
 import PublicIPTable from "@/components/PublicIPTable.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import {
@@ -293,7 +289,7 @@ import {
 
 @Component({
   name: "FarmsView",
-  components: { PublicIPTable, FarmNodesTable, FundsCard },
+  components: { PublicIPTable, FarmNodesTable },
 })
 export default class FarmsView extends Vue {
   headers = [

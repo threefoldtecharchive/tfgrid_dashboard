@@ -1,8 +1,6 @@
 <template>
   <v-container>
-    <v-container>
-      <FundsCard :balance="balance" />
-    </v-container>
+
     <v-card
       color="#388E3C"
       class="text-center py-5 my-3 "
@@ -84,7 +82,6 @@
 </template>
 
 <script lang="ts">
-import FundsCard from "@/components/FundsCard.vue";
 import NodeActionBtn from "@/components/NodeActionBtn.vue";
 import NodeDetails from "@/components/NodeDetails.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
@@ -92,7 +89,7 @@ import { getDNodes } from "../lib/nodes";
 import { byteToGB } from "../lib/nodes";
 @Component({
   name: "NodesView",
-  components: { NodeActionBtn, NodeDetails, FundsCard },
+  components: { NodeActionBtn, NodeDetails },
 })
 export default class NodesView extends Vue {
   headers = [

@@ -40,9 +40,7 @@
       </v-card>
     </v-container>
     <v-container v-else-if="!twinCreated">
-      <v-container>
-        <FundsCard :balance="balance" />
-      </v-container>
+
       <v-card
         color="#388E3C"
         class="text-center py-5 my-3 "

@@ -11,9 +11,7 @@
       style=""
       v-else
     >
-      <v-container>
-        <FundsCard :balance="balance" />
-      </v-container>
+
       <v-container v-if="editingTwin">
         <v-dialog
           transition="dialog-bottom-transition"
@@ -137,10 +135,10 @@ import { Component, Vue } from "vue-property-decorator";
 import { getBalance } from "../lib/balance";
 import { deleteTwin, getTwin, getTwinID, updateTwinIP } from "../lib/twin";
 import { hex2a } from "@/portal/lib/util";
-import FundsCard from "@/components/FundsCard.vue";
+
 @Component({
   name: "Twin",
-  components: { WelcomeWindow, FundsCard },
+  components: { WelcomeWindow },
 })
 export default class TwinView extends Vue {
   $api: any;

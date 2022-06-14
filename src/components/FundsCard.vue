@@ -21,21 +21,10 @@ import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 })
 export default class FundsCard extends Vue {
   address = "";
-
   loadingAddTFT = false;
   $api: any = [];
-
   @Prop({ required: true }) balance!: number;
-  @Watch("address") async onAddressChanged(value: string, oldValue: string) {
-    if (oldValue.length) {
-      console.log(`removing account ${oldValue}, putting in account ${value}`);
-    } else {
-      console.log(`putting in account ${value}`);
-    }
-  }
-  @Watch("balance") async onBalanceUpdate(value: number, oldValue: number) {
-    console.log(`balance went from ${oldValue}, to ${value}`);
-  }
+
   public async addTFT() {
     if (config.network !== "dev") {
       //redirect to https://gettft.com/auth/login?next_url=/gettft/shop/#/buy

@@ -8,6 +8,7 @@
     v-else
     style=""
   >
+
     <h1 class="text-center">Connected Accounts</h1>
 
     <v-container fluid>
@@ -53,10 +54,11 @@ import { Component, Vue } from "vue-property-decorator";
 import { accountInterface } from "../store/state";
 import WelcomeWindow from "../../components/WelcomeWindow.vue";
 import Account from "./Account.vue";
+import FundsCard from "../../components/FundsCard.vue";
 
 @Component({
   name: "AccountsView",
-  components: { WelcomeWindow, Account },
+  components: { WelcomeWindow, Account, FundsCard },
 })
 export default class AccountsView extends Vue {
   searchTerm = "";

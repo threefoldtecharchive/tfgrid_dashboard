@@ -1,8 +1,5 @@
 <template>
   <v-container>
-    <v-container>
-      <FundsCard :balance="balance" />
-    </v-container>
 
     <v-card
       color="#388E3C"
@@ -67,7 +64,7 @@ import FundsCard from "@/components/FundsCard.vue";
 
 @Component({
   name: "TransferView",
-  components: { QrcodeVue, FundsCard },
+  components: { QrcodeVue },
 })
 export default class TransferView extends Vue {
   receipientAddress = "";

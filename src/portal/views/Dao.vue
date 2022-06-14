@@ -1,8 +1,6 @@
 <template>
   <v-container fluid>
-    <v-container>
-      <FundsCard :balance="balance" />
-    </v-container>
+
     <v-card
       class="my-3 pa-3 d-flex justify-center"
       color="#512DA8"
@@ -85,13 +83,11 @@
   </v-container>
 </template>
 <script lang="ts">
-import FundsCard from "@/components/FundsCard.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { getProposals } from "../lib/dao";
 
 @Component({
   name: "Dao",
-  components: { FundsCard },
 })
 export default class DaoView extends Vue {
   openInfoModal = false;
