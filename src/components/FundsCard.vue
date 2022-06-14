@@ -4,7 +4,7 @@
     class="fund px-3 d-flex align-baseline font-weight-bold"
   > {{balance }} TFT
     <v-btn
-      @click="addTFT"
+      @click="addTFT()"
       class="ml-3"
       :loading="loadingAddTFT"
     >+</v-btn>
@@ -22,16 +22,20 @@ import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 export default class FundsCard extends Vue {
   address = "";
   loadingAddTFT = false;
-  $api: any = [];
+  $api: any;
   @Prop({ required: true }) balance!: number;
 
-  public async addTFT() {
+  async addTFT() {
     if (config.network !== "dev") {
-      //redirect to https://gettft.com/auth/login?next_url=/gettft/shop/#/buy
+      console.log("not on devnet");
+      window.open(
+        "https://gettft.com/auth/login?next_url=/gettft/shop/#/buy",
+        "_blank"
+      );
     } else {
       this.loadingAddTFT = true;
       getMoreFunds(
-        this.address,
+        this.$route.params.accountID,
         this.$api,
         (res: {
           events?: never[] | undefined;
