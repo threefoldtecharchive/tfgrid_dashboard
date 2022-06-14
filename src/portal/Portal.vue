@@ -2,7 +2,7 @@
 
   <v-container>
     <FundsCard
-      v-if="$route.path !='/'"
+      v-if="$route.path !='/' && $route.query.balance"
       :balance='balance'
     />
     <router-view style="padding: 13.5% 5% 5% 10%" />

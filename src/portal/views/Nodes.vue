@@ -129,13 +129,7 @@ export default class NodesView extends Vue {
     this.accountName = this.$route.query.accountName;
     this.balance = this.$route.query.balance;
   }
-  @Watch("$route.params.accountID") async onPropertyChanged(
-    value: string,
-    oldValue: string
-  ) {
-    console.log(`removing nodes of ${oldValue}, putting in nodes of ${value}`);
-    this.nodes = await getDNodes(this.$api, value);
-  }
+
   public filteredNodes() {
     if (this.searchTerm.length !== 0 && this.nodes.length !== 0) {
       return this.nodes.filter(
