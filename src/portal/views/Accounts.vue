@@ -55,6 +55,7 @@ import { accountInterface } from "../store/state";
 import WelcomeWindow from "../../components/WelcomeWindow.vue";
 import Account from "./Account.vue";
 import FundsCard from "../../components/FundsCard.vue";
+import { createClient } from "../lib/connect";
 
 @Component({
   name: "AccountsView",
@@ -81,7 +82,9 @@ export default class AccountsView extends Vue {
     }
     return this.accounts;
   }
-  public addAccountRoute(account: accountInterface) {
+  async addAccountRoute(account: accountInterface) {
+    Vue.prototype.$client = await createClient(account.address);
+
     this.$router.push({
       name: "account",
       path: "account",

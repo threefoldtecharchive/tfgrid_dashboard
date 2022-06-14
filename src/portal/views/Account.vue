@@ -131,6 +131,7 @@ import {
 import WelcomeWindow from "../../components/WelcomeWindow.vue";
 import { activateThroughActivationService } from "../lib/activation";
 import Twin from "./Twin.vue";
+
 @Component({
   name: "AccountView",
   components: { WelcomeWindow, Twin },
@@ -150,6 +151,7 @@ export default class AccountView extends Vue {
   loadingTwinCreate = false;
   ipErrorMessage = "";
   loadingAcceptedTC = false;
+  $client: any;
   async updated() {
     if (this.$api) {
       this.address = this.$route.params.accountID;

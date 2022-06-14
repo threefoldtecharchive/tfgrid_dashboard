@@ -196,10 +196,10 @@
 </template>
 
 <script lang="ts">
-import config from "@/portal/config";
+import { throwServerError } from "apollo-link-http-common";
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { getBalance, getMoreFunds } from "./portal/lib/balance";
-import { connect } from "./portal/lib/connect";
+import { getBalance } from "./portal/lib/balance";
+import { connect, createClient } from "./portal/lib/connect";
 import { getTwin, getTwinID } from "./portal/lib/twin";
 import { accountInterface } from "./portal/store/state";
 
@@ -235,7 +235,7 @@ export default class Dashboard extends Vue {
   $api: any;
   twin: any;
   balance: any = 0;
-
+  $client: any;
   accounts: accountInterface[] = [];
   searchTerm = "";
 
@@ -245,10 +245,11 @@ export default class Dashboard extends Vue {
       console.log(`connecting to api`);
     }
   }
-  async mounted() {
+  mounted() {
     this.accounts = this.$store.state.portal.accounts;
   }
-  async updated() {
+
+  updated() {
     this.accounts = this.$store.state.portal.accounts;
   }
   async unmounted() {
@@ -291,6 +292,10 @@ export default class Dashboard extends Vue {
     address: string,
     name: string
   ) {
+    if (this.$client.address !== address) {
+      Vue.prototype.$client = await createClient(address);
+    }
+
     this.twinID = await getTwinID(this.$api, address);
     this.balance = (await getBalance(this.$api, address)) / 1e7;
     if (this.twinID) {
@@ -313,6 +318,8 @@ export default class Dashboard extends Vue {
       }
     } else {
       if (!this.$route.path.includes(address)) {
+        Vue.prototype.$client = await createClient(address);
+
         this.$router.push({
           name: "account",
           path: "account",

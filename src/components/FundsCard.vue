@@ -14,7 +14,7 @@
 <script lang="ts">
 import config from "@/portal/config";
 import { getBalance, getMoreFunds } from "@/portal/lib/balance";
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component({
   name: "FundsCard",
@@ -27,7 +27,6 @@ export default class FundsCard extends Vue {
 
   async addTFT() {
     if (config.network !== "dev") {
-      console.log("not on devnet");
       window.open(
         "https://gettft.com/auth/login?next_url=/gettft/shop/#/buy",
         "_blank"
