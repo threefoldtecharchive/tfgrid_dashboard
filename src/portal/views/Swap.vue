@@ -1,5 +1,8 @@
 <template>
   <v-container>
+    <v-container>
+      <FundsCard :balance="balance" />
+    </v-container>
     <v-container v-if="openDepositDialog">
       <v-dialog
         transition="dialog-bottom-transition"
@@ -138,10 +141,11 @@ import config from "../config";
 import { getDepositFee, getWithdrawFee, withdraw } from "../lib/swap";
 import QrcodeVue from "qrcode.vue";
 import { getBalance } from "../lib/balance";
+import FundsCard from "@/components/FundsCard.vue";
 
 @Component({
   name: "TransferView",
-  components: { QrcodeVue },
+  components: { QrcodeVue, FundsCard },
 })
 export default class TransferView extends Vue {
   openDepositDialog = false;

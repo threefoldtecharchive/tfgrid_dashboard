@@ -1,5 +1,8 @@
 <template>
   <v-container fluid>
+    <v-container>
+      <FundsCard :balance="balance" />
+    </v-container>
 
     <v-card
       class="my-3 pa-3 text-center"
@@ -275,6 +278,7 @@
 
 <script lang="ts">
 import FarmNodesTable from "@/components/FarmNodesTable.vue";
+import FundsCard from "@/components/FundsCard.vue";
 import PublicIPTable from "@/components/PublicIPTable.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import {
@@ -289,7 +293,7 @@ import {
 
 @Component({
   name: "FarmsView",
-  components: { PublicIPTable, FarmNodesTable },
+  components: { PublicIPTable, FarmNodesTable, FundsCard },
 })
 export default class FarmsView extends Vue {
   headers = [
@@ -305,6 +309,7 @@ export default class FarmsView extends Vue {
   singleExpand = true;
   expanded: any = [];
   $api: any;
+  balance: any = 0;
   openV2AddressDialog = false;
   openCreateFarmDialog = false;
   v2_address = "";
@@ -325,7 +330,7 @@ export default class FarmsView extends Vue {
   async mounted() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
-
+    this.balance = this.$route.query.balance;
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
       this.nodes = await getNodesByFarmID(this.farms);
@@ -365,6 +370,7 @@ export default class FarmsView extends Vue {
     }
     this.v2_address;
     this.farmName;
+    this.balance;
   }
   public filteredFarms() {
     if (this.searchTerm.length !== 0 && this.farms.length !== 0) {
