@@ -110,6 +110,7 @@
       </v-row>
 
     </v-container>
+    <FundsCard :balance="balance" />
 
   </v-container>
 
@@ -127,11 +128,11 @@ import {
 } from "../lib/accepttc";
 import WelcomeWindow from "../../components/WelcomeWindow.vue";
 import { activateThroughActivationService } from "../lib/activation";
+import FundsCard from "@/components/FundsCard.vue";
 
-import Twin from "./Twin.vue";
 @Component({
   name: "AccountView",
-  components: { WelcomeWindow, Twin },
+  components: { WelcomeWindow, FundsCard },
 })
 export default class AccountView extends Vue {
   documentLink = "https://library.threefold.me/info/legal/#/";

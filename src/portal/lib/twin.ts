@@ -1,23 +1,15 @@
-import { Client } from 'tfgrid-api-client';
-import config from '../config'
+
 import { Signer } from '@polkadot/api/types';
 import {
   web3FromAddress,
 } from '@polkadot/extension-dapp';
-export async function createClient(address: string) {
+
+
+export async function createTwin(address: string, api: { tx: { tfgridModule: { createTwin: (arg0: string) => { (): any; new(): any; signAndSend: { (arg0: string, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, ip: string, callback: any) {
   const injector = await web3FromAddress(address)
-  const client = new Client(config.wsUrl, "", "sr25519", { signer: injector.signer, address })
-  try {
-    await client.init()
-  } catch (err) {
-    return err
-  }
-}
-
-export async function createTwin(address: string, client: any, ip: string, callback: any) {
-
-  const block = await client.createTwin(ip, callback)
-  console.log(`Transaction included in block with hash: ${block.toHex()}`)
+  return api.tx.tfgridModule
+    .createTwin(ip)
+    .signAndSend(address, { signer: injector.signer }, callback)
 }
 export async function getTwin(api: { query: { tfgridModule: { twins: (arg0: number) => any; }; }; }, id: number) {
   const twin = await api.query.tfgridModule.twins(id)
