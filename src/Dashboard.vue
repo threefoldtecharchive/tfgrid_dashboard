@@ -137,8 +137,8 @@
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title
-                    class="white--text"
-                    v-text="subchild.label.toUpperCase()"
+                    class="white--text text-capitalize"
+                    v-text="subchild.label"
                   >
                   </v-list-item-title>
                 </v-list-item-content>
