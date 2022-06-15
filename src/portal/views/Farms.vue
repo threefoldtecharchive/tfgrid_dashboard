@@ -235,16 +235,17 @@
               :createIP="createPublicIP"
               :loadingCreate="loadingCreateIP"
             />
+            <FarmNodesTable
+              :nodes="nodes"
+              @on:delete="getNodes()"
+            />
 
           </v-container>
 
         </td>
       </template>
     </v-data-table>
-    <FarmNodesTable
-      :nodes="nodes"
-      @on:delete="getNodes()"
-    />
+
     <v-dialog
       v-model="openDeleteFarmDialog"
       max-width="700px"

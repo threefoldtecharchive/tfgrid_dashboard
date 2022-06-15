@@ -2,7 +2,7 @@ import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios from 'axios';
 import config from '../config';
-import { getNodeUsedResources } from './nodes';
+
 import { hex2a } from './util'
 export async function getFarm(api: { query: any; }, twinID: number) {
   const farms = await api.query.tfgridModule.farms.entries()
@@ -72,10 +72,52 @@ export async function deleteFarm(address: string, api: { tx: { tfgridModule: { d
     .deleteFarm(farmId)
     .signAndSend(address, { signer: injector.signer }, callback)
 }
-export async function getNodesByFarmID(farms: any[]) {
-  const farmIDs = farms.map((farm: { id: any; }) => farm.id);
+export async function getNodeUsedResources(nodeId: string) {
+  const res = await axios.get(`${config.gridproxyUrl}nodes/${nodeId}`, {
+    timeout: 1000,
+  });
 
-  return []
+  if (res.status === 200) {
+    if (res.data == "likely down") {
+      throw Error("likely down");
+    } else {
+      return res.data.capacity.used_resources;
+    }
+  }
+}
+export async function getNodesByFarmID(farms: any[]) {
+  const farmIDs = farms.map((farm) => farm.id);
+
+  const nodes = farmIDs.map((farmID) => {
+    return getNodesByFarm(farmID);
+  });
+  const data = await Promise.all(nodes);
+
+  if (data.length === 0) return [];
+
+  const nodesWithResources = await data[0].map(async (node: { resourcesUsed: { sru: number; hru: number; mru: number; cru: number; }; nodeID: string; resources: { sru: number; hru: number; mru: number; cru: number; }; resourcesTotal: any; }) => {
+    try {
+      node.resourcesUsed = await getNodeUsedResources(node.nodeID);
+      node.resources = node.resourcesTotal;
+    } catch (error) {
+      node.resourcesUsed = {
+        sru: 0,
+        hru: 0,
+        mru: 0,
+        cru: 0,
+      };
+      node.resources = {
+        sru: 0,
+        hru: 0,
+        mru: 0,
+        cru: 0,
+      };
+    }
+
+    return node;
+  });
+
+  return await Promise.all(nodesWithResources);
 }
 export async function getNodesByFarm(farmID: string) {
   if (config.graphqlUrl) {
