@@ -7,14 +7,25 @@ import { hex2a } from './util'
 export async function getFarm(api: { query: any; }, twinID: number) {
   const farms = await api.query.tfgridModule.farms.entries()
 
-  const parsedFarms = farms.map((farm: { toJSON: () => any; }[]) => {
-    const parsedFarm = farm[1].toJSON()
-    parsedFarm.name = hex2a(parsedFarm.name)
-
-    return parsedFarm
+  const twinFarms = farms.filter((farm: { toJSON: () => { (): any; new(): any; twin_id: number } }[]) => {
+    if (farm[1].toJSON().twin_id === twinID) {
+      return farm
+    }
   })
 
-  return parsedFarms
+
+  const parsedFarms = twinFarms.map(async (farm: { toJSON: () => any; }[]) => {
+    const parsedFarm = farm[1].toJSON()
+    const v2address = await getFarmPayoutV2Address(api, parsedFarm.id)
+
+    return {
+      ...parsedFarm,
+      name: hex2a(parsedFarm.name),
+      v2address: hex2a(v2address)
+    }
+  })
+
+  return await Promise.all(parsedFarms)
 }
 export async function getFarmPayoutV2Address(api: { query: { tfgridModule: { farmPayoutV2AddressByFarmID: (arg0: number) => any; }; }; }, id: number) {
   const address = await api.query.tfgridModule.farmPayoutV2AddressByFarmID(id)
@@ -27,11 +38,11 @@ export async function setFarmPayoutV2Address(address: string, api: { tx: { tfgri
     .addStellarPayoutV2address(id, v2address)
     .signAndSend(address, { signer: injector.signer }, callback)
 }
-export async function createFarm(address: string, api: { tx: { tfgridModule: { createFarm: (arg0: string, arg1: never[]) => { (): any; new(): any; signAndSend: { (arg0: string, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, name: string, callback: any) {
+export async function createFarm(address: string, api: { tx: { tfgridModule: { createFarm: (arg0: string, arg1: never[], arg2: never[]) => { (): any; new(): any; signAndSend: { (arg0: string, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, name: string, callback: any) {
   const injector = await web3FromAddress(address)
 
   return api.tx.tfgridModule
-    .createFarm(name, [])
+    .createFarm(name, [], [])
     .signAndSend(address, { signer: injector.signer }, callback)
 }
 export async function createIP(address: string, api: { tx: { tfgridModule: { addFarmIp: (arg0: number, arg1: string, arg2: string) => { (): any; new(): any; signAndSend: { (arg0: string, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, farmID: number, ip: string, gateway: string, callback: any) {
@@ -65,37 +76,7 @@ export async function deleteFarm(address: string, api: { tx: { tfgridModule: { d
 export async function getNodesByFarmID(farms: any[]) {
   const farmIDs = farms.map((farm: { id: any; }) => farm.id);
 
-  const nodes = farmIDs.map((farmID: string) => {
-    return getNodesByFarm(farmID);
-  });
-  const data = await Promise.all(nodes);
-
-  if (data.length === 0) return [];
-  const _nodes = data.flat();
-
-  const nodesWithResources = await _nodes.map(async (node) => {
-    try {
-      node.resourcesUsed = await getNodeUsedResources(node.nodeID);
-      node.resources = node.resourcesTotal;
-    } catch (error) {
-      node.resourcesUsed = {
-        sru: 0,
-        hru: 0,
-        mru: 0,
-        cru: 0,
-      };
-      node.resources = {
-        sru: 0,
-        hru: 0,
-        mru: 0,
-        cru: 0,
-      };
-    }
-
-    return node;
-  });
-
-  return await Promise.all(nodesWithResources);
+  return []
 }
 export async function getNodesByFarm(farmID: string) {
   if (config.graphqlUrl) {

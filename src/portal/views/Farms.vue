@@ -329,7 +329,7 @@ export default class FarmsView extends Vue {
     this.balance = this.$route.query.balance;
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
-      this.nodes = await getNodesByFarmID(this.farms);
+      this.nodes = [];
     } else {
       this.$router.push({
         name: "accounts",
@@ -344,20 +344,18 @@ export default class FarmsView extends Vue {
     console.log(
       `switching from account ${oldValue} farms to account ${value} farms`
     );
-
+    this.id = value;
     this.farms = await getFarm(this.$api, value);
-    this.nodes = await getNodesByFarmID(this.farms);
   }
   @Watch("nodes.length") async onNodeDeleted(value: number, oldValue: number) {
     console.log(`there were ${oldValue} nodes, now there is ${value} nodes`);
-    this.getNodes();
   }
   async updated() {
     this.address;
     this.id;
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
-      this.nodes = await getNodesByFarmID(this.farms);
+      this.nodes = [];
     } else {
       this.$router.push({
         name: "accounts",
