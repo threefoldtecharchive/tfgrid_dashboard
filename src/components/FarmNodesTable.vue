@@ -41,23 +41,7 @@
           color="primary"
         ></v-progress-circular>
         <!--delete node-->
-        <v-tooltip
-          bottom
-          v-else
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon
-              medium
-              @click="openDelete(item)"
-              v-on="on"
-              v-bind="attrs"
-              :loading='loadingDelete'
-            >
-              mdi-delete
-            </v-icon>
-          </template>
-          <span>Delete a node</span>
-        </v-tooltip>
+        <!--removed until fixed -->
         <!--config Ips-->
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -631,7 +615,7 @@ export default class FarmNodesTable extends Vue {
     deleteNode(
       this.$route.params.accountID,
       this.$api,
-      this.nodeToDelete.nodeID,
+      parseInt(this.nodeToDelete.id.split("-")[1]),
       (res: {
         events?: never[] | undefined;
         status: { type: string; asFinalized: string; isFinalized: string };

@@ -57,7 +57,7 @@ export async function deleteIP(address: string, api: { tx: { tfgridModule: { rem
     .removeFarmIp(farmID, ip.ip)
     .signAndSend(address, { signer: injector.signer }, callback)
 }
-export async function deleteNode(address: string, api: { tx: { tfgridModule: { deleteNodeFarm: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: string, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, nodeId: string, callback: any) {
+export async function deleteNode(address: string, api: { tx: { tfgridModule: { deleteNodeFarm: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: string, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, nodeId: number, callback: any) {
   const injector = await web3FromAddress(address)
 
   return api.tx.tfgridModule
