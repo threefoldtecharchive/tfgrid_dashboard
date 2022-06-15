@@ -38,11 +38,11 @@ export async function setFarmPayoutV2Address(address: string, api: { tx: { tfgri
     .addStellarPayoutV2address(id, v2address)
     .signAndSend(address, { signer: injector.signer }, callback)
 }
-export async function createFarm(address: string, api: { tx: { tfgridModule: { createFarm: (arg0: string, arg1: never[], arg2: never[]) => { (): any; new(): any; signAndSend: { (arg0: string, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, name: string, callback: any) {
+export async function createFarm(address: string, api: any, name: string, callback: any) {
   const injector = await web3FromAddress(address)
 
   return api.tx.tfgridModule
-    .createFarm(name, [], [])
+    .createFarm(name, [])
     .signAndSend(address, { signer: injector.signer }, callback)
 }
 export async function createIP(address: string, api: { tx: { tfgridModule: { addFarmIp: (arg0: number, arg1: string, arg2: string) => { (): any; new(): any; signAndSend: { (arg0: string, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, farmID: number, ip: string, gateway: string, callback: any) {
