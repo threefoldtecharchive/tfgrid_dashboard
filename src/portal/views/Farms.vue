@@ -60,7 +60,7 @@
     ></v-text-field>
     <v-data-table
       :headers="headers"
-      :items="filteredFarms()"
+      :items="farms.length? filteredFarms(): []"
       :single-expand="singleExpand"
       :expanded.sync="expanded"
       item-key="name"
@@ -367,7 +367,7 @@ export default class FarmsView extends Vue {
     this.balance;
   }
   public filteredFarms() {
-    if (this.searchTerm.length !== 0 && this.farms.length !== 0) {
+    if (this.searchTerm.length !== 0 && this.farms.length) {
       return this.farms.filter(
         (farm: { name: string; id: any }) =>
           farm.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
