@@ -6,7 +6,7 @@ import { getNodeUsedResources } from './nodes';
 import { hex2a } from './util'
 export async function getFarm(api: { query: any; }, twinID: number) {
   const farms = await api.query.tfgridModule.farms.entries()
-  console.log(farms)
+
   const twinFarms = farms.filter((farm: { toJSON: () => { (): any; new(): any; twin_id: number } }[]) => {
     if (farm[1].toJSON().twin_id === twinID) {
       return farm
