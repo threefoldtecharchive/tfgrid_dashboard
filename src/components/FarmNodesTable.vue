@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container v-if="nodes.length">
     <v-text-field
       v-model="searchTerm"
       color="purple darken-2"
@@ -418,8 +418,8 @@ export default class FarmNodesTable extends Vue {
   domainErrorMessage = "";
   loadingPublicConfig = false;
   $api: any;
-  public filteredNodes() {
-    if (this.searchTerm.length !== 0 && this.nodes.length !== 0) {
+  filteredNodes() {
+    if (this.nodes.length > 0) {
       return this.nodes.filter(
         (node: {
           nodeID: any;
