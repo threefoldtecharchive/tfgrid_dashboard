@@ -55,7 +55,6 @@ import { accountInterface } from "../store/state";
 import WelcomeWindow from "../../components/WelcomeWindow.vue";
 import Account from "./Account.vue";
 import FundsCard from "../../components/FundsCard.vue";
-import { createClient } from "../lib/connect";
 
 @Component({
   name: "AccountsView",
@@ -85,22 +84,6 @@ export default class AccountsView extends Vue {
     return this.accounts;
   }
   async addAccountRoute(account: accountInterface) {
-    if (
-      this.$clients.filter((c: any) => c.address === account.address).length ===
-      0
-    ) {
-      this.$client = await createClient(account.address);
-      this.$clients.push(this.$client);
-    } else {
-      this.$clients.map((c: any) => {
-        if (c.address === account.address) {
-          Vue.prototype.$client = c;
-        }
-      });
-    }
-    console.log(this.$clients);
-    console.log(this.$client.address);
-
     this.$router.push({
       name: "account",
       path: "account",

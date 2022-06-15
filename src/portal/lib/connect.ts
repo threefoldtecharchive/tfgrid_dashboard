@@ -1,8 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { web3FromAddress } from '@polkadot/extension-dapp';
 import config from '../config'
 import types from './types.json'
-import { default as Client } from 'tfgrid-api-client';
+
 
 export async function connect() {
 
@@ -16,15 +15,4 @@ export async function connect() {
     console.log(`You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`)
     return api
 
-}
-export async function createClient(address: string) {
-    const injector = await web3FromAddress(address)
-    const client = new Client(config.wsUrl, "", "sr25519", { signer: injector.signer, address })
-    try {
-        await client.init()
-        console.log('client created')
-        return client
-    } catch (err) {
-        return err
-    }
 }

@@ -196,11 +196,9 @@
 </template>
 
 <script lang="ts">
-import { throwServerError } from "apollo-link-http-common";
-import { ClientRequest } from "http";
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { getBalance } from "./portal/lib/balance";
-import { connect, createClient } from "./portal/lib/connect";
+import { connect } from "./portal/lib/connect";
 import { getTwin, getTwinID } from "./portal/lib/twin";
 import { accountInterface } from "./portal/store/state";
 
@@ -296,18 +294,6 @@ export default class Dashboard extends Vue {
     name: string
   ) {
     //
-    if (this.$clients.filter((c: any) => c.address === address).length === 0) {
-      this.$client = await createClient(address);
-      this.$clients.push(this.$client);
-    } else {
-      this.$clients.map((c: any) => {
-        if (c.address === address) {
-          this.$client = c;
-        }
-      });
-    }
-    console.log(this.$clients);
-    console.log(this.$client.address);
 
     this.twinID = await getTwinID(this.$api, address);
     this.balance = (await getBalance(this.$api, address)) / 1e7;
@@ -331,21 +317,6 @@ export default class Dashboard extends Vue {
       }
     } else {
       if (!this.$route.path.includes(address)) {
-        if (
-          this.$clients.filter((c: any) => c.address === address).length === 0
-        ) {
-          this.$client = await createClient(address);
-          this.$clients.push(this.$client);
-        } else {
-          this.$clients.map((c: any) => {
-            if (c.address === address) {
-              Vue.prototype.$client = c;
-            }
-          });
-        }
-        console.log(this.$clients);
-        console.log(this.$client.address);
-
         this.$router.push({
           name: "account",
           path: "account",
