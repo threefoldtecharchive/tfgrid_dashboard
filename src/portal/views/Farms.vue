@@ -237,7 +237,7 @@
             />
             <FarmNodesTable
               :nodes="nodes"
-              @on:delete="getNodes()"
+              @on:delete="getNodes(item.farmId)"
             />
 
           </v-container>
@@ -284,7 +284,7 @@ import {
   deleteFarm,
   deleteIP,
   getFarm,
-  getNodesByFarmID,
+  getNodesByFarm,
   setFarmPayoutV2Address,
 } from "../lib/farms";
 
@@ -377,8 +377,8 @@ export default class FarmsView extends Vue {
     }
     return this.farms;
   }
-  async getNodes() {
-    this.nodes = await getNodesByFarmID(this.farms);
+  async getNodes(farmID: string) {
+    this.nodes = await getNodesByFarm(farmID);
   }
   openDeleteFarm(farm: any) {
     this.farmToDelete = farm;

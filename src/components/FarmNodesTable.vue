@@ -4,7 +4,7 @@
     :disabled="disabled"
   >
     <v-expansion-panel>
-      <v-expansion-panel-header>Farm Nodes</v-expansion-panel-header>
+      <v-expansion-panel-header>Nodes</v-expansion-panel-header>
       <v-expansion-panel-content>
         <v-container>
           <v-text-field
@@ -23,11 +23,7 @@
             dark
             sort-by="nodeID"
           >
-            <template v-slot:top>
-              <v-toolbar flat>
-                <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
-              </v-toolbar>
-            </template>
+
             <template v-slot:[`item.status`]="{ item }">
               <p class="text-left mt-1 mb-0">
                 <v-chip
@@ -93,15 +89,7 @@
                         <span>{{ item.nodeID }}</span>
                       </v-flex>
                     </v-row>
-                    <v-row>
-                      <v-flex
-                        xs3
-                        class="text-left pr-2"
-                      >Farm ID</v-flex>
-                      <v-flex class="text-truncate font-weight-bold">
-                        <span>{{ item.farmID }}</span>
-                      </v-flex>
-                    </v-row>
+
                     <v-row>
                       <v-flex
                         xs3

@@ -85,40 +85,7 @@ export async function getNodeUsedResources(nodeId: string) {
     }
   }
 }
-export async function getNodesByFarmID(farms: any[]) {
-  const farmIDs = farms.map((farm) => farm.id);
 
-  const nodes = farmIDs.map((farmID) => {
-    return getNodesByFarm(farmID);
-  });
-  const data = await Promise.all(nodes);
-
-  if (data.length === 0) return [];
-
-  const nodesWithResources = await data[0].map(async (node: { resourcesUsed: { sru: number; hru: number; mru: number; cru: number; }; nodeID: string; resources: { sru: number; hru: number; mru: number; cru: number; }; resourcesTotal: any; }) => {
-    try {
-      node.resourcesUsed = await getNodeUsedResources(node.nodeID);
-      node.resources = node.resourcesTotal;
-    } catch (error) {
-      node.resourcesUsed = {
-        sru: 0,
-        hru: 0,
-        mru: 0,
-        cru: 0,
-      };
-      node.resources = {
-        sru: 0,
-        hru: 0,
-        mru: 0,
-        cru: 0,
-      };
-    }
-
-    return node;
-  });
-
-  return await Promise.all(nodesWithResources);
-}
 export async function getNodesByFarm(farmID: string) {
   if (config.graphqlUrl) {
     const res = await axios.post(config.graphqlUrl, {
@@ -126,7 +93,30 @@ export async function getNodesByFarm(farmID: string) {
       operation: "getNodes",
     });
 
-    return res.data.data.nodes;
+    const nodes = res.data.data.nodes;
+    const nodesWithResources = await nodes[0].map(async (node: { resourcesUsed: { sru: number; hru: number; mru: number; cru: number; }; nodeID: string; resources: { sru: number; hru: number; mru: number; cru: number; }; resourcesTotal: any; }) => {
+      try {
+        node.resourcesUsed = await getNodeUsedResources(node.nodeID);
+        node.resources = node.resourcesTotal;
+      } catch (error) {
+        node.resourcesUsed = {
+          sru: 0,
+          hru: 0,
+          mru: 0,
+          cru: 0,
+        };
+        node.resources = {
+          sru: 0,
+          hru: 0,
+          mru: 0,
+          cru: 0,
+        };
+      }
+
+      return node;
+    });
+
+    return await Promise.all(nodesWithResources);
   }
 
 }
