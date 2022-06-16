@@ -60,7 +60,7 @@
     ></v-text-field>
     <v-data-table
       :headers="headers"
-      :items="farms.length? filteredFarms(): []"
+      :items="filteredFarms()"
       :single-expand="singleExpand"
       :expanded.sync="expanded"
       item-key="name"
@@ -246,7 +246,6 @@
       :nodes="nodes"
       @on:delete="getNodes()"
     />
-
     <v-dialog
       v-model="openDeleteFarmDialog"
       max-width="700px"
@@ -288,7 +287,6 @@ import {
   getNodesByFarmID,
   setFarmPayoutV2Address,
 } from "../lib/farms";
-
 @Component({
   name: "FarmsView",
   components: { PublicIPTable, FarmNodesTable },
@@ -307,7 +305,6 @@ export default class FarmsView extends Vue {
   singleExpand = true;
   expanded: any = [];
   $api: any;
-  balance: any = 0;
   openV2AddressDialog = false;
   openCreateFarmDialog = false;
   v2_address = "";
@@ -328,7 +325,6 @@ export default class FarmsView extends Vue {
   async beforeCreate() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
-    this.balance = this.$route.query.balance;
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
       this.nodes = this.getNodes();
@@ -346,7 +342,6 @@ export default class FarmsView extends Vue {
     console.log(
       `switching from account ${oldValue} farms to account ${value} farms`
     );
-    this.id = value;
     this.farms = await getFarm(this.$api, value);
     this.nodes = this.getNodes();
   }
@@ -364,7 +359,6 @@ export default class FarmsView extends Vue {
     }
     this.v2_address;
     this.farmName;
-    this.balance;
   }
   public filteredFarms() {
     if (this.farms.length > 0) {
@@ -398,19 +392,16 @@ export default class FarmsView extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
@@ -431,7 +422,6 @@ export default class FarmsView extends Vue {
       this.loadingDeleteFarm = false;
     });
   }
-
   deletePublicIP(publicIP: any) {
     this.loadingDeleteIP = true;
     deleteIP(
@@ -448,19 +438,16 @@ export default class FarmsView extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
@@ -499,19 +486,16 @@ export default class FarmsView extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
@@ -557,7 +541,6 @@ export default class FarmsView extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
@@ -565,12 +548,10 @@ export default class FarmsView extends Vue {
             this.$toasted.show(`Transaction submitted`);
             this.openCreateFarmDialog = false;
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
@@ -608,19 +589,16 @@ export default class FarmsView extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);

@@ -6,79 +6,77 @@
     >
       <h3>Howdy {{accountName}}! You can now reserve nodes from other's farms!</h3>
     </v-card>
-    <div v-if="nodes.length">
-      <v-text-field
-        v-model="searchTerm"
-        color="purple darken-2"
-        label="Search by node location or ID"
-      ></v-text-field>
-      <v-data-table
-        :headers="headers"
-        :items="filteredDNodes()"
-        :single-expand="singleExpand"
-        :expanded.sync="expanded"
-        item-key="nodeId"
-        show-expand
-        class="elevation-1"
-        dark
-        sort-by="item.nodeId"
-        :loading="loading"
-      >
-        <template v-slot:[`item.resources.mru`]="{ item }">
-          {{ byteToGB(item.resources.mru) }}
-        </template>
-        <template v-slot:[`item.resources.sru`]="{ item }">
-          {{ byteToGB(item.resources.sru) }}
-        </template>
-        <template v-slot:[`item.resources.hru`]="{ item }">
-          {{ byteToGB(item.resources.hru) }}
-        </template>
-        <template v-slot:[`item.actions`]="{ item }">
-          <NodeActionBtn :nodeId="item.nodeId" />
-        </template>
-        <template v-slot:top>
-          <v-toolbar flat>
-            <v-toolbar-title>Your Nodes</v-toolbar-title>
-          </v-toolbar>
-        </template>
-        <template v-slot:[`item.discount`]="{ item }">
-          <v-tooltip
-            bottom
-            color="primary"
-            close-delay="700"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <span
-                v-bind="attrs"
-                v-on="on"
-              >{{ item.discount }} *</span>
-            </template>
-            <span>Discounts: <br />
-              <ul>
-                <li>{{item.applyedDiscount.first}}% for the dedicated node</li>
-                <li>{{item.applyedDiscount.second}}% for the twin balance</li>
-              </ul>
-              See
-              <a
-                target="_blank"
-                href="https://library.threefold.me/info/threefold/#/tfgrid/grid/pricing?id=discount-levels"
-              >
-                <p style="color: blue; display: inline">discount levels</p>
-              </a>
-            </span>
-          </v-tooltip>
-        </template>
-        <template v-slot:expanded-item="{ headers, item }">
-          <td :colspan="headers.length">
-            <NodeDetails
-              :node="item"
-              :byteToGB="byteToGB"
-            />
-          </td>
-        </template>
+    <v-text-field
+      v-model="searchTerm"
+      color="purple darken-2"
+      label="Search by node location or ID"
+    ></v-text-field>
+    <v-data-table
+      :headers="headers"
+      :items="filteredDNodes()"
+      :single-expand="singleExpand"
+      :expanded.sync="expanded"
+      item-key="nodeId"
+      show-expand
+      class="elevation-1"
+      dark
+      sort-by="item.nodeId"
+      :loading="loading"
+    >
+      <template v-slot:[`item.resources.mru`]="{ item }">
+        {{ byteToGB(item.resources.mru) }}
+      </template>
+      <template v-slot:[`item.resources.sru`]="{ item }">
+        {{ byteToGB(item.resources.sru) }}
+      </template>
+      <template v-slot:[`item.resources.hru`]="{ item }">
+        {{ byteToGB(item.resources.hru) }}
+      </template>
+      <template v-slot:[`item.actions`]="{ item }">
+        <NodeActionBtn :nodeId="item.nodeId" />
+      </template>
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-toolbar-title>Your Nodes</v-toolbar-title>
+        </v-toolbar>
+      </template>
+      <template v-slot:[`item.discount`]="{ item }">
+        <v-tooltip
+          bottom
+          color="primary"
+          close-delay="700"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <span
+              v-bind="attrs"
+              v-on="on"
+            >{{ item.discount }} *</span>
+          </template>
+          <span>Discounts: <br />
+            <ul>
+              <li>{{item.applyedDiscount.first}}% for the dedicated node</li>
+              <li>{{item.applyedDiscount.second}}% for the twin balance</li>
+            </ul>
+            See
+            <a
+              target="_blank"
+              href="https://library.threefold.me/info/threefold/#/tfgrid/grid/pricing?id=discount-levels"
+            >
+              <p style="color: blue; display: inline">discount levels</p>
+            </a>
+          </span>
+        </v-tooltip>
+      </template>
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">
+          <NodeDetails
+            :node="item"
+            :byteToGB="byteToGB"
+          />
+        </td>
+      </template>
 
-      </v-data-table>
-    </div>
+    </v-data-table>
   </v-container>
 </template>
 
