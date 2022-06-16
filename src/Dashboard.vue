@@ -234,8 +234,6 @@ export default class Dashboard extends Vue {
   $api: any;
   twin: any;
   balance: any = 0;
-  $client: any;
-  $clients: any; // a clients dictionary key: account address, value: client of that account address
   accounts: accountInterface[] = [];
   searchTerm = "";
 
@@ -243,7 +241,6 @@ export default class Dashboard extends Vue {
     if (this.$route.path === "/" && !this.$api) {
       Vue.prototype.$api = await connect(); //declare global variable api
       console.log(`connecting to api`);
-      Vue.prototype.$clients = [];
     }
   }
   mounted() {

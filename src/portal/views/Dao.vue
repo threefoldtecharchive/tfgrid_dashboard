@@ -24,7 +24,7 @@
       </v-tooltip>
     </v-card>
 
-    <v-container v-if="proposals.length > 0">
+    <v-container v-if="proposals.length">
       <v-card
         class="my-3 pa-3"
         v-for="(proposal,i) in proposals"
