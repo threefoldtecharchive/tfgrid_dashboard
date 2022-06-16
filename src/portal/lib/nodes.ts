@@ -185,7 +185,25 @@ export async function getDedicatedNodes(farmID: string) {
   const res = await axios.post(
     config.graphqlUrl,
     {
-      query: `{ nodes(where: {farmID_eq:${farmID}}) { id, farmID, twinID, resourcesTotal { sru, hru, mru, cru } , location { longitude, latitude }, country, city, publicConfig { ipv4, ipv6, gw4, gw6 }, created, farmingPolicyId, interfaces { name, mac, ips }, certification ,  secure, virtualized, serialNumber, connectionPrice }}`,
+      query: `query MyQuery {
+          nodes(where: {farmID_eq: ${farmID}}) {
+            resourcesTotal {
+              cru
+              hru
+              mru
+              sru
+            }
+            nodeID
+            location {
+              latitude
+              longitude
+            }
+            country
+            city
+            farmID
+          }
+        }      
+        `,
       operation: "getNodes",
     },
     { timeout: 1000 }
