@@ -285,7 +285,6 @@ import {
   deleteFarm,
   deleteIP,
   getFarm,
-  getNodesByFarm,
   getNodesByFarmID,
   setFarmPayoutV2Address,
 } from "../lib/farms";
