@@ -1,0 +1,22 @@
+* {
+    font-family: 'Lato', sans-serif;
+}
+.v-btn__content {
+    text-transform: capitalize;
+    padding: 0px 23px;
+    min-width: 92px;
+}
+
+.v-btn{
+    height: 45px !important;
+    margin-right:10px ;
+    
+}
+
+.v-btn--icon.v-size--default{
+    width: 50px !important;
+}
+h2{
+    font-weight: 400;
+}
+

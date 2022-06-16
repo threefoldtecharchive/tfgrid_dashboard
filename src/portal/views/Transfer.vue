@@ -1,22 +1,17 @@
 <template>
   <v-container>
-
-    <v-card
-      color="#388E3C"
-      class="pa-5 my-5"
-    >
-      <h2 class="text-center"> Howdy {{accountName}}, want to transfer TFTs? </h2>
+    <v-card color="primary" class="white--text pa-5 my-5">
+      <h2 class="text-center">
+        Howdy {{ accountName.toUpperCase() }}, want to transfer TFTs?
+      </h2>
     </v-card>
 
-    <v-card
-      color="#388E3C"
-      class="pa-5 my-5"
-    >
-      <h3 class="text-center">You can also transfer from one account to another on the TFCHAIN:</h3>
-
+    <v-card color="primary" class="white--text pa-5 my-5">
+      <h3 class="text-center">
+        You can also transfer from one account to another on the TFCHAIN:
+      </h3>
     </v-card>
     <v-card class="pa-5 my-5">
-
       <v-combobox
         v-model="receipientAddress"
         :items="accountsAddresses"
@@ -25,34 +20,32 @@
         label="Receipient:"
         :error-messages="addressErrorMessages"
         :rules="[
-            () => !!receipientAddress || 'This field is required',
-            addressCheck()
-          ]"
+          () => !!receipientAddress || 'This field is required',
+          addressCheck(),
+        ]"
       ></v-combobox>
       <v-text-field
         v-model="amount"
         label="Amount (TFT)"
         type="number"
         :rules="[
-            () => !!amount || 'This field is required',
-            () => amount < balance || 'Amount cannot exceed balance',
-          ]"
+          () => !!amount || 'This field is required',
+          () => amount < balance || 'Amount cannot exceed balance',
+        ]"
       >
-
       </v-text-field>
       <v-card-actions>
-        <v-spacer>
-        </v-spacer>
+        <v-spacer> </v-spacer>
         <v-btn @click="clearInput">Clear</v-btn>
         <v-btn
+          class="primary white--text"
           @click="transferTFT"
           :loading="loadingTransfer"
-        >Submit</v-btn>
+          >Submit</v-btn
+        >
       </v-card-actions>
-
     </v-card>
   </v-container>
-
 </template>
 
 <script lang="ts">
@@ -176,3 +169,9 @@ export default class TransferView extends Vue {
   }
 }
 </script>
+
+<style scoped>
+.theme--dark.v-application a {
+  color: white;
+}
+</style>

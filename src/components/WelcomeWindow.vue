@@ -1,98 +1,61 @@
 <template>
-  <v-card
-    color="black"
-    dark
-    flat
-    tile
-  >
+  <v-card color="transparent" flat tile>
     <v-window v-model="onboarding">
-      <v-window-item
-        v-for="(card, index) in cards"
-        :key="`card-${index}`"
-      >
-        <v-card
-          color="transparent"
-          height="825"
-        >
-          <v-row
-            class="fill-height"
-            align="center"
-            justify="center"
-          >
-
-            <v-card-text
-              class="text-center"
-              style="font-size: 2rem"
-            >
+      <v-window-item v-for="(card, index) in cards" :key="`card-${index}`">
+        <v-card color="transparent">
+          <v-row class="fill-height" align="center" justify="center">
+            <v-card-text class="text-center" style="font-size: 2rem">
               <v-img
                 width="450"
-                style="margin:auto"
-                v-bind:src="card.img"
+                style="margin: auto; margin-bottom: 20px"
+                :src="card.img"
               >
-
               </v-img>
-              <v-card-subtitle style="font-size: 1.5rem">
-                {{card.text}}
+              <v-card-subtitle style="font-size: 1.5rem; padding: 5px">
+                {{ card.text }}
               </v-card-subtitle>
               <v-btn
                 v-if="card.button.toLowerCase().includes('capacity')"
                 color="primary"
                 x-large
-                style="margin-top:1.25rem"
+                style="margin-top: 1.25rem"
                 @click="redirectToExplorer()"
                 v-bind:target="blank"
               >
-                {{card.button}}
-
+                {{ card.button }}
               </v-btn>
               <v-btn
                 v-else
                 color="primary"
                 x-large
-                style="margin-top:1.25rem"
+                style="margin-top: 1.25rem"
                 v-bind:href="card.link"
                 v-bind:target="blank"
               >
-                {{card.button}}
+                {{ card.button }}
               </v-btn>
-
             </v-card-text>
           </v-row>
         </v-card>
       </v-window-item>
-
     </v-window>
 
     <v-card-actions class="justify-space-between">
-      <v-btn
-        text
-        @click="prev"
-      >
+      <v-btn text @click="prev">
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
-      <v-item-group
-        v-model="onboarding"
-        class="text-center"
-        mandatory
-      >
+      <v-item-group v-model="onboarding" class="text-center" mandatory>
         <v-item
           v-for="n in cards.length"
           :key="`btn-${n}`"
           v-slot="{ active, toggle }"
         >
-          <v-btn
-            :input-value="active"
-            icon
-            @click="toggle"
-          >
+          <v-btn :input-value="active" icon @click="toggle">
             <v-icon>mdi-record</v-icon>
           </v-btn>
         </v-item>
       </v-item-group>
-      <v-btn
-        text
-        @click="next"
-      >
+      <v-btn text @click="next">
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
     </v-card-actions>
@@ -117,21 +80,21 @@ export default class WelcomeWindow extends Vue {
   cards: WelcomeCard[] = [
     {
       text: "The Decentralized Cloud Awaits!",
-      button: "Sign in to your polkadot{.js} account to access the Portal",
+      button: "Download polkadot{.js} extension to access the Portal",
       link: "https://polkadot.js.org/extension/",
-      img: "https://i.ibb.co/vVL5jwN/threefold-registered.png",
+      img: require("../assets/decentralized.png"),
     },
     {
       text: "Discover the ThreeFold Grid",
       button: "View ThreeFold Capacity ",
       link: "https://explorer.dev.grid.tf/",
-      img: "https://i.ibb.co/fkDqVsh/png-world-map-world-map-png-2638-3455212594.png",
+      img: require("../assets/map.png"),
     },
     {
       text: "Your Guide to The ThreeFold Grid",
       button: "Learn More",
       link: "https://library.threefold.me/info/manual/#/",
-      img: "https://i.ibb.co/1Q8Py99/networking-538-149353815.png",
+      img: require("../assets/guide_to_gride.png"),
     },
   ];
 

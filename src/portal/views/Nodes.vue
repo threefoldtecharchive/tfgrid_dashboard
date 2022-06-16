@@ -1,14 +1,14 @@
 <template>
   <v-container>
-    <v-card
-      color="#388E3C"
-      class="text-center py-5 my-3 "
-    >
-      <h3>Howdy {{accountName}}! You can now reserve nodes from other's farms!</h3>
+    <v-card color="primary" class="white--text text-center py-5 my-3">
+      <h3>
+        Howdy {{ accountName.toUpperCase() }}! You can now reserve nodes from
+        other's farms!
+      </h3>
     </v-card>
     <v-text-field
       v-model="searchTerm"
-      color="purple darken-2"
+      color="primary darken-2"
       label="Search by node location or ID"
     ></v-text-field>
     <v-data-table
@@ -19,7 +19,6 @@
       item-key="nodeId"
       show-expand
       class="elevation-1"
-      dark
       sort-by="item.nodeId"
       :loading="loading"
     >
@@ -41,21 +40,15 @@
         </v-toolbar>
       </template>
       <template v-slot:[`item.discount`]="{ item }">
-        <v-tooltip
-          bottom
-          color="primary"
-          close-delay="700"
-        >
+        <v-tooltip bottom color="primary" close-delay="700">
           <template v-slot:activator="{ on, attrs }">
-            <span
-              v-bind="attrs"
-              v-on="on"
-            >{{ item.discount }} *</span>
+            <span v-bind="attrs" v-on="on">{{ item.discount }} *</span>
           </template>
-          <span>Discounts: <br />
+          <span
+            >Discounts: <br />
             <ul>
-              <li>{{item.applyedDiscount.first}}% for the dedicated node</li>
-              <li>{{item.applyedDiscount.second}}% for the twin balance</li>
+              <li>{{ item.applyedDiscount.first }}% for the dedicated node</li>
+              <li>{{ item.applyedDiscount.second }}% for the twin balance</li>
             </ul>
             See
             <a
@@ -69,13 +62,9 @@
       </template>
       <template v-slot:expanded-item="{ headers, item }">
         <td :colspan="headers.length">
-          <NodeDetails
-            :node="item"
-            :byteToGB="byteToGB"
-          />
+          <NodeDetails :node="item" :byteToGB="byteToGB" />
         </td>
       </template>
-
     </v-data-table>
   </v-container>
 </template>
