@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     <v-card
       color="#388E3C"
       class="text-center py-5 my-3 "
@@ -14,7 +13,7 @@
     ></v-text-field>
     <v-data-table
       :headers="headers"
-      :items="filteredNodes()"
+      :items="filteredDNodes()"
       :single-expand="singleExpand"
       :expanded.sync="expanded"
       item-key="nodeId"
@@ -110,11 +109,9 @@ export default class NodesView extends Vue {
   address = "";
   searchTerm = "";
   accountName: any = "";
-  balance: any = 0;
   async mounted() {
     this.address = this.$route.params.accountID;
     this.accountName = this.$route.query.accountName;
-    this.balance = this.$route.query.balance;
     if (this.$api) {
       this.nodes = await getDNodes(this.$api, this.address);
     } else {
@@ -125,12 +122,16 @@ export default class NodesView extends Vue {
     }
   }
   updated() {
-    this.address = this.$route.params.accountID;
-    this.accountName = this.$route.query.accountName;
-    this.balance = this.$route.query.balance;
+    this.address;
   }
-
-  public filteredNodes() {
+  @Watch("$route.params.accountID") async onPropertyChanged(
+    value: string,
+    oldValue: string
+  ) {
+    console.log(`removing nodes of ${oldValue}, putting in nodes of ${value}`);
+    this.nodes = await getDNodes(this.$api, value);
+  }
+  public filteredDNodes() {
     if (this.searchTerm.length !== 0 && this.nodes.length !== 0) {
       return this.nodes.filter(
         (node: { location: { country: string }; nodeId: any }) =>

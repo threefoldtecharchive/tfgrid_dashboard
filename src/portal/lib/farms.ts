@@ -2,7 +2,7 @@ import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios from 'axios';
 import config from '../config';
-
+import { getNodeUsedResources } from './nodes';
 import { hex2a } from './util'
 export async function getFarm(api: { query: any; }, twinID: number) {
   const farms = await api.query.tfgridModule.farms.entries()
@@ -12,7 +12,6 @@ export async function getFarm(api: { query: any; }, twinID: number) {
       return farm
     }
   })
-
   const parsedFarms = twinFarms.map(async (farm: { toJSON: () => any; }[]) => {
     const parsedFarm = farm[1].toJSON()
     const v2address = await getFarmPayoutV2Address(api, parsedFarm.id)
@@ -37,7 +36,7 @@ export async function setFarmPayoutV2Address(address: string, api: { tx: { tfgri
     .addStellarPayoutV2address(id, v2address)
     .signAndSend(address, { signer: injector.signer }, callback)
 }
-export async function createFarm(address: string, api: any, name: string, callback: any) {
+export async function createFarm(address: string, api: { tx: { tfgridModule: { createFarm: (arg0: string, arg1: never[]) => { (): any; new(): any; signAndSend: { (arg0: string, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, name: string, callback: any) {
   const injector = await web3FromAddress(address)
 
   return api.tx.tfgridModule
@@ -58,7 +57,7 @@ export async function deleteIP(address: string, api: { tx: { tfgridModule: { rem
     .removeFarmIp(farmID, ip.ip)
     .signAndSend(address, { signer: injector.signer }, callback)
 }
-export async function deleteNode(address: string, api: { tx: { tfgridModule: { deleteNodeFarm: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: string, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, nodeId: string, callback: any) {
+export async function deleteNode(address: string, api: { tx: { tfgridModule: { deleteNodeFarm: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: string, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, nodeId: number, callback: any) {
   const injector = await web3FromAddress(address)
 
   return api.tx.tfgridModule
@@ -72,53 +71,48 @@ export async function deleteFarm(address: string, api: { tx: { tfgridModule: { d
     .deleteFarm(farmId)
     .signAndSend(address, { signer: injector.signer }, callback)
 }
-export async function getNodeUsedResources(nodeId: string) {
-  const res = await axios.get(`${config.gridproxyUrl}nodes/${nodeId}`, {
-    timeout: 1000,
+export async function getNodesByFarmID(farms: any[]) {
+  const farmIDs = farms.map((farm: { id: any; }) => farm.id);
+
+  const nodes = farmIDs.map((farmID: string) => {
+    return getNodesByFarm(farmID);
+  });
+  const data = await Promise.all(nodes);
+
+  if (data.length === 0) return [];
+  const _nodes = data.flat();
+
+  const nodesWithResources = await _nodes.map(async (node) => {
+    try {
+      node.resourcesUsed = await getNodeUsedResources(node.nodeID);
+      node.resources = node.resourcesTotal;
+    } catch (error) {
+      node.resourcesUsed = {
+        sru: 0,
+        hru: 0,
+        mru: 0,
+        cru: 0,
+      };
+      node.resources = {
+        sru: 0,
+        hru: 0,
+        mru: 0,
+        cru: 0,
+      };
+    }
+
+    return node;
   });
 
-  if (res.status === 200) {
-    if (res.data == "likely down") {
-      throw Error("likely down");
-    } else {
-      return res.data.capacity.used_resources;
-    }
-  }
+  return await Promise.all(nodesWithResources);
 }
-
 export async function getNodesByFarm(farmID: string) {
-  if (config.graphqlUrl) {
-    const res = await axios.post(config.graphqlUrl, {
-      query: `{ nodes(where: {farmID_eq:${farmID}}) { twinID, uptime, createdAt, updatedAt, city, country, nodeID, farmID, serialNumber, virtualized, farmingPolicyId, location { latitude, longitude }, interfaces { ips, name, mac }, certificationType, publicConfig { domain, gw4, gw6, ipv4, ipv6 }, resourcesTotal { sru, hru, mru, cru }  }}`,
-      operation: "getNodes",
-    });
+  const res = await axios.post(config.graphqlUrl, {
+    query: `{ nodes(where: {farmID_eq:${farmID}}) { id, farmID, twinID, resourcesTotal { sru, hru, mru, cru } , location { longitude, latitude }, country, city, publicConfig { ipv4, ipv6, gw4, gw6 }, created, farmingPolicyId, interfaces { name, mac, ips }, certification ,  secure, virtualized, serialNumber, connectionPrice }}`,
+    operation: "getNodes",
+  });
 
-    const nodes = res.data.data.nodes;
-    const nodesWithResources = await nodes[0].map(async (node: { resourcesUsed: { sru: number; hru: number; mru: number; cru: number; }; nodeID: string; resources: { sru: number; hru: number; mru: number; cru: number; }; resourcesTotal: any; }) => {
-      try {
-        node.resourcesUsed = await getNodeUsedResources(node.nodeID);
-        node.resources = node.resourcesTotal;
-      } catch (error) {
-        node.resourcesUsed = {
-          sru: 0,
-          hru: 0,
-          mru: 0,
-          cru: 0,
-        };
-        node.resources = {
-          sru: 0,
-          hru: 0,
-          mru: 0,
-          cru: 0,
-        };
-      }
-
-      return node;
-    });
-
-    return await Promise.all(nodesWithResources);
-  }
-
+  return res.data.data.nodes;
 }
 export async function addNodePublicConfig(
   address: string,

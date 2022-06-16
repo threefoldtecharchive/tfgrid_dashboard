@@ -44,28 +44,37 @@ export async function getRentStatus(api: { query: { smartContractModule: { activ
   }
 }
 
+export async function getNodeUsedResources(nodeId: string) {
+  const res = await axios.get(`${config.gridproxyUrl}nodes/${nodeId}`, {
+    timeout: 1000,
+  });
 
+  if (res.status === 200) {
+    if (res.data == "likely down") {
+      throw Error("likely down");
+    } else {
+      return res.data.capacity.used_resources;
+    }
+  }
+}
 ////
 export async function getIpsForFarm(farmID: string) {
-  if (config.graphqlUrl) {
-    const res = await axios.post(
-      config.graphqlUrl,
-      {
-        query: `query MyQuery {
-            farms(where: {farmID_eq: ${farmID}}) {
-              publicIPs {
-                id
-              }
+  const res = await axios.post(
+    config.graphqlUrl,
+    {
+      query: `query MyQuery {
+          farms(where: {farmID_eq: ${farmID}}) {
+            publicIPs {
+              id
             }
-          }      
-          `,
-        operation: "getNodes",
-      },
-      { timeout: 1000 }
-    );
-    return res.data.data.farms[0].publicIPs.length;
-  }
-
+          }
+        }      
+        `,
+      operation: "getNodes",
+    },
+    { timeout: 1000 }
+  );
+  return res.data.data.farms[0].publicIPs.length;
 }
 export function calSU(hru: number, sru: number) {
   return hru / 1200 + sru / 200;
@@ -93,23 +102,20 @@ export async function getPrices(api: { query: { tfgridModule: { pricingPolicies:
   return pricing.toJSON();
 }
 export async function getDedicatedFarms() {
-  if (config.graphqlUrl) {
-    const res = await axios.post(
-      config.graphqlUrl,
-      {
-        query: `{
-          farms(where: {dedicatedFarm_eq: true}) {
-            farmID
-          }
+  const res = await axios.post(
+    config.graphqlUrl,
+    {
+      query: `{
+        farms(where: {dedicatedFarm_eq: true}) {
+          farmID
         }
-        `,
-        operation: "getDedicatedFarms",
-      },
-      { timeout: 1000 }
-    );
-    return res.data.data.farms.map((farm: { farmID: string; }) => farm.farmID);
-  }
-
+      }
+      `,
+      operation: "getDedicatedFarms",
+    },
+    { timeout: 1000 }
+  );
+  return res.data.data.farms.map((farm: { farmID: string; }) => farm.farmID);
 }
 
 export function countPrice(prices: { cu: { value: number; }; su: { value: number; }; }, node: { resourcesTotal: { sru: number; hru: number; mru: number; cru: any; }; }) {
@@ -176,36 +182,15 @@ export async function calDiscount(api: { query: { system: { account: (arg0: stri
   return [totalPrice.toFixed(2), discountPackages[selectedPackage].discount];
 }
 export async function getDedicatedNodes(farmID: string) {
-  if (config.graphqlUrl) {
-    const res = await axios.post(
-      config.graphqlUrl,
-      {
-        query: `query MyQuery {
-            nodes(where: {farmID_eq: ${farmID}}) {
-              resourcesTotal {
-                cru
-                hru
-                mru
-                sru
-              }
-              nodeID
-              location {
-                latitude
-                longitude
-              }
-              country
-              city
-              farmID
-            }
-          }      
-          `,
-        operation: "getNodes",
-      },
-      { timeout: 1000 }
-    );
-    return res.data.data.nodes;
-  }
-
+  const res = await axios.post(
+    config.graphqlUrl,
+    {
+      query: `{ nodes(where: {farmID_eq:${farmID}}) { id, farmID, twinID, resourcesTotal { sru, hru, mru, cru } , location { longitude, latitude }, country, city, publicConfig { ipv4, ipv6, gw4, gw6 }, created, farmingPolicyId, interfaces { name, mac, ips }, certification ,  secure, virtualized, serialNumber, connectionPrice }}`,
+      operation: "getNodes",
+    },
+    { timeout: 1000 }
+  );
+  return res.data.data.nodes;
 }
 export async function getDNodes(api: any, address: string) {
   const farmsIDs = await getDedicatedFarms();
