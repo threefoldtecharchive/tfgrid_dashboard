@@ -1,8 +1,11 @@
 <template>
   <v-container fluid>
-    <v-card class="white--text my-3 pa-3 text-center" color="primary">
+    <v-card
+      class="white--text my-3 pa-3 text-center"
+      color="primary"
+    >
       <h2>
-        Greetings {{ $route.query.accountName.toUpperCase() }}, you can now
+        Greetings {{ $route.query.accountName }}, you can now
         manage your farms & their nodes!
       </h2>
       <small>How cool is that?</small>
@@ -17,8 +20,7 @@
         @click="openCreateFarmDialog = true"
         class="my-3 mx-5"
         :loading="loadingCreateFarm"
-        >Create farm</v-btn
-      >
+      >Create farm</v-btn>
     </v-card>
     <v-dialog
       transition="dialog-bottom-transition"
@@ -26,7 +28,10 @@
       max-width="500"
     >
       <v-card>
-        <v-toolbar color="primary" class="white--text">Create Farm</v-toolbar>
+        <v-toolbar
+          color="primary"
+          class="white--text"
+        >Create Farm</v-toolbar>
         <v-card-text>
           <v-text-field
             label="Farm Name"
@@ -47,8 +52,7 @@
             color="primary"
             @click="createFarmFromName"
             :loading="loadingCreateFarm"
-            >Submit</v-btn
-          >
+          >Submit</v-btn>
           <v-btn @click="openCreateFarmDialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
@@ -93,7 +97,10 @@
       </template>
       <template v-slot:expanded-item="{ item }">
         <td :colspan="headers.length">
-          <v-container fluid class="text-left">
+          <v-container
+            fluid
+            class="text-left"
+          >
             <v-row>
               <v-col>
                 <v-flex class="text-left pr-2">Farm ID</v-flex>
@@ -160,16 +167,18 @@
                   <span style="font-size: small">
                     {{ item.v2address }}
                   </span>
-                  <v-btn x-small @click="openV2AddressDialog = true"
-                    >Edit</v-btn
-                  >
+                  <v-btn
+                    x-small
+                    @click="openV2AddressDialog = true"
+                  >Edit</v-btn>
                 </v-row>
               </v-col>
               <v-col v-else>
                 <v-flex>
-                  <v-btn x-small @click="openV2AddressDialog = true"
-                    >Add V2 Address</v-btn
-                  >
+                  <v-btn
+                    x-small
+                    @click="openV2AddressDialog = true"
+                  >Add V2 Address</v-btn>
                 </v-flex>
               </v-col>
               <v-dialog
@@ -178,9 +187,7 @@
                 max-width="500"
               >
                 <v-card>
-                  <v-toolbar color="primary"
-                    >Add/Edit V2 Stellar Address</v-toolbar
-                  >
+                  <v-toolbar color="primary">Add/Edit V2 Stellar Address</v-toolbar>
                   <v-card-text>
                     <v-text-field
                       v-model="v2_address"
@@ -205,8 +212,7 @@
                     x-small
                     v-bind:href="'https://v3.bootstrap.grid.tf/'"
                     target="blank"
-                    >view bootstrap</v-btn
-                  >
+                  >view bootstrap</v-btn>
                 </v-flex>
               </v-col>
             </v-row>
@@ -222,31 +228,31 @@
         </td>
       </template>
     </v-data-table>
-    <FarmNodesTable :nodes="nodes" @on:delete="getNodes()" />
-    <v-dialog v-model="openDeleteFarmDialog" max-width="700px">
+    <FarmNodesTable
+      :nodes="nodes"
+      @on:delete="getNodes()"
+    />
+    <v-dialog
+      v-model="openDeleteFarmDialog"
+      max-width="700px"
+    >
       <v-card>
-        <v-card-title class="text-h5"
-          >Are you certain you want to delete this farm?</v-card-title
-        >
-        <v-card-text
-          >This will delete the farm on the chain, this action is
-          irreversible</v-card-text
-        >
+        <v-card-title class="text-h5">Are you certain you want to delete this farm?</v-card-title>
+        <v-card-text>This will delete the farm on the chain, this action is
+          irreversible</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
             color="primary darken-1"
             text
             @click="openDeleteFarmDialog = false"
-            >Cancel</v-btn
-          >
+          >Cancel</v-btn>
           <v-btn
             color="primary darken-1"
             text
             :loading="loadingDeleteFarm"
             @click="callDeleteFarm()"
-            >OK</v-btn
-          >
+          >OK</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
