@@ -13,7 +13,7 @@
     ></v-text-field>
     <v-data-table
       :headers="headers"
-      :items="filteredNodes()"
+      :items="filteredDNodes()"
       :single-expand="singleExpand"
       :expanded.sync="expanded"
       item-key="nodeId"
@@ -121,7 +121,7 @@ export default class NodesView extends Vue {
     console.log(`removing nodes of ${oldValue}, putting in nodes of ${value}`);
     this.nodes = await getDNodes(this.$api, value);
   }
-  public filteredNodes() {
+  public filteredDNodes() {
     if (this.searchTerm.length !== 0 && this.nodes.length !== 0) {
       return this.nodes.filter(
         (node: { location: { country: string }; nodeId: any }) =>

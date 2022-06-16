@@ -66,6 +66,8 @@
       item-key="name"
       show-expand
       class="elevation-1"
+      dark
+      disable-pagination
     >
       <template v-slot:top>
         <v-toolbar flat>
@@ -301,13 +303,13 @@ export default class FarmsView extends Vue {
   farmToDelete: any = {};
   searchTerm = "";
   loadingCreateFarm = false;
-  async mounted() {
+  async beforeCreate() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
 
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
-      this.nodes = await getNodesByFarmID(this.farms);
+      this.nodes = this.getNodes();
     } else {
       this.$router.push({
         name: "accounts",
@@ -324,19 +326,15 @@ export default class FarmsView extends Vue {
     );
 
     this.farms = await getFarm(this.$api, value);
-    this.nodes = await getNodesByFarmID(this.farms);
+    this.nodes = this.getNodes();
   }
   @Watch("nodes.length") async onNodeDeleted(value: number, oldValue: number) {
     console.log(`there were ${oldValue} nodes, now there is ${value} nodes`);
-    this.getNodes();
   }
   async updated() {
     this.address;
     this.id;
-    if (this.$api) {
-      this.farms = await getFarm(this.$api, this.id);
-      this.nodes = await getNodesByFarmID(this.farms);
-    } else {
+    if (!this.$api) {
       this.$router.push({
         name: "accounts",
         path: "/",
@@ -346,7 +344,7 @@ export default class FarmsView extends Vue {
     this.farmName;
   }
   public filteredFarms() {
-    if (this.searchTerm.length !== 0 && this.farms.length !== 0) {
+    if (this.farms.length > 0) {
       return this.farms.filter(
         (farm: { name: string; id: any }) =>
           farm.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||

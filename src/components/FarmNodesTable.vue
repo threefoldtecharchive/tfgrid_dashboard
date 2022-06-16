@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container v-if="nodes.length">
     <v-text-field
       v-model="searchTerm"
       color="primary darken-2"
@@ -20,6 +20,11 @@
           <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
         </v-toolbar>
       </template>
+      <template v-slot:[`item.id`]="{ item }">
+        <p class="text-left mt-1 mb-0">
+          {{ item.id}}
+        </p>
+      </template>
       <template v-slot:[`item.status`]="{ item }">
         <p class="text-left mt-1 mb-0">
           <v-chip :color="getStatus(item).color">{{
@@ -34,20 +39,7 @@
           color="primary"
         ></v-progress-circular>
         <!--delete node-->
-        <v-tooltip bottom v-else>
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon
-              medium
-              @click="openDelete(item)"
-              v-on="on"
-              v-bind="attrs"
-              :loading="loadingDelete"
-            >
-              mdi-delete
-            </v-icon>
-          </template>
-          <span>Delete a node</span>
-        </v-tooltip>
+        <!--removed until fixed -->
         <!--config Ips-->
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -66,13 +58,16 @@
       </template>
       <!--expanded node view-->
       <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length" key="item.nodeID">
+        <td
+          :colspan="headers.length"
+          key="item.id"
+        >
           <v-col>
             <v-container fluid>
               <v-row>
                 <v-flex xs3 class="text-left pr-2">Node ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.nodeID }}</span>
+                  <span>{{ item.id }}</span>
                 </v-flex>
               </v-row>
               <v-row>
@@ -306,7 +301,7 @@ import { Component, Vue, Prop, Emit } from "vue-property-decorator";
 import moment from "moment";
 import { byteToGB } from "@/portal/lib/nodes";
 import { addNodePublicConfig, deleteNode } from "@/portal/lib/farms";
-
+import { hex2a } from "@/portal/lib/util";
 @Component({
   name: "FarmNodesTable",
 })
@@ -315,7 +310,7 @@ export default class FarmNodesTable extends Vue {
   singleExpand = true;
 
   headers = [
-    { text: "Node ID", value: "nodeID" },
+    { text: "Node ID", value: "id" },
     { text: "Farm ID", value: "farmID" },
     { text: "Country", value: "country" },
     { text: "Serial Number", value: "serialNumber" },
@@ -343,8 +338,9 @@ export default class FarmNodesTable extends Vue {
   domainErrorMessage = "";
   loadingPublicConfig = false;
   $api: any;
-  public filteredNodes() {
-    if (this.searchTerm.length !== 0 && this.nodes.length !== 0) {
+
+  filteredNodes() {
+    if (this.nodes.length > 0) {
       return this.nodes.filter(
         (node: {
           nodeID: any;
@@ -363,6 +359,9 @@ export default class FarmNodesTable extends Vue {
       );
     }
     return this.nodes;
+  }
+  convertHex(node: { id: string }) {
+    return hex2a(node.id);
   }
   byteToGB(capacity: number) {
     return byteToGB(capacity);
@@ -547,7 +546,7 @@ export default class FarmNodesTable extends Vue {
     deleteNode(
       this.$route.params.accountID,
       this.$api,
-      this.nodeToDelete.nodeID,
+      parseInt(this.nodeToDelete.id.split("-")[1]),
       (res: {
         events?: never[] | undefined;
         status: { type: string; asFinalized: string; isFinalized: string };
