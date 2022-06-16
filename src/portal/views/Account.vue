@@ -1,5 +1,4 @@
 <template>
-
   <v-container
     fluid
     v-if="openDialog"
@@ -14,7 +13,6 @@
       style="background-color: black"
       :loading="loadingTC"
     >
-
       <iframe
         :src="documentLink"
         frameborder="0"
@@ -35,52 +33,44 @@
   </v-container>
 
   <v-container v-else-if="$store.state.portal.accounts.length === 0">
-    <v-card>
+    <v-card
+      transparent
+      outlined
+    >
       <WelcomeWindow />
     </v-card>
   </v-container>
 
   <v-container v-else-if="!twinCreated">
-
-    <v-card
-      color="#388E3C"
-      class="text-center py-5 my-3 "
-    >
+    <v-card class="text-center primary white--text py-5 my-3">
       <h2>
-        Welcome aboard {{$route.query.accountName}}, <br>
+        Welcome aboard {{ $route.query.accountName }}, <br />
         Let’s get you connected to the TF Grid !
       </h2>
     </v-card>
-    <v-card
-      color="#512DA8"
-      class="text-center pa-5"
-    >
-      <h3>Choose your preferred method to create a Twin: </h3>
+    <v-card class="text-center pa-5">
+      <h3>Choose your preferred method to create a Twin:</h3>
     </v-card>
-    <v-container fluid>
+    <v-container
+      fluid
+      class="px-0"
+    >
       <v-row>
-
         <v-col>
           <v-card
             class="pa-5 text-center"
             height="175"
           >
-            <h3>
-              Planetary
-              using Yggdrasil IPV6
-            </h3>
+            <h3>Planetary using Yggdrasil IPV6</h3>
             <v-text-field
               label="Twin IP ::1"
               v-model="ip"
               :error-messages="ipErrorMessage"
-              :rules="[
-              () => !!ip || 'This field is required',
-              ipcheck
-            ]"
+              :rules="[() => !!ip || 'This field is required', ipcheck]"
             >
-
             </v-text-field>
             <v-btn
+              class="primary"
               :loading="loadingTwinCreate"
               @click="createTwinFunc(ip)"
             >create</v-btn>
@@ -92,30 +82,26 @@
             height="175"
           >
             <v-btn
+              class="primary"
               :loading="loadingTwinCreate"
               @click="createTwinFunc('::1')"
             >automatically</v-btn>
-
           </v-card>
         </v-col>
-
       </v-row>
       <v-row>
         <v-col>
           <v-card class="pa-5 text-center d-flex align-center justify-center">
             <v-btn
+              class="primary"
               :target="'blank'"
               :href="'https://library.threefold.me/info/manual/#/manual__yggdrasil_client'"
             >why do i even need a twin?</v-btn>
           </v-card>
         </v-col>
-
       </v-row>
-
     </v-container>
-
   </v-container>
-
 </template>
 
 <script lang="ts">
@@ -318,5 +304,12 @@ export default class AccountView extends Vue {
   }
 }
 </script>
+
 <style scoped>
+/* .v-card {
+  background-color: transparent !important;
+}
+.v-sheet.v-card:not(.v-sheet--outlined) {
+  box-shadow: none !important;
+} */
 </style>

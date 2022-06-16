@@ -1,13 +1,12 @@
 <template>
-
   <v-container>
     <FundsCard
       v-if="$route.path !='/' && $route.query.balance"
       :balance='balance'
     />
-    <router-view style="padding: 13.5% 5% 5% 10%" />
-  </v-container>
 
+    <router-view style="padding: 6% 5% 5% 10%; margin: 4% 0" />
+  </v-container>
 </template>
 <script lang="ts">
 import FundsCard from "@/components/FundsCard.vue";

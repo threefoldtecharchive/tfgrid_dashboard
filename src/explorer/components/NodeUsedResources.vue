@@ -26,7 +26,7 @@
                 :value="item.value"
                 :size="150"
                 :width="15"
-                color="teal"
+                color="primary"
                 >{{ item.value }}%</v-progress-circular
               >
             </div>
@@ -38,7 +38,7 @@
       <v-progress-circular
         v-if="loader"
         indeterminate
-        color="teal"
+        color="primary"
         :size="50"
         class="mt-10 mb-10"
       />

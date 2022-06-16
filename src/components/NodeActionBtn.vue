@@ -1,19 +1,17 @@
 <template>
   <v-container>
-    <v-dialog
-      v-model="openUnreserveDialog"
-      max-width="600"
-    >
+    <v-dialog v-model="openUnreserveDialog" max-width="600">
       <v-card>
         <v-card-title>
           Are you sure you want to unreserve this dedicated node?
         </v-card-title>
-        <v-card-text>This will free up the node for others on the chain</v-card-text>
+        <v-card-text
+          >This will free up the node for others on the chain</v-card-text
+        >
         <v-card-actions class="justify-end">
-          <v-btn
-            @click="unReserveNode()"
-            :loading="loadingUnreserveNode"
-          >Yes</v-btn>
+          <v-btn @click="unReserveNode()" :loading="loadingUnreserveNode"
+            >Yes</v-btn
+          >
           <v-btn @click="openUnreserveDialog = false">No</v-btn>
         </v-card-actions>
       </v-card>
@@ -23,7 +21,8 @@
       small
       outlined
       :loading="loadingReserveNode"
-      color="green"
+      color="#064663"
+      style="background: white"
       v-if="status === 'free'"
       @click="reserveNode(nodeId)"
     >
@@ -33,22 +32,16 @@
       small
       outlined
       color="red"
+      style="background: white"
       v-if="status === 'yours'"
       @click="removeReserve(nodeId)"
     >
       Unreserve
     </v-btn>
-    <v-btn
-      small
-      outlined
-      disabled
-      color="gray"
-      v-if="status === 'taken'"
-    >
+    <v-btn small outlined disabled color="gray" v-if="status === 'taken'">
       Taken
     </v-btn>
   </v-container>
-
 </template>
 <script lang="ts">
 import {

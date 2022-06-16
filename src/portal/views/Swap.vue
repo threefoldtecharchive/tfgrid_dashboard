@@ -7,27 +7,24 @@
         max-width="900"
         v-model="openDepositDialog"
       >
-
         <v-card>
-          <v-toolbar
-            color="primary"
-            dark
-          >Deposit TFT</v-toolbar>
+          <v-toolbar color="primary" dark>Deposit TFT</v-toolbar>
           <v-card-text>
             <v-container>
-
               <v-row>
                 <v-col>
-                  Send a {{selectedName.toUpperCase()}} transaction with your TFT's to deposit to:
+                  Send a {{ selectedName.toUpperCase() }} transaction with your
+                  TFT's to deposit to:
                   <ul>
-                    <li>Destination: <b>{{ depositWallet }}</b></li>
-                    <li>Memo Text: <b>twin_{{id}}</b></li>
+                    <li>
+                      Destination: <b>{{ depositWallet }}</b>
+                    </li>
+                    <li>
+                      Memo Text: <b>twin_{{ id }}</b>
+                    </li>
                   </ul>
                 </v-col>
-                <v-divider
-                  class="mx-4"
-                  vertical
-                ></v-divider>
+                <v-divider class="mx-4" vertical></v-divider>
                 <v-col>
                   Or use Threefold connect to scan this qr code:
                   <div class="d-flex justify-center">
@@ -38,18 +35,18 @@
                       render-as="svg"
                     />
                   </div>
-
                 </v-col>
               </v-row>
-              <v-row class="d-flex row justify-center">Amount: should be larger than {{depositFee}}TFT
-                (deposit fee is: {{depositFee}}TFT)</v-row>
+              <v-row class="d-flex row justify-center"
+                >Amount: should be larger than {{ depositFee }}TFT (deposit fee
+                is: {{ depositFee }}TFT)</v-row
+              >
             </v-container>
           </v-card-text>
           <v-card-actions class="justify-end">
             <v-btn @click="openDepositDialog = false">Close</v-btn>
           </v-card-actions>
         </v-card>
-
       </v-dialog>
     </v-container>
     <v-container v-if="openWithdrawDialog">
@@ -58,46 +55,38 @@
         max-width="900"
         v-model="openWithdrawDialog"
       >
-
         <v-card>
-          <v-toolbar
-            color="primary"
-            dark
-          >Withdraw TFT</v-toolbar>
-          <v-card-title> Interact with the bridge in order to withdraw your TFT to {{selectedName.toUpperCase()}} (withdraw fee is: {{withdrawFee}} TFT)
+          <v-toolbar color="primary" dark>Withdraw TFT</v-toolbar>
+          <v-card-title>
+            Interact with the bridge in order to withdraw your TFT to
+            {{ selectedName.toUpperCase() }} (withdraw fee is:
+            {{ withdrawFee }} TFT)
           </v-card-title>
           <v-card-text>
-
             <v-text-field
               v-model="target"
               :label="selectedName.toUpperCase() + ' Target Wallet Address'"
             >
-
             </v-text-field>
-            <v-text-field
-              label="Amount"
-              v-model="amount"
-            ></v-text-field>
-
+            <v-text-field label="Amount" v-model="amount"></v-text-field>
           </v-card-text>
           <v-card-actions class="justify-end">
             <v-btn @click="openWithdrawDialog = false">Close</v-btn>
-            <v-btn @click="withdrawTFT(target, amount)">Submit</v-btn>
+            <v-btn
+              class="primary white--text"
+              @click="withdrawTFT(target, amount)"
+              >Submit</v-btn
+            >
           </v-card-actions>
-
         </v-card>
-
       </v-dialog>
     </v-container>
-    <v-card
-      color="#388E3C"
-      class="pa-5 my-5"
-    >
-      <h3 class="text-center">We use bridges for transfer to and from the following:</h3>
-
+    <v-card color="primary" class="pa-5 my-5 white--text">
+      <h3 class="text-center">
+        We use bridges for transfer to and from the following:
+      </h3>
     </v-card>
     <v-card class="pa-5 my-5">
-
       <v-select
         :items="items"
         label="Please select one:"
@@ -105,31 +94,33 @@
         item-text="name"
         item-value="id"
       >
-
       </v-select>
     </v-card>
     <v-container class="d-flex justify-center pa-5 my-2">
-
       <v-btn
-        color="#512DA8"
-        class="mx-5 pa-5"
+        color="primary"
+        class="white--text mx-5 pa-5"
         @click="openDepositDialog = true"
-      >deposit</v-btn>
+        >deposit</v-btn
+      >
 
       <v-btn
-        color="#303F9F"
-        class="mx-5 pa-5"
+        color="primary"
+        class="mx-5 pa-5 white--text"
         @click="openWithdrawDialog = true"
-      >withdraw</v-btn>
+        >withdraw</v-btn
+      >
     </v-container>
 
     <v-container class="d-flex justify-center pa-5 my-3">
-      <v-btn
+      <a
+        color="primary"
         :target="'blank'"
+        class="text-decoration-none"
         :href="'https://library.threefold.me/info/manual/#/manual__tfchain_portal_home?id=transfer-tft'"
-      >why do we use bridges?</v-btn>
+        >why do we use bridges?</a
+      >
     </v-container>
-
   </v-container>
 </template>
 
@@ -267,3 +258,9 @@ export default class TransferView extends Vue {
   }
 }
 </script>
+
+<style scoped>
+.theme--dark.v-application a {
+  color: white;
+}
+</style>
