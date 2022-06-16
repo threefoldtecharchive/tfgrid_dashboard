@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: elmdary/tfgrid_dashboard
+  repository: threefolddev/tfgrid_dashboard
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
