@@ -5,6 +5,28 @@ interface AppConfigs {
   polkadot_url: string;
   proxy_url: string;
   version: string;
+  APP_API_URL: string
+  APP_STELLAR_HORIZON_URL: string
+  APP_TFT_ASSET_ISSUER: string
+  APP_BRIDGE_TFT_ADDRESS: string
+  APP_ACTIVATION_SERVICE_URL: string
+  APP_EXPLORER_URL: string
+  APP_GRAPHQL_URL: string
+  APP_GRIDPROXY_URL: string
+  APP_NETWORK: string
+}
+declare let process: {
+  env: {
+    APP_API_URL: string
+    APP_STELLAR_HORIZON_URL: string
+    APP_TFT_ASSET_ISSUER: string
+    APP_BRIDGE_TFT_ADDRESS: string
+    APP_ACTIVATION_SERVICE_URL: string
+    APP_EXPLORER_URL: string
+    APP_GRAPHQL_URL: string
+    APP_GRIDPROXY_URL: string
+    APP_NETWORK: string
+  }
 }
 
 declare global {
@@ -21,6 +43,8 @@ declare global {
     }
 
   }
+
+
 
   interface Window {
     configs: AppConfigs;

@@ -1,13 +1,13 @@
 
 const config = {
-  wsUrl: 'ws://127.0.0.1:9944',
-  horizonUrl: 'https://horizon-testnet.stellar.org',
-  tftAssetIssuer: 'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3',
-  bridgeTftAddress: 'GBLQSUJUD3HTC6YVCOIYI57QX6Q37AR4TNGVCH2YCSKH7YMUUHECHKPN',
-  activationServiceUrl: 'https://activation.dev.grid.tf',
-  explorerUrl: 'https://explorer.dev.grid.tf/',
-  graphqlUrl: 'https://graphql.dev.grid.tf/graphql/',
-  gridproxyUrl: 'https://gridproxy.dev.grid.tf/',
-  network: 'dev'
+  wsUrl: process.env.APP_API_URL || window.configs.APP_API_URL,
+  horizonUrl: process.env.APP_STELLAR_HORIZON_URL || window.configs.APP_STELLAR_HORIZON_URL,
+  tftAssetIssuer: process.env.APP_TFT_ASSET_ISSUER || window.configs.APP_TFT_ASSET_ISSUER,
+  bridgeTftAddress: process.env.APP_BRIDGE_TFT_ADDRESS || window.configs.APP_BRIDGE_TFT_ADDRESS,
+  activationServiceUrl: process.env.APP_ACTIVATION_SERVICE_URL || window.configs.APP_ACTIVATION_SERVICE_URL,
+  explorerUrl: process.env.APP_EXPLORER_URL || window.configs.APP_EXPLORER_URL,
+  graphqlUrl: process.env.APP_GRAPHQL_URL || window.configs.APP_GRAPHQL_URL,
+  gridproxyUrl: process.env.APP_GRIDPROXY_URL || window.configs.APP_GRIDPROXY_URL,
+  network: process.env.APP_NETWORK || window.configs.APP_NETWORK
 }
 export default config
