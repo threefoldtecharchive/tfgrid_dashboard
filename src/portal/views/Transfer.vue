@@ -1,12 +1,18 @@
 <template>
   <v-container>
-    <v-card color="primary" class="white--text pa-5 my-5">
+    <v-card
+      color="primary"
+      class="white--text pa-5 my-5"
+    >
       <h2 class="text-center">
         Howdy {{ accountName.toUpperCase() }}, want to transfer TFTs?
       </h2>
     </v-card>
 
-    <v-card color="primary" class="white--text pa-5 my-5">
+    <v-card
+      color="primary"
+      class="white--text pa-5 my-5"
+    >
       <h3 class="text-center">
         You can also transfer from one account to another on the TFCHAIN:
       </h3>
@@ -41,8 +47,7 @@
           class="primary white--text"
           @click="transferTFT"
           :loading="loadingTransfer"
-          >Submit</v-btn
-        >
+        >Submit</v-btn>
       </v-card-actions>
     </v-card>
   </v-container>
@@ -53,7 +58,6 @@ import { Component, Vue } from "vue-property-decorator";
 import { checkAddress, transfer } from "../lib/transfer";
 import QrcodeVue from "qrcode.vue";
 import { accountInterface } from "../store/state";
-import FundsCard from "@/components/FundsCard.vue";
 
 @Component({
   name: "TransferView",
