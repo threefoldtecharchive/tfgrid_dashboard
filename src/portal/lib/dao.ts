@@ -2,7 +2,7 @@
 import { hex2a } from './util'
 import moment from 'moment'
 import { web3FromAddress } from '@polkadot/extension-dapp';
-export async function vote(address: string, api: { tx: { dao: { vote: (arg0: any, arg1: any, arg2: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: any }, arg2: any): any; new(): any } } } } }, farmId: string, hash: any, approve: any, callback: any) {
+export async function vote(address: string, api: { tx: { dao: { vote: (arg0: any, arg1: any, arg2: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: any }, arg2: any): any; new(): any } } } } }, farmId: string, hash: any, approve: boolean, callback: any) {
     try {
         const injector = await web3FromAddress(address)
         return api.tx.dao
@@ -28,14 +28,14 @@ export async function getProposals(api: any) {
             ayes: proposalVotes.ayes,
             nayes: proposalVotes.nayes,
             vetos: proposalVotes.vetos,
-            end: moment().add('second', timeUntilEnd),
+            end: moment().add(timeUntilEnd, 'second'),
             hash: hash,
             action: hex2a(proposal.args._remark),
             description: hex2a(daoProposal.description),
             link: hex2a(daoProposal.link)
         })
     })
-    console.log(proposals)
+
     return proposals
 }
 
