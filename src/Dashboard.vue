@@ -41,11 +41,19 @@
           class="mx-2 px-1"
         >
           <v-btn icon>
-            <v-icon
-              color="#4CAF50"
-              class=""
-              @click="disconnectWallet"
-            >mdi-lan-connect</v-icon>
+            <v-tooltip>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  color="#4CAF50"
+                  class=""
+                  @click="disconnectWallet"
+                  v-bind="attrs"
+                  v-on="on"
+                >mdi-lan-connect</v-icon>
+              </template>
+              <span>Disconnect Wallet</span>
+
+            </v-tooltip>
           </v-btn>
         </v-card>
       </v-app-bar>
