@@ -25,9 +25,16 @@
     </v-card>
 
     <v-container v-if="proposals.length">
+
+      <v-text-field
+        v-model="searchTerm"
+        color="primary darken-2"
+        label="Search by proposal action"
+      ></v-text-field>
+
       <v-card
         class="my-3 pa-3"
-        v-for="(proposal,i) in proposals"
+        v-for="(proposal,i) in filteredProposals()"
         :key="i"
       >
         <v-card-title>
@@ -134,7 +141,7 @@ export default class DaoView extends Vue {
   vote = false;
   loadingVote = false;
   selectedProposal: any = "";
-
+  searchTerm = "";
   async mounted() {
     if (this.$api) {
       this.balance = this.$route.query.balance;
@@ -157,6 +164,14 @@ export default class DaoView extends Vue {
     this.balance = this.$route.query.balance;
 
     this.id = this.$route.query.twinID;
+  }
+  filteredProposals() {
+    if (this.searchTerm.length !== 0) {
+      return this.proposals.filter((proposal: { action: string }) =>
+        proposal.action.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+    return this.proposals;
   }
   openVoteDialog(hash: any, vote: boolean) {
     this.openVDialog = true;
