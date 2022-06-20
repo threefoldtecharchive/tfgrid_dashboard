@@ -1,15 +1,15 @@
 <template>
   <Layout pageName="Statistics" v-if="stats" :noFilter="true">
-    <h2 style="text-align: center; padding-bottom: 20px">Nodes Distribution</h2>
-    <tf-map
-      :nodes="nodesDistribution"
-      style="width: 50rem; display: block; margin: auto"
-    ></tf-map>
-    <section class="items" v-if="statistics.length > 0">
-      <div v-for="item of statistics" :key="item.title">
-        <StatisticsCard :item="item" />
-      </div>
-    </section>
+    <v-row>
+      <section class="items" v-if="statistics.length > 0">
+        <div v-for="item of statistics" :key="item.title">
+          <StatisticsCard :item="item" />
+        </div>
+      </section>
+      <v-col cols="10" class="mx-auto">
+        <tf-map :nodes="nodesDistribution"></tf-map
+      ></v-col>
+    </v-row>
 
     <section class="loader" v-if="statistics.length === 0">
       <v-progress-circular size="150" indeterminate />
@@ -116,13 +116,13 @@ export default class Statistics extends Vue {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  padding: 30px 16px;
+  padding: 15px 16px 0;
   > div {
-    padding: 15px;
+    padding: 5px;
     width: 16.5%;
 
     @media (max-width: 1910px) {
-      width: calc(100% / 4);
+      width: calc(100% / 6);
     }
 
     @media (max-width: 1270px) {
