@@ -104,6 +104,11 @@ export default class Statistics extends Vue {
   background-color: #1982b1;
 }
 
+.theme--dark.v-card {
+  color: rgb(255, 255, 255);
+  background-color: #1982b1;
+}
+
 .theme--light.v-divider {
   color: rgb(255, 255, 255);
 }
