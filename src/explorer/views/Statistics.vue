@@ -1,5 +1,10 @@
 <template>
   <Layout pageName="Statistics" v-if="stats" :noFilter="true">
+    <h2 style="text-align: center; padding-bottom: 20px">Nodes Distribution</h2>
+    <tf-map
+      :nodes="nodesDistribution"
+      style="width: 50rem; display: block; margin: auto"
+    ></tf-map>
     <section class="items" v-if="statistics.length > 0">
       <div v-for="item of statistics" :key="item.title">
         <StatisticsCard :item="item" />
@@ -11,9 +16,6 @@
     </section>
 
     <v-divider class="mt-2 mb-2" />
-
-    <h2>Nodes Distribution</h2>
-    <tf-map :nodes="nodesDistribution"></tf-map>
   </Layout>
 </template>
 
@@ -101,12 +103,13 @@ export default class Statistics extends Vue {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  padding: 30px 16px;
   > div {
     padding: 15px;
     width: 16.5%;
 
     @media (max-width: 1910px) {
-      width: calc(100% / 3);
+      width: calc(100% / 4);
     }
 
     @media (max-width: 1270px) {

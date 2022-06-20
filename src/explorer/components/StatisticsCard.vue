@@ -1,11 +1,12 @@
 <template>
   <v-card class="item">
-    <h4 class="item__title">{{ item.title }}</h4>
     <div class="item__img">
-      <v-icon size="50">
+      <v-icon size="30">
         {{ item.icon }}
       </v-icon>
     </div>
+    <h4 class="item__title">{{ item.title }}</h4>
+
     <v-divider />
     <p class="item__data">
       {{ item.data }}
