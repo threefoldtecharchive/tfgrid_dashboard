@@ -103,6 +103,10 @@ export default class Statistics extends Vue {
   color: rgb(255, 255, 255);
   background-color: #1982b1;
 }
+
+.theme--light.v-divider {
+  color: rgb(255, 255, 255);
+}
 .items {
   display: flex;
   flex-wrap: wrap;
