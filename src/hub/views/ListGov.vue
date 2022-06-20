@@ -1,8 +1,14 @@
 <template>
   <v-container>
-    <v-row justify="space-between" class="mb-6">
+    <v-row
+      justify="space-between"
+      class="mb-6"
+    >
       <h1>Proposals</h1>
-      <v-alert type="error" v-if="error != null">
+      <v-alert
+        type="error"
+        v-if="error != null"
+      >
         {{ error }}
       </v-alert>
 
@@ -23,7 +29,11 @@
           </ul>
         </div>
 
-        <v-divider vertical class="mr-2 ml-2" v-if="tally" />
+        <v-divider
+          vertical
+          class="mr-2 ml-2"
+          v-if="tally"
+        />
 
         <div v-if="deposit || voting">
           <div v-if="deposit">
@@ -55,7 +65,11 @@
           </div>
         </div>
 
-        <v-divider vertical class="mr-2 ml-2" v-if="deposit || voting" />
+        <v-divider
+          vertical
+          class="mr-2 ml-2"
+          v-if="deposit || voting"
+        />
 
         <div>
           <ul style="list-style: none">
@@ -68,12 +82,10 @@
               :key="color[0]"
               style="display: flex; align-items: center"
             >
-              <span
-                :style="
+              <span :style="
                   'display: inline-block; margin-right: 10px;height: 20px; width: 20px; background-color:' +
                   color[0]
-                "
-              />
+                " />
               <span>{{ color[1] }}</span>
             </li>
           </ul>
@@ -81,7 +93,11 @@
       </div>
     </v-row>
 
-    <v-data-table :headers="headers" :items="proposals" :loading="loading">
+    <v-data-table
+      :headers="headers"
+      :items="proposals"
+      :loading="loading"
+    >
       <template v-slot:[`item.status`]="{ item }">
         {{ item.status.replace("PROPOSAL_STATUS_", "") }}
       </template>
@@ -95,7 +111,7 @@
       </template>
 
       <template v-slot:[`item.submitTime`]="{ item }">
-        {{ item.submitTime | toUTC }}
+        {{ item.submitTime }}
       </template>
 
       <template v-slot:[`item.type`]="{ item }">
