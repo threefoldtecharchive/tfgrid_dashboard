@@ -81,7 +81,7 @@
         max-width="600"
       >
         <v-card>
-          <v-card-title>Vote</v-card-title>
+          <v-card-title>Cast Vote</v-card-title>
           <v-card-text>
             <v-select
               :items="farms"
