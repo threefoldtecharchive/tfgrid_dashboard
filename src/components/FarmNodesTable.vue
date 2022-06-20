@@ -1,8 +1,8 @@
 <template>
-  <v-container>
+  <v-container v-if="nodes.length">
     <v-text-field
       v-model="searchTerm"
-      color="purple darken-2"
+      color="primary darken-2"
       label="Search by node ID, serial number, certification type, farming policy ID"
     ></v-text-field>
     <v-data-table
@@ -13,7 +13,6 @@
       item-key="nodeID"
       show-expand
       class="elevation-1"
-      dark
       sort-by="nodeID"
     >
       <template v-slot:top>
@@ -21,12 +20,16 @@
           <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
         </v-toolbar>
       </template>
+      <template v-slot:[`item.id`]="{ item }">
+        <p class="text-left mt-1 mb-0">
+          {{ item.id}}
+        </p>
+      </template>
       <template v-slot:[`item.status`]="{ item }">
         <p class="text-left mt-1 mb-0">
-          <v-chip
-            :color="getStatus(item).color"
-            dark
-          >{{ getStatus(item).status }}</v-chip>
+          <v-chip :color="getStatus(item).color">{{
+            getStatus(item).status
+          }}</v-chip>
         </p>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
@@ -36,23 +39,7 @@
           color="primary"
         ></v-progress-circular>
         <!--delete node-->
-        <v-tooltip
-          bottom
-          v-else
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon
-              medium
-              @click="openDelete(item)"
-              v-on="on"
-              v-bind="attrs"
-              :loading='loadingDelete'
-            >
-              mdi-delete
-            </v-icon>
-          </template>
-          <span>Delete a node</span>
-        </v-tooltip>
+        <!--removed until fixed -->
         <!--config Ips-->
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -73,105 +60,72 @@
       <template v-slot:expanded-item="{ headers, item }">
         <td
           :colspan="headers.length"
-          key="item.nodeID"
+          key="item.id"
         >
           <v-col>
             <v-container fluid>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Node ID</v-flex>
+                <v-flex xs3 class="text-left pr-2">Node ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.nodeID }}</span>
+                  <span>{{ item.id }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Farm ID</v-flex>
+                <v-flex xs3 class="text-left pr-2">Farm ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.farmID }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Twin ID</v-flex>
+                <v-flex xs3 class="text-left pr-2">Twin ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.twinID }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Certification Type</v-flex>
+                <v-flex xs3 class="text-left pr-2">Certification Type</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.certificationType }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >First boot at</v-flex>
+                <v-flex xs3 class="text-left pr-2">First boot at</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ new Date(parseInt(item.createdAt)) }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Uptime</v-flex>
+                <v-flex xs3 class="text-left pr-2">Uptime</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.uptime  }}</span>
+                  <span>{{ item.uptime }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Updated at</v-flex>
+                <v-flex xs3 class="text-left pr-2">Updated at</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ new Date(parseInt(item.updatedAt)) }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Country</v-flex>
+                <v-flex xs3 class="text-left pr-2">Country</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.country }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >City</v-flex>
+                <v-flex xs3 class="text-left pr-2">City</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.city }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Serial Number</v-flex>
+                <v-flex xs3 class="text-left pr-2">Serial Number</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.serialNumber }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Farming Policy ID</v-flex>
+                <v-flex xs3 class="text-left pr-2">Farming Policy ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.farmingPolicyId }}</span>
                 </v-flex>
@@ -185,15 +139,12 @@
 
           <v-col>
             <div class="title">
-              <v-icon
-                small
-                left
-              >fa-chart-pie</v-icon>Resource units reserved
+              <v-icon small left>fa-chart-pie</v-icon>Resource units reserved
             </div>
 
             <v-row>
               <v-col
-                v-for="( value, key) in item.resourcesTotal"
+                v-for="(value, key) in item.resourcesTotal"
                 :key="key"
                 align="center"
               >
@@ -212,32 +163,26 @@
                         color="light-green darken-2"
                       />
                       <template v-if="item.resourcesUsed">
-
                         <span v-if="item.resourcesTotal[key] >> 1000">
-                          {{ byteToGB( item.resourcesUsed[key] )}} / {{ byteToGB(item.resourcesTotal[key])  }} GB
+                          {{ byteToGB(item.resourcesUsed[key]) }} /
+                          {{ byteToGB(item.resourcesTotal[key]) }} GB
                         </span>
                         <span v-else>
-                          {{ item.resourcesUsed[key] }} / {{ item.resourcesTotal[key]  }}
+                          {{ item.resourcesUsed[key] }} /
+                          {{ item.resourcesTotal[key] }}
                         </span>
-
                       </template>
-
                     </template>
-
                   </v-tooltip>
                 </v-flex>
               </v-col>
             </v-row>
           </v-col>
-
         </td>
       </template>
     </v-data-table>
     <!--public config dialog-->
-    <v-dialog
-      v-model="openPublicConfigDialog"
-      width="800"
-    >
+    <v-dialog v-model="openPublicConfigDialog" width="800">
       <v-card>
         <v-card-title class="text-h5">
           Add a public config to your node with ID: {{ nodeToEdit.nodeID }}
@@ -254,10 +199,7 @@
             persistent-hint
             :error-messages="ip4ErrorMessage"
             :validate-on-blur="true"
-            :rules="[
-              () => !!ip4 || 'This field is required',
-              ip4check
-            ]"
+            :rules="[() => !!ip4 || 'This field is required', ip4check]"
           ></v-text-field>
 
           <v-text-field
@@ -270,10 +212,7 @@
             persistent-hint
             :validate-on-blur="true"
             :error-messages="gw4ErrorMessage"
-            :rules="[
-              () => !!gw4 || 'This field is required',
-              gw4Check
-            ]"
+            :rules="[() => !!gw4 || 'This field is required', gw4Check]"
           ></v-text-field>
 
           <v-divider></v-divider>
@@ -287,9 +226,7 @@
             persistent-hint
             :validate-on-blur="true"
             :error-messages="ip6ErrorMessage"
-            :rules="[
-              ip6check
-            ]"
+            :rules="[ip6check]"
           ></v-text-field>
 
           <v-text-field
@@ -301,9 +238,7 @@
             persistent-hint
             :validate-on-blur="true"
             :error-messages="gw6ErrorMessage"
-            :rules="[
-              gw6Check
-            ]"
+            :rules="[gw6Check]"
           ></v-text-field>
 
           <v-text-field
@@ -315,29 +250,18 @@
             persistent-hint
             :validate-on-blur="true"
             :error-messages="domainErrorMessage"
-            :rules="[
-              domainCheck
-            ]"
+            :rules="[domainCheck]"
           ></v-text-field>
         </v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-actions>
-          <v-btn
-            text
-            color="error"
-            @click="removeConfig()"
-          >
+          <v-btn text color="error" @click="removeConfig()">
             Remove config
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn
-            text
-            @click="openPublicConfigDialog = false"
-          >
-            Cancel
-          </v-btn>
+          <v-btn text @click="openPublicConfigDialog = false"> Cancel </v-btn>
           <v-btn
             text
             color="primary"
@@ -348,28 +272,24 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-
     </v-dialog>
     <!-- delete item dialog-->
-    <v-dialog
-      v-model="openDeleteDialog"
-      max-width="700px"
-    >
+    <v-dialog v-model="openDeleteDialog" max-width="700px">
       <v-card>
-        <v-card-title class="text-h5">Are you certain you want to delete this node from your farm?</v-card-title>
-        <v-card-text>This will delete the node on chain, this action is irreversible</v-card-text>
+        <v-card-title class="text-h5"
+          >Are you certain you want to delete this node from your
+          farm?</v-card-title
+        >
+        <v-card-text
+          >This will delete the node on chain, this action is
+          irreversible</v-card-text
+        >
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="openDeleteDialog = false"
-          >Cancel</v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="deleteItem()"
-          >OK</v-btn>
+          <v-btn color="blue darken-1" text @click="openDeleteDialog = false"
+            >Cancel</v-btn
+          >
+          <v-btn color="blue darken-1" text @click="deleteItem()">OK</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
@@ -381,7 +301,7 @@ import { Component, Vue, Prop, Emit } from "vue-property-decorator";
 import moment from "moment";
 import { byteToGB } from "@/portal/lib/nodes";
 import { addNodePublicConfig, deleteNode } from "@/portal/lib/farms";
-
+import { hex2a } from "@/portal/lib/util";
 @Component({
   name: "FarmNodesTable",
 })
@@ -390,7 +310,7 @@ export default class FarmNodesTable extends Vue {
   singleExpand = true;
 
   headers = [
-    { text: "Node ID", value: "nodeID" },
+    { text: "Node ID", value: "id" },
     { text: "Farm ID", value: "farmID" },
     { text: "Country", value: "country" },
     { text: "Serial Number", value: "serialNumber" },
@@ -418,8 +338,9 @@ export default class FarmNodesTable extends Vue {
   domainErrorMessage = "";
   loadingPublicConfig = false;
   $api: any;
-  public filteredNodes() {
-    if (this.searchTerm.length !== 0 && this.nodes.length !== 0) {
+
+  filteredNodes() {
+    if (this.nodes.length > 0) {
       return this.nodes.filter(
         (node: {
           nodeID: any;
@@ -438,6 +359,9 @@ export default class FarmNodesTable extends Vue {
       );
     }
     return this.nodes;
+  }
+  convertHex(node: { id: string }) {
+    return hex2a(node.id);
   }
   byteToGB(capacity: number) {
     return byteToGB(capacity);
@@ -622,7 +546,7 @@ export default class FarmNodesTable extends Vue {
     deleteNode(
       this.$route.params.accountID,
       this.$api,
-      this.nodeToDelete.nodeID,
+      parseInt(this.nodeToDelete.id.split("-")[1]),
       (res: {
         events?: never[] | undefined;
         status: { type: string; asFinalized: string; isFinalized: string };
