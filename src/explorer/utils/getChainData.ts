@@ -1,7 +1,7 @@
 import { IState } from "../store/state";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ActionContext } from "vuex";
-import { types } from "../json/types";
+import types from "@/types.json";
 
 export default async function getChainData({
   state,

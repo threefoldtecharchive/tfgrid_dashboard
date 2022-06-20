@@ -7,7 +7,7 @@ window.configs = {
     "GBLQSUJUD3HTC6YVCOIYI57QX6Q37AR4TNGVCH2YCSKH7YMUUHECHKPN",
   APP_ACTIVATION_SERVICE_URL: "https://activation.dev.grid.tf",
   APP_EXPLORER_URL: "https://explorer.dev.grid.tf/",
-  APP_GRAPHQL_URL: "https://graphql.dev.tf/graphql",
+  APP_GRAPHQL_URL: "https://graphql.dev.grid.tf/graphql",
   APP_GRIDPROXY_URL: "https://gridproxy.dev.grid.tf",
   APP_NETWORK: "dev",
   APP_VERSION: "dev1.0.0",

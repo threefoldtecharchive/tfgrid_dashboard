@@ -1,5 +1,5 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { types } from "../json/types";
+import types from "@/types.json";
 const URL = window.configs.APP_API_URL;
 
 function _toString(bytes: ArrayLike<number>): string {

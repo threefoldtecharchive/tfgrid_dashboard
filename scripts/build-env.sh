@@ -26,8 +26,8 @@ STELLAR_HORIZON_URL="https://horizon-testnet.stellar.org"
 case $GQL_URL in
   *"dev"*)
     NETWORK="dev"
-    GQL_URL="https://graphql.dev.tf/graphql"
-	PROXY_URL="https://gridproxy.dev.grid.tf"
+    GQL_URL="https://graphql.dev.grid.tf/graphql"
+	  PROXY_URL="https://gridproxy.dev.grid.tf"
     POLKADOT_URL="wss://tfchain.dev.grid.tf/ws"
     TFT_ASSET_ISSUER="GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3"
     BRIDGE_TFT_ADDRESS="GBLQSUJUD3HTC6YVCOIYI57QX6Q37AR4TNGVCH2YCSKH7YMUUHECHKPN"
@@ -37,7 +37,7 @@ case $GQL_URL in
     ;;
   *"test"*)
     NETWORK="test"
-    GQL_URL="https://graphql.test.tf/graphql"
+    GQL_URL="https://graphql.test.grid.tf/graphql"
     PROXY_URL="https://gridproxy.test.grid.tf"
     POLKADOT_URL="wss://tfchain.test.grid.tf/ws"
     TFT_ASSET_ISSUER="GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3"
@@ -48,7 +48,7 @@ case $GQL_URL in
     ;;
   *"qa"*)
     NETWORK="qa"
-    GQL_URL="https://graphql.qa.tf/graphql"
+    GQL_URL="https://graphql.qa.grid.tf/graphql"
     PROXY_URL="https://gridproxy.qa.grid.tf"
     POLKADOT_URL="wss://tfchain.qa.grid.tf/ws"
     TFT_ASSET_ISSUER="GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3"
