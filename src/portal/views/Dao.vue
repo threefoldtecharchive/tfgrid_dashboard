@@ -29,7 +29,7 @@
       <v-text-field
         v-model="searchTerm"
         color="primary darken-2"
-        label="Search by proposal action"
+        label="Search by proposal action or description"
       ></v-text-field>
 
       <v-card
@@ -167,8 +167,14 @@ export default class DaoView extends Vue {
   }
   filteredProposals() {
     if (this.searchTerm.length !== 0) {
-      return this.proposals.filter((proposal: { action: string }) =>
-        proposal.action.toLowerCase().includes(this.searchTerm.toLowerCase())
+      return this.proposals.filter(
+        (proposal: { action: string; description: string }) =>
+          proposal.action
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase()) ||
+          proposal.description
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase())
       );
     }
     return this.proposals;
