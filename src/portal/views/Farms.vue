@@ -64,7 +64,7 @@
     ></v-text-field>
     <v-data-table
       :headers="headers"
-      :items="filteredFarms()"
+      :items="farms.length ? filteredFarms() : []"
       :single-expand="singleExpand"
       :expanded.sync="expanded"
       item-key="name"
@@ -308,7 +308,7 @@ export default class FarmsView extends Vue {
   farmToDelete: any = {};
   searchTerm = "";
   loadingCreateFarm = false;
-  async beforeCreate() {
+  async mounted() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
     if (this.$api) {
@@ -331,12 +331,15 @@ export default class FarmsView extends Vue {
     this.farms = await getFarm(this.$api, value);
     this.nodes = this.getNodes();
   }
+  @Watch("farms.length") async onFarmCreation(value: number, oldValue: number) {
+    console.log(`there were ${oldValue} farms, now there is ${value} farms`);
+  }
   @Watch("nodes.length") async onNodeDeleted(value: number, oldValue: number) {
     console.log(`there were ${oldValue} nodes, now there is ${value} nodes`);
   }
   async updated() {
     this.address = this.$route.params.accountID;
-    this.id;
+    this.id = this.$route.query.twinID;
     if (!this.$api) {
       this.$router.push({
         name: "accounts",
