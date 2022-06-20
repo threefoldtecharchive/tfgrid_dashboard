@@ -66,11 +66,10 @@
       item-key="name"
       show-expand
       class="elevation-1"
-      dark
       disable-pagination
     >
       <template v-slot:top>
-        <v-toolbar flat>
+        <v-toolbar flat class="primary white--text">
           <v-toolbar-title>Your Farms</v-toolbar-title>
           <v-spacer></v-spacer>
         </v-toolbar>

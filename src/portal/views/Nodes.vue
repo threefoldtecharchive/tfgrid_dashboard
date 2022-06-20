@@ -35,7 +35,7 @@
         <NodeActionBtn :nodeId="item.nodeId" />
       </template>
       <template v-slot:top>
-        <v-toolbar flat>
+        <v-toolbar flat class="primary white--text">
           <v-toolbar-title>Your Nodes</v-toolbar-title>
         </v-toolbar>
       </template>
