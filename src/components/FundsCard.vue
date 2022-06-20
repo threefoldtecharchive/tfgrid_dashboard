@@ -14,7 +14,7 @@
 <script lang="ts">
 import config from "@/portal/config";
 import { getBalance, getMoreFunds } from "@/portal/lib/balance";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 
 @Component({
   name: "FundsCard",
@@ -63,10 +63,11 @@ export default class FundsCard extends Vue {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
               if (section === "balances" && method === "Transfer") {
                 this.$toasted.show("Success!");
-
-                getBalance(this.$api, this.address).then((balance) => {
-                  this.balance = balance / 1e7;
-                });
+                getBalance(this.$api, this.$route.params.accountID).then(
+                  (balance: number) => {
+                    this.$emit("update:balance", balance / 1e7);
+                  }
+                );
                 this.loadingAddTFT = false;
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Get more TFT failed!");

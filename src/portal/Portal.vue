@@ -2,7 +2,8 @@
   <v-container>
     <FundsCard
       v-if="$route.path !='/' && $route.query.balance"
-      :balance='balance'
+      :balance.sync='balance'
+      @update:balance="$route.query.balance=$event"
     />
 
     <router-view style="padding: 6% 5% 5% 10%; margin: 4% 0" />
@@ -18,7 +19,7 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 })
 export default class PortalView extends Vue {
   balance: any = 0;
-
+  $api: any;
   @Watch("this.$route.query.balance") async onBalanceUpdate(
     value: number,
     oldValue: number
