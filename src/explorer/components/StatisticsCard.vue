@@ -4,8 +4,8 @@
       <v-icon size="30">
         {{ item.icon }}
       </v-icon>
+      <p class="item__title">{{ item.title }}</p>
     </div>
-    <h4 class="item__title">{{ item.title }}</h4>
 
     <v-divider />
     <p class="item__data">
@@ -27,6 +27,9 @@ export default class StatisticsCard extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.theme--light.v-icon {
+  color: #ffffff !important;
+}
 .item {
   text-align: center;
   padding: 15px;

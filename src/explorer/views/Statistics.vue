@@ -99,6 +99,10 @@ export default class Statistics extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.theme--light.v-card {
+  color: rgb(255, 255, 255);
+  background-color: #1982b1;
+}
 .items {
   display: flex;
   flex-wrap: wrap;
