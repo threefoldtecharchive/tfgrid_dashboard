@@ -335,7 +335,7 @@ export default class FarmsView extends Vue {
     console.log(`there were ${oldValue} nodes, now there is ${value} nodes`);
   }
   async updated() {
-    this.address;
+    this.address = this.$route.params.accountID;
     this.id;
     if (!this.$api) {
       this.$router.push({
@@ -548,6 +548,7 @@ export default class FarmsView extends Vue {
               getFarm(this.$api, this.id).then((farms) => {
                 this.farms = farms;
               });
+              this.openCreateFarmDialog = false;
             } else if (section === "system" && method === "ExtrinsicFailed") {
               this.$toasted.show("Farm creation failed!");
               this.openCreateFarmDialog = false;
@@ -558,6 +559,8 @@ export default class FarmsView extends Vue {
       }
     ).catch((err) => {
       this.$toasted.show(err.message);
+      this.openCreateFarmDialog = false;
+      this.loadingCreateFarm = false;
     });
   }
   public addV2Address() {
