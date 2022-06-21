@@ -194,7 +194,7 @@ export const getFarmsQuery = gql`
     $farmId_in: [Int!]
     $name_in: [String!]
     $twinId_in: [Int!]
-    $certificationType_in: [CertificationType!]
+    $certificationType_in: [FarmCertification!]
     $pricingPolicyId_in: [Int!]
     $orderBy: [FarmOrderByInput!]
   ) {
@@ -203,7 +203,7 @@ export const getFarmsQuery = gql`
         farmID_in: $farmId_in
         name_in: $name_in
         twinID_in: $twinId_in
-        certificationType_in: $certificationType_in
+        certification_in: $certificationType_in
         pricingPolicyID_in: $pricingPolicyId_in
       }
       orderBy: farmID_ASC
@@ -219,7 +219,7 @@ export const getFarmsQuery = gql`
         farmID_in: $farmId_in
         name_in: $name_in
         twinID_in: $twinId_in
-        certificationType_in: $certificationType_in
+        certification_in: $certificationType_in
         pricingPolicyID_in: $pricingPolicyId_in
       }
     ) {
@@ -229,7 +229,7 @@ export const getFarmsQuery = gql`
         contractId
       }
       twinId: twinID
-      certificationType
+      certificationType: certification
       pricingPolicyId: pricingPolicyID
     }
   }
