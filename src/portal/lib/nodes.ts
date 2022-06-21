@@ -45,24 +45,24 @@ export async function getRentStatus(api: { query: { smartContractModule: { activ
 }
 
 export async function getNodeUsedResources(nodeId: string) {
-    const res = await axios.get(`${config.gridproxyUrl}nodes/${nodeId}`, {
-      timeout: 1000,
-    });
-  
-    if (res.status === 200) {
-      if (res.data == "likely down") {
-        throw Error("likely down");
-      } else {
-        return res.data.capacity.used_resources;
-      }
+  const res = await axios.get(`${config.gridproxyUrl}nodes/${nodeId}`, {
+    timeout: 1000,
+  });
+
+  if (res.status === 200) {
+    if (res.data == "likely down") {
+      throw Error("likely down");
+    } else {
+      return res.data.capacity.used_resources;
     }
   }
-  ////
-  export async function getIpsForFarm(farmID: string) {
-    const res = await axios.post(
-      config.graphqlUrl,
-      {
-        query: `query MyQuery {
+}
+////
+export async function getIpsForFarm(farmID: string) {
+  const res = await axios.post(
+    config.graphqlUrl,
+    {
+      query: `query MyQuery {
           farms(where: {farmID_eq: ${farmID}}) {
             publicIPs {
               id
@@ -70,37 +70,37 @@ export async function getNodeUsedResources(nodeId: string) {
           }
         }      
         `,
-        operation: "getNodes",
-      },
-      { timeout: 1000 }
-    );
-    return res.data.data.farms[0].publicIPs.length;
-  }
-  export function calSU(hru: number, sru: number) {
-    return hru / 1200 + sru / 200;
-  }
-  export function calCU(cru: number, mru: number) {
-    const mru_used_1 = mru / 4;
-    const cru_used_1 = cru / 2;
-    const cu1 = mru_used_1 > cru_used_1 ? mru_used_1 : cru_used_1;
-  
-    const mru_used_2 = mru / 8;
-    const cru_used_2 = cru;
-    const cu2 = mru_used_2 > cru_used_2 ? mru_used_2 : cru_used_2;
-  
-    const mru_used_3 = mru / 2;
-    const cru_used_3 = cru / 4;
-    const cu3 = mru_used_3 > cru_used_3 ? mru_used_3 : cru_used_3;
-  
-    let cu = cu1 > cu2 ? cu2 : cu1;
-    cu = cu > cu3 ? cu3 : cu;
-  
-    return cu;
-  }
-  export async function getPrices(api: { query: { tfgridModule: { pricingPolicies: (arg0: number) => any; }; }; }){
-    const pricing = await api.query.tfgridModule.pricingPolicies(1);
-    return pricing.toJSON();
-  }
+      operation: "getNodes",
+    },
+    { timeout: 1000 }
+  );
+  return res.data.data.farms[0].publicIPs.length;
+}
+export function calSU(hru: number, sru: number) {
+  return hru / 1200 + sru / 200;
+}
+export function calCU(cru: number, mru: number) {
+  const mru_used_1 = mru / 4;
+  const cru_used_1 = cru / 2;
+  const cu1 = mru_used_1 > cru_used_1 ? mru_used_1 : cru_used_1;
+
+  const mru_used_2 = mru / 8;
+  const cru_used_2 = cru;
+  const cu2 = mru_used_2 > cru_used_2 ? mru_used_2 : cru_used_2;
+
+  const mru_used_3 = mru / 2;
+  const cru_used_3 = cru / 4;
+  const cu3 = mru_used_3 > cru_used_3 ? mru_used_3 : cru_used_3;
+
+  let cu = cu1 > cu2 ? cu2 : cu1;
+  cu = cu > cu3 ? cu3 : cu;
+
+  return cu;
+}
+export async function getPrices(api: { query: { tfgridModule: { pricingPolicies: (arg0: number) => any; }; }; }) {
+  const pricing = await api.query.tfgridModule.pricingPolicies(1);
+  return pricing.toJSON();
+}
 export async function getDedicatedFarms() {
   const res = await axios.post(
     config.graphqlUrl,
@@ -118,74 +118,74 @@ export async function getDedicatedFarms() {
   return res.data.data.farms.map((farm: { farmID: string; }) => farm.farmID);
 }
 
-  export function countPrice(prices: { cu: { value: number; }; su: { value: number; }; }, node: { resourcesTotal: { sru: number; hru: number; mru: number; cru: any; }; }) {
+export function countPrice(prices: { cu: { value: number; }; su: { value: number; }; }, node: { resourcesTotal: { sru: number; hru: number; mru: number; cru: any; }; }) {
 
-    const resources = {
-      sru: node.resourcesTotal.sru / 1024 / 1024 / 1024,
-      hru: node.resourcesTotal.hru / 1024 / 1024 / 1024,
-      mru: node.resourcesTotal.mru / 1024 / 1024 / 1024,
-      cru: node.resourcesTotal.cru,
-    };
-    const SU = calSU(resources.hru, resources.sru);
-    const CU = calCU(resources.cru, resources.mru);
-  
-    const totalPrice =
-      CU * prices.cu.value * 24 * 30 + SU * prices.su.value * 24 * 30;
-  
-    const usdPrice = totalPrice / 10000000;
-  
-    return usdPrice.toFixed(2);
-  }
-  export async function calDiscount(api: { query: { system: { account: (arg0: string) => { data: any; }; }; }; }, address: string, pricing: { discount_for_dedicated_nodes: any; }, price: any) {
-    // discount for Dedicated Nodes
-    const discount = pricing.discount_for_dedicated_nodes;
-  
-    let totalPrice = price - price * (discount / 100);
-  
-    // discount for Twin Balance
-    const balance = (await getBalance(api, address)) / 1e7;
-  
-    const discountPackages: any = {
-      'none': {
-        duration: 0,
-        discount: 0,
-      },
-      'default': {
-        duration: 3,
-        discount: 20,
-      },
-      'bronze': {
-        duration: 6,
-        discount: 30,
-      },
-      'silver': {
-        duration: 12,
-        discount: 40,
-      },
-      'gold': {
-        duration: 36,
-        discount: 60,
-      },
-    };
-  
-    let selectedPackage = discountPackages.none 
- 
+  const resources = {
+    sru: node.resourcesTotal.sru / 1024 / 1024 / 1024,
+    hru: node.resourcesTotal.hru / 1024 / 1024 / 1024,
+    mru: node.resourcesTotal.mru / 1024 / 1024 / 1024,
+    cru: node.resourcesTotal.cru,
+  };
+  const SU = calSU(resources.hru, resources.sru);
+  const CU = calCU(resources.cru, resources.mru);
 
-    for (const pkg in discountPackages) {
-      if (balance > totalPrice * discountPackages[pkg].duration) {
-        selectedPackage = pkg;
-      }
+  const totalPrice =
+    CU * prices.cu.value * 24 * 30 + SU * prices.su.value * 24 * 30;
+
+  const usdPrice = totalPrice / 10000000;
+
+  return usdPrice.toFixed(2);
+}
+export async function calDiscount(api: { query: { system: { account: (arg0: string) => { data: any; }; }; }; }, address: string, pricing: { discount_for_dedicated_nodes: any; }, price: any) {
+  // discount for Dedicated Nodes
+  const discount = pricing.discount_for_dedicated_nodes;
+
+  let totalPrice = price - price * (discount / 100);
+
+  // discount for Twin Balance
+  const balance = (await getBalance(api, address)) / 1e7;
+
+  const discountPackages: any = {
+    'none': {
+      duration: 0,
+      discount: 0,
+    },
+    'default': {
+      duration: 3,
+      discount: 20,
+    },
+    'bronze': {
+      duration: 6,
+      discount: 30,
+    },
+    'silver': {
+      duration: 12,
+      discount: 40,
+    },
+    'gold': {
+      duration: 36,
+      discount: 60,
+    },
+  };
+
+  let selectedPackage = discountPackages.none
+
+
+  for (const pkg in discountPackages) {
+    if (balance > totalPrice * discountPackages[pkg].duration) {
+      selectedPackage = pkg;
     }
-  
-    totalPrice = totalPrice - totalPrice * (discountPackages[selectedPackage].discount / 100);
-  
-    return [totalPrice.toFixed(2), discountPackages[selectedPackage].discount];
   }
-  export async function getDedicatedNodes(farmID: string) {
-    const res = await axios.post(
-      config.graphqlUrl,
-      {
-        query: `query MyQuery {
+
+  totalPrice = totalPrice - totalPrice * (discountPackages[selectedPackage].discount / 100);
+
+  return [totalPrice.toFixed(2), discountPackages[selectedPackage].discount];
+}
+export async function getDedicatedNodes(farmID: string) {
+  const res = await axios.post(
+    config.graphqlUrl,
+    {
+      query: `query MyQuery {
           nodes(where: {farmID_eq: ${farmID}}) {
             resourcesTotal {
               cru
@@ -204,46 +204,46 @@ export async function getDedicatedFarms() {
           }
         }      
         `,
-        operation: "getNodes",
+      operation: "getNodes",
+    },
+    { timeout: 1000 }
+  );
+  return res.data.data.nodes;
+}
+export async function getDNodes(api: any, address: string) {
+  const farmsIDs = await getDedicatedFarms();
+
+  let nodes: any[] = [];
+  for (const farmID of farmsIDs) {
+    const _nodes = await getDedicatedNodes(farmID);
+    nodes = nodes.concat(_nodes);
+  }
+
+  const pricing = await getPrices(api);
+  const dNodes: { nodeId: string; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; }[] = [];
+  nodes.forEach(async (node) => {
+    const price = countPrice(pricing, node);
+    const [discount, discountLevel] = await calDiscount(api, address, pricing, price);
+    const ips = await getIpsForFarm(node.farmID);
+    dNodes.push({
+      nodeId: node.nodeID,
+      price: price,
+      discount: discount,
+      applyedDiscount: { first: pricing.discount_for_dedicated_nodes, second: discountLevel },
+      location: {
+        country: node.country,
+        city: node.city,
+        long: node.location.longitude,
+        lat: node.location.latitude,
       },
-      { timeout: 1000 }
-    );
-    return res.data.data.nodes;
-  }
-  export async function getDNodes(api: any, address: string) {
-    const farmsIDs = await getDedicatedFarms();
-  
-    let nodes: any[] = [];
-    for (const farmID of farmsIDs) {
-      const _nodes = await getDedicatedNodes(farmID);
-      nodes = nodes.concat(_nodes);
-    }
-  
-    const pricing = await getPrices(api);
-    const dNodes: { nodeId: string; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; }[] = [];
-    nodes.forEach(async (node) => {
-      const price = countPrice(pricing, node);
-      const [discount, discountLevel] = await calDiscount(api, address, pricing, price);
-      const ips = await getIpsForFarm(node.farmID);
-      dNodes.push({
-        nodeId: node.nodeID,
-        price: price,
-        discount: discount,
-        applyedDiscount: {first: pricing.discount_for_dedicated_nodes, second: discountLevel },
-        location: {
-          country: node.country,
-          city: node.city,
-          long: node.location.longitude,
-          lat: node.location.latitude,
-        },
-        resources: {
-          cru: node.resourcesTotal.cru,
-          mru: node.resourcesTotal.mru,
-          hru: node.resourcesTotal.hru,
-          sru: node.resourcesTotal.sru,
-        },
-        pubIps: ips,
-      });
+      resources: {
+        cru: node.resourcesTotal.cru,
+        mru: node.resourcesTotal.mru,
+        hru: node.resourcesTotal.hru,
+        sru: node.resourcesTotal.sru,
+      },
+      pubIps: ips,
     });
-    return dNodes;
-  }
+  });
+  return dNodes;
+}

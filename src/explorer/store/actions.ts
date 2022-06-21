@@ -28,12 +28,12 @@ export default {
   async loadNodesData({ state, commit }: ActionContext<IState, IState>) {
     commit(MutationTypes.SET_TABLE_LOAD, true);
     const nodes = await paginated_fetcher(
-      `${window.configs.proxy_url}/nodes`,
+      `${window.configs.APP_GRIDPROXY_URL}/nodes`,
       1,
       50
     );
     const farms = await paginated_fetcher(
-      `${window.configs.proxy_url}/farms`,
+      `${window.configs.APP_GRIDPROXY_URL}/farms`,
       1,
       50
     );
@@ -44,7 +44,7 @@ export default {
 
   loadData({ state, commit }: ActionContext<IState, IState>) {
     commit(MutationTypes.SET_LOAD, true);
-    fetch(`${window.configs.proxy_url}/stats?status=up`)
+    fetch(`${window.configs.APP_GRIDPROXY_URL}/stats?status=up`)
       .then((data) => data.json())
       .then((data) => {
         const {

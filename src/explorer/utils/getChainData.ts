@@ -1,16 +1,18 @@
 import { IState } from "../store/state";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ActionContext } from "vuex";
-import { types } from "../json/types";
+import types from "@/types.json";
 
 export default async function getChainData({
   state,
 }: ActionContext<IState, IState>) {
-  const URL = window.configs.polkadot_url;
+  const URL = window.configs.APP_API_URL;
   const provider = new WsProvider(URL);
   const pricingPolicies = await getPricingPolicies(provider);
   const { specName, specVersion } = await getSpecData(provider);
-  const proxyVersion = await fetch(window.configs.proxy_url + "/version")
+  const proxyVersion = await fetch(
+    window.configs.APP_GRIDPROXY_URL + "/version"
+  )
     .then<{ version: string }>((res) => res.json())
     .then(({ version: value }) => ({ name: "Grid Proxy", value }));
 
@@ -18,7 +20,7 @@ export default async function getChainData({
   state.versions = [
     {
       name: "Explorer",
-      value: window.configs.version,
+      value: window.configs.APP_VERSION,
     },
     proxyVersion,
     { name: "Chain", value: `${specName} v${specVersion}` },

@@ -5,4 +5,5 @@ export default {
     accounts: (state: PortalState) => state.accounts,
 
 
-}as GetterTree<PortalState, PortalState>;
+
+} as GetterTree<PortalState, PortalState>;

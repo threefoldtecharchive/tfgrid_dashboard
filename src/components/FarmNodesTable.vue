@@ -308,7 +308,6 @@ import { hex2a } from "@/portal/lib/util";
 export default class FarmNodesTable extends Vue {
   expanded: any = [];
   singleExpand = true;
-
   headers = [
     { text: "Node ID", value: "id" },
     { text: "Farm ID", value: "farmID" },
@@ -338,7 +337,6 @@ export default class FarmNodesTable extends Vue {
   domainErrorMessage = "";
   loadingPublicConfig = false;
   $api: any;
-
   filteredNodes() {
     if (this.nodes.length > 0) {
       return this.nodes.filter(
@@ -401,19 +399,16 @@ export default class FarmNodesTable extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
@@ -461,7 +456,6 @@ export default class FarmNodesTable extends Vue {
       this.gw6 = this.nodeToEdit.publicConfig.gw6;
       this.domain = this.nodeToEdit.publicConfig.domain;
     }
-
     this.openPublicConfigDialog = true;
   }
   openDelete(node: any) {
@@ -470,7 +464,6 @@ export default class FarmNodesTable extends Vue {
   }
   ip4check() {
     if (this.ip4 === "") return true;
-
     const ipRegex = new RegExp(
       "^([0-9]{1,3}.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))$"
     );
@@ -498,7 +491,6 @@ export default class FarmNodesTable extends Vue {
   }
   gw4Check() {
     if (this.gw4 === "") return true;
-
     const gatewayRegex = new RegExp("^(?:[0-9]{1,3}.){3}[0-9]{1,3}$");
     if (gatewayRegex.test(this.gw4)) {
       this.gw4ErrorMessage = "";
@@ -510,7 +502,6 @@ export default class FarmNodesTable extends Vue {
   }
   gw6Check() {
     if (this.gw6 === "") return true;
-
     const gatewayRegex = new RegExp(
       "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))[0-9]{1,3}$"
     );
@@ -530,7 +521,6 @@ export default class FarmNodesTable extends Vue {
     const startTime = moment();
     const end = moment(new Date(parseInt(updatedAt)));
     const hours = startTime.diff(end, "hours");
-
     if (hours < 2) return { color: "green", status: "up" };
     else if (hours > 2 && hours < 3) {
       return { color: "orange", status: "likely down" };
@@ -539,7 +529,6 @@ export default class FarmNodesTable extends Vue {
   get getFarmNodes() {
     return this.nodes;
   }
-
   deleteItem() {
     this.loadingDelete = true;
     this.openDeleteDialog = false;
@@ -556,19 +545,16 @@ export default class FarmNodesTable extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
@@ -589,7 +575,6 @@ export default class FarmNodesTable extends Vue {
       this.loadingDelete = false;
     });
   }
-
   getPercentage(type: any) {
     if (!this.expanded[0].resourcesUsed) return 0;
     const reservedResources = this.expanded[0].resourcesUsed[type];
