@@ -150,7 +150,7 @@
               </template>
 
               <v-list-item
-                v-for="subchild in route.children[0].children"
+                v-for="subchild in getRouteSubChildren(route)"
                 :key="subchild.label"
                 @click="
                   redirectToSubchild(
@@ -434,44 +434,48 @@ export default class Dashboard extends Vue {
       prefix: "/hub/",
       children: [
         {
-          label: "Send To Cosmos",
-          path: "send-to-cosmos",
-          icon: "",
+          label: "Send to Threefold Hub",
+          path: "threefold-hub",
+          icon: "swap-horizontal",
           showBeforeLogIn: true,
         },
         {
           label: "Send To BSC",
-          path: "send-to-bsc",
-          icon: "",
+          path: "bsc",
+          icon: "swap-horizontal",
           showBeforeLogIn: true,
         },
         {
           label: "Pending BSC Transactions",
-          path: "pending-bsc-transactions",
-          icon: "",
+          path: "list-bsc",
+          icon: "swap-horizontal",
           showBeforeLogIn: true,
         },
         {
           label: "Add Proposal",
           path: "add-proposal",
-          icon: "",
+          icon: "swap-horizontal",
           showBeforeLogIn: true,
         },
         {
           label: "Proposals",
-          path: "proposals",
-          icon: "",
+          path: "list-proposals",
+          icon: "swap-horizontal",
           showBeforeLogIn: true,
         },
         {
           label: "Validators",
           path: "validators",
-          icon: "",
+          icon: "swap-horizontal",
           showBeforeLogIn: true,
         },
       ],
     },
   ];
+
+  getRouteSubChildren(route: SidenavItem) {
+    return route.children[0].children || [];
+  }
 }
 </script>
 
