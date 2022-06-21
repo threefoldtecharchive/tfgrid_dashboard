@@ -78,16 +78,6 @@
       </v-card>
       <h4 class="text-center my-5 pa-5">What do you wish to do?</h4>
       <div class="d-flex row justify-center align-center">
-        <!-- <v-card
-          v-for="link in links"
-          :key="link.label"
-          class="primary white--text pa-2 mx-3"
-          @click="redirectToLabelRoute(link.path, address)"
-          >{{ link.label.replace(/^\w/, (c) => c.toUpperCase()) }}</v-card
-        > -->
-
-        <!-- <button type="button"
-         class="v-btn v-btn--is-elevated v-btn--has-bg theme--dark v-size--default primary"><span class="v-btn__content">Edit</span></button> -->
 
         <button
           type="button"
@@ -135,6 +125,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { getBalance } from "../lib/balance";
 import { deleteTwin, getTwin, getTwinID, updateTwinIP } from "../lib/twin";
 import { hex2a } from "@/portal/lib/util";
+
 @Component({
   name: "Twin",
   components: { WelcomeWindow },
@@ -165,6 +156,10 @@ export default class TwinView extends Vue {
     {
       label: "manage farms",
       path: "account-farms",
+    },
+    {
+      label: "vote on proposals",
+      path: "account-dao",
     },
     {
       label: "manage nodes",

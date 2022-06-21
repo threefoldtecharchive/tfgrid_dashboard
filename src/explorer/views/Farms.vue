@@ -54,7 +54,7 @@
         "
       >
         <template v-slot:[`item.certificationType`]="{ item }">
-          {{ item.certificationType }}
+          {{ item.certificationType || "None" }}
         </template>
 
         <template v-slot:[`item.publicIPs`]="{ item }">
@@ -343,7 +343,7 @@ export default class Farms extends Vue {
         farmId: farmID
         name
         gridVersion
-        certificationType
+        certificationType: certification
         stellarAddress
       }
 

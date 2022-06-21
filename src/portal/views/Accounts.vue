@@ -2,7 +2,10 @@
   <v-container v-if="$store.state.portal.accounts.length === 0">
     <WelcomeWindow />
   </v-container>
-  <v-container v-else style="">
+  <v-container
+    v-else
+    style=""
+  >
     <h1 class="text-center">Connected Accounts</h1>
 
     <v-container fluid>
@@ -41,14 +44,17 @@ import { Component, Vue } from "vue-property-decorator";
 import { accountInterface } from "../store/state";
 import WelcomeWindow from "../../components/WelcomeWindow.vue";
 import Account from "./Account.vue";
+import FundsCard from "../../components/FundsCard.vue";
 
 @Component({
   name: "AccountsView",
-  components: { WelcomeWindow, Account },
+  components: { WelcomeWindow, Account, FundsCard },
 })
 export default class AccountsView extends Vue {
   searchTerm = "";
   accounts: accountInterface[] = [];
+  $clients: any;
+  $client: any;
   mounted() {
     this.accounts = this.$store.state.portal.accounts;
   }
@@ -67,7 +73,7 @@ export default class AccountsView extends Vue {
     }
     return this.accounts;
   }
-  public addAccountRoute(account: accountInterface) {
+  async addAccountRoute(account: accountInterface) {
     this.$router.push({
       name: "account",
       path: "account",

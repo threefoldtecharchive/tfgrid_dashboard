@@ -98,7 +98,6 @@ export default class NodesView extends Vue {
   address = "";
   searchTerm = "";
   accountName: any = "";
-
   async mounted() {
     this.address = this.$route.params.accountID;
     this.accountName = this.$route.query.accountName;

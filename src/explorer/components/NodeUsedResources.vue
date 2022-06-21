@@ -67,7 +67,7 @@ export default class NodeUsedResources extends Vue {
   getNodeUsedResources(nodeId: number) {
     this.loader = true;
 
-    return fetch(`${window.configs.proxy_url}/nodes/${nodeId}`)
+    return fetch(`${window.configs.APP_GRIDPROXY_URL}/nodes/${nodeId}`)
       .then((res) => res.json())
       .then<any[]>((res) => {
         if ("Error" in res) return [];

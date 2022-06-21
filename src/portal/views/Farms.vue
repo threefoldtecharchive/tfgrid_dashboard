@@ -64,7 +64,7 @@
     ></v-text-field>
     <v-data-table
       :headers="headers"
-      :items="filteredFarms()"
+      :items="farms.length ? filteredFarms() : []"
       :single-expand="singleExpand"
       :expanded.sync="expanded"
       item-key="name"
@@ -273,7 +273,6 @@ import {
   getNodesByFarmID,
   setFarmPayoutV2Address,
 } from "../lib/farms";
-
 @Component({
   name: "FarmsView",
   components: { PublicIPTable, FarmNodesTable },
@@ -309,10 +308,9 @@ export default class FarmsView extends Vue {
   farmToDelete: any = {};
   searchTerm = "";
   loadingCreateFarm = false;
-  async beforeCreate() {
+  async mounted() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
-
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
       this.nodes = this.getNodes();
@@ -330,16 +328,18 @@ export default class FarmsView extends Vue {
     console.log(
       `switching from account ${oldValue} farms to account ${value} farms`
     );
-
     this.farms = await getFarm(this.$api, value);
     this.nodes = this.getNodes();
+  }
+  @Watch("farms.length") async onFarmCreation(value: number, oldValue: number) {
+    console.log(`there were ${oldValue} farms, now there is ${value} farms`);
   }
   @Watch("nodes.length") async onNodeDeleted(value: number, oldValue: number) {
     console.log(`there were ${oldValue} nodes, now there is ${value} nodes`);
   }
   async updated() {
-    this.address;
-    this.id;
+    this.address = this.$route.params.accountID;
+    this.id = this.$route.query.twinID;
     if (!this.$api) {
       this.$router.push({
         name: "accounts",
@@ -381,19 +381,16 @@ export default class FarmsView extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
@@ -414,7 +411,6 @@ export default class FarmsView extends Vue {
       this.loadingDeleteFarm = false;
     });
   }
-
   deletePublicIP(publicIP: any) {
     this.loadingDeleteIP = true;
     deleteIP(
@@ -431,19 +427,16 @@ export default class FarmsView extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
@@ -482,19 +475,16 @@ export default class FarmsView extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
@@ -540,7 +530,6 @@ export default class FarmsView extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
@@ -548,12 +537,10 @@ export default class FarmsView extends Vue {
             this.$toasted.show(`Transaction submitted`);
             this.openCreateFarmDialog = false;
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
@@ -564,6 +551,7 @@ export default class FarmsView extends Vue {
               getFarm(this.$api, this.id).then((farms) => {
                 this.farms = farms;
               });
+              this.openCreateFarmDialog = false;
             } else if (section === "system" && method === "ExtrinsicFailed") {
               this.$toasted.show("Farm creation failed!");
               this.openCreateFarmDialog = false;
@@ -574,6 +562,8 @@ export default class FarmsView extends Vue {
       }
     ).catch((err) => {
       this.$toasted.show(err.message);
+      this.openCreateFarmDialog = false;
+      this.loadingCreateFarm = false;
     });
   }
   public addV2Address() {
@@ -591,19 +581,16 @@ export default class FarmsView extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);

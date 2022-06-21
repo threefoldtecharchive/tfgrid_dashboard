@@ -1,5 +1,6 @@
 <template>
   <v-container>
+
     <v-container v-if="openDepositDialog">
       <v-dialog
         transition="dialog-bottom-transition"
@@ -129,6 +130,7 @@ import config from "../config";
 import { getDepositFee, getWithdrawFee, withdraw } from "../lib/swap";
 import QrcodeVue from "qrcode.vue";
 import { getBalance } from "../lib/balance";
+import FundsCard from "@/components/FundsCard.vue";
 
 @Component({
   name: "TransferView",
@@ -173,7 +175,9 @@ export default class TransferView extends Vue {
         this.accountName = this.$route.query.accountName;
       }
       this.balance = this.$route.query.balance;
-      this.depositWallet = config.bridgeTftAddress;
+      if (config.bridgeTftAddress) {
+        this.depositWallet = config.bridgeTftAddress;
+      }
 
       this.qrCodeText = `TFT:${this.depositWallet}?message=twin_${this.id}&sender=me`;
       this.selectedName = this.items.filter(
