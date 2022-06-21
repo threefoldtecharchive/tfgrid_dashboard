@@ -37,7 +37,11 @@
       </v-row>
     </form>
 
-    <CustomAlert :loading="loading" :result="result" :error="error" />
+    <CustomAlert
+      :loading="loading"
+      :result="result"
+      :error="error"
+    />
   </v-container>
 </template>
 
@@ -75,6 +79,7 @@ export default class TextProposal extends Vue {
   money() {
     try {
       this.parseAmount();
+      return true;
     } catch (err: any) {
       return err.message;
     }
