@@ -23,14 +23,14 @@ TFT_ASSET_ISSUER="GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3"
 BRIDGE_TFT_ADDRESS="GBLQSUJUD3HTC6YVCOIYI57QX6Q37AR4TNGVCH2YCSKH7YMUUHECHKPN"
 STELLAR_HORIZON_URL="https://horizon-testnet.stellar.org"
 
-GRAVITY_CONTRACT_ADDRESS="0xA18f6d4929eABb0C6073E916830Bb2FF1A419f12"
+GRAVITY_CONTRACT_ADDRESS="0xBF8C35Ad93366E159C0F0B75F1a4f4ad6Ff80811"
 TFT_TOKEN_CONTRACT_ADDRESS="0xDC5a9199e2604A6BF4A99A583034506AE53F4B34"
 BRIDGE_FEES="3"
 TFT_DECIMALS=7
 TFT_DENOM="TFT"
 PROPOSAL_DENOM="TFT"
-COSMOS_REST="https://threefoldhub.test.gridtesting.xyz:1317/"
-TENDERMINT_RPC="https://threefoldhub.test.gridtesting.xyz:26657/"
+COSMOS_REST="https://tfhub.test.grid.tf:1317/"
+TENDERMINT_RPC="https://tfhub.test.grid.tf:26657/"
 GAS_PRICE="80TFT"
 CHAIN_ID="threefold-hub-testnet"
 
@@ -45,17 +45,6 @@ case $GQL_URL in
     ACTIVATION_SERVICE_URL="https://activation.dev.grid.tf"
     EXPLORER_URL="https://explorer.dev.grid.tf/"
     STELLAR_HORIZON_URL="https://horizon-testnet.stellar.org"
-
-    GRAVITY_CONTRACT_ADDRESS="0xA18f6d4929eABb0C6073E916830Bb2FF1A419f12"
-    TFT_TOKEN_CONTRACT_ADDRESS="0xDC5a9199e2604A6BF4A99A583034506AE53F4B34"
-    BRIDGE_FEES="3"
-    TFT_DECIMALS=7
-    TFT_DENOM="TFT"
-    PROPOSAL_DENOM="TFT"
-    COSMOS_REST="https://threefoldhub.test.gridtesting.xyz:1317/"
-    TENDERMINT_RPC="https://threefoldhub.test.gridtesting.xyz:26657/"
-    GAS_PRICE="80TFT"
-    CHAIN_ID="threefold-hub-testnet"
     ;;
   *"test"*)
     NETWORK="test"
@@ -67,17 +56,6 @@ case $GQL_URL in
     ACTIVATION_SERVICE_URL="https://activation.test.grid.tf"
     EXPLORER_URL="https://explorer.test.grid.tf/"
     STELLAR_HORIZON_URL="https://horizon-testnet.stellar.org"
-
-    GRAVITY_CONTRACT_ADDRESS="0xA18f6d4929eABb0C6073E916830Bb2FF1A419f12"
-    TFT_TOKEN_CONTRACT_ADDRESS="0xDC5a9199e2604A6BF4A99A583034506AE53F4B34"
-    BRIDGE_FEES="3"
-    TFT_DECIMALS=7
-    TFT_DENOM="TFT"
-    PROPOSAL_DENOM="TFT"
-    COSMOS_REST="https://threefoldhub.test.gridtesting.xyz:1317/"
-    TENDERMINT_RPC="https://threefoldhub.test.gridtesting.xyz:26657/"
-    GAS_PRICE="80TFT"
-    CHAIN_ID="threefold-hub-testnet"
     ;;
   *"qa"*)
     NETWORK="qa"
@@ -89,17 +67,6 @@ case $GQL_URL in
     ACTIVATION_SERVICE_URL="https://activation.qa.grid.tf"
     EXPLORER_URL="https://explorer.qa.grid.tf/"
     STELLAR_HORIZON_URL="https://horizon-testnet.stellar.org"
-
-    GRAVITY_CONTRACT_ADDRESS="0xA18f6d4929eABb0C6073E916830Bb2FF1A419f12"
-    TFT_TOKEN_CONTRACT_ADDRESS="0xDC5a9199e2604A6BF4A99A583034506AE53F4B34"
-    BRIDGE_FEES="3"
-    TFT_DECIMALS=7
-    TFT_DENOM="TFT"
-    PROPOSAL_DENOM="TFT"
-    COSMOS_REST="https://threefoldhub.test.gridtesting.xyz:1317/"
-    TENDERMINT_RPC="https://threefoldhub.test.gridtesting.xyz:26657/"
-    GAS_PRICE="80TFT"
-    CHAIN_ID="threefold-hub-testnet"
     ;;
 esac
 
