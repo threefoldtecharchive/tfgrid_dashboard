@@ -11,6 +11,17 @@ interface AppConfigs {
   APP_GRIDPROXY_URL: string;
   APP_NETWORK: string;
   APP_VERSION: string;
+
+  APP_GRAVITY_CONTRACT_ADDRESS: string;
+  APP_TFT_TOKEN_CONTRACT_ADDRESS: string;
+  APP_BRIDGE_FEES: string;
+  APP_TFT_DECIMALS: number;
+  APP_TFT_DENOM: string;
+  APP_PROPOSAL_DENOM: string;
+  APP_COSMOS_REST: string;
+  APP_TENDERMINT_RPC: string;
+  APP_GAS_PRICE: string;
+  APP_CHAIN_ID: string;
 }
 declare let process: {
   env: {

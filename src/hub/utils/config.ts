@@ -17,18 +17,18 @@ export interface Config {
 
 async function validateConfig(config: { [key: string]: any }) {
   const props = [
-    "BRIDGE_FEES",
-    "TFT_TOKEN_CONTRACT_ADDRESS",
-    "GRAVITY_CONTRACT_ADDRESS",
-    "TFT_DECIMALS",
-    "TFT_DENOM",
-    "COSMOS_REST",
-    "TENDERMINT_RPC",
-    "PROPOSAL_DENOM",
-    "GAS_PRICE",
-    "CHAIN_ID",
+    "APP_BRIDGE_FEES",
+    "APP_TFT_TOKEN_CONTRACT_ADDRESS",
+    "APP_GRAVITY_CONTRACT_ADDRESS",
+    "APP_TFT_DECIMALS",
+    "APP_TFT_DENOM",
+    "APP_COSMOS_REST",
+    "APP_TENDERMINT_RPC",
+    "APP_PROPOSAL_DENOM",
+    "APP_GAS_PRICE",
+    "APP_CHAIN_ID",
   ];
-  const numbers = ["BRIDGE_FEES", "TFT_DECIMALS"];
+  const numbers = ["APP_BRIDGE_FEES", "APP_TFT_DECIMALS"];
   for (const prop of props) {
     if (config[prop] === undefined) {
       throw new Error(prop + " is required and not present in the env vars");
@@ -44,19 +44,19 @@ async function validateConfig(config: { [key: string]: any }) {
 }
 
 export function loadConfig(): Config {
-  const config = window.config;
+  const config = window.configs;
   validateConfig(config);
-  const tft_decimals = +(config["TFT_DECIMALS"] as string);
+  const tft_decimals = +config["APP_TFT_DECIMALS"];
   return {
-    bridge_fees: parseUnits(config["BRIDGE_FEES"], tft_decimals),
-    tft_token_contract_address: config["TFT_TOKEN_CONTRACT_ADDRESS"],
-    gravity_contract_address: config["GRAVITY_CONTRACT_ADDRESS"],
+    bridge_fees: parseUnits(config["APP_BRIDGE_FEES"], tft_decimals),
+    tft_token_contract_address: config["APP_TFT_TOKEN_CONTRACT_ADDRESS"],
+    gravity_contract_address: config["APP_GRAVITY_CONTRACT_ADDRESS"],
     tft_decimals: tft_decimals,
-    tft_denom: config["TFT_DENOM"],
-    cosmos_rest: config["COSMOS_REST"] as string,
-    tendermint_rpc: config["TENDERMINT_RPC"] as string,
-    proposal_denom: config["PROPOSAL_DENOM"] as string,
-    gas_price: config["GAS_PRICE"] as string,
-    chain_id: config["CHAIN_ID"] as string,
+    tft_denom: config["APP_TFT_DENOM"],
+    cosmos_rest: config["APP_COSMOS_REST"],
+    tendermint_rpc: config["APP_TENDERMINT_RPC"],
+    proposal_denom: config["APP_PROPOSAL_DENOM"],
+    gas_price: config["APP_GAS_PRICE"],
+    chain_id: config["APP_CHAIN_ID"],
   };
 }
