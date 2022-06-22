@@ -1,29 +1,88 @@
 <template>
-  <v-card
-    color="#0D47A1"
-    class="fund px-3 d-flex align-baseline font-weight-bold"
-  > {{balance }} TFT
-    <v-btn
-      @click="addTFT()"
-      class="ml-3"
-      :loading="loadingAddTFT"
-    >+</v-btn>
+  <v-container>
+    <v-card class="fund  d-flex align-center font-weight-bold">
+      <v-card-text>
+        <v-tooltip>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="openBalance = true"
+              v-bind="attrs"
+              v-on="on"
+              class="d-flex align-end"
+            >
+              <p>{{balanceFree }}</p>
+              <p class="font-weight-black">TFT</p>
 
-  </v-card>
+            </v-btn>
+
+          </template>
+          <span>View Balance Summary</span>
+
+        </v-tooltip>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn
+          @click="addTFT()"
+          class=""
+          :loading="loadingAddTFT"
+        >+</v-btn>
+
+      </v-card-actions>
+
+    </v-card>
+    <v-dialog
+      v-model="openBalance"
+      max-width="600"
+    >
+
+      <v-card>
+        <v-toolbar
+          color="primary"
+          dark
+        >
+          Balance Summary
+        </v-toolbar>
+        <v-card-text class="pa-5">
+          <v-container>
+            <v-row>
+              Free: {{balanceFree }} TFT
+            </v-row>
+            <v-row>
+              Reserved (Locked): {{balanceReserved}} TFT
+            </v-row>
+          </v-container>
+
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn @click="openBalance = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+
+    </v-dialog>
+
+  </v-container>
 </template>
 <script lang="ts">
 import config from "@/portal/config";
-import { getBalance, getMoreFunds } from "@/portal/lib/balance";
-import { Component, Emit, Prop, Vue } from "vue-property-decorator";
+import {
+  balanceInterface,
+  getBalance,
+  getMoreFunds,
+} from "@/portal/lib/balance";
+import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component({
   name: "FundsCard",
 })
 export default class FundsCard extends Vue {
-  address = "";
   loadingAddTFT = false;
   $api: any;
-  @Prop({ required: true }) balance!: number;
+  @Prop({ required: true }) balanceFree!: number;
+  @Prop({ required: true }) balanceReserved!: number;
+  openBalance = false;
+  mounted() {
+    console.log(this.$route.params.accountID);
+  }
 
   async addTFT() {
     if (config.network !== "dev") {
@@ -63,12 +122,13 @@ export default class FundsCard extends Vue {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
               if (section === "balances" && method === "Transfer") {
                 this.$toasted.show("Success!");
+                this.loadingAddTFT = false;
                 getBalance(this.$api, this.$route.params.accountID).then(
-                  (balance: number) => {
-                    this.$emit("update:balance", balance / 1e7);
+                  (balance) => {
+                    this.$emit("update:balanceFree", balance.free);
+                    this.$emit("update:balanceReserved", balance.reserved);
                   }
                 );
-                this.loadingAddTFT = false;
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Get more TFT failed!");
                 this.loadingAddTFT = false;
@@ -86,8 +146,9 @@ export default class FundsCard extends Vue {
 <style scoped>
 .fund {
   position: fixed;
-  top: 14%;
-  right: 0;
+  top: 0;
+  right: 11.5%;
   z-index: 1000;
+  height: 65px;
 }
 </style>

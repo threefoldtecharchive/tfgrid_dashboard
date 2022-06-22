@@ -129,7 +129,7 @@ export default class AccountView extends Vue {
   twinCreated = false;
   address = "";
   $api: any;
-  balance = 0;
+  balance: any;
   twinID = 0;
   ip = "";
   twin: any;
@@ -141,7 +141,7 @@ export default class AccountView extends Vue {
   async updated() {
     if (this.$api) {
       this.address = this.$route.params.accountID;
-      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+      this.balance = await getBalance(this.$api, this.address);
       this.twinID = await getTwinID(this.$api, this.address);
       if (this.twinID) {
         this.twinCreated = true;
@@ -154,7 +154,8 @@ export default class AccountView extends Vue {
             accountName: `${this.$route.query.accountName}`,
             twinID: this.twin.id,
             twinIP: this.twin.ip,
-            balance: `${this.balance}`,
+            balanceFree: `${this.balance.free}`,
+            balanceReserved: `${this.balance.reserved}`,
           },
         });
       }
@@ -167,7 +168,7 @@ export default class AccountView extends Vue {
   async mounted() {
     if (this.$api) {
       this.address = this.$route.params.accountID;
-      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+      this.balance = await getBalance(this.$api, this.address);
       this.twinID = await getTwinID(this.$api, this.address);
       if (this.twinID) {
         this.twinCreated = true;
@@ -305,11 +306,3 @@ export default class AccountView extends Vue {
 }
 </script>
 
-<style scoped>
-/* .v-card {
-  background-color: transparent !important;
-}
-.v-sheet.v-card:not(.v-sheet--outlined) {
-  box-shadow: none !important;
-} */
-</style>

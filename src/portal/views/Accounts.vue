@@ -18,23 +18,24 @@
           ></v-text-field>
         </v-col>
       </v-row>
-
-      <v-card
-        v-for="account in filteredAccounts()"
-        :key="account.address"
-        @click="addAccountRoute(account)"
-        class="my-4 primary white--text"
-      >
-        <div class="d-flex justify-space-between">
-          <div class="d-inline-block text-truncate">
-            <v-card-title>{{ account.meta.name.toUpperCase() }}</v-card-title>
-            <v-card-subtitle>
-              {{ account.address }}
-            </v-card-subtitle>
+      <div v-if="accounts.length">
+        <v-card
+          v-for="account in filteredAccounts()"
+          :key="account.address"
+          @click="addAccountRoute(account)"
+          class="my-4 primary white--text"
+        >
+          <div class="d-flex justify-space-between">
+            <div class="d-inline-block text-truncate">
+              <v-card-title>{{ account.meta.name.toUpperCase() }}</v-card-title>
+              <v-card-subtitle>
+                {{ account.address }}
+              </v-card-subtitle>
+            </div>
+            <v-icon>mdi-chevron-right</v-icon>
           </div>
-          <v-icon>mdi-chevron-right</v-icon>
-        </div>
-      </v-card>
+        </v-card>
+      </div>
     </v-container>
   </v-container>
 </template>
@@ -53,8 +54,7 @@ import FundsCard from "../../components/FundsCard.vue";
 export default class AccountsView extends Vue {
   searchTerm = "";
   accounts: accountInterface[] = [];
-  $clients: any;
-  $client: any;
+
   mounted() {
     this.accounts = this.$store.state.portal.accounts;
   }

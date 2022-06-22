@@ -143,7 +143,7 @@ export async function calDiscount(api: { query: { system: { account: (arg0: stri
   let totalPrice = price - price * (discount / 100);
 
   // discount for Twin Balance
-  const balance = (await getBalance(api, address)) / 1e7;
+  const balance = (await getBalance(api, address));
 
   const discountPackages: any = {
     'none': {
@@ -172,7 +172,7 @@ export async function calDiscount(api: { query: { system: { account: (arg0: stri
 
 
   for (const pkg in discountPackages) {
-    if (balance > totalPrice * discountPackages[pkg].duration) {
+    if (balance.free > totalPrice * discountPackages[pkg].duration) {
       selectedPackage = pkg;
     }
   }

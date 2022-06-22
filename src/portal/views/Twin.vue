@@ -79,17 +79,6 @@
       <h4 class="text-center my-5 pa-5">What do you wish to do?</h4>
       <div class="d-flex row justify-center align-center">
 
-        <button
-          type="button"
-          v-for="link in links"
-          :key="link.label"
-          class="v-btn v-btn--is-elevated v-btn--has-bg theme--dark v-size--default primary"
-          @click="redirectToLabelRoute(link.path, address)"
-        >
-          <span class="v-btn__content">
-            {{ link.label }}
-          </span>
-        </button>
       </div>
     </v-container>
     <v-dialog
@@ -139,7 +128,7 @@ export default class TwinView extends Vue {
   address = "";
   twin: any;
   accountName: any;
-  balance: any = 0;
+
   loadingDeleteTwin = false;
   openDeleteTwinDialog = false;
   ipErrorMessage = "";
@@ -172,9 +161,6 @@ export default class TwinView extends Vue {
       this.id = this.$route.query.twinID;
       this.accountName = this.$route.query.accountName;
     }
-    if (this.$route.query.balance !== this.balance) {
-      this.balance = this.$route.query.balance;
-    }
   }
   mounted() {
     if (this.$api) {
@@ -184,7 +170,6 @@ export default class TwinView extends Vue {
         this.id = this.$route.query.twinID;
         this.accountName = this.$route.query.accountName;
       }
-      this.balance = this.$route.query.balance;
     } else {
       this.$router.push({
         name: "accounts",
@@ -193,7 +178,6 @@ export default class TwinView extends Vue {
     }
   }
   unmounted() {
-    this.balance = 0;
     this.address = "";
   }
   ipcheck() {
@@ -219,18 +203,7 @@ export default class TwinView extends Vue {
   decodeHex(input: string) {
     return hex2a(input);
   }
-  public redirectToLabelRoute(path: string, address: string) {
-    this.$router.push({
-      name: `${path}`,
-      path: `/:accountID/${path}`,
-      params: { accountID: `${address}` },
-      query: {
-        accountName: `${this.accountName}`,
-        twinID: this.id,
-        balance: `${this.balance}`,
-      },
-    });
-  }
+
   public editTwin() {
     console.log("editing a twin");
     this.editingTwin = true;
@@ -274,7 +247,7 @@ export default class TwinView extends Vue {
                   this.$api,
                   this.$route.params.accountID
                 );
-                this.balance = await getBalance(this.$api, this.address);
+
                 this.twin = await getTwin(this.$api, this.id);
                 this.ip = this.twin.ip;
                 this.editingTwin = false;
