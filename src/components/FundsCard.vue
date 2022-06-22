@@ -80,9 +80,6 @@ export default class FundsCard extends Vue {
   @Prop({ required: true }) balanceFree!: number;
   @Prop({ required: true }) balanceReserved!: number;
   openBalance = false;
-  mounted() {
-    console.log(this.$route.params.accountID);
-  }
 
   async addTFT() {
     if (config.network !== "dev") {
@@ -116,7 +113,7 @@ export default class FundsCard extends Vue {
             console.log(
               `Transaction included at blockHash ${status.asFinalized}`
             );
-
+            console.log(events);
             // Loop through Vec<EventRecord> to display all events
             events.forEach(({ phase, event: { data, method, section } }) => {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);

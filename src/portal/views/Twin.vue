@@ -76,10 +76,7 @@
           >Delete</v-btn>
         </v-card-actions>
       </v-card>
-      <h4 class="text-center my-5 pa-5">What do you wish to do?</h4>
-      <div class="d-flex row justify-center align-center">
 
-      </div>
     </v-container>
     <v-dialog
       max-width="600"

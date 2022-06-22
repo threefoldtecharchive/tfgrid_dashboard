@@ -15,7 +15,7 @@ export async function getMoreFunds(substrateAccountID: string, api: { tx: { bala
   const keyring = new Keyring({ type: 'sr25519' })
   const alice = keyring.addFromUri('//Alice')
 
-  const transfer = api.tx.balances.transfer(substrateAccountID, 100 * 1e7)
+  const transfer = await api.tx.balances.transfer(substrateAccountID, 100 * 1e7)
 
   transfer.signAndSend(alice, callback)
 }
