@@ -139,7 +139,6 @@ import config from "../config";
 import { getDepositFee, getWithdrawFee, withdraw } from "../lib/swap";
 import QrcodeVue from "qrcode.vue";
 import { getBalance } from "../lib/balance";
-import FundsCard from "@/components/FundsCard.vue";
 
 @Component({
   name: "TransferView",
@@ -242,27 +241,34 @@ export default class TransferView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (
-              section === "tftBridgeModule" &&
-              method === "BurnTransactionCreated"
-            ) {
-              this.$toasted.show("Withdraw sumbitted!");
-              this.openWithdrawDialog = false;
-              getBalance(this.$api, this.address).then((balance: any) => {
-                this.balance = balance;
-              });
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Withdraw failed!");
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Withdraw failed!");
+            this.openWithdrawDialog = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (
+                section === "tftBridgeModule" &&
+                method === "BurnTransactionCreated"
+              ) {
+                this.$toasted.show("Withdraw sumbitted!");
+                this.openWithdrawDialog = false;
+                getBalance(this.$api, this.address).then((balance: any) => {
+                  this.balance = balance;
+                });
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Withdraw failed!");
+                this.openWithdrawDialog = false;
+              }
+            });
+          }
         }
       }
     ).catch((err) => {
       console.log(err.message);
+      this.$toasted.show("Withdraw failed!");
+      this.openWithdrawDialog = false;
     });
   }
 }

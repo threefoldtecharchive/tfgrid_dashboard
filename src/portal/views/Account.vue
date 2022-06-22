@@ -238,18 +238,23 @@ export default class AccountView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "tfgridModule" && method === "TwinStored") {
-              this.loadingTwinCreate = false;
-              this.$toasted.show("Twin created!");
-              this.twinCreated = true;
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Twin creation failed!");
-              this.loadingTwinCreate = false;
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Twin creation failed!");
+            this.loadingTwinCreate = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "tfgridModule" && method === "TwinStored") {
+                this.loadingTwinCreate = false;
+                this.$toasted.show("Twin created!");
+                this.twinCreated = true;
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Twin creation failed!");
+                this.loadingTwinCreate = false;
+              }
+            });
+          }
         }
       }
     ).catch((err: { message: string }) => {
@@ -285,17 +290,22 @@ export default class AccountView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "system" && method === "ExtrinsicSuccess") {
-              this.$toasted.show("Accepted!");
-              this.loadingTC = false;
-              this.loadingAcceptedTC = false;
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("rejected");
-              this.loadingAcceptedTC = false;
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("rejected");
+            this.loadingAcceptedTC = false;
+          } else {
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "system" && method === "ExtrinsicSuccess") {
+                this.$toasted.show("Accepted!");
+                this.loadingTC = false;
+                this.loadingAcceptedTC = false;
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("rejected");
+                this.loadingAcceptedTC = false;
+              }
+            });
+          }
         }
       }
     ).catch((err: { message: string }) => {

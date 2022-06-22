@@ -391,19 +391,24 @@ export default class FarmsView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "tfgridModule" && method === "FarmDeleted") {
-              this.$toasted.show("Farm deleted!");
-              this.loadingDeleteFarm = false;
-              this.openDeleteFarmDialog = false;
-              this.farms = getFarm(this.$api, this.id);
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Deleting a farm failed");
-              this.loadingDeleteFarm = false;
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Deleting a farm failed");
+            this.loadingDeleteFarm = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "tfgridModule" && method === "FarmDeleted") {
+                this.$toasted.show("Farm deleted!");
+                this.loadingDeleteFarm = false;
+                this.openDeleteFarmDialog = false;
+                this.farms = getFarm(this.$api, this.id);
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Deleting a farm failed");
+                this.loadingDeleteFarm = false;
+              }
+            });
+          }
         }
       }
     ).catch((err: { message: string }) => {
@@ -437,20 +442,25 @@ export default class FarmsView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "tfgridModule" && method === "FarmUpdated") {
-              this.$toasted.show("IP deleted!");
-              getFarm(this.$api, this.id).then((farms) => {
-                this.farms = farms;
+          if (!events.length) {
+            this.$toasted.show("IP deletion failed!");
+            this.loadingDeleteIP = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "tfgridModule" && method === "FarmUpdated") {
+                this.$toasted.show("IP deleted!");
+                getFarm(this.$api, this.id).then((farms) => {
+                  this.farms = farms;
+                  this.loadingDeleteIP = false;
+                });
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("IP deletion failed!");
                 this.loadingDeleteIP = false;
-              });
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("IP deletion failed!");
-              this.loadingDeleteIP = false;
-            }
-          });
+              }
+            });
+          }
         }
       }
     ).catch((err) => {
@@ -485,19 +495,23 @@ export default class FarmsView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "tfgridModule" && method === "FarmUpdated") {
-              this.$toasted.show("IP created!");
-              getFarm(this.$api, this.id).then((farms) => {
-                this.farms = farms;
-                this.loadingCreateIP = false;
-              });
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Adding an IP failed!");
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Adding an IP failed!");
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "tfgridModule" && method === "FarmUpdated") {
+                this.$toasted.show("IP created!");
+                getFarm(this.$api, this.id).then((farms) => {
+                  this.farms = farms;
+                  this.loadingCreateIP = false;
+                });
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Adding an IP failed!");
+              }
+            });
+          }
         }
       }
     ).catch((err) => {
@@ -541,23 +555,29 @@ export default class FarmsView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "tfgridModule" && method === "FarmStored") {
-              this.$toasted.show("Farm created!");
-              this.loadingCreateFarm = false;
-              this.farmName = "";
-              getFarm(this.$api, this.id).then((farms) => {
-                this.farms = farms;
-              });
-              this.openCreateFarmDialog = false;
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Farm creation failed!");
-              this.openCreateFarmDialog = false;
-              this.loadingCreateFarm = false;
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Farm creation failed!");
+            this.openCreateFarmDialog = false;
+            this.loadingCreateFarm = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "tfgridModule" && method === "FarmStored") {
+                this.$toasted.show("Farm created!");
+                this.loadingCreateFarm = false;
+                this.farmName = "";
+                getFarm(this.$api, this.id).then((farms) => {
+                  this.farms = farms;
+                });
+                this.openCreateFarmDialog = false;
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Farm creation failed!");
+                this.openCreateFarmDialog = false;
+                this.loadingCreateFarm = false;
+              }
+            });
+          }
         }
       }
     ).catch((err) => {
@@ -591,26 +611,33 @@ export default class FarmsView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (
-              section === "tfgridModule" &&
-              method === "FarmPayoutV2AddressRegistered"
-            ) {
-              this.$toasted.show("Address added!");
-              getFarm(this.$api, this.id).then((farms) => {
-                this.farms = farms;
-              });
-              this.openV2AddressDialog = false;
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Adding a V2 address failed!");
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Adding a V2 address failed!");
+            this.openV2AddressDialog = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (
+                section === "tfgridModule" &&
+                method === "FarmPayoutV2AddressRegistered"
+              ) {
+                this.$toasted.show("Address added!");
+                getFarm(this.$api, this.id).then((farms) => {
+                  this.farms = farms;
+                });
+                this.openV2AddressDialog = false;
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Adding a V2 address failed!");
+                this.openV2AddressDialog = false;
+              }
+            });
+          }
         }
       }
     ).catch((err) => {
       this.$toasted.show(err.message);
+      this.openV2AddressDialog = false;
     });
   }
 }

@@ -108,7 +108,6 @@
 <script lang="ts">
 import WelcomeWindow from "@/components/WelcomeWindow.vue";
 import { Component, Vue } from "vue-property-decorator";
-import { getBalance } from "../lib/balance";
 import { deleteTwin, getTwin, getTwinID, updateTwinIP } from "../lib/twin";
 import { hex2a } from "@/portal/lib/util";
 
@@ -231,33 +230,40 @@ export default class TwinView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
+          if (!events.length) {
+            this.$toasted.show("Twin creation/update failed!");
+            this.loadingEditTwin = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(
+              async ({ phase, event: { data, method, section } }) => {
+                console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+                if (section === "tfgridModule" && method === "TwinUpdated") {
+                  this.loadingEditTwin = false;
+                  this.$toasted.show("Twin updated!");
 
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(
-            async ({ phase, event: { data, method, section } }) => {
-              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-              if (section === "tfgridModule" && method === "TwinUpdated") {
-                this.loadingEditTwin = false;
-                this.$toasted.show("Twin updated!");
+                  this.id = await getTwinID(
+                    this.$api,
+                    this.$route.params.accountID
+                  );
 
-                this.id = await getTwinID(
-                  this.$api,
-                  this.$route.params.accountID
-                );
-
-                this.twin = await getTwin(this.$api, this.id);
-                this.ip = this.twin.ip;
-                this.editingTwin = false;
-              } else if (section === "system" && method === "ExtrinsicFailed") {
-                this.$toasted.show("Twin creation/update failed!");
-                this.loadingEditTwin = false;
+                  this.twin = await getTwin(this.$api, this.id);
+                  this.ip = this.twin.ip;
+                  this.editingTwin = false;
+                } else if (
+                  section === "system" &&
+                  method === "ExtrinsicFailed"
+                ) {
+                  this.$toasted.show("Twin creation/update failed!");
+                  this.loadingEditTwin = false;
+                }
               }
-            }
-          );
+            );
+          }
         }
       }
     ).catch((err: { message: string }) => {
-      this.$toasted.show(err.message);
+      this.$toasted.show("Twin creation/update failed!");
       this.loadingEditTwin = false;
     });
   }
@@ -292,25 +298,29 @@ export default class TwinView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "tfgridModule" && method === "TwinDeleted") {
-              this.$toasted.show("Twin deleted!");
-              this.loadingDeleteTwin = false;
-              this.openDeleteTwinDialog = false;
-              this.$router.push({
-                name: "account",
-                path: "account",
-                params: { accountID: `${this.address}` },
-                query: { accountName: `${this.accountName}` },
-              });
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Deleting a twin failed");
-              this.loadingDeleteTwin = false;
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Deleting a twin failed");
+            this.loadingDeleteTwin = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "tfgridModule" && method === "TwinDeleted") {
+                this.$toasted.show("Twin deleted!");
+                this.loadingDeleteTwin = false;
+                this.openDeleteTwinDialog = false;
+                this.$router.push({
+                  name: "account",
+                  path: "account",
+                  params: { accountID: `${this.address}` },
+                  query: { accountName: `${this.accountName}` },
+                });
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Deleting a twin failed");
+                this.loadingDeleteTwin = false;
+              }
+            });
+          }
         }
       }
     ).catch((err: { message: string }) => {

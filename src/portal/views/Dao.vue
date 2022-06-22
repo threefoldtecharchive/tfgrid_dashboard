@@ -216,23 +216,28 @@ export default class DaoView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "dao" && method === "Voted") {
-              this.$toasted.show("Voted for proposal!");
-              this.loadingVote = false;
-              this.openVDialog = false;
-              getProposals(this.$api).then(
-                (proposals) => (this.proposals = proposals)
-              );
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Vote failed");
-              this.loadingVote = false;
-              this.openVDialog = false;
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Vote failed");
+            this.loadingVote = false;
+            this.openVDialog = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "dao" && method === "Voted") {
+                this.$toasted.show("Voted for proposal!");
+                this.loadingVote = false;
+                this.openVDialog = false;
+                getProposals(this.$api).then(
+                  (proposals) => (this.proposals = proposals)
+                );
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Vote failed");
+                this.loadingVote = false;
+                this.openVDialog = false;
+              }
+            });
+          }
         }
       }
     ).catch((err) => {
