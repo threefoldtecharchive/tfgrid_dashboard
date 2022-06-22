@@ -64,11 +64,7 @@
 </template>
 <script lang="ts">
 import config from "@/portal/config";
-import {
-  balanceInterface,
-  getBalance,
-  getMoreFunds,
-} from "@/portal/lib/balance";
+import { getBalance, getMoreFunds } from "@/portal/lib/balance";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component({
@@ -80,7 +76,9 @@ export default class FundsCard extends Vue {
   @Prop({ required: true }) balanceFree!: number;
   @Prop({ required: true }) balanceReserved!: number;
   openBalance = false;
-
+  mounted() {
+    console.log(this.$api);
+  }
   async addTFT() {
     if (config.network !== "dev") {
       window.open(

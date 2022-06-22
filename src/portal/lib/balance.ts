@@ -4,7 +4,7 @@ export interface balanceInterface {
   reserved: number;
 }
 
-export async function getBalance(api: { query: { system: { account: (arg0: string) => { data: any } } } }, address: string) {
+export async function getBalance(api: { query: { system: { account: (arg0: string) => { data: { free: { toJSON: () => number; }; reserved: { toJSON: () => number; }; } } } } }, address: string) {
   const res = await api.query.system.account(address)
 
   return { free: res.data.free.toJSON() / 1e7, reserved: res.data.reserved.toJSON() / 1e7 }
