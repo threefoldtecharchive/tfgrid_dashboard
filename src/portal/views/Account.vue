@@ -107,7 +107,7 @@
 <script lang="ts">
 import axios from "axios";
 import { Component, Vue } from "vue-property-decorator";
-import { getBalance } from "../lib/balance";
+import { balanceInterface, getBalance } from "../lib/balance";
 import { createTwin, getTwin, getTwinID } from "../lib/twin";
 import blake from "blakejs";
 import {
@@ -129,10 +129,10 @@ export default class AccountView extends Vue {
   twinCreated = false;
   address = "";
   $api: any;
-  balance: any;
+  balance: balanceInterface = { free: 0, reserved: 0 };
   twinID = 0;
   ip = "";
-  twin: any;
+  twin!: { id: any; ip: any };
   loadingTC = true;
   loadingTwinCreate = false;
   ipErrorMessage = "";
@@ -191,7 +191,7 @@ export default class AccountView extends Vue {
   }
   unmounted() {
     this.address = "";
-    this.balance = 0;
+    this.balance = { free: 0, reserved: 0 };
     this.twinID = 0;
   }
   ipcheck() {

@@ -30,7 +30,11 @@
       </v-row>
     </form>
 
-    <CustomAlert :loading="loading" :result="result" :error="error" />
+    <CustomAlert
+      :loading="loading"
+      :result="result"
+      :error="error"
+    />
   </v-container>
 </template>
 
@@ -51,7 +55,7 @@ import { BigNumber } from "ethers";
 })
 export default class Cosmos extends Vue {
   loading = false;
-  result: any = null;
+  result: string | null = null;
   error: string | null = null;
 
   amount = "";
@@ -76,8 +80,8 @@ export default class Cosmos extends Vue {
     try {
       this.parseAmount();
       return true;
-    } catch (err: any) {
-      return err.message;
+    } catch (e) {
+      return (e as Error).message;
     }
   }
 
@@ -106,7 +110,7 @@ export default class Cosmos extends Vue {
         destination,
         amount
       )
-        .then((res) => {
+        .then(() => {
           this.result = "Transaction submitted succefully!";
         })
         .catch((err) => {
@@ -115,8 +119,8 @@ export default class Cosmos extends Vue {
         .finally(() => {
           this.loading = false;
         });
-    } catch (err: any) {
-      this.error = err.message;
+    } catch (e) {
+      this.error = (e as Error).message;
       this.loading = false;
     }
   }

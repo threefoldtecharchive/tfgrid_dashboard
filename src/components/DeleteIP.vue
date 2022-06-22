@@ -60,7 +60,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 })
 export default class DeleteIP extends Vue {
   open = false;
-  @Prop({ required: true }) ip!: any;
+  @Prop({ required: true }) ip!: { ip: string };
   deletePublicIP() {
     this.open = false;
     this.$emit("delete");

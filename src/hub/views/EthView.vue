@@ -53,7 +53,11 @@
       </v-row>
     </form>
 
-    <CustomAlert :loading="loading" :result="result" :error="error" />
+    <CustomAlert
+      :loading="loading"
+      :result="result"
+      :error="error"
+    />
   </v-container>
 </template>
 
@@ -75,7 +79,7 @@ import { debounce } from "debounce";
 })
 export default class Eth extends Vue {
   loading = false;
-  result: any = null;
+  result: string | null = null;
   error: string | null = null;
 
   amount = "";
@@ -116,7 +120,7 @@ export default class Eth extends Vue {
           // ignore error
           this.error = "Can't estimate transaction fees: " + err;
         });
-    } catch (err: any) {
+    } catch (e) {
       return 0;
     }
   }
@@ -141,7 +145,7 @@ export default class Eth extends Vue {
         this.txFees,
         this.$store.state.hub.config.tft_decimals || 0
       );
-    } catch (err: any) {
+    } catch (e) {
       return 0;
     }
     return formatUnits(bridge_fees.add(amountBN).add(txFeesBN), decimals);
@@ -155,8 +159,8 @@ export default class Eth extends Vue {
     try {
       this.parseAmount(this.amount);
       return true;
-    } catch (err: any) {
-      return err.message;
+    } catch (e) {
+      return (e as Error).message;
     }
   }
 
@@ -164,8 +168,8 @@ export default class Eth extends Vue {
     try {
       validateBSCAddress(this.destination);
       return true;
-    } catch (err: any) {
-      return err.message;
+    } catch (e) {
+      return (e as Error).message;
     }
   }
 
@@ -174,20 +178,20 @@ export default class Eth extends Vue {
     this.result = null;
     this.error = null;
 
-    const { destination, amount } = this;
+    const { destination } = this;
     const config = this.$store.state.hub.config as Config;
     let amountBN: BigNumber = BigNumber.from(0);
     try {
       amountBN = this.parseAmount(this.amount);
-    } catch (err: any) {
-      this.error = "Invalid amount: " + err.message;
+    } catch (e) {
+      this.error = "Invalid amount: " + (e as Error).message;
       this.loading = false;
       return;
     }
     try {
       validateBSCAddress(destination);
-    } catch (err: any) {
-      this.error = "Invalid amount: " + err.message;
+    } catch (e) {
+      this.error = "Invalid amount: " + (e as Error).message;
       this.loading = false;
       return;
     }
@@ -202,7 +206,7 @@ export default class Eth extends Vue {
       config.bridge_fees,
       config.tft_denom
     )
-      .then((res) => {
+      .then(() => {
         this.result = "Transaction submitted succefully!";
       })
       .catch((err) => {

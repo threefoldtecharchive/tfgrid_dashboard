@@ -22,7 +22,7 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 export default class PortalView extends Vue {
   balanceFree: string | (string | null)[] = "";
   balanceReserved: string | (string | null)[] = "";
-  $api: any;
+
   @Watch("this.$route.query.balance") async onBalanceUpdate(
     value: number,
     oldValue: number
@@ -40,7 +40,6 @@ export default class PortalView extends Vue {
     this.balanceFree = this.$route.query.balanceFree;
     this.balanceReserved = this.$route.query.balanceReserved;
   }
-
   unmounted() {
     this.$store.dispatch("portal/unsubscribeAccounts");
   }

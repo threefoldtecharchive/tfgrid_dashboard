@@ -59,7 +59,7 @@
         <v-list>
           <v-list-item> ID: {{ id }} </v-list-item>
 
-          <v-list-item> IP: {{ decodeHex(ip) }} </v-list-item>
+          <v-list-item> IP: {{ decodeHex(`${ip}`) }} </v-list-item>
 
           <v-list-item> ADDRESS: {{ address }} </v-list-item>
         </v-list>
@@ -118,11 +118,11 @@ import { hex2a } from "@/portal/lib/util";
 export default class TwinView extends Vue {
   $api: any;
   editingTwin = false;
-  ip: any = [];
+  ip: string | (string | null)[] = "";
   ipv = "";
-  id: any = [];
+  id: string | (string | null)[] = "";
   address = "";
-  twin: any;
+  twin: { ip: string } = { ip: "" };
   accountName: any;
 
   loadingDeleteTwin = false;
@@ -209,13 +209,14 @@ export default class TwinView extends Vue {
     updateTwinIP(
       this.$route.params.accountID,
       this.$api,
-      this.ip,
+      `${this.ip}`,
       (res: {
         events?: never[] | undefined;
         status: { type: string; asFinalized: string; isFinalized: string };
       }) => {
         if (res instanceof Error) {
           console.log(res);
+
           return;
         }
 
@@ -247,7 +248,10 @@ export default class TwinView extends Vue {
                     this.$route.params.accountID
                   );
 
-                  this.twin = await getTwin(this.$api, this.id);
+                  this.twin = await getTwin(
+                    this.$api,
+                    parseFloat(`${this.id}`)
+                  );
                   this.ip = this.twin.ip;
                   this.editingTwin = false;
                 } else if (
@@ -263,6 +267,7 @@ export default class TwinView extends Vue {
         }
       }
     ).catch((err: { message: string }) => {
+      console.log(err.message);
       this.$toasted.show("Twin creation/update failed!");
       this.loadingEditTwin = false;
     });
@@ -276,7 +281,7 @@ export default class TwinView extends Vue {
     deleteTwin(
       this.address,
       this.$api,
-      this.id,
+      `${this.id}`,
       (res: {
         events?: never[] | undefined;
         status: { type: string; asFinalized: string; isFinalized: string };

@@ -1,18 +1,30 @@
 <template>
   <v-container>
     <h1>BSC transactions</h1>
-    <v-alert type="error" v-if="permError != null">
+    <v-alert
+      type="error"
+      v-if="permError != null"
+    >
       {{ permError }}
     </v-alert>
     <v-tabs v-model="tab">
-      <v-tab v-for="t in tabs" :key="t.symbol">
+      <v-tab
+        v-for="t in tabs"
+        :key="t.symbol"
+      >
         {{ t.label }}
       </v-tab>
     </v-tabs>
 
     <v-tabs-items v-model="tab">
-      <v-tab-item v-for="t in tabs" :key="t.symbol">
-        <v-data-table :headers="t.headers" :items="list[t.symbol]">
+      <v-tab-item
+        v-for="t in tabs"
+        :key="t.symbol"
+      >
+        <v-data-table
+          :headers="t.headers"
+          :items="list[t.symbol]"
+        >
           <template v-slot:[`item.erc20Token.amount`]="{ item }">
             {{ normalize(item.erc20Token.amount) }}
           </template>
@@ -38,10 +50,21 @@
         </v-data-table>
       </v-tab-item>
     </v-tabs-items>
-    <v-snackbar :value="error != null" color="red" absolute left top>
+    <v-snackbar
+      :value="error != null"
+      color="red"
+      absolute
+      left
+      top
+    >
       {{ error }}
       <template v-slot:action="{ attrs }">
-        <v-btn color="yellow" text v-bind="attrs" @click="error = null">
+        <v-btn
+          color="yellow"
+          text
+          v-bind="attrs"
+          @click="error = null"
+        >
           Close
         </v-btn>
       </template>
@@ -139,7 +162,7 @@ export default class ListEth extends Vue {
       this.$store.state.hub.config.chain_id,
       txId
     )
-      .then((_) => {
+      .then(() => {
         this.updateList();
       })
       .catch((err) => {

@@ -10,10 +10,10 @@
       :items="filteredNodes()"
       :single-expand="singleExpand"
       :expanded.sync="expanded"
-      item-key="nodeID"
+      item-key="id"
       show-expand
       class="elevation-1"
-      sort-by="nodeID"
+      sort-by="id"
     >
       <template v-slot:top>
         <v-toolbar flat>
@@ -224,7 +224,7 @@
     >
       <v-card>
         <v-card-title class="text-h5">
-          Add a public config to your node with ID: {{ nodeToEdit.nodeID }}
+          Add a public config to your node with ID: {{ nodeToEdit.id }}
         </v-card-title>
 
         <v-card-text class="text">
@@ -348,7 +348,7 @@
   </v-container>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop, Emit } from "vue-property-decorator";
+import { Component, Vue, Prop } from "vue-property-decorator";
 import moment from "moment";
 import { byteToGB } from "@/portal/lib/nodes";
 import { addNodePublicConfig, deleteNode } from "@/portal/lib/farms";
@@ -371,10 +371,32 @@ export default class FarmNodesTable extends Vue {
   openDeleteDialog = false;
   editedIndex = -1;
   editedItem: any;
-  nodeToEdit: any = {};
-  nodeToDelete: any = {};
+  nodeToEdit: {
+    id: string;
+    farmId: string;
+    publicConfig: {
+      ipv4: string;
+      gw4: string;
+      ipv6: string;
+      gw6: string;
+      domain: string;
+    };
+  } = {
+    id: "",
+    farmId: "",
+    publicConfig: {
+      ipv4: "",
+      gw4: "",
+      ipv6: "",
+      gw6: "",
+      domain: "",
+    },
+  };
+  nodeToDelete: { id: string } = {
+    id: "",
+  };
   openPublicConfigDialog = false;
-  @Prop({ required: true }) nodes!: any;
+  @Prop({ required: true }) nodes!: [];
   searchTerm = "";
   ip4 = "";
   gw4 = "";
@@ -392,12 +414,12 @@ export default class FarmNodesTable extends Vue {
     if (this.nodes.length > 0) {
       return this.nodes.filter(
         (node: {
-          nodeID: any;
+          id: any;
           serialNumber: string;
           certificationType: string;
           farmingPolicyId: number;
         }) =>
-          `${node.nodeID}`.includes(this.searchTerm) ||
+          `${node.id}`.includes(this.searchTerm) ||
           node.serialNumber
             .toLowerCase()
             .includes(this.searchTerm.toLowerCase()) ||
@@ -433,13 +455,13 @@ export default class FarmNodesTable extends Vue {
     domain: string;
   }) {
     this.loadingPublicConfig = true;
-    console.log(this.nodeToEdit.nodeId);
+    console.log(this.nodeToEdit.id);
     console.log(this.nodeToEdit.farmId);
     addNodePublicConfig(
       this.$route.params.accountID,
       this.$store.state.api,
       this.nodeToEdit.farmId,
-      this.nodeToEdit.nodeId,
+      this.nodeToEdit.id,
       config,
       (res: {
         events?: never[] | undefined;
@@ -484,6 +506,7 @@ export default class FarmNodesTable extends Vue {
       }
     ).catch((err: { message: string }) => {
       console.log(err.message);
+      this.$toasted.show("Adding Node public config failed");
       this.loadingPublicConfig = false;
       this.openPublicConfigDialog = false;
     });
@@ -503,7 +526,17 @@ export default class FarmNodesTable extends Vue {
     };
     this.save(config);
   }
-  openPublicConfig(node: any) {
+  openPublicConfig(node: {
+    id: string;
+    farmId: string;
+    publicConfig: {
+      ipv4: string;
+      gw4: string;
+      ipv6: string;
+      gw6: string;
+      domain: string;
+    };
+  }) {
     this.nodeToEdit = node;
     console.log(this.nodeToEdit);
     if (this.nodeToEdit.publicConfig) {
@@ -515,7 +548,7 @@ export default class FarmNodesTable extends Vue {
     }
     this.openPublicConfigDialog = true;
   }
-  openDelete(node: any) {
+  openDelete(node: { id: string }) {
     this.nodeToDelete = node;
     this.openDeleteDialog = true;
   }
@@ -619,7 +652,7 @@ export default class FarmNodesTable extends Vue {
               this.$toasted.show("Node deleted!");
               this.loadingDelete = false;
               this.openDeleteDialog = false;
-              this.$emit("on:delete", this.nodeToDelete.nodeID);
+              this.$emit("on:delete", this.nodeToDelete.id);
             } else if (section === "system" && method === "ExtrinsicFailed") {
               this.$toasted.show("Deleting a node failed");
               this.loadingDelete = false;
@@ -629,6 +662,7 @@ export default class FarmNodesTable extends Vue {
       }
     ).catch((err: { message: string }) => {
       console.log(err.message);
+      this.$toasted.show("Deleting a node failed");
       this.loadingDelete = false;
     });
   }
