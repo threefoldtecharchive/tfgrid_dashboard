@@ -113,28 +113,37 @@ export default class FundsCard extends Vue {
             console.log(
               `Transaction included at blockHash ${status.asFinalized}`
             );
-            console.log(events);
-            // Loop through Vec<EventRecord> to display all events
-            events.forEach(({ phase, event: { data, method, section } }) => {
-              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-              if (section === "balances" && method === "Transfer") {
-                this.$toasted.show("Success!");
-                this.loadingAddTFT = false;
-                getBalance(this.$api, this.$route.params.accountID).then(
-                  (balance) => {
-                    this.$emit("update:balanceFree", balance.free);
-                    this.$emit("update:balanceReserved", balance.reserved);
-                  }
-                );
-              } else if (section === "system" && method === "ExtrinsicFailed") {
-                this.$toasted.show("Get more TFT failed!");
-                this.loadingAddTFT = false;
-              }
-            });
+            if (!events.length) {
+              this.$toasted.show("Get more TFT failed!");
+              this.loadingAddTFT = false;
+            } else {
+              // Loop through Vec<EventRecord> to display all events
+              events.forEach(({ phase, event: { data, method, section } }) => {
+                console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+                if (section === "balances" && method === "Transfer") {
+                  this.$toasted.show("Success!");
+                  this.loadingAddTFT = false;
+                  getBalance(this.$api, this.$route.params.accountID).then(
+                    (balance) => {
+                      this.$emit("update:balanceFree", balance.free);
+                      this.$emit("update:balanceReserved", balance.reserved);
+                    }
+                  );
+                } else if (
+                  section === "system" &&
+                  method === "ExtrinsicFailed"
+                ) {
+                  this.$toasted.show("Get more TFT failed!");
+                  this.loadingAddTFT = false;
+                }
+              });
+            }
           }
         }
       ).catch((err: { message: string }) => {
         console.log(err.message);
+        this.loadingAddTFT = false;
+        this.$toasted.show("Get more TFT failed!");
       });
     }
   }
