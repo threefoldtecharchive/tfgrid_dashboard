@@ -52,66 +52,65 @@
 
         </v-card-text>
 
-        <v-container>
-          <div class="py-5 d-flex justify-space-between">
+        <v-container
+          fluid
+          class="d-flex justify-space-between my-5"
+        >
+          <v-btn
+            color="green"
+            class=" "
+            :width="`${proposal.ayes.length *100 + 100}`"
+            @click="openVoteDialog(proposal.hash, true)"
+            :loading="loadingVote"
+          >Yes
+            <v-divider
+              class="mx-3"
+              vertical
+            />{{proposal.ayes.length}}
+          </v-btn>
 
-            <v-btn
-              color="green"
-              class=" "
-              :width="`${proposal.ayes.length *100 + 100}`"
-              @click="openVoteDialog(proposal.hash, true)"
-              :loading="loadingVote"
-            >Yes
-              <v-divider
-                class="mx-3"
-                vertical
-              />{{proposal.ayes.length}}
-            </v-btn>
-            <div class="d-flex align-center  text-center">
-              <v-divider vertical />
-              <span>Threshold: <br>{{(proposal.nayes.length + proposal.ayes.length)}}/{{proposal.threshold}}
+          <div class="d-flex align-center  text-center threshold">
+            <v-divider vertical />
+            <span>Threshold: <br>{{(proposal.nayes.length + proposal.ayes.length)}}/{{proposal.threshold}}
 
-              </span>
-              <v-divider vertical />
+            </span>
+            <v-divider vertical />
 
-            </div>
-            <v-btn
-              color="red"
-              class=""
-              :width="`${proposal.nayes.length *100 + 100}`"
-              @click="openVoteDialog(proposal.hash, false)"
-              :loading="loadingVote"
-            >No
-              <v-divider
-                class="mx-3"
-                vertical
-              />{{proposal.nayes.length}}
-            </v-btn>
           </div>
-
-          <v-container fluid>
-            <v-row justify="center">
-
-              <v-col
-                :sm="Math.round(proposal.ayesProgress*12/100)===12? 11: proposal.ayesProgress*12/100"
-                height="25"
-                style="background-color: green;"
-              >
-                <span>{{ proposal.ayesProgress  }}%</span>
-              </v-col>
-              <v-col
-                height="25"
-                style="background-color: red;"
-                :sm="Math.round(proposal.nayesProgress*12/100)===12? 11: proposal.nayesProgress*12/100"
-              >
-                <span> {{proposal.nayesProgress}}%</span>
-              </v-col>
-            </v-row>
-
-          </v-container>
-          <p>You can vote until: {{proposal.end}}</p>
+          <v-btn
+            color="red"
+            :width="`${proposal.nayes.length *100 + 100}`"
+            @click="openVoteDialog(proposal.hash, false)"
+            :loading="loadingVote"
+          >No
+            <v-divider
+              class="mx-3"
+              vertical
+            />{{proposal.nayes.length}}
+          </v-btn>
 
         </v-container>
+        <v-container>
+          <v-row justify="center">
+
+            <v-col
+              :sm="Math.round(proposal.ayesProgress*12/100)===12? 11: proposal.ayesProgress*12/100"
+              height="25"
+              style="background-color: green;"
+            >
+              <span>{{ proposal.ayesProgress  }}%</span>
+            </v-col>
+            <v-col
+              height="25"
+              style="background-color: red;"
+              :sm="Math.round(proposal.nayesProgress*12/100)===12? 11: proposal.nayesProgress*12/100"
+            >
+              <span> {{proposal.nayesProgress}}%</span>
+            </v-col>
+          </v-row>
+        </v-container>
+
+        <p>You can vote until: {{proposal.end}}</p>
 
       </v-card>
 
@@ -298,5 +297,9 @@ export default class DaoView extends Vue {
 <style scoped>
 .chart {
   width: 50%;
+}
+.threshold {
+  position: absolute;
+  left: 46%;
 }
 </style>
