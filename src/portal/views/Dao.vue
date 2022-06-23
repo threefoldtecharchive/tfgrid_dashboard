@@ -65,11 +65,11 @@
               <v-divider
                 class="mx-3"
                 vertical
-              />{{ proposal.ayes.length}}
+              />{{proposal.ayes.length}}
             </v-btn>
             <div class="d-flex align-center  text-center">
               <v-divider vertical />
-              <span>Threshold: <br>{{proposal.threshold}}
+              <span>Threshold: <br>{{(proposal.nayes.length + proposal.ayes.length)}}/{{proposal.threshold}}
 
               </span>
               <v-divider vertical />
@@ -89,17 +89,27 @@
             </v-btn>
           </div>
 
-          <div>
+          <v-container fluid>
+            <v-row justify="center">
 
-            <!--
-            <v-progress-linear
-              height="25"
-              v-bind:value="getProgress(proposal.hash)"
-            >
-              <strong>{{ getProgress(proposal.hash)  }}%</strong>
-            </v-progress-linear>-->
-            <p>You can vote until: {{proposal.end}}</p>
-          </div>
+              <v-col
+                :sm="Math.round(proposal.ayesProgress*12/100)===12? 11: proposal.ayesProgress*12/100"
+                height="25"
+                style="background-color: green;"
+              >
+                <span>{{ proposal.ayesProgress  }}%</span>
+              </v-col>
+              <v-col
+                height="25"
+                style="background-color: red;"
+                :sm="Math.round(proposal.nayesProgress*12/100)===12? 11: proposal.nayesProgress*12/100"
+              >
+                <span> {{proposal.nayesProgress}}%</span>
+              </v-col>
+            </v-row>
+
+          </v-container>
+          <p>You can vote until: {{proposal.end}}</p>
 
         </v-container>
 
@@ -147,16 +157,21 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 import { getProposals, vote } from "../lib/dao";
 import { getFarm, getNodesByFarm } from "../lib/farms";
 import DaoBarChart from "../components/DaoBarChart.vue";
-
+interface ayesAndNayesInterface {
+  farm_id: number;
+  weight: number;
+}
 interface proposalInterface {
   action: string;
   hash: string;
   description: string;
   link: string;
-  ayes: [];
-  nayes: [];
+  ayes: ayesAndNayesInterface[];
+  nayes: ayesAndNayesInterface[];
   end: number;
-  threshold: string;
+  threshold: number;
+  ayesProgress: number;
+  nayesProgress: number;
 }
 @Component({
   name: "Dao",
@@ -210,6 +225,7 @@ export default class DaoView extends Vue {
     }
     return this.proposals;
   }
+
   openVoteDialog(hash: any, vote: boolean) {
     this.openVDialog = true;
     this.vote = vote;
@@ -276,26 +292,6 @@ export default class DaoView extends Vue {
       this.loadingVote = false;
       this.openVDialog = false;
     });
-  }
-  getProgress(hash: any) {
-    const proposal = this.proposals.filter(
-      (p: { hash: any }) => p.hash === hash
-    )[0];
-
-    const totalAyeWeight = proposal.ayes.reduce(
-      (total: number, v: { weight: number }) => total + v.weight,
-      0
-    );
-    const totalNayeWeight = proposal.nayes.reduce(
-      (total: number, v: { weight: number }) => total + v.weight,
-      0
-    );
-
-    const total = totalAyeWeight + totalNayeWeight;
-    if (total > 0) {
-      return (totalAyeWeight / total) * 100;
-    }
-    return 0;
   }
 }
 </script>

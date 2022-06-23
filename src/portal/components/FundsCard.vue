@@ -148,9 +148,9 @@ export default class FundsCard extends Vue {
 <style scoped>
 .fund {
   position: fixed;
-  top: 0;
-  right: 11.5%;
+  top: 0.65px;
+  right: 35%;
   z-index: 1000;
-  height: 65px;
+  height: 62.5px;
 }
 </style>
