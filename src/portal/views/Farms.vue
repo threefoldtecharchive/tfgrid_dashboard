@@ -261,8 +261,8 @@
 </template>
 
 <script lang="ts">
-import FarmNodesTable from "@/components/FarmNodesTable.vue";
-import PublicIPTable from "@/components/PublicIPTable.vue";
+import FarmNodesTable from "../components/FarmNodesTable.vue";
+import PublicIPTable from "../components/PublicIPTable.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import {
   createFarm,

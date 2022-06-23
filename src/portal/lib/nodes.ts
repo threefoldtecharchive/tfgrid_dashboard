@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Signer } from "@polkadot/api/types";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import axios from "axios";

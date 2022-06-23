@@ -53,29 +53,51 @@
         </v-card-text>
 
         <v-container>
-          <div class="d-flex justify-center py-5 ">
+          <div class="py-5 d-flex justify-space-between">
+
             <v-btn
               color="green"
-              class="mx-5 "
-              style="padding:2.5% 5%"
+              class=" "
+              :width="`${proposal.ayes.length *100 + 100}`"
               @click="openVoteDialog(proposal.hash, true)"
               :loading="loadingVote"
-            >Yes <br>{{ proposal.ayes.length}}</v-btn>
+            >Yes
+              <v-divider
+                class="mx-3"
+                vertical
+              />{{ proposal.ayes.length}}
+            </v-btn>
+            <div class="d-flex align-center  text-center">
+              <v-divider vertical />
+              <span>Threshold: <br>{{proposal.threshold}}
+
+              </span>
+              <v-divider vertical />
+
+            </div>
             <v-btn
               color="red"
-              class=" mx-5"
-              style="padding:2.5% 5%"
+              class=""
+              :width="`${proposal.nayes.length *100 + 100}`"
               @click="openVoteDialog(proposal.hash, false)"
               :loading="loadingVote"
-            >No <br>{{proposal.nayes.length}}</v-btn>
+            >No
+              <v-divider
+                class="mx-3"
+                vertical
+              />{{proposal.nayes.length}}
+            </v-btn>
           </div>
+
           <div>
+
+            <!--
             <v-progress-linear
               height="25"
               v-bind:value="getProgress(proposal.hash)"
             >
               <strong>{{ getProgress(proposal.hash)  }}%</strong>
-            </v-progress-linear>
+            </v-progress-linear>-->
             <p>You can vote until: {{proposal.end}}</p>
           </div>
 
@@ -124,30 +146,41 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { getProposals, vote } from "../lib/dao";
 import { getFarm, getNodesByFarm } from "../lib/farms";
+import DaoBarChart from "../components/DaoBarChart.vue";
 
+interface proposalInterface {
+  action: string;
+  hash: string;
+  description: string;
+  link: string;
+  ayes: [];
+  nayes: [];
+  end: number;
+  threshold: string;
+}
 @Component({
   name: "Dao",
+  components: { DaoBarChart },
 })
 export default class DaoView extends Vue {
   openInfoModal = false;
-  proposals: any = [];
+  proposals: proposalInterface[] = [];
   $api: any;
-  balance: any = 0;
   percentageVoted = 0;
   openVDialog = false;
-  id: any = [];
-  selectedFarm: any = [];
-  farms: any = [];
+  id: string | (string | null)[] = "";
+  selectedFarm = "";
+  farms: any[] = [];
   vote = false;
   loadingVote = false;
-  selectedProposal: any = "";
+  selectedProposal = "";
   searchTerm = "";
+
   async mounted() {
     if (this.$api) {
-      this.balance = this.$route.query.balance;
       this.id = this.$route.query.twinID;
       this.proposals = await getProposals(this.$api);
-      this.farms = await getFarm(this.$api, this.id);
+      this.farms = await getFarm(this.$api, parseFloat(`${this.id}`));
     } else {
       this.$router.push({
         name: "accounts",
@@ -161,8 +194,6 @@ export default class DaoView extends Vue {
     );
   }
   async updated() {
-    this.balance = this.$route.query.balance;
-
     this.id = this.$route.query.twinID;
   }
   filteredProposals() {
@@ -186,7 +217,7 @@ export default class DaoView extends Vue {
   }
   async castVote() {
     const nodes = await getNodesByFarm(this.selectedFarm);
-
+    console.log(this.selectedFarm);
     if (nodes.length === 0) {
       alert("no nodes in farm");
       return;
@@ -268,3 +299,8 @@ export default class DaoView extends Vue {
   }
 }
 </script>
+<style scoped>
+.chart {
+  width: 50%;
+}
+</style>

@@ -106,7 +106,7 @@
 </template>
 
 <script lang="ts">
-import WelcomeWindow from "@/components/WelcomeWindow.vue";
+import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { deleteTwin, getTwin, getTwinID, updateTwinIP } from "../lib/twin";
 import { hex2a } from "@/portal/lib/util";
@@ -123,7 +123,7 @@ export default class TwinView extends Vue {
   id: string | (string | null)[] = "";
   address = "";
   twin: { ip: string } = { ip: "" };
-  accountName: any;
+  accountName: string | (string | null)[] = "";
 
   loadingDeleteTwin = false;
   openDeleteTwinDialog = false;

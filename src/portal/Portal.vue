@@ -12,7 +12,7 @@
   </v-container>
 </template>
 <script lang="ts">
-import FundsCard from "@/components/FundsCard.vue";
+import FundsCard from "./components/FundsCard.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
 
 @Component({

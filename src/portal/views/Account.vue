@@ -114,7 +114,7 @@ import {
   acceptTermsAndCondition,
   userAcceptedTermsAndConditions,
 } from "../lib/accepttc";
-import WelcomeWindow from "../../components/WelcomeWindow.vue";
+import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { activateThroughActivationService } from "../lib/activation";
 import Twin from "./Twin.vue";
 

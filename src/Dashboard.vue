@@ -223,7 +223,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { getBalance } from "./portal/lib/balance";
+import { balanceInterface, getBalance } from "./portal/lib/balance";
 import { connect } from "./portal/lib/connect";
 import { getTwin, getTwinID } from "./portal/lib/twin";
 import { accountInterface } from "./portal/store/state";
@@ -255,10 +255,10 @@ export default class Dashboard extends Vue {
   collapseOnScroll = true;
   mini = true;
   drawer = true;
-  twinID: any;
+  twinID = 0;
   $api: any;
-  twin: any;
-  balance: any;
+  twin: { id: string; ip: string } = { id: "", ip: "" };
+  balance: balanceInterface = { free: 0, reserved: 0 };
   accounts: accountInterface[] = [];
   searchTerm = "";
 
