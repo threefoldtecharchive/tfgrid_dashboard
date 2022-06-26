@@ -12,7 +12,7 @@
         justify="space-between"
         align="center"
       >
-        <h1>{{ proposal.content.title }} #{{ proposal.proposalId }}</h1>
+        <h1 class="my-6">{{ proposal.content.title }} #{{ proposal.proposalId }}</h1>
         <v-btn
           v-if="proposal.status === 'PROPOSAL_STATUS_DEPOSIT_PERIOD'"
           color="primary"
@@ -28,7 +28,7 @@
       >
         <v-card
           v-for="item of [
-            { label: 'YES', symbol: 'yes', color: 'success' },
+            { label: 'YES', symbol: 'yes', color: 'primary' },
             { label: 'NO', symbol: 'no', color: 'red' },
             { label: 'ABSTAIN', symbol: 'abstain', color: 'grey' },
             { label: 'NO (VETO)', symbol: 'noWithVeto', color: '#c40404' },

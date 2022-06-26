@@ -18,7 +18,7 @@
 
       <v-btn
         @click="openCreateFarmDialog = true"
-        class="my-3 mx-5"
+        class="farm my-3 mx-5"
         :loading="loadingCreateFarm"
       >Create farm</v-btn>
     </v-card>
@@ -649,5 +649,8 @@ export default class FarmsView extends Vue {
 
 .theme--dark.v-btn.v-btn--has-bg {
   background-color: #064663;
+}
+.farm {
+  font-weight: 500 !important;
 }
 </style>

@@ -15,6 +15,7 @@
         <v-card
           class="mx-2 px-1"
           color="transparent"
+          outlined
           v-if="$store.state.portal.accounts.length === 0"
         >
           <v-btn icon>
@@ -26,7 +27,7 @@
             >
           </v-btn>
         </v-card>
-        <v-card v-else color="transparent" class="mx-2 px-1">
+        <v-card outlined v-else color="transparent" class="mx-2 px-1">
           <v-btn icon>
             <v-tooltip>
               <template v-slot:activator="{ on, attrs }">

@@ -8,11 +8,9 @@
 }
 
 .v-btn{
-    height: 45px !important;
     margin-right:6px ;
-    font-size: 1rem !important;
+    font-weight: 900 !important;
     padding: 0px 1px !important;
-    
 }
 
 .v-btn--icon.v-size--default{

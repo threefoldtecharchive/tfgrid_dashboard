@@ -1,65 +1,45 @@
 <template>
   <v-container>
-    <v-card class="fund  d-flex align-center font-weight-bold">
-      <v-card-text>
+    <v-card class="fund d-flex align-center font-weight-bold">
+      <v-card-text style="padding: 5px">
         <v-tooltip>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               @click="openBalance = true"
               v-bind="attrs"
               v-on="on"
-              class="d-flex align-end"
+              class="d-flex align-center"
             >
-              <p>{{balanceFree }}</p>
-              <p class="font-weight-black">TFT</p>
-
+              <p class="mr-1">{{ balanceFree }}</p>
+              <p class="font-weight-black"> TFT</p>
             </v-btn>
-
           </template>
           <span>View Balance Summary</span>
-
         </v-tooltip>
       </v-card-text>
       <v-card-actions>
         <v-btn
           @click="addTFT()"
-          class=""
+          style="max-width: 60px"
           :loading="loadingAddTFT"
-        >+</v-btn>
-
-      </v-card-actions>
-
-    </v-card>
-    <v-dialog
-      v-model="openBalance"
-      max-width="600"
-    >
-
-      <v-card>
-        <v-toolbar
-          color="primary"
-          dark
+          >+</v-btn
         >
-          Balance Summary
-        </v-toolbar>
+      </v-card-actions>
+    </v-card>
+    <v-dialog v-model="openBalance" max-width="600">
+      <v-card>
+        <v-toolbar color="primary"> Balance Summary </v-toolbar>
         <v-card-text class="pa-5">
           <v-container>
-            <v-row>
-              Free: {{balanceFree }} TFT
-            </v-row>
-            <v-row>
-              Reserved (Locked): {{balanceReserved}} TFT
-            </v-row>
+            <v-row> Free: {{ balanceFree }} TFT </v-row>
+            <v-row> Reserved (Locked): {{ balanceReserved }} TFT </v-row>
           </v-container>
-
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn @click="openBalance = false">Close</v-btn>
         </v-card-actions>
       </v-card>
-
     </v-dialog>
-
   </v-container>
 </template>
 <script lang="ts">
@@ -147,10 +127,11 @@ export default class FundsCard extends Vue {
 </script>
 <style scoped>
 .fund {
+  background-color: transparent;
+  box-shadow: none !important;
   position: fixed;
-  top: 0.65px;
-  right: 35%;
+  top: 7px;
+  right: 8.5%;
   z-index: 1000;
-  height: 62.5px;
 }
 </style>
