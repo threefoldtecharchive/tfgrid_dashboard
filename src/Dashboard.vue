@@ -223,11 +223,10 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { getBalance } from "./portal/lib/balance";
+import { balanceInterface, getBalance } from "./portal/lib/balance";
 import { connect } from "./portal/lib/connect";
 import { getTwin, getTwinID } from "./portal/lib/twin";
 import { accountInterface } from "./portal/store/state";
-
 interface SidenavItem {
   label: string;
   icon: string;
@@ -256,10 +255,10 @@ export default class Dashboard extends Vue {
   collapseOnScroll = true;
   mini = true;
   drawer = true;
-  twinID: any;
+  twinID = 0;
   $api: any;
-  twin: any;
-  balance: any = 0;
+  twin: { id: string; ip: string } = { id: "", ip: "" };
+  balance: balanceInterface = { free: 0, reserved: 0 };
   accounts: accountInterface[] = [];
   searchTerm = "";
 
@@ -334,7 +333,8 @@ export default class Dashboard extends Vue {
     //
 
     this.twinID = await getTwinID(this.$api, address);
-    this.balance = (await getBalance(this.$api, address)) / 1e7;
+    this.balance = await getBalance(this.$api, address);
+
     if (this.twinID) {
       this.twin = await getTwin(this.$api, this.twinID);
       if (
@@ -349,7 +349,8 @@ export default class Dashboard extends Vue {
             accountName: `${name}`,
             twinID: this.twin.id,
             twinIP: this.twin.ip,
-            balance: `${this.balance}`,
+            balanceFree: `${this.balance.free}`,
+            balanceReserved: `${this.balance.reserved}`,
           },
         });
       }

@@ -52,34 +52,65 @@
 
         </v-card-text>
 
-        <v-container>
-          <div class="d-flex justify-center py-5 ">
-            <v-btn
-              color="green"
-              class="mx-5 "
-              style="padding:2.5% 5%"
-              @click="openVoteDialog(proposal.hash, true)"
-              :loading="loadingVote"
-            >Yes <br>{{ proposal.ayes.length}}</v-btn>
-            <v-btn
-              color="red"
-              class=" mx-5"
-              style="padding:2.5% 5%"
-              @click="openVoteDialog(proposal.hash, false)"
-              :loading="loadingVote"
-            >No <br>{{proposal.nayes.length}}</v-btn>
+        <v-container
+          fluid
+          class="d-flex justify-space-between my-5"
+        >
+          <v-btn
+            color="green"
+            class=" "
+            :width="`${proposal.ayes.length *100 + 100}`"
+            @click="openVoteDialog(proposal.hash, true)"
+            :loading="loadingVote"
+          >Yes
+            <v-divider
+              class="mx-3"
+              vertical
+            />{{proposal.ayes.length}}
+          </v-btn>
+
+          <div class="d-flex align-center  text-center threshold">
+            <v-divider vertical />
+            <span>Threshold: <br>{{(proposal.nayes.length + proposal.ayes.length)}}/{{proposal.threshold}}
+
+            </span>
+            <v-divider vertical />
+
           </div>
-          <div>
-            <v-progress-linear
-              height="25"
-              v-bind:value="getProgress(proposal.hash)"
-            >
-              <strong>{{ getProgress(proposal.hash)  }}%</strong>
-            </v-progress-linear>
-            <p>You can vote until: {{proposal.end}}</p>
-          </div>
+          <v-btn
+            color="red"
+            :width="`${proposal.nayes.length *100 + 100}`"
+            @click="openVoteDialog(proposal.hash, false)"
+            :loading="loadingVote"
+          >No
+            <v-divider
+              class="mx-3"
+              vertical
+            />{{proposal.nayes.length}}
+          </v-btn>
 
         </v-container>
+        <v-container>
+          <v-row justify="center">
+
+            <v-col
+              :sm="Math.round(proposal.ayesProgress*12/100)===12? 11: proposal.ayesProgress*12/100"
+              height="25"
+              style="background-color: green;"
+            >
+              <span>{{ proposal.ayesProgress  }}%</span>
+            </v-col>
+            <v-col
+              height="25"
+              style="background-color: red;"
+              :sm="Math.round(proposal.nayesProgress*12/100)===12? 11: proposal.nayesProgress*12/100"
+            >
+              <span> {{proposal.nayesProgress}}%</span>
+            </v-col>
+          </v-row>
+        </v-container>
+
+        <p>You can vote until: {{proposal.end}}</p>
 
       </v-card>
 
@@ -124,30 +155,46 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { getProposals, vote } from "../lib/dao";
 import { getFarm, getNodesByFarm } from "../lib/farms";
-
+import DaoBarChart from "../components/DaoBarChart.vue";
+interface ayesAndNayesInterface {
+  farm_id: number;
+  weight: number;
+}
+interface proposalInterface {
+  action: string;
+  hash: string;
+  description: string;
+  link: string;
+  ayes: ayesAndNayesInterface[];
+  nayes: ayesAndNayesInterface[];
+  end: number;
+  threshold: number;
+  ayesProgress: number;
+  nayesProgress: number;
+}
 @Component({
   name: "Dao",
+  components: { DaoBarChart },
 })
 export default class DaoView extends Vue {
   openInfoModal = false;
-  proposals: any = [];
+  proposals: proposalInterface[] = [];
   $api: any;
-  balance: any = 0;
   percentageVoted = 0;
   openVDialog = false;
-  id: any = [];
-  selectedFarm: any = [];
-  farms: any = [];
+  id: string | (string | null)[] = "";
+  selectedFarm = "";
+  farms: any[] = [];
   vote = false;
   loadingVote = false;
-  selectedProposal: any = "";
+  selectedProposal = "";
   searchTerm = "";
+
   async mounted() {
     if (this.$api) {
-      this.balance = this.$route.query.balance;
       this.id = this.$route.query.twinID;
       this.proposals = await getProposals(this.$api);
-      this.farms = await getFarm(this.$api, this.id);
+      this.farms = await getFarm(this.$api, parseFloat(`${this.id}`));
     } else {
       this.$router.push({
         name: "accounts",
@@ -161,8 +208,6 @@ export default class DaoView extends Vue {
     );
   }
   async updated() {
-    this.balance = this.$route.query.balance;
-
     this.id = this.$route.query.twinID;
   }
   filteredProposals() {
@@ -179,6 +224,7 @@ export default class DaoView extends Vue {
     }
     return this.proposals;
   }
+
   openVoteDialog(hash: any, vote: boolean) {
     this.openVDialog = true;
     this.vote = vote;
@@ -186,7 +232,7 @@ export default class DaoView extends Vue {
   }
   async castVote() {
     const nodes = await getNodesByFarm(this.selectedFarm);
-
+    console.log(this.selectedFarm);
     if (nodes.length === 0) {
       alert("no nodes in farm");
       return;
@@ -216,23 +262,28 @@ export default class DaoView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "dao" && method === "Voted") {
-              this.$toasted.show("Voted for proposal!");
-              this.loadingVote = false;
-              this.openVDialog = false;
-              getProposals(this.$api).then(
-                (proposals) => (this.proposals = proposals)
-              );
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Vote failed");
-              this.loadingVote = false;
-              this.openVDialog = false;
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Vote failed");
+            this.loadingVote = false;
+            this.openVDialog = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "dao" && method === "Voted") {
+                this.$toasted.show("Voted for proposal!");
+                this.loadingVote = false;
+                this.openVDialog = false;
+                getProposals(this.$api).then(
+                  (proposals) => (this.proposals = proposals)
+                );
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Vote failed");
+                this.loadingVote = false;
+                this.openVDialog = false;
+              }
+            });
+          }
         }
       }
     ).catch((err) => {
@@ -241,25 +292,14 @@ export default class DaoView extends Vue {
       this.openVDialog = false;
     });
   }
-  getProgress(hash: any) {
-    const proposal = this.proposals.filter(
-      (p: { hash: any }) => p.hash === hash
-    )[0];
-
-    const totalAyeWeight = proposal.ayes.reduce(
-      (total: number, v: { weight: number }) => total + v.weight,
-      0
-    );
-    const totalNayeWeight = proposal.nayes.reduce(
-      (total: number, v: { weight: number }) => total + v.weight,
-      0
-    );
-
-    const total = totalAyeWeight + totalNayeWeight;
-    if (total > 0) {
-      return (totalAyeWeight / total) * 100;
-    }
-    return 0;
-  }
 }
 </script>
+<style scoped>
+.chart {
+  width: 50%;
+}
+.threshold {
+  position: absolute;
+  left: 46%;
+}
+</style>

@@ -1,12 +1,12 @@
 const toCamel = (s: string) => {
     return s.replace(/([-_][a-z])/ig, ($1: string) => {
         return $1.toUpperCase()
-        .replace('-', '')
-        .replace('_', '');
+            .replace('-', '')
+            .replace('_', '');
     });
 };
 export function snakeToCamelCase(obj: any) {
-    if (typeof(obj) != "object" || obj === undefined || obj === null)
+    if (typeof (obj) != "object" || obj === undefined || obj === null)
         return;
 
     if (Array.isArray(obj)) {
@@ -14,7 +14,7 @@ export function snakeToCamelCase(obj: any) {
             snakeToCamelCase(v)
         }
     } else {
-        Object.entries(obj).forEach(([ k, v ]) => {
+        Object.entries(obj).forEach(([k, v]) => {
             const camelK = toCamel(k);
             if (camelK != k) {
                 obj[camelK] = obj[k];

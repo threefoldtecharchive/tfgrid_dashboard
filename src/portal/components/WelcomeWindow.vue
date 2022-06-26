@@ -1,10 +1,24 @@
 <template>
-  <v-card color="transparent" flat tile>
+  <v-card
+    color="transparent"
+    flat
+    tile
+  >
     <v-window v-model="onboarding">
-      <v-window-item v-for="(card, index) in cards" :key="`card-${index}`">
+      <v-window-item
+        v-for="(card, index) in cards"
+        :key="`card-${index}`"
+      >
         <v-card color="transparent">
-          <v-row class="fill-height" align="center" justify="center">
-            <v-card-text class="text-center" style="font-size: 2rem">
+          <v-row
+            class="fill-height"
+            align="center"
+            justify="center"
+          >
+            <v-card-text
+              class="text-center"
+              style="font-size: 2rem"
+            >
               <v-img
                 width="450"
                 style="margin: auto; margin-bottom: 20px"
@@ -41,21 +55,35 @@
     </v-window>
 
     <v-card-actions class="justify-space-between">
-      <v-btn text @click="prev">
+      <v-btn
+        text
+        @click="prev"
+      >
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
-      <v-item-group v-model="onboarding" class="text-center" mandatory>
+      <v-item-group
+        v-model="onboarding"
+        class="text-center"
+        mandatory
+      >
         <v-item
           v-for="n in cards.length"
           :key="`btn-${n}`"
           v-slot="{ active, toggle }"
         >
-          <v-btn :input-value="active" icon @click="toggle">
+          <v-btn
+            :input-value="active"
+            icon
+            @click="toggle"
+          >
             <v-icon>mdi-record</v-icon>
           </v-btn>
         </v-item>
       </v-item-group>
-      <v-btn text @click="next">
+      <v-btn
+        text
+        @click="next"
+      >
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
     </v-card-actions>
@@ -82,19 +110,19 @@ export default class WelcomeWindow extends Vue {
       text: "The Decentralized Cloud Awaits!",
       button: "Download polkadot{.js} extension to access the Portal",
       link: "https://polkadot.js.org/extension/",
-      img: require("../assets/decentralized.png"),
+      img: require("../../assets/decentralized.png"),
     },
     {
       text: "Discover the ThreeFold Grid",
       button: "View ThreeFold Capacity ",
       link: "https://explorer.dev.grid.tf/",
-      img: require("../assets/map.png"),
+      img: require("../../assets/map.png"),
     },
     {
       text: "Your Guide to The ThreeFold Grid",
       button: "Learn More",
       link: "https://library.threefold.me/info/manual/#/",
-      img: require("../assets/guide_to_gride.png"),
+      img: require("../../assets/guide_to_gride.png"),
     },
   ];
 
