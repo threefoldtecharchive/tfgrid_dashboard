@@ -2,7 +2,10 @@
   <v-container v-if="$store.state.portal.accounts.length === 0">
     <WelcomeWindow />
   </v-container>
-  <v-container v-else style="">
+  <v-container
+    v-else
+    style=""
+  >
     <h1 class="text-center">Connected Accounts</h1>
 
     <v-container fluid>
@@ -15,23 +18,24 @@
           ></v-text-field>
         </v-col>
       </v-row>
-
-      <v-card
-        v-for="account in filteredAccounts()"
-        :key="account.address"
-        @click="addAccountRoute(account)"
-        class="my-4 primary white--text"
-      >
-        <div class="d-flex justify-space-between">
-          <div class="d-inline-block text-truncate">
-            <v-card-title>{{ account.meta.name.toUpperCase() }}</v-card-title>
-            <v-card-subtitle>
-              {{ account.address }}
-            </v-card-subtitle>
+      <div v-if="accounts.length">
+        <v-card
+          v-for="account in filteredAccounts()"
+          :key="account.address"
+          @click="addAccountRoute(account)"
+          class="my-4 primary white--text"
+        >
+          <div class="d-flex justify-space-between">
+            <div class="d-inline-block text-truncate">
+              <v-card-title>{{ account.meta.name.toUpperCase() }}</v-card-title>
+              <v-card-subtitle>
+                {{ account.address }}
+              </v-card-subtitle>
+            </div>
+            <v-icon>mdi-chevron-right</v-icon>
           </div>
-          <v-icon>mdi-chevron-right</v-icon>
-        </div>
-      </v-card>
+        </v-card>
+      </div>
     </v-container>
   </v-container>
 </template>
@@ -39,16 +43,18 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { accountInterface } from "../store/state";
-import WelcomeWindow from "../../components/WelcomeWindow.vue";
+import WelcomeWindow from "../components/WelcomeWindow.vue";
 import Account from "./Account.vue";
+import FundsCard from "../components/FundsCard.vue";
 
 @Component({
   name: "AccountsView",
-  components: { WelcomeWindow, Account },
+  components: { WelcomeWindow, Account, FundsCard },
 })
 export default class AccountsView extends Vue {
   searchTerm = "";
   accounts: accountInterface[] = [];
+
   mounted() {
     this.accounts = this.$store.state.portal.accounts;
   }
@@ -67,7 +73,7 @@ export default class AccountsView extends Vue {
     }
     return this.accounts;
   }
-  public addAccountRoute(account: accountInterface) {
+  async addAccountRoute(account: accountInterface) {
     this.$router.push({
       name: "account",
       path: "account",

@@ -1,5 +1,9 @@
 <template>
-  <v-container fluid v-if="openDialog" height="100%">
+  <v-container
+    fluid
+    v-if="openDialog"
+    height="100%"
+  >
     <v-dialog
       v-model="openDialog"
       persistent
@@ -18,12 +22,21 @@
         width="100px"
         sandbox="allow-forms allow-modals allow-scripts allow-popups allow-same-origin "
       ></iframe>
-      <v-btn @click="acceptTC"> accept terms and conditions </v-btn>
+      <v-btn
+        @click="acceptTC"
+        :loading="loadingAcceptedTC"
+      >
+        accept terms and conditions
+      </v-btn>
+
     </v-dialog>
   </v-container>
 
   <v-container v-else-if="$store.state.portal.accounts.length === 0">
-    <v-card transparent outlined>
+    <v-card
+      transparent
+      outlined
+    >
       <WelcomeWindow />
     </v-card>
   </v-container>
@@ -38,10 +51,16 @@
     <v-card class="text-center pa-5">
       <h3>Choose your preferred method to create a Twin:</h3>
     </v-card>
-    <v-container fluid class="px-0">
+    <v-container
+      fluid
+      class="px-0"
+    >
       <v-row>
         <v-col>
-          <v-card class="pa-5 text-center" height="175">
+          <v-card
+            class="pa-5 text-center"
+            height="175"
+          >
             <h3>Planetary using Yggdrasil IPV6</h3>
             <v-text-field
               label="Twin IP ::1"
@@ -54,8 +73,7 @@
               class="primary"
               :loading="loadingTwinCreate"
               @click="createTwinFunc(ip)"
-              >create</v-btn
-            >
+            >create</v-btn>
           </v-card>
         </v-col>
         <v-col>
@@ -67,8 +85,7 @@
               class="primary"
               :loading="loadingTwinCreate"
               @click="createTwinFunc('::1')"
-              >automatically</v-btn
-            >
+            >automatically</v-btn>
           </v-card>
         </v-col>
       </v-row>
@@ -79,8 +96,7 @@
               class="primary"
               :target="'blank'"
               :href="'https://library.threefold.me/info/manual/#/manual__yggdrasil_client'"
-              >why do i even need a twin?</v-btn
-            >
+            >why do i even need a twin?</v-btn>
           </v-card>
         </v-col>
       </v-row>
@@ -91,17 +107,17 @@
 <script lang="ts">
 import axios from "axios";
 import { Component, Vue } from "vue-property-decorator";
-import { getBalance } from "../lib/balance";
+import { balanceInterface, getBalance } from "../lib/balance";
 import { createTwin, getTwin, getTwinID } from "../lib/twin";
 import blake from "blakejs";
 import {
   acceptTermsAndCondition,
   userAcceptedTermsAndConditions,
 } from "../lib/accepttc";
-import WelcomeWindow from "../../components/WelcomeWindow.vue";
+import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { activateThroughActivationService } from "../lib/activation";
-
 import Twin from "./Twin.vue";
+
 @Component({
   name: "AccountView",
   components: { WelcomeWindow, Twin },
@@ -113,22 +129,23 @@ export default class AccountView extends Vue {
   twinCreated = false;
   address = "";
   $api: any;
-  balance = 0;
+  balance: balanceInterface = { free: 0, reserved: 0 };
   twinID = 0;
   ip = "";
-  twin: any;
+  twin!: { id: any; ip: any };
   loadingTC = true;
   loadingTwinCreate = false;
   ipErrorMessage = "";
+  loadingAcceptedTC = false;
+
   async updated() {
     if (this.$api) {
       this.address = this.$route.params.accountID;
-      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+      this.balance = await getBalance(this.$api, this.address);
       this.twinID = await getTwinID(this.$api, this.address);
       if (this.twinID) {
         this.twinCreated = true;
         this.twin = await getTwin(this.$api, this.twinID);
-
         this.$router.push({
           name: "account-twin",
           path: "/:accountID/account-twin",
@@ -137,12 +154,12 @@ export default class AccountView extends Vue {
             accountName: `${this.$route.query.accountName}`,
             twinID: this.twin.id,
             twinIP: this.twin.ip,
-            balance: `${this.balance}`,
+            balanceFree: `${this.balance.free}`,
+            balanceReserved: `${this.balance.reserved}`,
           },
         });
       }
     }
-
     this.openDialog = !(await userAcceptedTermsAndConditions(
       this.$api,
       this.address
@@ -151,9 +168,8 @@ export default class AccountView extends Vue {
   async mounted() {
     if (this.$api) {
       this.address = this.$route.params.accountID;
-      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+      this.balance = await getBalance(this.$api, this.address);
       this.twinID = await getTwinID(this.$api, this.address);
-
       if (this.twinID) {
         this.twinCreated = true;
       }
@@ -161,7 +177,6 @@ export default class AccountView extends Vue {
         this.$api,
         this.address
       ));
-
       let document = await axios.get(this.documentLink);
       this.documentHash = blake.blake2bHex(document.data);
     } else {
@@ -176,12 +191,11 @@ export default class AccountView extends Vue {
   }
   unmounted() {
     this.address = "";
-    this.balance = 0;
+    this.balance = { free: 0, reserved: 0 };
     this.twinID = 0;
   }
   ipcheck() {
     if (this.ip === "") return true;
-
     const ip4Regex = new RegExp(
       "^([0-9]{1,3}.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))$"
     );
@@ -214,31 +228,33 @@ export default class AccountView extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "tfgridModule" && method === "TwinStored") {
-              this.loadingTwinCreate = false;
-              this.$toasted.show("Twin created!");
-              this.twinCreated = true;
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Twin creation failed!");
-              this.loadingTwinCreate = false;
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Twin creation failed!");
+            this.loadingTwinCreate = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "tfgridModule" && method === "TwinStored") {
+                this.loadingTwinCreate = false;
+                this.$toasted.show("Twin created!");
+                this.twinCreated = true;
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Twin creation failed!");
+                this.loadingTwinCreate = false;
+              }
+            });
+          }
         }
       }
     ).catch((err: { message: string }) => {
@@ -247,6 +263,7 @@ export default class AccountView extends Vue {
     });
   }
   public acceptTC() {
+    this.loadingAcceptedTC = true;
     activateThroughActivationService(this.address);
     acceptTermsAndCondition(
       this.$api,
@@ -262,7 +279,6 @@ export default class AccountView extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
@@ -270,36 +286,33 @@ export default class AccountView extends Vue {
             this.$toasted.show(`Transaction submitted`);
             this.openDialog = false;
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "system" && method === "ExtrinsicSuccess") {
-              this.$toasted.show("Accepted!");
-
-              this.loadingTC = false;
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("rejected");
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("rejected");
+            this.loadingAcceptedTC = false;
+          } else {
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "system" && method === "ExtrinsicSuccess") {
+                this.$toasted.show("Accepted!");
+                this.loadingTC = false;
+                this.loadingAcceptedTC = false;
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("rejected");
+                this.loadingAcceptedTC = false;
+              }
+            });
+          }
         }
       }
     ).catch((err: { message: string }) => {
       this.$toasted.show(err.message);
+      this.loadingAcceptedTC = false;
     });
   }
 }
 </script>
 
-<style scoped>
-/* .v-card {
-  background-color: transparent !important;
-}
-.v-sheet.v-card:not(.v-sheet--outlined) {
-  box-shadow: none !important;
-} */
-</style>

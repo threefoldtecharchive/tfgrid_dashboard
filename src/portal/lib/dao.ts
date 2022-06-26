@@ -1,0 +1,80 @@
+
+import { hex2a } from './util'
+import moment from 'moment'
+import { web3FromAddress } from '@polkadot/extension-dapp';
+interface ayesAndNayesInterface {
+    farm_id: number;
+    weight: number;
+}
+export async function vote(address: string, api: { tx: { dao: { vote: (arg0: any, arg1: any, arg2: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: any }, arg2: any): any; new(): any } } } } }, farmId: string, hash: any, approve: boolean, callback: any) {
+    try {
+        const injector = await web3FromAddress(address)
+        return api.tx.dao
+            .vote(farmId, hash, approve)
+            .signAndSend(address, { signer: injector.signer }, callback)
+    } catch (error) {
+        console.log(`err while trying to get injector ${error}`)
+    }
+}
+export async function getProposals(api: any) {
+    const proposals: any = [];
+    const hashes = await api.query.dao.proposalList()
+    hashes.map(async (hash: { toJSON: () => any; }) => {
+        const daoProposal = await getDaoProposal(api, hash)
+        const proposal = await getProposal(api, hash)
+        const proposalVotes = await getProposalVotes(api, hash)
+
+        const nowBlock = await api.query.system.number()
+        const timeUntilEnd = (proposalVotes.end - nowBlock.toJSON()) * 6
+
+
+        proposals.push({
+            threshold: proposalVotes.threshold,
+            ayes: proposalVotes.ayes, //[{farm_id: number, weight: number}]
+            nayes: proposalVotes.nayes,
+            vetos: proposalVotes.vetos,
+            end: moment().add(timeUntilEnd, 'second'),
+            hash: hash,
+            action: hex2a(proposal.args._remark),
+            description: hex2a(daoProposal.description),
+            link: hex2a(daoProposal.link),
+            ayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nayes, true),
+            nayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nayes, false)
+        })
+    })
+
+    return proposals
+}
+export function getVotesWithWeights(votes: ayesAndNayesInterface[]) {
+    return votes.reduce((total: number, vote: ayesAndNayesInterface) => {
+        return total + vote.weight;
+    }, 0);
+}
+export function getProgress(
+    ayes: ayesAndNayesInterface[],
+    nayes: ayesAndNayesInterface[],
+    typeAye: boolean
+) {
+    const totalAyeWeight = getVotesWithWeights(ayes);
+    const totalNayeWeight = getVotesWithWeights(nayes);
+    const total = totalAyeWeight + totalNayeWeight;
+    if (total > 0) {
+        if (typeAye) {
+            return (totalAyeWeight / total) * 100;
+        }
+        return (totalNayeWeight / total) * 100;
+    }
+    return 0;
+}
+export async function getDaoProposal(api: { query: any }, hash: { toJSON: () => any }) {
+    const proposal = await api.query.dao.proposals(hash)
+    return proposal.toJSON()
+}
+export async function getProposal(api: { query: any }, hash: { toJSON: () => any }) {
+    const proposal = await api.query.dao.proposalOf(hash)
+    return proposal.toJSON()
+}
+export async function getProposalVotes(api: any, hash: any) {
+    const voting = await api.query.dao.voting(hash)
+    return voting.toJSON()
+}

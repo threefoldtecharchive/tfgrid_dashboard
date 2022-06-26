@@ -1,12 +1,18 @@
 <template>
   <v-container>
-    <v-card color="primary" class="white--text pa-5 my-5">
+    <v-card
+      color="primary"
+      class="white--text pa-5 my-5"
+    >
       <h2 class="text-center">
         Howdy {{ accountName.toUpperCase() }}, want to transfer TFTs?
       </h2>
     </v-card>
 
-    <v-card color="primary" class="white--text pa-5 my-5">
+    <v-card
+      color="primary"
+      class="white--text pa-5 my-5"
+    >
       <h3 class="text-center">
         You can also transfer from one account to another on the TFCHAIN:
       </h3>
@@ -41,8 +47,7 @@
           class="primary white--text"
           @click="transferTFT"
           :loading="loadingTransfer"
-          >Submit</v-btn
-        >
+        >Submit</v-btn>
       </v-card-actions>
     </v-card>
   </v-container>
@@ -148,18 +153,22 @@ export default class TransferView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "balances" && method === "Transfer") {
-              this.$toasted.show("Transfer succeeded!");
-              this.loadingTransfer = false;
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Transfer failed!");
-              this.loadingTransfer = false;
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Transfer failed!");
+            this.loadingTransfer = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "balances" && method === "Transfer") {
+                this.$toasted.show("Transfer succeeded!");
+                this.loadingTransfer = false;
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Transfer failed!");
+                this.loadingTransfer = false;
+              }
+            });
+          }
         }
       }
     ).catch((err) => {

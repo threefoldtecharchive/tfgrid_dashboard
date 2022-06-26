@@ -283,7 +283,7 @@ export default class NodeDetails_ extends Vue {
   }
 
   getZOSVersion(nodeId: number) {
-    return fetch(`${window.configs.proxy_url}/nodes/${nodeId}`)
+    return fetch(`${window.configs.APP_GRIDPROXY_URL}/nodes/${nodeId}`)
       .then((res) => res.json())
       .then<string>((res) => {
         if ("Error" in res) return;

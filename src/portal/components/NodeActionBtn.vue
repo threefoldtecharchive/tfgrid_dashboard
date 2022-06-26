@@ -53,7 +53,6 @@ import {
 } from "@/portal/lib/nodes";
 import { getTwinID } from "@/portal/lib/twin";
 import { Component, Prop, Vue } from "vue-property-decorator";
-
 @Component({
   name: "NodeActionBtn",
 })
@@ -119,7 +118,6 @@ export default class NodeActionBtn extends Vue {
   async unReserveNode() {
     this.loadingUnreserveNode = true;
     this.$toasted.show(`check for contracts on node ${this.nodeIDToUnreserve}`);
-
     const contracts = await getActiveContracts(
       this.$api,
       this.nodeIDToUnreserve

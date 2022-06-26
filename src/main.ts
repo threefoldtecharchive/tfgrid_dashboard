@@ -6,6 +6,7 @@ import vuetify from "./plugins/vuetify";
 import Toasted from "vue-toasted";
 
 import { explorerConfigs } from "./explorer/config";
+import {} from "./hub/config";
 
 Vue.config.productionTip = false;
 

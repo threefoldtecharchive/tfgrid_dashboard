@@ -1,5 +1,6 @@
 <template>
   <v-container>
+
     <v-container v-if="openDepositDialog">
       <v-dialog
         transition="dialog-bottom-transition"
@@ -7,7 +8,10 @@
         v-model="openDepositDialog"
       >
         <v-card>
-          <v-toolbar color="primary" dark>Deposit TFT</v-toolbar>
+          <v-toolbar
+            color="primary"
+            dark
+          >Deposit TFT</v-toolbar>
           <v-card-text>
             <v-container>
               <v-row>
@@ -23,7 +27,10 @@
                     </li>
                   </ul>
                 </v-col>
-                <v-divider class="mx-4" vertical></v-divider>
+                <v-divider
+                  class="mx-4"
+                  vertical
+                ></v-divider>
                 <v-col>
                   Or use Threefold connect to scan this qr code:
                   <div class="d-flex justify-center">
@@ -36,10 +43,8 @@
                   </div>
                 </v-col>
               </v-row>
-              <v-row class="d-flex row justify-center"
-                >Amount: should be larger than {{ depositFee }}TFT (deposit fee
-                is: {{ depositFee }}TFT)</v-row
-              >
+              <v-row class="d-flex row justify-center">Amount: should be larger than {{ depositFee }}TFT (deposit fee
+                is: {{ depositFee }}TFT)</v-row>
             </v-container>
           </v-card-text>
           <v-card-actions class="justify-end">
@@ -55,7 +60,10 @@
         v-model="openWithdrawDialog"
       >
         <v-card>
-          <v-toolbar color="primary" dark>Withdraw TFT</v-toolbar>
+          <v-toolbar
+            color="primary"
+            dark
+          >Withdraw TFT</v-toolbar>
           <v-card-title>
             Interact with the bridge in order to withdraw your TFT to
             {{ selectedName.toUpperCase() }} (withdraw fee is:
@@ -67,20 +75,25 @@
               :label="selectedName.toUpperCase() + ' Target Wallet Address'"
             >
             </v-text-field>
-            <v-text-field label="Amount" v-model="amount"></v-text-field>
+            <v-text-field
+              label="Amount"
+              v-model="amount"
+            ></v-text-field>
           </v-card-text>
           <v-card-actions class="justify-end">
             <v-btn @click="openWithdrawDialog = false">Close</v-btn>
             <v-btn
               class="primary white--text"
               @click="withdrawTFT(target, amount)"
-              >Submit</v-btn
-            >
+            >Submit</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </v-container>
-    <v-card color="primary" class="pa-5 my-5 white--text">
+    <v-card
+      color="primary"
+      class="pa-5 my-5 white--text"
+    >
       <h3 class="text-center">
         We use bridges for transfer to and from the following:
       </h3>
@@ -100,15 +113,13 @@
         color="primary"
         class="white--text mx-5 pa-5"
         @click="openDepositDialog = true"
-        >deposit</v-btn
-      >
+      >deposit</v-btn>
 
       <v-btn
         color="primary"
         class="mx-5 pa-5 white--text"
         @click="openWithdrawDialog = true"
-        >withdraw</v-btn
-      >
+      >withdraw</v-btn>
     </v-container>
 
     <v-container class="d-flex justify-center pa-5 my-3">
@@ -117,8 +128,7 @@
         :target="'blank'"
         class="text-decoration-none"
         :href="'https://library.threefold.me/info/manual/#/manual__tfchain_portal_home?id=transfer-tft'"
-        >why do we use bridges?</a
-      >
+      >why do we use bridges?</a>
     </v-container>
   </v-container>
 </template>
@@ -151,7 +161,7 @@ export default class TransferView extends Vue {
       name: "cosmos",
     },
   ];
-  balance: any = 0;
+  balance: any;
   $api: any;
   address = "";
   ip: any = [];
@@ -173,7 +183,9 @@ export default class TransferView extends Vue {
         this.accountName = this.$route.query.accountName;
       }
       this.balance = this.$route.query.balance;
-      this.depositWallet = config.bridgeTftAddress;
+      if (config.bridgeTftAddress) {
+        this.depositWallet = config.bridgeTftAddress;
+      }
 
       this.qrCodeText = `TFT:${this.depositWallet}?message=twin_${this.id}&sender=me`;
       this.selectedName = this.items.filter(
@@ -229,27 +241,34 @@ export default class TransferView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (
-              section === "tftBridgeModule" &&
-              method === "BurnTransactionCreated"
-            ) {
-              this.$toasted.show("Withdraw sumbitted!");
-              this.openWithdrawDialog = false;
-              getBalance(this.$api, this.address).then((balance: number) => {
-                this.balance = balance / 1e7;
-              });
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Withdraw failed!");
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Withdraw failed!");
+            this.openWithdrawDialog = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (
+                section === "tftBridgeModule" &&
+                method === "BurnTransactionCreated"
+              ) {
+                this.$toasted.show("Withdraw sumbitted!");
+                this.openWithdrawDialog = false;
+                getBalance(this.$api, this.address).then((balance: any) => {
+                  this.balance = balance;
+                });
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Withdraw failed!");
+                this.openWithdrawDialog = false;
+              }
+            });
+          }
         }
       }
     ).catch((err) => {
       console.log(err.message);
+      this.$toasted.show("Withdraw failed!");
+      this.openWithdrawDialog = false;
     });
   }
 }

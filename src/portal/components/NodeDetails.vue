@@ -165,12 +165,15 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-
 @Component({
   name: "NodeDetails",
 })
 export default class NodeDetails extends Vue {
-  @Prop({ required: true }) node!: any;
+  @Prop({ required: true }) node!: {
+    resources: { cru: string; hru: string; sru: string; mru: string };
+    location: { country: string; city: string; long: string; lat: string };
+    pubIps: string;
+  };
   @Prop({ required: true }) byteToGB!: any;
   loading = false;
 }

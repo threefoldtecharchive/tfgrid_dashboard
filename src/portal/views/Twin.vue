@@ -5,7 +5,10 @@
     </v-card>
   </v-container>
 
-  <div style="padding-top: 100px" v-else>
+  <div
+    style="padding-top: 100px"
+    v-else
+  >
     <v-container v-if="editingTwin">
       <v-dialog
         transition="dialog-bottom-transition"
@@ -13,7 +16,10 @@
         v-model="editingTwin"
       >
         <v-card>
-          <v-toolbar color="primary" dark>Edit Twin</v-toolbar>
+          <v-toolbar
+            color="primary"
+            dark
+          >Edit Twin</v-toolbar>
           <v-card-text>
             <div class="text-h2 pa-12">
               <v-text-field
@@ -30,16 +36,18 @@
               class="primary white--text"
               @click="updateTwin"
               :loading="loadingEditTwin"
-              >Submit</v-btn
-            >
+            >Submit</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </v-container>
     <v-container>
-      <v-card color="primary white--text" class="my-3 pa-3 text-center">
+      <v-card
+        color="primary white--text"
+        class="my-3 pa-3 text-center"
+      >
         <h2>
-          Congratulations {{ $route.query.accountName.toUpperCase() }} on
+          Congratulations {{ $route.query.accountName }} on
           creating a twin!
           <br />
           You can now interact with the TF Grid
@@ -51,65 +59,45 @@
         <v-list>
           <v-list-item> ID: {{ id }} </v-list-item>
 
-          <v-list-item> IP: {{ decodeHex(ip) }} </v-list-item>
+          <v-list-item> IP: {{ decodeHex(`${ip}`) }} </v-list-item>
 
           <v-list-item> ADDRESS: {{ address }} </v-list-item>
         </v-list>
         <v-card-actions class="justify-end">
-          <v-btn @click="editTwin" color="primary">Edit</v-btn>
+          <v-btn
+            @click="editTwin"
+            color="primary"
+          >Edit</v-btn>
           <v-btn
             @click="openDeleteTwin"
             :loading="loadingDeleteTwin"
             color="red"
             class="white--text"
-            >Delete</v-btn
-          >
+          >Delete</v-btn>
         </v-card-actions>
       </v-card>
-      <h4 class="text-center my-5 pa-5">What do you wish to do?</h4>
-      <div class="d-flex row justify-center align-center">
-        <!-- <v-card
-          v-for="link in links"
-          :key="link.label"
-          class="primary white--text pa-2 mx-3"
-          @click="redirectToLabelRoute(link.path, address)"
-          >{{ link.label.replace(/^\w/, (c) => c.toUpperCase()) }}</v-card
-        > -->
 
-        <!-- <button type="button"
-         class="v-btn v-btn--is-elevated v-btn--has-bg theme--dark v-size--default primary"><span class="v-btn__content">Edit</span></button> -->
-
-        <button
-          type="button"
-          v-for="link in links"
-          :key="link.label"
-          class="v-btn v-btn--is-elevated v-btn--has-bg theme--dark v-size--default primary"
-          @click="redirectToLabelRoute(link.path, address)"
-        >
-          <span class="v-btn__content">
-            {{ link.label }}
-          </span>
-        </button>
-      </div>
     </v-container>
-    <v-dialog max-width="600" v-model="openDeleteTwinDialog">
+    <v-dialog
+      max-width="600"
+      v-model="openDeleteTwinDialog"
+    >
       <v-card>
-        <v-card-title class="text-h5"
-          >Are you certain you want to delete this twin?</v-card-title
-        >
-        <v-card-text
-          >This will delete the twin on the chain, this action is
-          irreversible</v-card-text
-        >
+        <v-card-title class="text-h5">Are you certain you want to delete this twin?</v-card-title>
+        <v-card-text>This will delete the twin on the chain, this action is
+          irreversible</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
             color="blue darken-1"
             text
             @click="openDeleteTwinDialog = false"
-            >Cancel</v-btn
-          >
-          <v-btn color="blue darken-1" text @click="callDeleteTwin()">OK</v-btn>
+          >Cancel</v-btn>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="callDeleteTwin()"
+          >OK</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
@@ -118,11 +106,11 @@
 </template>
 
 <script lang="ts">
-import WelcomeWindow from "@/components/WelcomeWindow.vue";
+import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { Component, Vue } from "vue-property-decorator";
-import { getBalance } from "../lib/balance";
 import { deleteTwin, getTwin, getTwinID, updateTwinIP } from "../lib/twin";
 import { hex2a } from "@/portal/lib/util";
+
 @Component({
   name: "Twin",
   components: { WelcomeWindow },
@@ -130,13 +118,13 @@ import { hex2a } from "@/portal/lib/util";
 export default class TwinView extends Vue {
   $api: any;
   editingTwin = false;
-  ip: any = [];
+  ip: string | (string | null)[] = "";
   ipv = "";
-  id: any = [];
+  id: string | (string | null)[] = "";
   address = "";
-  twin: any;
-  accountName: any;
-  balance: any = 0;
+  twin: { ip: string } = { ip: "" };
+  accountName: string | (string | null)[] = "";
+
   loadingDeleteTwin = false;
   openDeleteTwinDialog = false;
   ipErrorMessage = "";
@@ -155,6 +143,10 @@ export default class TwinView extends Vue {
       path: "account-farms",
     },
     {
+      label: "vote on proposals",
+      path: "account-dao",
+    },
+    {
       label: "manage nodes",
       path: "account-nodes",
     },
@@ -165,9 +157,6 @@ export default class TwinView extends Vue {
       this.id = this.$route.query.twinID;
       this.accountName = this.$route.query.accountName;
     }
-    if (this.$route.query.balance !== this.balance) {
-      this.balance = this.$route.query.balance;
-    }
   }
   mounted() {
     if (this.$api) {
@@ -177,7 +166,6 @@ export default class TwinView extends Vue {
         this.id = this.$route.query.twinID;
         this.accountName = this.$route.query.accountName;
       }
-      this.balance = this.$route.query.balance;
     } else {
       this.$router.push({
         name: "accounts",
@@ -186,7 +174,6 @@ export default class TwinView extends Vue {
     }
   }
   unmounted() {
-    this.balance = 0;
     this.address = "";
   }
   ipcheck() {
@@ -212,18 +199,7 @@ export default class TwinView extends Vue {
   decodeHex(input: string) {
     return hex2a(input);
   }
-  public redirectToLabelRoute(path: string, address: string) {
-    this.$router.push({
-      name: `${path}`,
-      path: `/:accountID/${path}`,
-      params: { accountID: `${address}` },
-      query: {
-        accountName: `${this.accountName}`,
-        twinID: this.id,
-        balance: `${this.balance}`,
-      },
-    });
-  }
+
   public editTwin() {
     console.log("editing a twin");
     this.editingTwin = true;
@@ -233,13 +209,14 @@ export default class TwinView extends Vue {
     updateTwinIP(
       this.$route.params.accountID,
       this.$api,
-      this.ip,
+      `${this.ip}`,
       (res: {
         events?: never[] | undefined;
         status: { type: string; asFinalized: string; isFinalized: string };
       }) => {
         if (res instanceof Error) {
           console.log(res);
+
           return;
         }
 
@@ -254,33 +231,44 @@ export default class TwinView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
+          if (!events.length) {
+            this.$toasted.show("Twin creation/update failed!");
+            this.loadingEditTwin = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(
+              async ({ phase, event: { data, method, section } }) => {
+                console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+                if (section === "tfgridModule" && method === "TwinUpdated") {
+                  this.loadingEditTwin = false;
+                  this.$toasted.show("Twin updated!");
 
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(
-            async ({ phase, event: { data, method, section } }) => {
-              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-              if (section === "tfgridModule" && method === "TwinUpdated") {
-                this.loadingEditTwin = false;
-                this.$toasted.show("Twin updated!");
+                  this.id = await getTwinID(
+                    this.$api,
+                    this.$route.params.accountID
+                  );
 
-                this.id = await getTwinID(
-                  this.$api,
-                  this.$route.params.accountID
-                );
-                this.balance = await getBalance(this.$api, this.address);
-                this.twin = await getTwin(this.$api, this.id);
-                this.ip = this.twin.ip;
-                this.editingTwin = false;
-              } else if (section === "system" && method === "ExtrinsicFailed") {
-                this.$toasted.show("Twin creation/update failed!");
-                this.loadingEditTwin = false;
+                  this.twin = await getTwin(
+                    this.$api,
+                    parseFloat(`${this.id}`)
+                  );
+                  this.ip = this.twin.ip;
+                  this.editingTwin = false;
+                } else if (
+                  section === "system" &&
+                  method === "ExtrinsicFailed"
+                ) {
+                  this.$toasted.show("Twin creation/update failed!");
+                  this.loadingEditTwin = false;
+                }
               }
-            }
-          );
+            );
+          }
         }
       }
     ).catch((err: { message: string }) => {
-      this.$toasted.show(err.message);
+      console.log(err.message);
+      this.$toasted.show("Twin creation/update failed!");
       this.loadingEditTwin = false;
     });
   }
@@ -293,7 +281,7 @@ export default class TwinView extends Vue {
     deleteTwin(
       this.address,
       this.$api,
-      this.id,
+      `${this.id}`,
       (res: {
         events?: never[] | undefined;
         status: { type: string; asFinalized: string; isFinalized: string };
@@ -315,25 +303,29 @@ export default class TwinView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "tfgridModule" && method === "TwinDeleted") {
-              this.$toasted.show("Twin deleted!");
-              this.loadingDeleteTwin = false;
-              this.openDeleteTwinDialog = false;
-              this.$router.push({
-                name: "account",
-                path: "account",
-                params: { accountID: `${this.address}` },
-                query: { accountName: `${this.accountName}` },
-              });
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Deleting a twin failed");
-              this.loadingDeleteTwin = false;
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Deleting a twin failed");
+            this.loadingDeleteTwin = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "tfgridModule" && method === "TwinDeleted") {
+                this.$toasted.show("Twin deleted!");
+                this.loadingDeleteTwin = false;
+                this.openDeleteTwinDialog = false;
+                this.$router.push({
+                  name: "account",
+                  path: "account",
+                  params: { accountID: `${this.address}` },
+                  query: { accountName: `${this.accountName}` },
+                });
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Deleting a twin failed");
+                this.loadingDeleteTwin = false;
+              }
+            });
+          }
         }
       }
     ).catch((err: { message: string }) => {

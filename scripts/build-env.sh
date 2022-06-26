@@ -14,26 +14,85 @@ then
 fi
 
 
+NETWORK="main"
 POLKADOT_URL="wss://tfchain.grid.tf/ws"
 PROXY_URL="https://gridproxy.grid.tf"
+ACTIVATION_SERVICE_URL="https://activation.grid.tf"
+EXPLORER_URL="https://explorer.grid.tf/"
+TFT_ASSET_ISSUER="GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3"
+BRIDGE_TFT_ADDRESS="GBLQSUJUD3HTC6YVCOIYI57QX6Q37AR4TNGVCH2YCSKH7YMUUHECHKPN"
+STELLAR_HORIZON_URL="https://horizon-testnet.stellar.org"
+
+GRAVITY_CONTRACT_ADDRESS="0xBF8C35Ad93366E159C0F0B75F1a4f4ad6Ff80811"
+TFT_TOKEN_CONTRACT_ADDRESS="0xDC5a9199e2604A6BF4A99A583034506AE53F4B34"
+BRIDGE_FEES="3"
+TFT_DECIMALS=7
+TFT_DENOM="TFT"
+PROPOSAL_DENOM="TFT"
+COSMOS_REST="https://tfhub.test.grid.tf:1317/"
+TENDERMINT_RPC="https://tfhub.test.grid.tf:26657/"
+GAS_PRICE="80TFT"
+CHAIN_ID="threefold-hub-testnet"
 
 case $GQL_URL in
   *"dev"*)
-	PROXY_URL="https://gridproxy.dev.grid.tf"
+    NETWORK="dev"
+    GQL_URL="https://graphql.dev.grid.tf/graphql"
+	  PROXY_URL="https://gridproxy.dev.grid.tf"
     POLKADOT_URL="wss://tfchain.dev.grid.tf/ws"
+    TFT_ASSET_ISSUER="GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3"
+    BRIDGE_TFT_ADDRESS="GBLQSUJUD3HTC6YVCOIYI57QX6Q37AR4TNGVCH2YCSKH7YMUUHECHKPN"
+    ACTIVATION_SERVICE_URL="https://activation.dev.grid.tf"
+    EXPLORER_URL="https://explorer.dev.grid.tf/"
+    STELLAR_HORIZON_URL="https://horizon-testnet.stellar.org"
     ;;
   *"test"*)
+    NETWORK="test"
+    GQL_URL="https://graphql.test.grid.tf/graphql"
     PROXY_URL="https://gridproxy.test.grid.tf"
     POLKADOT_URL="wss://tfchain.test.grid.tf/ws"
+    TFT_ASSET_ISSUER="GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3"
+    BRIDGE_TFT_ADDRESS="GBLQSUJUD3HTC6YVCOIYI57QX6Q37AR4TNGVCH2YCSKH7YMUUHECHKPN"
+    ACTIVATION_SERVICE_URL="https://activation.test.grid.tf"
+    EXPLORER_URL="https://explorer.test.grid.tf/"
+    STELLAR_HORIZON_URL="https://horizon-testnet.stellar.org"
+    ;;
+  *"qa"*)
+    NETWORK="qa"
+    GQL_URL="https://graphql.qa.grid.tf/graphql"
+    PROXY_URL="https://gridproxy.qa.grid.tf"
+    POLKADOT_URL="wss://tfchain.qa.grid.tf/ws"
+    TFT_ASSET_ISSUER="GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3"
+    BRIDGE_TFT_ADDRESS="GBLQSUJUD3HTC6YVCOIYI57QX6Q37AR4TNGVCH2YCSKH7YMUUHECHKPN"
+    ACTIVATION_SERVICE_URL="https://activation.qa.grid.tf"
+    EXPLORER_URL="https://explorer.qa.grid.tf/"
+    STELLAR_HORIZON_URL="https://horizon-testnet.stellar.org"
     ;;
 esac
 
 configs="
-window.configs = window.configs || {};
-window.configs.gql_url = '$GQL_URL';
-window.configs.proxy_url = '$PROXY_URL';
-window.configs.polkadot_url = '$POLKADOT_URL';
-window.configs.version = '$VERSION';
+window.configs = {
+  APP_API_URL: '$POLKADOT_URL',
+  APP_STELLAR_HORIZON_URL: '$STELLAR_HORIZON_URL',
+  APP_TFT_ASSET_ISSUER: '$TFT_ASSET_ISSUER',
+  APP_BRIDGE_TFT_ADDRESS: '$BRIDGE_TFT_ADDRESS',
+  APP_ACTIVATION_SERVICE_URL: '$ACTIVATION_SERVICE_URL',
+  APP_EXPLORER_URL: '$EXPLORER_URL',
+  APP_GRAPHQL_URL: '$GQL_URL',
+  APP_GRIDPROXY_URL: '$PROXY_URL',
+  APP_NETWORK: '$NETWORK',
+  APP_VERSION: '$VERSION',
+  APP_GRAVITY_CONTRACT_ADDRESS: '$GRAVITY_CONTRACT_ADDRESS',
+  APP_TFT_TOKEN_CONTRACT_ADDRESS: '$TFT_TOKEN_CONTRACT_ADDRESS',
+  APP_BRIDGE_FEES: '$BRIDGE_FEES',
+  APP_TFT_DECIMALS: $TFT_DECIMALS,
+  APP_TFT_DENOM: '$TFT_DENOM',
+  APP_PROPOSAL_DENOM: '$PROPOSAL_DENOM',
+  APP_COSMOS_REST: '$COSMOS_REST',
+  APP_TENDERMINT_RPC: '$TENDERMINT_RPC',
+  APP_GAS_PRICE: '$GAS_PRICE',
+  APP_CHAIN_ID: '$CHAIN_ID'
+};
 "
 
 if [ -e $file ]
