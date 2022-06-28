@@ -160,10 +160,19 @@ export default class DaoView extends Vue {
       `there were ${oldValue.length} proposals, now there is ${value.length} proposals`
     );
   }
-  async updated() {
-    this.balance = this.$route.query.balance;
 
+  async updated() {
     this.id = this.$route.query.twinID;
+    if (this.$api) {
+      this.id = this.$route.query.twinID;
+
+      this.farms = await getFarm(this.$api, parseFloat(`${this.id}`));
+    } else {
+      this.$router.push({
+        name: "accounts",
+        path: "/",
+      });
+    }
   }
   filteredProposals() {
     if (this.searchTerm.length !== 0) {
