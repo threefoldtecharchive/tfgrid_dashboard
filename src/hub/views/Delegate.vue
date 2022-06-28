@@ -24,10 +24,20 @@
       </form>
     </div>
 
-    <CustomAlert :loading="loading" :result="result" :error="error" />
+    <CustomAlert
+      :loading="loading"
+      :result="result"
+      :error="error"
+    />
 
-    <v-row justify="center" v-if="loading">
-      <v-progress-circular indeterminate color="primary" />
+    <v-row
+      justify="center"
+      v-if="loading"
+    >
+      <v-progress-circular
+        indeterminate
+        color="primary"
+      />
     </v-row>
   </v-container>
 </template>
@@ -49,7 +59,7 @@ export default class GovDeposit extends Vue {
   amount = "1";
   address = "";
   loading = false;
-  result: any = null;
+  result: string | null = null;
   error: string | null = null;
 
   created() {
@@ -74,8 +84,8 @@ export default class GovDeposit extends Vue {
     try {
       this.parseAmount();
       return true;
-    } catch (err: any) {
-      return err.message;
+    } catch (e) {
+      return (e as Error).message;
     }
   }
 
@@ -93,7 +103,7 @@ export default class GovDeposit extends Vue {
       parseUnits(this.amount, this.$store.state.hub.config.tft_decimals),
       this.$store.state.hub.config.tft_denom
     )
-      .then((res) => {
+      .then(() => {
         this.result = `Successfully delegated ${this.amount} to validator #${this.address}`;
       })
       .catch((err) => {

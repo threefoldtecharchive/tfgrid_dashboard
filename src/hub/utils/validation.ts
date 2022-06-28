@@ -23,10 +23,10 @@ async function ensureKeplr(chain_id: string): Promise<any> {
             offlineSigner = signer
             return signer.getAccounts()
         })
-        .then((_: any) => {
+        .then(() => {
             return offlineSigner
         })
-        .catch((reason: any) => {
+        .catch((reason) => {
             if (reason.toString().indexOf("key not found") != -1) {
                 throw new Error("Make sure there's at least one account configured in keplr")
             } else {

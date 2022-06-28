@@ -60,7 +60,7 @@ import { parseUnits } from "ethers/lib/utils";
 })
 export default class TextProposal extends Vue {
   loading = false;
-  result: any = null;
+  result: string | null = null;
   error: string | null = null;
 
   title = "";
@@ -80,8 +80,8 @@ export default class TextProposal extends Vue {
     try {
       this.parseAmount();
       return true;
-    } catch (err: any) {
-      return err.message;
+    } catch (e) {
+      return (e as Error).message;
     }
   }
 
@@ -115,7 +115,7 @@ export default class TextProposal extends Vue {
         parseUnits(initialDeposit, this.$store.state.hub.config.tft_decimals),
         this.$store.state.hub.config.proposal_denom
       )
-        .then((res) => {
+        .then(() => {
           this.result = "Proposal added succefully!";
         })
         .catch((err) => {
@@ -124,9 +124,9 @@ export default class TextProposal extends Vue {
         .finally(() => {
           this.loading = false;
         });
-    } catch (err: any) {
+    } catch (e) {
       this.loading = false;
-      this.error = err.message;
+      this.error = (e as Error).message;
     }
   }
 }

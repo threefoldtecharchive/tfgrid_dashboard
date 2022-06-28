@@ -67,6 +67,11 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import { hex2a } from "@/portal/lib/util";
 import CreateIP from "./CreateIP.vue";
 import DeleteIP from "./DeleteIP.vue";
+interface ipInterface {
+  ip: string;
+  gateway: string;
+  contract_id: string;
+}
 
 @Component({
   name: "PublicIPTable",
@@ -75,7 +80,7 @@ import DeleteIP from "./DeleteIP.vue";
 export default class PublicIPTable extends Vue {
   panel = [0];
   disabled = false;
-  @Prop({ required: true }) ips!: any;
+  @Prop({ required: true }) ips!: ipInterface[];
   @Prop({ required: true }) createIP!: any;
   @Prop({ required: true }) loadingCreate!: boolean;
   @Prop({ required: true }) deleteIP!: any;

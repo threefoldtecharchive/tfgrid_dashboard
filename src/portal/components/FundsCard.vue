@@ -1,0 +1,156 @@
+<template>
+  <v-container>
+    <v-card class="fund  d-flex align-center font-weight-bold">
+      <v-card-text>
+        <v-tooltip>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="openBalance = true"
+              v-bind="attrs"
+              v-on="on"
+              class="d-flex align-end"
+            >
+              <p>{{balanceFree }}</p>
+              <p class="font-weight-black">TFT</p>
+
+            </v-btn>
+
+          </template>
+          <span>View Balance Summary</span>
+
+        </v-tooltip>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn
+          @click="addTFT()"
+          class=""
+          :loading="loadingAddTFT"
+        >+</v-btn>
+
+      </v-card-actions>
+
+    </v-card>
+    <v-dialog
+      v-model="openBalance"
+      max-width="600"
+    >
+
+      <v-card>
+        <v-toolbar
+          color="primary"
+          dark
+        >
+          Balance Summary
+        </v-toolbar>
+        <v-card-text class="pa-5">
+          <v-container>
+            <v-row>
+              Free: {{balanceFree }} TFT
+            </v-row>
+            <v-row>
+              Reserved (Locked): {{balanceReserved}} TFT
+            </v-row>
+          </v-container>
+
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn @click="openBalance = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+
+    </v-dialog>
+
+  </v-container>
+</template>
+<script lang="ts">
+import config from "@/portal/config";
+import { getBalance, getMoreFunds } from "@/portal/lib/balance";
+import { Component, Prop, Vue } from "vue-property-decorator";
+
+@Component({
+  name: "FundsCard",
+})
+export default class FundsCard extends Vue {
+  loadingAddTFT = false;
+  $api: any;
+  @Prop({ required: true }) balanceFree!: number;
+  @Prop({ required: true }) balanceReserved!: number;
+  openBalance = false;
+
+  async addTFT() {
+    if (config.network !== "dev") {
+      window.open(
+        "https://gettft.com/auth/login?next_url=/gettft/shop/#/buy",
+        "_blank"
+      );
+    } else {
+      this.loadingAddTFT = true;
+      getMoreFunds(
+        this.$route.params.accountID,
+        this.$api,
+        (res: {
+          events?: never[] | undefined;
+          status: { type: string; asFinalized: string; isFinalized: string };
+        }) => {
+          console.log(res);
+          if (res instanceof Error) {
+            console.log(res);
+            return;
+          }
+
+          const { events = [], status } = res;
+          console.log(`Current status is ${status.type}`);
+          switch (status.type) {
+            case "Ready":
+              this.$toasted.show(`Transaction submitted`);
+          }
+
+          if (status.isFinalized) {
+            console.log(
+              `Transaction included at blockHash ${status.asFinalized}`
+            );
+            if (!events.length) {
+              this.$toasted.show("Get more TFT failed!");
+              this.loadingAddTFT = false;
+            } else {
+              // Loop through Vec<EventRecord> to display all events
+              events.forEach(({ phase, event: { data, method, section } }) => {
+                console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+                if (section === "balances" && method === "Transfer") {
+                  this.$toasted.show("Success!");
+                  this.loadingAddTFT = false;
+                  getBalance(this.$api, this.$route.params.accountID).then(
+                    (balance) => {
+                      this.$emit("update:balanceFree", balance.free);
+                      this.$emit("update:balanceReserved", balance.reserved);
+                    }
+                  );
+                } else if (
+                  section === "system" &&
+                  method === "ExtrinsicFailed"
+                ) {
+                  this.$toasted.show("Get more TFT failed!");
+                  this.loadingAddTFT = false;
+                }
+              });
+            }
+          }
+        }
+      ).catch((err: { message: string }) => {
+        console.log(err.message);
+        this.loadingAddTFT = false;
+        this.$toasted.show("Get more TFT failed!");
+      });
+    }
+  }
+}
+</script>
+<style scoped>
+.fund {
+  position: fixed;
+  top: 0.65px;
+  right: 35%;
+  z-index: 1000;
+  height: 62.5px;
+}
+</style>

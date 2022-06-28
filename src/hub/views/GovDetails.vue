@@ -1,10 +1,17 @@
 <template>
   <v-container>
-    <v-row justify="center" v-if="!proposal">
+    <v-row
+      justify="center"
+      v-if="!proposal"
+    >
       <v-progress-circular indeterminate />
     </v-row>
     <div v-if="proposal">
-      <v-row class="mb-2" justify="space-between" align="center">
+      <v-row
+        class="mb-2"
+        justify="space-between"
+        align="center"
+      >
         <h1>{{ proposal.content.title }} #{{ proposal.proposalId }}</h1>
         <v-btn
           v-if="proposal.status === 'PROPOSAL_STATUS_DEPOSIT_PERIOD'"
@@ -50,7 +57,11 @@
           </v-list-item>
         </v-card>
 
-        <v-card style="width: 100%" dark v-if="bondedTokens">
+        <v-card
+          style="width: 100%"
+          dark
+          v-if="bondedTokens"
+        >
           <v-list-item three-line>
             <v-list-item-content>
               <div class="text-overline">Percent Voted</div>
@@ -73,24 +84,26 @@
         <strong>
           {{
             proposal.totalDeposit.length ? proposal.totalDeposit[0].denom : ""
-          }}</strong
-        >
+          }}</strong>
       </p>
 
       <h3 class="mt-6">Description</h3>
       <p v-html="getDescription()" />
 
       <div v-if="proposal.content['@type'].indexOf('SoftwareUpgrade') > -1">
-        <v-divider class="mb-2"/>
+        <v-divider class="mb-2" />
         <p class="mb-0"><strong>Name:</strong> {{ proposal.content.plan.name }}</p>
         <p class="mb-0"><strong>Height:</strong> {{ proposal.content.plan.height }}</p>
         <p class="mb-0">
           <strong>info:</strong>
-          <ul>
-            <li v-for="(u, i) in normalizeInfo(proposal.content.plan.info)" :key="i">
-              <strong>{{ u[0] }}:</strong> {{  u[1] }}
-            </li>
-          </ul>
+        <ul>
+          <li
+            v-for="(u, i) in normalizeInfo(proposal.content.plan.info)"
+            :key="i"
+          >
+            <strong>{{ u[0] }}:</strong> {{  u[1] }}
+          </li>
+        </ul>
         </p>
       </div>
 
@@ -109,7 +122,11 @@
         </v-btn>
       </div>
 
-      <CustomAlert :loading="!!loading" :result="result" :error="error" />
+      <CustomAlert
+        :loading="!!loading"
+        :result="result"
+        :error="error"
+      />
     </div>
   </v-container>
 </template>
@@ -140,7 +157,7 @@ export default class GovDetails extends Vue {
   bondedTokens: string | null = null;
 
   loading: VoteOption | null = null;
-  result: any = null;
+  result: string | null = null;
   error: string | null = null;
 
   getDescription() {
@@ -198,7 +215,8 @@ export default class GovDetails extends Vue {
         );
       })
       .catch((err) => {
-        this.error = "Couldn't get proposal info (refresh to try again): " + err.message
+        this.error =
+          "Couldn't get proposal info (refresh to try again): " + err.message;
       })
       .finally(() => {
         this.loading = null;
@@ -212,7 +230,9 @@ export default class GovDetails extends Vue {
         );
       })
       .catch((err) => {
-        this.error = "Couldn't get total vonded tokens (refresh to try again): " + err.message
+        this.error =
+          "Couldn't get total vonded tokens (refresh to try again): " +
+          err.message;
       });
   }
 
@@ -235,7 +255,7 @@ export default class GovDetails extends Vue {
       this.proposal.proposalId,
       action.value
     )
-      .then((res) => {
+      .then(() => {
         this.result = `Successfully voted with '${action.label}'.`;
       })
       .catch((err) => {

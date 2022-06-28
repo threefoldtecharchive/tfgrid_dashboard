@@ -153,18 +153,22 @@ export default class TransferView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "balances" && method === "Transfer") {
-              this.$toasted.show("Transfer succeeded!");
-              this.loadingTransfer = false;
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Transfer failed!");
-              this.loadingTransfer = false;
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Transfer failed!");
+            this.loadingTransfer = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "balances" && method === "Transfer") {
+                this.$toasted.show("Transfer succeeded!");
+                this.loadingTransfer = false;
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Transfer failed!");
+                this.loadingTransfer = false;
+              }
+            });
+          }
         }
       }
     ).catch((err) => {

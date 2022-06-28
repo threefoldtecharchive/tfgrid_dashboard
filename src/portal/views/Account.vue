@@ -107,14 +107,14 @@
 <script lang="ts">
 import axios from "axios";
 import { Component, Vue } from "vue-property-decorator";
-import { getBalance } from "../lib/balance";
+import { balanceInterface, getBalance } from "../lib/balance";
 import { createTwin, getTwin, getTwinID } from "../lib/twin";
 import blake from "blakejs";
 import {
   acceptTermsAndCondition,
   userAcceptedTermsAndConditions,
 } from "../lib/accepttc";
-import WelcomeWindow from "../../components/WelcomeWindow.vue";
+import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { activateThroughActivationService } from "../lib/activation";
 import Twin from "./Twin.vue";
 
@@ -129,10 +129,10 @@ export default class AccountView extends Vue {
   twinCreated = false;
   address = "";
   $api: any;
-  balance = 0;
+  balance: balanceInterface = { free: 0, reserved: 0 };
   twinID = 0;
   ip = "";
-  twin: any;
+  twin!: { id: any; ip: any };
   loadingTC = true;
   loadingTwinCreate = false;
   ipErrorMessage = "";
@@ -141,7 +141,7 @@ export default class AccountView extends Vue {
   async updated() {
     if (this.$api) {
       this.address = this.$route.params.accountID;
-      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+      this.balance = await getBalance(this.$api, this.address);
       this.twinID = await getTwinID(this.$api, this.address);
       if (this.twinID) {
         this.twinCreated = true;
@@ -154,7 +154,8 @@ export default class AccountView extends Vue {
             accountName: `${this.$route.query.accountName}`,
             twinID: this.twin.id,
             twinIP: this.twin.ip,
-            balance: `${this.balance}`,
+            balanceFree: `${this.balance.free}`,
+            balanceReserved: `${this.balance.reserved}`,
           },
         });
       }
@@ -167,7 +168,7 @@ export default class AccountView extends Vue {
   async mounted() {
     if (this.$api) {
       this.address = this.$route.params.accountID;
-      this.balance = (await getBalance(this.$api, this.address)) / 1e7;
+      this.balance = await getBalance(this.$api, this.address);
       this.twinID = await getTwinID(this.$api, this.address);
       if (this.twinID) {
         this.twinCreated = true;
@@ -190,7 +191,7 @@ export default class AccountView extends Vue {
   }
   unmounted() {
     this.address = "";
-    this.balance = 0;
+    this.balance = { free: 0, reserved: 0 };
     this.twinID = 0;
   }
   ipcheck() {
@@ -237,18 +238,23 @@ export default class AccountView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "tfgridModule" && method === "TwinStored") {
-              this.loadingTwinCreate = false;
-              this.$toasted.show("Twin created!");
-              this.twinCreated = true;
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Twin creation failed!");
-              this.loadingTwinCreate = false;
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("Twin creation failed!");
+            this.loadingTwinCreate = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "tfgridModule" && method === "TwinStored") {
+                this.loadingTwinCreate = false;
+                this.$toasted.show("Twin created!");
+                this.twinCreated = true;
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Twin creation failed!");
+                this.loadingTwinCreate = false;
+              }
+            });
+          }
         }
       }
     ).catch((err: { message: string }) => {
@@ -284,17 +290,22 @@ export default class AccountView extends Vue {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`
           );
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "system" && method === "ExtrinsicSuccess") {
-              this.$toasted.show("Accepted!");
-              this.loadingTC = false;
-              this.loadingAcceptedTC = false;
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("rejected");
-              this.loadingAcceptedTC = false;
-            }
-          });
+          if (!events.length) {
+            this.$toasted.show("rejected");
+            this.loadingAcceptedTC = false;
+          } else {
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "system" && method === "ExtrinsicSuccess") {
+                this.$toasted.show("Accepted!");
+                this.loadingTC = false;
+                this.loadingAcceptedTC = false;
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("rejected");
+                this.loadingAcceptedTC = false;
+              }
+            });
+          }
         }
       }
     ).catch((err: { message: string }) => {
@@ -305,11 +316,3 @@ export default class AccountView extends Vue {
 }
 </script>
 
-<style scoped>
-/* .v-card {
-  background-color: transparent !important;
-}
-.v-sheet.v-card:not(.v-sheet--outlined) {
-  box-shadow: none !important;
-} */
-</style>
