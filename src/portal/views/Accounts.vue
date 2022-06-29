@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="$store.state.portal.accounts.length === 0">
+  <v-container v-if="!$store.state.portal.accounts.length && loadingAPI">
     <WelcomeWindow />
   </v-container>
   <v-container
@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import { accountInterface } from "../store/state";
 import WelcomeWindow from "../components/WelcomeWindow.vue";
 import Account from "./Account.vue";
@@ -54,12 +54,19 @@ import FundsCard from "../components/FundsCard.vue";
 export default class AccountsView extends Vue {
   searchTerm = "";
   accounts: accountInterface[] = [];
-
+  $api: any;
+  loadingAPI = true;
   mounted() {
     this.accounts = this.$store.state.portal.accounts;
+    if (this.$api) {
+      this.loadingAPI = false;
+    }
   }
   updated() {
     this.accounts = this.$store.state.portal.accounts;
+    if (this.$api) {
+      this.loadingAPI = false;
+    }
   }
   public filteredAccounts() {
     if (this.searchTerm.length !== 0) {
