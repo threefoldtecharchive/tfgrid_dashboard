@@ -23,8 +23,12 @@
         </span>
       </v-tooltip>
     </v-card>
-
-    <v-container v-if="proposals.length">
+    <v-container v-if="!proposals.length">
+      <v-card class="my-3 pa-3 d-flex justify-center">
+        <h3>No Active proposals at this time</h3>
+      </v-card>
+    </v-container>
+    <v-container v-else>
 
       <v-text-field
         v-model="searchTerm"
@@ -143,23 +147,14 @@
 
     </v-container>
 
-    <v-container v-else>
-      <v-card class="my-3 pa-3 d-flex justify-center">
-        <h3>No Active proposals at this time</h3>
-      </v-card>
-    </v-container>
-
   </v-container>
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { getProposals, vote } from "../lib/dao";
+import { ayesAndNayesInterface, getProposals, vote } from "../lib/dao";
 import { getFarm, getNodesByFarm } from "../lib/farms";
 import DaoBarChart from "../components/DaoBarChart.vue";
-interface ayesAndNayesInterface {
-  farm_id: number;
-  weight: number;
-}
+
 interface proposalInterface {
   action: string;
   hash: string;
@@ -194,6 +189,7 @@ export default class DaoView extends Vue {
     if (this.$api) {
       this.id = this.$route.query.twinID;
       this.proposals = await getProposals(this.$api);
+      console.log(this.proposals);
       this.farms = await getFarm(this.$api, parseFloat(`${this.id}`));
     } else {
       this.$router.push({
@@ -211,7 +207,6 @@ export default class DaoView extends Vue {
     this.id = this.$route.query.twinID;
     if (this.$api) {
       this.id = this.$route.query.twinID;
-
       this.farms = await getFarm(this.$api, parseFloat(`${this.id}`));
     } else {
       this.$router.push({
@@ -221,7 +216,7 @@ export default class DaoView extends Vue {
     }
   }
   filteredProposals() {
-    if (this.searchTerm.length !== 0) {
+    if (this.searchTerm.length) {
       return this.proposals.filter(
         (proposal: { action: string; description: string }) =>
           proposal.action
@@ -243,7 +238,7 @@ export default class DaoView extends Vue {
   async castVote() {
     const nodes = await getNodesByFarm(this.selectedFarm);
     console.log(this.selectedFarm);
-    if (nodes.length === 0) {
+    if (!nodes.length) {
       alert("no nodes in farm");
       return;
     }
