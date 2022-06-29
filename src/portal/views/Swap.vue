@@ -138,7 +138,7 @@ import { Component, Vue } from "vue-property-decorator";
 import config from "../config";
 import { getDepositFee, getWithdrawFee, withdraw } from "../lib/swap";
 import QrcodeVue from "qrcode.vue";
-import { getBalance } from "../lib/balance";
+import { balanceInterface, getBalance } from "../lib/balance";
 
 @Component({
   name: "TransferView",
@@ -182,7 +182,8 @@ export default class TransferView extends Vue {
         this.id = this.$route.query.twinID;
         this.accountName = this.$route.query.accountName;
       }
-      this.balance = this.$route.query.balance;
+      this.balance = this.$route.query.balanceFree;
+
       if (config.bridgeTftAddress) {
         this.depositWallet = config.bridgeTftAddress;
       }
@@ -201,8 +202,8 @@ export default class TransferView extends Vue {
   async updated() {
     this.id = this.$route.query.twinID;
     this.ip = this.$route.query.twinIP;
-    if (this.$route.query.balance !== this.balance) {
-      this.balance = this.$route.query.balance;
+    if (this.$route.query.balanceFree !== this.balance) {
+      this.balance = this.$route.query.balanceFree;
     }
     this.selectedName = this.items.filter(
       (item) => item.id === this.selectedItem.item_id
@@ -254,9 +255,11 @@ export default class TransferView extends Vue {
               ) {
                 this.$toasted.show("Withdraw sumbitted!");
                 this.openWithdrawDialog = false;
-                getBalance(this.$api, this.address).then((balance: any) => {
-                  this.balance = balance;
-                });
+                getBalance(this.$api, this.address).then(
+                  (balance: balanceInterface) => {
+                    this.balance = balance.free;
+                  }
+                );
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Withdraw failed!");
                 this.openWithdrawDialog = false;

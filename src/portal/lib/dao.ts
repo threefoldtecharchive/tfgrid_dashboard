@@ -2,8 +2,8 @@
 import { hex2a } from './util'
 import moment from 'moment'
 import { web3FromAddress } from '@polkadot/extension-dapp';
-interface ayesAndNayesInterface {
-    farm_id: number;
+export interface ayesAndNayesInterface {
+    farmId: number;
     weight: number;
 }
 export async function vote(address: string, api: { tx: { dao: { vote: (arg0: any, arg1: any, arg2: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: any }, arg2: any): any; new(): any } } } } }, farmId: string, hash: any, approve: boolean, callback: any) {
@@ -30,16 +30,16 @@ export async function getProposals(api: any) {
 
         proposals.push({
             threshold: proposalVotes.threshold,
-            ayes: proposalVotes.ayes, //[{farm_id: number, weight: number}]
-            nayes: proposalVotes.nayes,
+            ayes: proposalVotes.ayes, //[{farmId: number, weight: number}]
+            nayes: proposalVotes.nays,
             vetos: proposalVotes.vetos,
             end: moment().add(timeUntilEnd, 'second'),
             hash: hash,
-            action: hex2a(proposal.args._remark),
+            action: hex2a(proposal.args.remark),
             description: hex2a(daoProposal.description),
             link: hex2a(daoProposal.link),
-            ayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nayes, true),
-            nayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nayes, false)
+            ayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, true),
+            nayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, false)
         })
     })
 
@@ -47,6 +47,7 @@ export async function getProposals(api: any) {
 }
 export function getVotesWithWeights(votes: ayesAndNayesInterface[]) {
     return votes.reduce((total: number, vote: ayesAndNayesInterface) => {
+
         return total + vote.weight;
     }, 0);
 }
@@ -55,8 +56,9 @@ export function getProgress(
     nayes: ayesAndNayesInterface[],
     typeAye: boolean
 ) {
-    const totalAyeWeight = getVotesWithWeights(ayes);
-    const totalNayeWeight = getVotesWithWeights(nayes);
+
+    const totalAyeWeight = ayes ? getVotesWithWeights(ayes) : 0;
+    const totalNayeWeight = nayes ? getVotesWithWeights(nayes) : 0;
     const total = totalAyeWeight + totalNayeWeight;
     if (total > 0) {
         if (typeAye) {
