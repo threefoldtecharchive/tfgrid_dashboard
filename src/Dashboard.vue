@@ -203,7 +203,11 @@
       </v-list>
     </v-navigation-drawer>
 
-    <router-view />
+    <router-view v-if="!loadingAPI" />
+    <WelcomeWindow
+      v-else
+      style="padding: 6% 5% 5% 10%; margin: 4% 0"
+    />
     <v-footer
       padless
       fixed
@@ -227,6 +231,7 @@ import { balanceInterface, getBalance } from "./portal/lib/balance";
 import { connect } from "./portal/lib/connect";
 import { getTwin, getTwinID } from "./portal/lib/twin";
 import { accountInterface } from "./portal/store/state";
+import WelcomeWindow from "./portal/components/WelcomeWindow.vue";
 interface SidenavItem {
   label: string;
   icon: string;
@@ -250,6 +255,7 @@ interface SidenavItem {
 
 @Component({
   name: "Dashboard",
+  components: { WelcomeWindow },
 })
 export default class Dashboard extends Vue {
   collapseOnScroll = true;
@@ -261,10 +267,13 @@ export default class Dashboard extends Vue {
   balance: balanceInterface = { free: 0, reserved: 0 };
   accounts: accountInterface[] = [];
   searchTerm = "";
+  loadingAPI = true;
 
   async created() {
     if (this.$route.path === "/" && !this.$api) {
-      Vue.prototype.$api = await connect(); //declare global variable api
+      Vue.prototype.$api = await connect().then(
+        () => (this.loadingAPI = false)
+      ); //declare global variable api
       console.log(`connecting to api`);
     }
   }
