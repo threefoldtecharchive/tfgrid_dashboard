@@ -12,6 +12,7 @@ export async function getFarm(api: { query: any; }, twinID: number) {
       return farm
     }
   })
+
   const parsedFarms = twinFarms.map(async (farm: { toJSON: () => any; }[]) => {
     const parsedFarm = farm[1].toJSON()
     const v2address = await getFarmPayoutV2Address(api, parsedFarm.id)
