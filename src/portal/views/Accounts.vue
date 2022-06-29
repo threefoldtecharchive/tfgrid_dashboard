@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="!$store.state.portal.accounts.length && loadingAPI">
+  <v-container v-if="!$store.state.portal.accounts.length ">
     <WelcomeWindow />
   </v-container>
   <v-container
@@ -54,19 +54,12 @@ import FundsCard from "../components/FundsCard.vue";
 export default class AccountsView extends Vue {
   searchTerm = "";
   accounts: accountInterface[] = [];
-  $api: any;
-  loadingAPI = true;
+
   mounted() {
     this.accounts = this.$store.state.portal.accounts;
-    if (this.$api) {
-      this.loadingAPI = false;
-    }
   }
   updated() {
     this.accounts = this.$store.state.portal.accounts;
-    if (this.$api) {
-      this.loadingAPI = false;
-    }
   }
   public filteredAccounts() {
     if (this.searchTerm.length !== 0) {

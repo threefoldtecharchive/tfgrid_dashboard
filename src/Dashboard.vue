@@ -271,15 +271,16 @@ export default class Dashboard extends Vue {
 
   async created() {
     if (this.$route.path === "/" && !this.$api) {
-      Vue.prototype.$api = await connect().then(
-        () => (this.loadingAPI = false)
-      ); //declare global variable api
+      Vue.prototype.$api = await connect(); //declare global variable api
       console.log(`connecting to api`);
+      this.loadingAPI = false;
     }
   }
   mounted() {
     this.accounts = this.$store.state.portal.accounts;
-
+    if (this.$api) {
+      this.loadingAPI = false;
+    }
     const theme = localStorage.getItem("dark_theme");
     if (theme) {
       if (theme === "true") {
@@ -298,6 +299,9 @@ export default class Dashboard extends Vue {
 
   updated() {
     this.accounts = this.$store.state.portal.accounts;
+    if (this.$api) {
+      this.loadingAPI = false;
+    }
   }
   async unmounted() {
     console.log(`disconnecting from api`);
