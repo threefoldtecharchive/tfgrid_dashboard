@@ -1,6 +1,5 @@
 <template>
-  <v-card flat color="transparent" class="container">
-    <h2>Nodes Distribution</h2>
+  <v-card flat color="transparent">
     <div @mousemove="controllTooltip($event)">
       <Map v-on:map-ref="onGetMapRef" />
 

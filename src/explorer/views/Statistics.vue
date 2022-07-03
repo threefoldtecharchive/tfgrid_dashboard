@@ -1,19 +1,21 @@
 <template>
   <Layout pageName="Statistics" v-if="stats" :noFilter="true">
-    <section class="items" v-if="statistics.length > 0">
-      <div v-for="item of statistics" :key="item.title">
-        <StatisticsCard :item="item" />
-      </div>
-    </section>
+    <v-row>
+      <section class="items" v-if="statistics.length > 0">
+        <div v-for="item of statistics" :key="item.title">
+          <StatisticsCard :item="item" />
+        </div>
+      </section>
+      <v-col cols="10" class="mx-auto">
+        <tf-map :nodes="nodesDistribution"></tf-map
+      ></v-col>
+    </v-row>
 
     <section class="loader" v-if="statistics.length === 0">
       <v-progress-circular size="150" indeterminate />
     </section>
 
     <v-divider class="mt-2 mb-2" />
-
-    <h2>Nodes Distribution</h2>
-    <tf-map :nodes="nodesDistribution"></tf-map>
   </Layout>
 </template>
 
@@ -97,16 +99,30 @@ export default class Statistics extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.theme--light.v-card {
+  color: rgb(255, 255, 255);
+  background-color: #1982b1;
+}
+
+.theme--dark.v-card {
+  color: rgb(255, 255, 255);
+  background-color: #1982b1;
+}
+
+.theme--light.v-divider {
+  color: rgb(255, 255, 255);
+}
 .items {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  padding: 15px 16px 0;
   > div {
-    padding: 15px;
+    padding: 5px;
     width: 16.5%;
 
     @media (max-width: 1910px) {
-      width: calc(100% / 3);
+      width: calc(100% / 6);
     }
 
     @media (max-width: 1270px) {

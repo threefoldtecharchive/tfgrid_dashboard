@@ -42,7 +42,7 @@
       </v-text-field>
       <v-card-actions>
         <v-spacer> </v-spacer>
-        <v-btn @click="clearInput">Clear</v-btn>
+        <v-btn @click="clearInput" color="grey lighten-2 black--text">Clear</v-btn>
         <v-btn
           class="primary white--text"
           @click="transferTFT"

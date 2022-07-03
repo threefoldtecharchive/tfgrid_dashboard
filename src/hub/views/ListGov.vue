@@ -1,20 +1,14 @@
 <template>
   <v-container>
-    <v-row
-      justify="space-between"
-      class="mb-6"
-    >
+    <v-row justify="space-between" class="my-6">
       <h1>Proposals</h1>
-      <v-alert
-        type="error"
-        v-if="error != null"
-      >
+      <v-alert type="error" v-if="error != null">
         {{ error }}
       </v-alert>
 
       <div style="display: flex">
         <div v-if="tally">
-          <h4>Tally Parameters</h4>
+          <h4 class="my-2">Tally Parameters</h4>
           <ul style="list-style: square">
             <li>
               Quorum: <strong>{{ normalize(tally.quorum) }}</strong>
@@ -29,15 +23,11 @@
           </ul>
         </div>
 
-        <v-divider
-          vertical
-          class="mr-2 ml-2"
-          v-if="tally"
-        />
+        <v-divider vertical class="mx-4" v-if="tally" />
 
         <div v-if="deposit || voting">
           <div v-if="deposit">
-            <h4>Deposit Parameters</h4>
+            <h4 class="my-2">Deposit Parameters</h4>
             <ul style="list-style: square">
               <li>
                 Min Deposit:
@@ -53,10 +43,10 @@
             </ul>
           </div>
 
-          <v-divider v-if="deposit && voting" />
+          <v-divider class="my-2" v-if="deposit && voting" />
 
           <div v-if="voting">
-            <h4>Voting Parameters</h4>
+            <h4 class="my-2">Voting Parameters</h4>
             <ul style="list-style: square">
               <li>
                 Voting Period: <strong>{{ voting.votingPeriod }}</strong>
@@ -65,27 +55,25 @@
           </div>
         </div>
 
-        <v-divider
-          vertical
-          class="mr-2 ml-2"
-          v-if="deposit || voting"
-        />
+        <v-divider vertical class="mx-4" v-if="deposit || voting" />
 
-        <div>
+        <div class="my-4">
           <ul style="list-style: none">
             <li
               v-for="color in [
-                ['#2ecc71', 'Yes'],
+                ['#1982b1', 'Yes'],
                 ['#e74c3c', 'No'],
                 ['#c0392b', 'No With Veto'],
               ]"
               :key="color[0]"
-              style="display: flex; align-items: center"
+              style="display: flex; align-items: center; margin-bottom: 4px;"
             >
-              <span :style="
+              <span
+                :style="
                   'display: inline-block; margin-right: 10px;height: 20px; width: 20px; background-color:' +
                   color[0]
-                " />
+                "
+              />
               <span>{{ color[1] }}</span>
             </li>
           </ul>
@@ -93,11 +81,7 @@
       </div>
     </v-row>
 
-    <v-data-table
-      :headers="headers"
-      :items="proposals"
-      :loading="loading"
-    >
+    <v-data-table :headers="headers" :items="proposals" :loading="loading">
       <template v-slot:[`item.status`]="{ item }">
         {{ item.status.replace("PROPOSAL_STATUS_", "") }}
       </template>
@@ -224,3 +208,9 @@ export default class ListGov extends Vue {
   }
 }
 </script>
+
+<style scoped>
+ul {
+  font-size: .9rem;
+}
+</style>

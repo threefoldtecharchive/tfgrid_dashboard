@@ -1,15 +1,16 @@
 <template>
-  <v-card class="item">
-    <h4 class="item__title">{{ item.title }}</h4>
+  <v-card class="item text-center">
     <div class="item__img">
-      <v-icon size="50">
+      <!--<v-icon size="30">
         {{ item.icon }}
-      </v-icon>
+      </v-icon>-->
+      <h4 class="item__title d-inline">{{ item.title }}</h4>
+      <v-divider color="white" class="mt-1" />
+
+      <p class="item__data text-center">
+        {{ item.data }}
+      </p>
     </div>
-    <v-divider />
-    <p class="item__data">
-      {{ item.data }}
-    </p>
   </v-card>
 </template>
 
@@ -26,21 +27,19 @@ export default class StatisticsCard extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.theme--light.v-icon {
+  color: #ffffff !important;
+}
+.theme--light.v-divider {
+  color: rgb(255, 255, 255);
+}
 .item {
-  text-align: center;
-  padding: 15px;
-
-  &__img {
-    padding: 15px;
-  }
-
+  padding: 5px;
   &__data {
-    // font-weight: bold;
-    font-size: 30px;
-    margin-top: 15px;
+    font-size: 21px !important;
   }
   &__title {
-    font-size: 25px;
+    font-size: 1.2rem !important;
   }
 }
 </style>

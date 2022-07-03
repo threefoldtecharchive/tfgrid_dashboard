@@ -30,7 +30,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
   name: "VoteCircle",
 })
 export default class VoteCircle extends Vue {
-  private readonly colors = ["#2ecc71", "#e74c3c", "#c0392b"]; // prettier-ignore
+  private readonly colors = ["#1982b1", "#e74c3c", "#c0392b"]; // prettier-ignore
   @Prop({ required: true }) yes!: number;
   @Prop({ required: true }) no!: number;
   @Prop({ required: true }) noWithVeto!: number;

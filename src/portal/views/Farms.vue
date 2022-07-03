@@ -18,7 +18,7 @@
 
       <v-btn
         @click="openCreateFarmDialog = true"
-        class="my-3 mx-5"
+        class="farm my-3 mx-5"
         :loading="loadingCreateFarm"
       >Create farm</v-btn>
     </v-card>
@@ -49,11 +49,11 @@
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn
-            color="primary"
+            color="primary white--text"
             @click="createFarmFromName"
             :loading="loadingCreateFarm"
           >Submit</v-btn>
-          <v-btn @click="openCreateFarmDialog = false">Close</v-btn>
+          <v-btn @click="openCreateFarmDialog = false" color="grey lighten-2 black--text">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -70,11 +70,10 @@
       item-key="name"
       show-expand
       class="elevation-1"
-      dark
       disable-pagination
     >
       <template v-slot:top>
-        <v-toolbar flat>
+        <v-toolbar flat class="primary white--text">
           <v-toolbar-title>Your Farms</v-toolbar-title>
           <v-spacer></v-spacer>
         </v-toolbar>
@@ -196,8 +195,8 @@
                     </v-text-field>
                   </v-card-text>
                   <v-card-actions class="justify-end">
-                    <v-btn @click="openV2AddressDialog = false">Close</v-btn>
-                    <v-btn @click="addV2Address">Submit</v-btn>
+                    <v-btn @click="openV2AddressDialog = false" color="grey lighten-2 black--text">Close</v-btn>
+                    <v-btn @click="addV2Address" color="primary white--text">Submit</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -243,12 +242,12 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            color="primary darken-1"
+            color="grey lighten-2 black--text"
             text
             @click="openDeleteFarmDialog = false"
           >Cancel</v-btn>
           <v-btn
-            color="primary darken-1"
+            color="primary white--text"
             text
             :loading="loadingDeleteFarm"
             @click="callDeleteFarm()"
@@ -652,5 +651,8 @@ export default class FarmsView extends Vue {
 
 .theme--dark.v-btn.v-btn--has-bg {
   background-color: #064663;
+}
+.farm {
+  font-weight: 500 !important;
 }
 </style>

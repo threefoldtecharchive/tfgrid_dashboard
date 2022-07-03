@@ -34,13 +34,13 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            text
+            color="grey lighten-2 black--text"
             @click="open = false"
           >
             Cancel
           </v-btn>
           <v-btn
-            color="primary"
+            color="red"
             text
             @click="deletePublicIP()"
           >

@@ -1,11 +1,12 @@
 <template>
   <v-container fluid>
-
     <v-card
       class="my-3 pa-3 d-flex justify-center"
-      color="#512DA8"
+      color="primary white--text"
     >
-      <h2> Howdy {{$route.query.accountName}}, you can now vote on proposals!</h2>
+      <h2>
+        Howdy {{ $route.query.accountName }}, you can now vote on proposals!
+      </h2>
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-icon
@@ -18,9 +19,7 @@
             mdi-information-outline
           </v-icon>
         </template>
-        <span>
-          Click for more info
-        </span>
+        <span> Click for more info </span>
       </v-tooltip>
     </v-card>
     <v-container v-if="!proposals.length">
@@ -29,7 +28,6 @@
       </v-card>
     </v-container>
     <v-container v-else>
-
       <v-text-field
         v-model="searchTerm"
         color="primary darken-2"
@@ -38,22 +36,21 @@
 
       <v-card
         class="my-3 pa-3"
-        v-for="(proposal,i) in filteredProposals()"
+        v-for="(proposal, i) in filteredProposals()"
         :key="i"
       >
         <v-card-title>
-          {{proposal.action.toUpperCase()}}
+          {{ proposal.action.toUpperCase() }}
         </v-card-title>
         <v-card-subtitle>
-          {{proposal.hash}}
+          {{ proposal.hash }}
         </v-card-subtitle>
         <v-card-text>
-          {{proposal.description}}
+          {{ proposal.description }}
           <a
             v-bind:href="proposal.link"
             v-bind:target="'blank'"
           >More details</a>
-
         </v-card-text>
 
         <v-container
@@ -61,61 +58,71 @@
           class="d-flex justify-space-between my-5"
         >
           <v-btn
-            color="green"
-            class=" "
-            :width="`${proposal.ayes.length *100 + 100}`"
+            color="primary"
             @click="openVoteDialog(proposal.hash, true)"
             :loading="loadingVote"
+            :width="`${(proposal.ayes.length)/(proposal.ayes.length+ proposal.nayes.length) *100 + 100}`"
           >Yes
             <v-divider
               class="mx-3"
               vertical
-            />{{proposal.ayes.length}}
+            />{{ proposal.ayes.length }}
           </v-btn>
 
-          <div class="d-flex align-center  text-center threshold">
+          <div class="d-flex align-center text-center threshold">
             <v-divider vertical />
-            <span>Threshold: <br>{{(proposal.nayes.length + proposal.ayes.length)}}/{{proposal.threshold}}
-
+            <span>Threshold: <br />{{
+                proposal.nayes.length + proposal.ayes.length
+              }}/{{ proposal.threshold }}
             </span>
             <v-divider vertical />
-
           </div>
           <v-btn
-            color="red"
-            :width="`${proposal.nayes.length *100 + 100}`"
+            color="grey lighten-2 black--text"
             @click="openVoteDialog(proposal.hash, false)"
+            :width="`${proposal.nayes.length /(proposal.ayes.length+ proposal.nayes.length) *100 + 100}`"
             :loading="loadingVote"
           >No
             <v-divider
               class="mx-3"
               vertical
-            />{{proposal.nayes.length}}
+            />{{ proposal.nayes.length }}
           </v-btn>
-
         </v-container>
-        <v-container>
+        <v-container v-if="proposal.ayesProgress > 0 || proposal.nayesProgress > 0">
           <v-row justify="center">
-
-            <v-col
-              :sm="Math.round(proposal.ayesProgress*12/100)===12? 11: proposal.ayesProgress*12/100"
+            <v-progress-linear
+              :value="proposal.ayesProgress"
               height="25"
-              style="background-color: green;"
+              :style="{
+                width: proposal.ayesProgress + '%',
+                marginRight: 'auto',
+                backgroundColor: '#1982b1',
+                color: '#fff',
+              }"
             >
-              <span>{{ proposal.ayesProgress  }}%</span>
-            </v-col>
-            <v-col
+              <template>
+                <strong>{{ proposal.ayesProgress }}%</strong>
+              </template>
+            </v-progress-linear>
+            <v-progress-linear
+              :value="proposal.nayesProgress"
+              color="grey lighten-2"
               height="25"
-              style="background-color: red;"
-              :sm="Math.round(proposal.nayesProgress*12/100)===12? 11: proposal.nayesProgress*12/100"
+              :style="{
+                width: proposal.nayesProgress + '%',
+                marginRight: 'auto',
+                color: '#333',
+              }"
             >
-              <span> {{proposal.nayesProgress}}%</span>
-            </v-col>
+              <template>
+                <strong>{{ proposal.nayesProgress }}%</strong>
+              </template>
+            </v-progress-linear>
           </v-row>
         </v-container>
 
-        <p>You can vote until: {{proposal.end}}</p>
-
+        <p>You can vote until: {{ proposal.end }}</p>
       </v-card>
 
       <v-dialog
@@ -139,14 +146,16 @@
             <v-btn
               @click="castVote"
               :loading="loadingVote"
+              color="primary white--text"
             >Submit</v-btn>
-            <v-btn @click="openVDialog = false">Close</v-btn>
+            <v-btn
+              @click="openVDialog = false"
+              color="grey lighten-2 black--text"
+            >Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-
     </v-container>
-
   </v-container>
 </template>
 <script lang="ts">

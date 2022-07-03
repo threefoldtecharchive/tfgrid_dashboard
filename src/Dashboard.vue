@@ -1,30 +1,21 @@
 <template>
   <v-app>
     <div>
-      <v-app-bar
-        color="#064663"
-        dense
-        dark
-        fixed
-        height="65"
-      >
+      <v-app-bar color="#064663" dense dark fixed height="65">
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
-        <v-toolbar-title
-          class="font-weight-bold"
-          @click="redirectToHomePage"
-        >THREEFOLD CHAIN</v-toolbar-title>
+        <v-toolbar-title class="font-weight-bold" @click="redirectToHomePage"
+          >THREEFOLD CHAIN</v-toolbar-title
+        >
 
         <v-spacer></v-spacer>
-        <v-btn
-          icon
-          @click="toggle_dark_mode"
-        >
+        <v-btn icon @click="toggle_dark_mode">
           <v-icon>mdi-theme-light-dark</v-icon>
         </v-btn>
         <v-card
           class="mx-2 px-1"
           color="transparent"
+          outlined
           v-if="$store.state.portal.accounts.length === 0"
         >
           <v-btn icon>
@@ -32,14 +23,11 @@
               class=""
               color="#F44336"
               @click="$store.dispatch('portal/subscribeAccounts')"
-            >mdi-lan-disconnect</v-icon>
+              >mdi-lan-disconnect</v-icon
+            >
           </v-btn>
         </v-card>
-        <v-card
-          v-else
-          color="transparent"
-          class="mx-2 px-1"
-        >
+        <v-card outlined v-else color="transparent" class="mx-2 px-1">
           <v-btn icon>
             <v-tooltip>
               <template v-slot:activator="{ on, attrs }">
@@ -49,10 +37,10 @@
                   @click="disconnectWallet"
                   v-bind="attrs"
                   v-on="on"
-                >mdi-lan-connect</v-icon>
+                  >mdi-lan-connect</v-icon
+                >
               </template>
               <span>Disconnect Wallet</span>
-
             </v-tooltip>
           </v-btn>
         </v-card>
@@ -74,15 +62,11 @@
             <v-img src="./assets/logo.png"></v-img>
           </v-list-item-avatar>
 
-          <v-list-item-title
-            class="white--text"
-            @click="redirectToHomePage"
-          >THREEFOLD CHAIN</v-list-item-title>
-
-          <v-btn
-            icon
-            @click.stop="mini = !mini"
+          <v-list-item-title class="white--text" @click="redirectToHomePage"
+            >THREEFOLD CHAIN</v-list-item-title
           >
+
+          <v-btn icon @click.stop="mini = !mini">
             <v-icon class="white--text">mdi-chevron-left</v-icon>
           </v-btn>
         </v-list-item>
@@ -95,10 +79,7 @@
         >
           <template v-slot:activator>
             <v-list-item-icon>
-              <v-icon
-                class="white--text"
-                v-text="'mdi-' + route.icon"
-              />
+              <v-icon class="white--text" v-text="'mdi-' + route.icon" />
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="white--text">
@@ -127,7 +108,7 @@
 
           <div v-if="route.prefix === '/'">
             <v-list-group
-              :value=false
+              :value="false"
               no-action
               sub-group
               v-for="account in filteredAccounts()"
@@ -159,13 +140,10 @@
                     account.meta.name
                   )
                 "
-                class="white--text"
+                class="white--text pl-16"
               >
                 <v-list-item-icon>
-                  <v-icon
-                    class="white--text"
-                    v-text="'mdi-' + subchild.icon"
-                  />
+                  <v-icon class="white--text" v-text="'mdi-' + subchild.icon" />
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title
@@ -183,18 +161,13 @@
               v-for="child in route.children"
               :key="child.label"
               :to="route.prefix + child.path"
+              class="pl-16"
             >
-              <v-list-item-icon>
-                <v-icon
-                  class="white--text"
-                  v-text="'mdi-' + child.icon"
-                />
+              <v-list-item-icon class="mr-4" v-if="child.icon">
+                <v-icon class="white--text" v-text="'mdi-' + child.icon" />
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title
-                  class="white--text"
-                  v-text="child.label"
-                >
+                <v-list-item-title class="white--text" v-text="child.label">
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
