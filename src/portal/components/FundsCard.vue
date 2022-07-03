@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-card class="fund d-flex align-center font-weight-bold">
-      <v-card-text style="padding: 5px">
+    <v-card class="fund d-flex align-center font-weight-bold mr-4 primary">
+      <v-card-text style="padding: 5px" class="pr-0">
         <v-tooltip>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -17,7 +17,7 @@
           <span>View Balance Summary</span>
         </v-tooltip>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions class="px-0">
         <v-btn
           @click="addTFT()"
           style="max-width: 60px"
