@@ -61,7 +61,7 @@
             color="primary"
             @click="openVoteDialog(proposal.hash, true)"
             :loading="loadingVote"
-            :width="`${proposal.ayes.length *100 + 100}`"
+            :width="`${(proposal.ayes.length)/(proposal.ayes.length+ proposal.nayes.length) *100 + 100}`"
           >Yes
             <v-divider
               class="mx-3"
@@ -80,7 +80,7 @@
           <v-btn
             color="grey lighten-2 black--text"
             @click="openVoteDialog(proposal.hash, false)"
-            :width="`${proposal.nayes.length *100 + 100}`"
+            :width="`${proposal.nayes.length /(proposal.ayes.length+ proposal.nayes.length) *100 + 100}`"
             :loading="loadingVote"
           >No
             <v-divider
