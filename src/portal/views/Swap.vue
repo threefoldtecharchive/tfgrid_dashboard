@@ -48,7 +48,7 @@
             </v-container>
           </v-card-text>
           <v-card-actions class="justify-end">
-            <v-btn @click="openDepositDialog = false">Close</v-btn>
+            <v-btn @click="openDepositDialog = false" class="grey lighten-2 black--text">Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -81,7 +81,7 @@
             ></v-text-field>
           </v-card-text>
           <v-card-actions class="justify-end">
-            <v-btn @click="openWithdrawDialog = false">Close</v-btn>
+            <v-btn @click="openWithdrawDialog = false" color="grey lighten-2 black--text">Close</v-btn>
             <v-btn
               class="primary white--text"
               @click="withdrawTFT(target, amount)"

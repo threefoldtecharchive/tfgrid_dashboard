@@ -22,7 +22,7 @@
       </template>
       <template v-slot:[`item.id`]="{ item }">
         <p class="text-left mt-1 mb-0">
-          {{ item.id}}
+          {{ item.id }}
         </p>
       </template>
       <template v-slot:[`item.status`]="{ item }">
@@ -58,107 +58,71 @@
       </template>
       <!--expanded node view-->
       <template v-slot:expanded-item="{ headers, item }">
-        <td
-          :colspan="headers.length"
-          key="item.id"
-        >
+        <td :colspan="headers.length" key="item.id">
           <v-col>
             <v-container fluid>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Node ID</v-flex>
+                <v-flex xs3 class="text-left pr-2">Node ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.id }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Farm ID</v-flex>
+                <v-flex xs3 class="text-left pr-2">Farm ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.farmID }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Twin ID</v-flex>
+                <v-flex xs3 class="text-left pr-2">Twin ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.twinID }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Certification Type</v-flex>
+                <v-flex xs3 class="text-left pr-2">Certification Type</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.certificationType }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >First boot at</v-flex>
+                <v-flex xs3 class="text-left pr-2">First boot at</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ new Date(parseInt(item.createdAt)) }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Uptime</v-flex>
+                <v-flex xs3 class="text-left pr-2">Uptime</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.uptime }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Updated at</v-flex>
+                <v-flex xs3 class="text-left pr-2">Updated at</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ new Date(parseInt(item.updatedAt)) }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Country</v-flex>
+                <v-flex xs3 class="text-left pr-2">Country</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.country }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >City</v-flex>
+                <v-flex xs3 class="text-left pr-2">City</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.city }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Serial Number</v-flex>
+                <v-flex xs3 class="text-left pr-2">Serial Number</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.serialNumber }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Farming Policy ID</v-flex>
+                <v-flex xs3 class="text-left pr-2">Farming Policy ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.farmingPolicyId }}</span>
                 </v-flex>
@@ -172,10 +136,7 @@
 
           <v-col>
             <div class="title">
-              <v-icon
-                small
-                left
-              >fa-chart-pie</v-icon>Resource units reserved
+              <v-icon small left>fa-chart-pie</v-icon>Resource units reserved
             </div>
 
             <v-row>
@@ -218,10 +179,7 @@
       </template>
     </v-data-table>
     <!--public config dialog-->
-    <v-dialog
-      v-model="openPublicConfigDialog"
-      width="800"
-    >
+    <v-dialog v-model="openPublicConfigDialog" width="800">
       <v-card>
         <v-card-title class="text-h5">
           Add a public config to your node with ID: {{ nodeToEdit.id }}
@@ -296,21 +254,18 @@
         <v-divider></v-divider>
 
         <v-card-actions>
-          <v-btn
-            text
-            color="error"
-            @click="removeConfig()"
-          >
+          <v-btn text color="error" @click="removeConfig()">
             Remove config
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
-            text
+            color="grey lighten-2 black--text"
             @click="openPublicConfigDialog = false"
-          > Cancel </v-btn>
+          >
+            Cancel
+          </v-btn>
           <v-btn
-            text
-            color="primary"
+            color="primary white--text"
             :loading="loadingPublicConfig"
             @click="saveConfig()"
           >
@@ -320,27 +275,24 @@
       </v-card>
     </v-dialog>
     <!-- delete item dialog-->
-    <v-dialog
-      v-model="openDeleteDialog"
-      max-width="700px"
-    >
+    <v-dialog v-model="openDeleteDialog" max-width="700px">
       <v-card>
-        <v-card-title class="text-h5">Are you certain you want to delete this node from your
-          farm?</v-card-title>
-        <v-card-text>This will delete the node on chain, this action is
-          irreversible</v-card-text>
+        <v-card-title class="text-h5"
+          >Are you certain you want to delete this node from your
+          farm?</v-card-title
+        >
+        <v-card-text
+          >This will delete the node on chain, this action is
+          irreversible</v-card-text
+        >
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            color="blue darken-1"
-            text
+            color="grey lighten-2 black--text"
             @click="openDeleteDialog = false"
-          >Cancel</v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="deleteItem()"
-          >OK</v-btn>
+            >Cancel</v-btn
+          >
+          <v-btn color="primary white--text" @click="deleteItem()">OK</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>

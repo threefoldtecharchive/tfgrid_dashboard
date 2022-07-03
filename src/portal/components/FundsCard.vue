@@ -11,7 +11,7 @@
               class="d-flex align-center"
             >
               <p class="mr-1">{{ balanceFree }}</p>
-              <p class="font-weight-black"> TFT</p>
+              <p class="font-weight-black">TFT</p>
             </v-btn>
           </template>
           <span>View Balance Summary</span>
@@ -36,7 +36,9 @@
           </v-container>
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn @click="openBalance = false">Close</v-btn>
+          <v-btn @click="openBalance = false" color="grey lighten-2 black--text"
+            >Close</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>

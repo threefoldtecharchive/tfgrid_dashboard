@@ -5,10 +5,7 @@
     </v-card>
   </v-container>
 
-  <div
-    style="padding-top: 100px"
-    v-else
-  >
+  <div style="padding-top: 100px" v-else>
     <v-container v-if="editingTwin">
       <v-dialog
         transition="dialog-bottom-transition"
@@ -16,10 +13,7 @@
         v-model="editingTwin"
       >
         <v-card>
-          <v-toolbar
-            color="primary"
-            dark
-          >Edit Twin</v-toolbar>
+          <v-toolbar color="primary" dark>Edit Twin</v-toolbar>
           <v-card-text>
             <div class="text-h2 pa-12">
               <v-text-field
@@ -31,24 +25,25 @@
             </div>
           </v-card-text>
           <v-card-actions class="justify-end">
-            <v-btn @click="editingTwin = false">Close</v-btn>
+            <v-btn
+              @click="editingTwin = false"
+              class="grey lighten-2 black--text"
+              >Close</v-btn
+            >
             <v-btn
               class="primary white--text"
               @click="updateTwin"
               :loading="loadingEditTwin"
-            >Submit</v-btn>
+              >Submit</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-dialog>
     </v-container>
     <v-container>
-      <v-card
-        color="primary white--text"
-        class="my-3 pa-3 text-center"
-      >
+      <v-card color="primary white--text" class="my-3 pa-3 text-center">
         <h2>
-          Congratulations {{ $route.query.accountName }} on
-          creating a twin!
+          Congratulations {{ $route.query.accountName }} on creating a twin!
           <br />
           You can now interact with the TF Grid
         </h2>
@@ -64,40 +59,36 @@
           <v-list-item> ADDRESS: {{ address }} </v-list-item>
         </v-list>
         <v-card-actions class="justify-end">
-          <v-btn
-            @click="editTwin"
-            color="primary"
-          >Edit</v-btn>
+          <v-btn @click="editTwin" color="primary">Edit</v-btn>
           <v-btn
             @click="openDeleteTwin"
             :loading="loadingDeleteTwin"
             color="red"
             class="white--text"
-          >Delete</v-btn>
+            >Delete</v-btn
+          >
         </v-card-actions>
       </v-card>
-
     </v-container>
-    <v-dialog
-      max-width="600"
-      v-model="openDeleteTwinDialog"
-    >
+    <v-dialog max-width="600" v-model="openDeleteTwinDialog">
       <v-card>
-        <v-card-title class="text-h5">Are you certain you want to delete this twin?</v-card-title>
-        <v-card-text>This will delete the twin on the chain, this action is
-          irreversible</v-card-text>
+        <v-card-title class="text-h5"
+          >Are you certain you want to delete this twin?</v-card-title
+        >
+        <v-card-text
+          >This will delete the twin on the chain, this action is
+          irreversible</v-card-text
+        >
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            color="blue darken-1"
-            text
+            color="grey lighten-2 black--text"
             @click="openDeleteTwinDialog = false"
-          >Cancel</v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="callDeleteTwin()"
-          >OK</v-btn>
+            >Cancel</v-btn
+          >
+          <v-btn color="primary white--text" @click="callDeleteTwin()"
+            >OK</v-btn
+          >
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>

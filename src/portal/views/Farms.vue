@@ -49,11 +49,11 @@
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn
-            color="primary"
+            color="primary white--text"
             @click="createFarmFromName"
             :loading="loadingCreateFarm"
           >Submit</v-btn>
-          <v-btn @click="openCreateFarmDialog = false">Close</v-btn>
+          <v-btn @click="openCreateFarmDialog = false" color="grey lighten-2 black--text">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -195,8 +195,8 @@
                     </v-text-field>
                   </v-card-text>
                   <v-card-actions class="justify-end">
-                    <v-btn @click="openV2AddressDialog = false">Close</v-btn>
-                    <v-btn @click="addV2Address">Submit</v-btn>
+                    <v-btn @click="openV2AddressDialog = false" color="grey lighten-2 black--text">Close</v-btn>
+                    <v-btn @click="addV2Address" color="primary white--text">Submit</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -242,12 +242,12 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            color="primary darken-1"
+            color="grey lighten-2 black--text"
             text
             @click="openDeleteFarmDialog = false"
           >Cancel</v-btn>
           <v-btn
-            color="primary darken-1"
+            color="primary white--text"
             text
             :loading="loadingDeleteFarm"
             @click="callDeleteFarm()"

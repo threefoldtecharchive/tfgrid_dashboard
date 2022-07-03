@@ -60,8 +60,7 @@
       {{ error }}
       <template v-slot:action="{ attrs }">
         <v-btn
-          color="yellow"
-          text
+          color="grey lighten-2 black--text"
           v-bind="attrs"
           @click="error = null"
         >
