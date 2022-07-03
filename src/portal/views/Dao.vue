@@ -1,6 +1,9 @@
 <template>
   <v-container fluid>
-    <v-card class="my-3 pa-3 d-flex justify-center" color="primary white--text">
+    <v-card
+      class="my-3 pa-3 d-flex justify-center"
+      color="primary white--text"
+    >
       <h2>
         Howdy {{ $route.query.accountName }}, you can now vote on proposals!
       </h2>
@@ -44,23 +47,31 @@
         </v-card-subtitle>
         <v-card-text>
           {{ proposal.description }}
-          <a v-bind:href="proposal.link" v-bind:target="'blank'"
-            >More details</a
-          >
+          <a
+            v-bind:href="proposal.link"
+            v-bind:target="'blank'"
+          >More details</a>
         </v-card-text>
 
-        <v-container fluid class="d-flex justify-space-between my-5">
+        <v-container
+          fluid
+          class="d-flex justify-space-between my-5"
+        >
           <v-btn
             color="primary"
             @click="openVoteDialog(proposal.hash, true)"
             :loading="loadingVote"
-            >Yes <v-divider class="mx-3" vertical />{{ proposal.ayes.length }}
+            :width="`${proposal.ayes.length *100 + 100}`"
+          >Yes
+            <v-divider
+              class="mx-3"
+              vertical
+            />{{ proposal.ayes.length }}
           </v-btn>
 
           <div class="d-flex align-center text-center threshold">
             <v-divider vertical />
-            <span
-              >Threshold: <br />{{
+            <span>Threshold: <br />{{
                 proposal.nayes.length + proposal.ayes.length
               }}/{{ proposal.threshold }}
             </span>
@@ -69,13 +80,16 @@
           <v-btn
             color="grey lighten-2 black--text"
             @click="openVoteDialog(proposal.hash, false)"
+            :width="`${proposal.nayes.length *100 + 100}`"
             :loading="loadingVote"
-            >No <v-divider class="mx-3" vertical />{{ proposal.nayes.length }}
+          >No
+            <v-divider
+              class="mx-3"
+              vertical
+            />{{ proposal.nayes.length }}
           </v-btn>
         </v-container>
-        <v-container
-          v-if="proposal.ayesProgress > 0 || proposal.nayesProgress > 0"
-        >
+        <v-container v-if="proposal.ayesProgress > 0 || proposal.nayesProgress > 0">
           <v-row justify="center">
             <v-progress-linear
               :value="proposal.ayesProgress"
@@ -111,7 +125,10 @@
         <p>You can vote until: {{ proposal.end }}</p>
       </v-card>
 
-      <v-dialog v-model="openVDialog" max-width="600">
+      <v-dialog
+        v-model="openVDialog"
+        max-width="600"
+      >
         <v-card>
           <v-card-title>Cast Vote</v-card-title>
           <v-card-text>
@@ -130,13 +147,11 @@
               @click="castVote"
               :loading="loadingVote"
               color="primary white--text"
-              >Submit</v-btn
-            >
+            >Submit</v-btn>
             <v-btn
               @click="openVDialog = false"
               color="grey lighten-2 black--text"
-              >Close</v-btn
-            >
+            >Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
