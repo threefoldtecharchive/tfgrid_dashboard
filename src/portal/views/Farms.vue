@@ -126,7 +126,7 @@
               </v-col>
               <v-col>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.twin_id }}</span>
+                  <span>{{ item.twinId }}</span>
                 </v-flex>
               </v-col>
             </v-row>
@@ -136,7 +136,7 @@
               </v-col>
               <v-col>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.certification_type }}</span>
+                  <span>{{ item.certification }}</span>
                 </v-flex>
               </v-col>
             </v-row>
@@ -146,7 +146,7 @@
               </v-col>
               <v-col>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.pricing_policy_id }}</span>
+                  <span>{{ item.pricingPolicyId }}</span>
                 </v-flex>
               </v-col>
             </v-row>
@@ -217,7 +217,7 @@
             </v-row>
 
             <PublicIPTable
-              :ips="item.public_ips"
+              :ips="item.publicIps"
               :deleteIP="deletePublicIP"
               :loadingDelete="loadingDeleteIP"
               :createIP="createPublicIP"
@@ -280,9 +280,9 @@ export default class FarmsView extends Vue {
   headers = [
     { text: "Farm ID", value: "id" },
     { text: "Farm name", value: "name" },
-    { text: "Linked Twin ID", value: "twin_id" },
-    { text: "Certification type", value: "certification_type" },
-    { text: "Pricing Policy ID", value: "pricing_policy_id" },
+    { text: "Linked Twin ID", value: "twinId" },
+    { text: "Certification type", value: "certification" },
+    { text: "Pricing Policy ID", value: "pricingPolicyId" },
     { text: "Actions", value: "actions" },
   ];
   farms: any = [];
@@ -339,7 +339,9 @@ export default class FarmsView extends Vue {
   async updated() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
-    if (!this.$api) {
+    if (this.$api) {
+      this.farms = await getFarm(this.$api, this.id);
+    } else {
       this.$router.push({
         name: "accounts",
         path: "/",

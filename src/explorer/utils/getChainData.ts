@@ -1,7 +1,6 @@
 import { IState } from "../store/state";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ActionContext } from "vuex";
-import types from "@/types.json";
 
 export default async function getChainData({
   state,
@@ -28,32 +27,22 @@ export default async function getChainData({
 
   provider.disconnect();
 }
-function _toString(bytes: ArrayLike<number>): string {
-  return Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
-}
 
 function getPricingPolicies(
   provider: WsProvider
 ): Promise<Map<number, string>> {
-  return ApiPromise.create({ provider, types })
+  return ApiPromise.create({ provider })
     .then((api) => {
       return api.query.tfgridModule.pricingPolicies.entries();
     })
-    .then(([[_, ...entries]]) => {
-      return entries.reduce(
-        (
-          map,
-          {
-            id: {
-              words: [id],
-            },
-            name,
-          }: any
-        ) => {
-          return map.set(id, _toString(name));
-        },
-        new Map<number, string>()
-      );
+    .then(([[_, res]]) => res.toHuman())
+    .then((certs: any) => {
+      const map = new Map();
+      certs = Array.isArray(certs) ? certs : [certs];
+      for (const { id, name } of certs) {
+        map.set(id, name);
+      }
+      return map;
     });
 }
 

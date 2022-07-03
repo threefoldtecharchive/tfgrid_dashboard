@@ -84,7 +84,7 @@ export default class TransferView extends Vue {
         this.id = this.$route.query.twinID;
         this.accountName = this.$route.query.accountName;
       }
-      this.balance = +this.$route.query.balance;
+      this.balance = +this.$route.query.balanceFree;
 
       this.accountsAddresses = this.$store.state.portal.accounts
         .filter((account: accountInterface) => account.address !== this.address)
@@ -99,8 +99,8 @@ export default class TransferView extends Vue {
   async updated() {
     this.id = this.$route.query.twinID;
     this.ip = this.$route.query.twinIP;
-    if (this.$route.query.balance !== this.balance) {
-      this.balance = +this.$route.query.balance;
+    if (this.$route.query.balanceFree !== this.balance) {
+      this.balance = +this.$route.query.balanceFree;
     }
   }
 

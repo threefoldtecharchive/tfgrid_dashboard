@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="$store.state.portal.accounts.length === 0">
+  <v-container v-if="!$store.state.portal.accounts.length ">
     <WelcomeWindow />
   </v-container>
   <v-container
@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import { accountInterface } from "../store/state";
 import WelcomeWindow from "../components/WelcomeWindow.vue";
 import Account from "./Account.vue";
