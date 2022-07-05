@@ -54,6 +54,7 @@
         </v-card-text>
 
         <v-container
+          v-if="proposal.end > Date.now()"
           fluid
           class="d-flex justify-space-between my-5"
         >
@@ -122,7 +123,9 @@
           </v-row>
         </v-container>
 
-        <p>You can vote until: {{ proposal.end }}</p>
+        <p v-if="proposal.end > Date.now()">You can vote until: {{ proposal.end }}</p>
+        <p v-else>Voting ended on: {{ proposal.end }}</p>
+
       </v-card>
 
       <v-dialog
@@ -198,7 +201,6 @@ export default class DaoView extends Vue {
     if (this.$api) {
       this.id = this.$route.query.twinID;
       this.proposals = await getProposals(this.$api);
-      console.log(this.proposals);
       this.farms = await getFarm(this.$api, parseFloat(`${this.id}`));
     } else {
       this.$router.push({
