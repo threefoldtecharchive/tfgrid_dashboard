@@ -269,7 +269,6 @@ export default class DaoView extends Vue {
     if (this.$api) {
       this.id = this.$route.query.twinID;
       this.proposals = await getProposals(this.$api);
-      console.log(this.proposals);
       this.activeProposals = this.proposals.active;
       this.inactiveProposals = this.proposals.inactive;
       this.tabs = [
