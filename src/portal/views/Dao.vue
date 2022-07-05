@@ -66,7 +66,7 @@
 
               <v-card
                 class="my-3 pa-3"
-                v-for="(proposal, i) in tab.content"
+                v-for="(proposal, i) in filteredProposals(tab.content)"
                 :key="i"
               >
                 <v-card-title>
@@ -301,9 +301,9 @@ export default class DaoView extends Vue {
       });
     }
   }
-  filteredProposals() {
+  filteredProposals(selectedProposals: any) {
     if (this.searchTerm.length) {
-      return this.activeProposals.filter(
+      return selectedProposals.filter(
         (proposal: { action: string; description: string }) =>
           proposal.action
             .toLowerCase()
@@ -313,7 +313,7 @@ export default class DaoView extends Vue {
             .includes(this.searchTerm.toLowerCase())
       );
     }
-    return this.proposals;
+    return selectedProposals;
   }
 
   openVoteDialog(hash: any, vote: boolean) {
