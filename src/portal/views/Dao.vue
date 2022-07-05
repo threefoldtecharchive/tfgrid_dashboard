@@ -38,7 +38,6 @@
             <v-tabs
               v-model="tabSelected"
               centered
-              slider-color="yellow"
             >
               <v-tab
                 v-for="(tab, i) in tabs"
