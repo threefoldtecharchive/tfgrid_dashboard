@@ -274,7 +274,7 @@ export default class DaoView extends Vue {
       this.inactiveProposals = this.proposals.inactive;
       this.tabs = [
         { title: "Active", content: this.activeProposals },
-        { title: "Archived", content: this.inactiveProposals },
+        { title: "Executable", content: this.inactiveProposals },
       ];
       this.farms = await getFarm(this.$api, parseFloat(`${this.id}`));
     } else {
