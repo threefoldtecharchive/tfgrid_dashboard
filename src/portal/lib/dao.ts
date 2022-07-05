@@ -6,6 +6,20 @@ export interface ayesAndNayesInterface {
     farmId: number;
     weight: number;
 }
+export interface proposalInterface {
+    threshold: number,
+    ayes: ayesAndNayesInterface[];
+    nayes: ayesAndNayesInterface[];
+    vetos: number,
+    end: any,
+    hash: any,
+    action: string,
+    description: string,
+    link: string,
+    ayesProgress: number,
+    nayesProgress: number
+
+}
 export async function vote(address: string, api: { tx: { dao: { vote: (arg0: any, arg1: any, arg2: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: any }, arg2: any): any; new(): any } } } } }, farmId: string, hash: any, approve: boolean, callback: any) {
     try {
         const injector = await web3FromAddress(address)
@@ -17,7 +31,8 @@ export async function vote(address: string, api: { tx: { dao: { vote: (arg0: any
     }
 }
 export async function getProposals(api: any) {
-    const proposals: any = [];
+    const activeProposals: proposalInterface[] = [];
+    const inactiveProposals: proposalInterface[] = [];
     const hashes = await api.query.dao.proposalList()
     hashes.map(async (hash: { toJSON: () => any; }) => {
         const daoProposal = await getDaoProposal(api, hash)
@@ -27,23 +42,39 @@ export async function getProposals(api: any) {
         const nowBlock = await api.query.system.number()
         const timeUntilEnd = (proposalVotes.end - nowBlock.toJSON()) * 6
 
+        if (proposalVotes.end < nowBlock.toJSON()) {
+            inactiveProposals.push({
+                threshold: proposalVotes.threshold,
+                ayes: proposalVotes.ayes, //[{farmId: number, weight: number}]
+                nayes: proposalVotes.nays,
+                vetos: proposalVotes.vetos,
+                end: moment().add(timeUntilEnd, 'second'),
+                hash: hash,
+                action: hex2a(proposal.args.remark),
+                description: hex2a(daoProposal.description),
+                link: hex2a(daoProposal.link),
+                ayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, true),
+                nayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, false)
+            })
+        } else {
+            activeProposals.push({
+                threshold: proposalVotes.threshold,
+                ayes: proposalVotes.ayes, //[{farmId: number, weight: number}]
+                nayes: proposalVotes.nays,
+                vetos: proposalVotes.vetos,
+                end: moment().add(timeUntilEnd, 'second'),
+                hash: hash,
+                action: hex2a(proposal.args.remark),
+                description: hex2a(daoProposal.description),
+                link: hex2a(daoProposal.link),
+                ayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, true),
+                nayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, false)
+            })
+        }
 
-        proposals.push({
-            threshold: proposalVotes.threshold,
-            ayes: proposalVotes.ayes, //[{farmId: number, weight: number}]
-            nayes: proposalVotes.nays,
-            vetos: proposalVotes.vetos,
-            end: moment().add(timeUntilEnd, 'second'),
-            hash: hash,
-            action: hex2a(proposal.args.remark),
-            description: hex2a(daoProposal.description),
-            link: hex2a(daoProposal.link),
-            ayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, true),
-            nayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, false)
-        })
     })
 
-    return proposals
+    return { active: activeProposals, inactive: inactiveProposals }
 }
 export function getVotesWithWeights(votes: ayesAndNayesInterface[]) {
     return votes.reduce((total: number, vote: ayesAndNayesInterface) => {
