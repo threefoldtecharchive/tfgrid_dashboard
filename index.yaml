@@ -2,13 +2,13 @@ apiVersion: v1
 entries:
   tfgrid-dashboard:
   - apiVersion: v2
-    appVersion: v1.0.1
-    created: "2022-07-05T17:16:00.169329343+02:00"
+    appVersion: v1.0.2
+    created: "2022-07-06T10:51:43.093272819+02:00"
     description: A Helm chart for Kubernetes
-    digest: f475b82608ce4fd1f2e00ec515591d1a3fd37cd3af44fd1159466af5406d42f8
+    digest: 685794e0a18330fb1087fec2256d66a821f017e2bd1f782e9c1506a66afa9c39
     name: tfgrid-dashboard
     type: application
     urls:
-    - https://github.com/threefoldtech/tfgrid_dashboard/releases/download/v1.0.1/tfgrid-dashboard-1.0.1.tgz
-    version: 1.0.1
-generated: "2022-07-05T17:16:00.168596391+02:00"
+    - https://github.com/threefoldtech/tfgrid_dashboard/releases/download/v1.0.2/tfgrid-dashboard-1.0.2.tgz
+    version: 1.0.2
+generated: "2022-07-06T10:51:43.092114392+02:00"
