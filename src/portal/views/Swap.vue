@@ -155,11 +155,7 @@ export default class TransferView extends Vue {
   selectedName = "";
 
   items = [
-    { id: 1, name: "stellar" },
-    {
-      id: 2,
-      name: "cosmos",
-    },
+    { id: 1, name: "stellar" }
   ];
   balance: any;
   $api: any;

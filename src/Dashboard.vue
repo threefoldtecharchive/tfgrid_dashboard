@@ -410,50 +410,7 @@ export default class Dashboard extends Vue {
           showBeforeLogIn: true,
         },
       ],
-    },
-    {
-      label: "Hub",
-      icon: "axis-arrow-info",
-      prefix: "/hub/",
-      children: [
-        {
-          label: "Send to Threefold Hub",
-          path: "threefold-hub",
-          icon: "swap-horizontal",
-          showBeforeLogIn: true,
-        },
-        {
-          label: "Send To BSC",
-          path: "bsc",
-          icon: "swap-horizontal",
-          showBeforeLogIn: true,
-        },
-        {
-          label: "Pending BSC Transactions",
-          path: "list-bsc",
-          icon: "swap-horizontal",
-          showBeforeLogIn: true,
-        },
-        {
-          label: "Add Proposal",
-          path: "add-proposal",
-          icon: "swap-horizontal",
-          showBeforeLogIn: true,
-        },
-        {
-          label: "Proposals",
-          path: "list-proposals",
-          icon: "swap-horizontal",
-          showBeforeLogIn: true,
-        },
-        {
-          label: "Validators",
-          path: "validators",
-          icon: "swap-horizontal",
-          showBeforeLogIn: true,
-        },
-      ],
-    },
+    }
   ];
 
   getRouteSubChildren(route: SidenavItem) {
