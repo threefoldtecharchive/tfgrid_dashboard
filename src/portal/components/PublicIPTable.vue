@@ -40,7 +40,7 @@
               >
                 <td>{{ decodeHex(ip.ip) }}</td>
                 <td>{{ decodeHex(ip.gateway) }}</td>
-                <td>{{ ip.contractId }}</td>
+                <td>{{ ip.contract_id }}</td>
 
                 <td>
                   <v-progress-circular
@@ -70,7 +70,7 @@ import DeleteIP from "./DeleteIP.vue";
 interface ipInterface {
   ip: string;
   gateway: string;
-  contractId: string;
+  contract_id: string;
 }
 
 @Component({

@@ -1,6 +1,7 @@
 import { IState } from "../store/state";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ActionContext } from "vuex";
+import types from "@/types.json";
 
 export default async function getChainData({
   state,
@@ -31,7 +32,7 @@ export default async function getChainData({
 function getPricingPolicies(
   provider: WsProvider
 ): Promise<Map<number, string>> {
-  return ApiPromise.create({ provider })
+  return ApiPromise.create({ provider, types })
     .then((api) => {
       return api.query.tfgridModule.pricingPolicies.entries();
     })

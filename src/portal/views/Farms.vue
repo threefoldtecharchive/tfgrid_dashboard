@@ -126,7 +126,7 @@
               </v-col>
               <v-col>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.twinId }}</span>
+                  <span>{{ item.twin_id }}</span>
                 </v-flex>
               </v-col>
             </v-row>
@@ -146,7 +146,7 @@
               </v-col>
               <v-col>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.pricingPolicyId }}</span>
+                  <span>{{ item.pricing_policy_id }}</span>
                 </v-flex>
               </v-col>
             </v-row>
@@ -217,7 +217,7 @@
             </v-row>
 
             <PublicIPTable
-              :ips="item.publicIps"
+              :ips="item.public_ips"
               :deleteIP="deletePublicIP"
               :loadingDelete="loadingDeleteIP"
               :createIP="createPublicIP"
@@ -280,9 +280,9 @@ export default class FarmsView extends Vue {
   headers = [
     { text: "Farm ID", value: "id" },
     { text: "Farm name", value: "name" },
-    { text: "Linked Twin ID", value: "twinId" },
+    { text: "Linked Twin ID", value: "twin_id" },
     { text: "Certification type", value: "certification" },
-    { text: "Pricing Policy ID", value: "pricingPolicyId" },
+    { text: "Pricing Policy ID", value: "pricing_policy_id" },
     { text: "Actions", value: "actions" },
   ];
   farms: any = [];
