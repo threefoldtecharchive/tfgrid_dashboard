@@ -200,7 +200,7 @@ export default class TwinView extends Vue {
     updateTwinIP(
       this.$route.params.accountID,
       this.$api,
-      `${this.ip}`,
+      `${this.ipv}`,
       (res: {
         events?: never[] | undefined;
         status: { type: string; asFinalized: string; isFinalized: string };
