@@ -283,7 +283,7 @@ export default class FarmsView extends Vue {
     { text: "Linked Twin ID", value: "twin_id" },
     { text: "Certification type", value: "certification" },
     { text: "Pricing Policy ID", value: "pricing_policy_id" },
-    { text: "Actions", value: "actions" },
+    // { text: "Actions", value: "actions" },
   ];
   farms: any = [];
   id: any = [];
