@@ -20,7 +20,7 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: "tfgrid_dashboard"
+  name: "tfgrid-dashboard"
 
 podAnnotations: {}
 
@@ -48,6 +48,7 @@ ingress:
     - host: dashbard.com
       paths:
         - path: /
+          pathType: Prefix
   tls:
     - secretName: chart-example-tls
       hosts:
