@@ -60,15 +60,15 @@ export async function getProposals(api: any) {
             activeProposals.push({
                 threshold: proposalVotes.threshold,
                 ayes: proposalVotes.ayes, //[{farmId: number, weight: number}]
-                nayes: proposalVotes.nays,
+                nayes: proposalVotes.nayes,
                 vetos: proposalVotes.vetos,
                 end: moment().add(timeUntilEnd, 'second'),
                 hash: hash,
-                action: hex2a(proposal.args.remark),
+                action: hex2a(proposal.args._remark),
                 description: hex2a(daoProposal.description),
                 link: hex2a(daoProposal.link),
-                ayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, true),
-                nayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, false)
+                ayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nayes, true),
+                nayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nayes, false)
             })
         }
 
