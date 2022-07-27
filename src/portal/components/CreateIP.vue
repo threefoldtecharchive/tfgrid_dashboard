@@ -30,10 +30,9 @@
             dense
             hint="IP address in CIDR format xxx.xx.xx.xx/xx"
             persistent-hint
-            :error-messages="ipErrorMessage"
             :rules="[
               () => !!publicIP || 'This field is required',
-              ipcheck
+              () => ipcheck() || 'incorrect format'
             ]"
           ></v-text-field>
           <v-text-field
@@ -94,21 +93,11 @@ export default class CreateIP extends Vue {
     this.$emit("create", this.publicIP, this.gateway);
   }
   ipcheck() {
-    if (this.publicIP === "") {
-      this.ipErrorMessage = "";
-      return true;
-    }
-
-    const ipRegex = new RegExp(
-      "^([0-9]{1,3}.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))$"
-    );
+    const ipRegex = new RegExp("^(?:[0-9]{1,3}.){3}[0-9]{1,3}$");
     if (ipRegex.test(this.publicIP)) {
-      this.ipErrorMessage = "";
       return true;
-    } else {
-      this.ipErrorMessage = "IP address is not formatted correctly";
-      return false;
     }
+    return false;
   }
   gatewayCheck() {
     if (this.gateway === "") {
