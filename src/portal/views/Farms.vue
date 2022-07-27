@@ -188,11 +188,17 @@
                 <v-card>
                   <v-toolbar color="primary">Add/Edit V2 Stellar Address</v-toolbar>
                   <v-card-text>
-                    <v-text-field
-                      v-model="v2_address"
-                      label="Stellar Wallet Address"
-                    >
-                    </v-text-field>
+                    <v-form v-model="isValidStellarV2Address">
+                      <v-text-field
+                        v-model="v2_address"
+                        label="Stellar Wallet Address"
+                        :rules="[
+          () => !!v2_address || 'This field is required',
+          () => stellarAddressCheck() || 'invalid address',
+        ]"
+                      >
+                      </v-text-field>
+                    </v-form>
                   </v-card-text>
                   <v-card-actions class="justify-end">
                     <v-btn
@@ -202,6 +208,8 @@
                     <v-btn
                       @click="addV2Address"
                       color="primary white--text"
+                      :disabled="!isValidStellarV2Address"
+                      :loading="loadingAddStellar"
                     >Submit</v-btn>
                   </v-card-actions>
                 </v-card>
@@ -278,6 +286,7 @@ import {
   getNodesByFarmID,
   setFarmPayoutV2Address,
 } from "../lib/farms";
+import { StrKey } from "stellar-sdk";
 @Component({
   name: "FarmsView",
   components: { PublicIPTable, FarmNodesTable },
@@ -314,6 +323,8 @@ export default class FarmsView extends Vue {
   searchTerm = "";
   loadingCreateFarm = false;
   isValidFarmName = false;
+  isValidStellarV2Address = false;
+  loadingAddStellar = false;
   async mounted() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
@@ -594,7 +605,17 @@ export default class FarmsView extends Vue {
       this.loadingCreateFarm = false;
     });
   }
+  stellarAddressCheck() {
+    const isValid = StrKey.isValidEd25519PublicKey(this.v2_address);
+
+    if (isValid && !this.v2_address.match(/\W/)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   public addV2Address() {
+    this.loadingAddStellar = true;
     setFarmPayoutV2Address(
       this.$route.params.accountID,
       this.$api,
@@ -607,6 +628,7 @@ export default class FarmsView extends Vue {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
+          this.loadingAddStellar = false;
           return;
         }
         const { events = [], status } = res;
@@ -635,9 +657,13 @@ export default class FarmsView extends Vue {
                   this.farms = farms;
                 });
                 this.openV2AddressDialog = false;
+                this.loadingAddStellar = false;
+                this.v2_address = "";
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Adding a V2 address failed!");
                 this.openV2AddressDialog = false;
+                this.loadingAddStellar = false;
+                this.v2_address = "";
               }
             });
           }
@@ -646,6 +672,8 @@ export default class FarmsView extends Vue {
     ).catch((err) => {
       this.$toasted.show(err.message);
       this.openV2AddressDialog = false;
+      this.loadingAddStellar = false;
+      this.v2_address = "";
     });
   }
 }

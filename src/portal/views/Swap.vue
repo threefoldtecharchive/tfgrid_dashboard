@@ -170,7 +170,7 @@ export default class TransferView extends Vue {
   selectedItem = {
     item_id: 1,
   };
-  addressErrorMessages = "";
+
   selectedName = "";
   isValidSwap = false;
   items = [{ id: 1, name: "stellar" }];
@@ -235,14 +235,10 @@ export default class TransferView extends Vue {
     const isValid = StrKey.isValidEd25519PublicKey(this.target);
 
     if (isValid && this.target.length && !this.target.match(/\W/)) {
-      this.addressErrorMessages = "";
-
       return true;
-    } else {
-      this.addressErrorMessages = "invalid address";
-
-      return false;
     }
+
+    return false;
   }
   public async withdrawTFT(target: string, amount: number) {
     this.loadingWithdraw = true;
