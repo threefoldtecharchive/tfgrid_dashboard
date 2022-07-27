@@ -24,10 +24,10 @@
             <div class="text-h2 pa-12">
               <v-form v-model="isValidTwinIP">
                 <v-text-field
-                  v-model="ipv"
-                  label="Twin IP ::1"
-                  :error-messages="ipErrorMessage"
-                  :rules="[() => !!ip || 'This field is required', ipcheck]"
+                  v-model="ipEntered"
+                  label="Twin IP"
+                  :rules="[() => !!ipEntered || 'This field is required', 
+                  () => ipcheck() || 'invalid IP format']"
                 ></v-text-field>
               </v-form>
             </div>
@@ -62,7 +62,7 @@
         <v-list>
           <v-list-item> ID: {{ id }} </v-list-item>
 
-          <v-list-item> IP: {{ decodeHex(`${ip}`) }} </v-list-item>
+          <v-list-item> IP: {{ decodeHex(`${ipFetched}`) }} </v-list-item>
 
           <v-list-item> ADDRESS: {{ address }} </v-list-item>
         </v-list>
@@ -118,8 +118,8 @@ import { hex2a } from "@/portal/lib/util";
 export default class TwinView extends Vue {
   $api: any;
   editingTwin = false;
-  ip: string | (string | null)[] = "";
-  ipv = "";
+  ipFetched: string | (string | null)[] = "";
+  ipEntered = "";
   id: string | (string | null)[] = "";
   address = "";
   twin: { ip: string } = { ip: "" };
@@ -127,7 +127,7 @@ export default class TwinView extends Vue {
   isValidTwinIP = false;
   loadingDeleteTwin = false;
   openDeleteTwinDialog = false;
-  ipErrorMessage = "";
+
   loadingEditTwin = false;
 
   updated() {
@@ -141,7 +141,7 @@ export default class TwinView extends Vue {
     if (this.$api) {
       this.address = this.$route.params.accountID;
       if (this.$route.query.twinIP && this.$route.query.twinID) {
-        this.ip = this.$route.query.twinIP;
+        this.ipFetched = this.$route.query.twinIP;
         this.id = this.$route.query.twinID;
         this.accountName = this.$route.query.accountName;
       }
@@ -156,24 +156,13 @@ export default class TwinView extends Vue {
     this.address = "";
   }
   ipcheck() {
-    if (this.ipv === "") return true;
-
-    const ip4Regex = new RegExp(
-      "^([0-9]{1,3}.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))$"
-    );
     const ip6Regex = new RegExp(
-      "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
+      "^(?:(?:(?:[A-F0-9]{1,4}:){5}[A-F0-9]{1,4}|(?:[A-F0-9]{1,4}:){4}:[A-F0-9]{1,4}|(?:[A-F0-9]{1,4}:){3}(?::[A-F0-9]{1,4}){1,2}|(?:[A-F0-9]{1,4}:){2}(?::[A-F0-9]{1,4}){1,3}|[A-F0-9]{1,4}:(?::[A-F0-9]{1,4}){1,4}|(?:[A-F0-9]{1,4}:){1,5}|:(?::[A-F0-9]{1,4}){1,5}|:):(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])|(?:[A-F0-9]{1,4}:){7}[A-F0-9]{1,4}|(?:[A-F0-9]{1,4}:){6}:[A-F0-9]{1,4}|(?:[A-F0-9]{1,4}:){5}(?::[A-F0-9]{1,4}){1,2}|(?:[A-F0-9]{1,4}:){4}(?::[A-F0-9]{1,4}){1,3}|(?:[A-F0-9]{1,4}:){3}(?::[A-F0-9]{1,4}){1,4}|(?:[A-F0-9]{1,4}:){2}(?::[A-F0-9]{1,4}){1,5}|[A-F0-9]{1,4}:(?::[A-F0-9]{1,4}){1,6}|(?:[A-F0-9]{1,4}:){1,7}:|:(?::[A-F0-9]{1,4}){1,7}|::)$"
     );
-    if (ip4Regex.test(this.ipv)) {
-      this.ipErrorMessage = "";
+    if (ip6Regex.test(this.ipEntered)) {
       return true;
-    } else if (ip6Regex.test(this.ipv)) {
-      this.ipErrorMessage = "";
-      return true;
-    } else {
-      this.ipErrorMessage = "IP address is not formatted correctly";
-      return false;
     }
+    return false;
   }
   decodeHex(input: string) {
     return hex2a(input);
@@ -188,7 +177,7 @@ export default class TwinView extends Vue {
     updateTwinIP(
       this.$route.params.accountID,
       this.$api,
-      `${this.ip}`,
+      `${this.ipEntered}`,
       (res: {
         events?: never[] | undefined;
         status: { type: string; asFinalized: string; isFinalized: string };
@@ -231,14 +220,17 @@ export default class TwinView extends Vue {
                     this.$api,
                     parseFloat(`${this.id}`)
                   );
-                  this.ip = this.twin.ip;
+                  this.ipFetched = this.twin.ip;
+
                   this.editingTwin = false;
+                  this.ipEntered = "";
                 } else if (
                   section === "system" &&
                   method === "ExtrinsicFailed"
                 ) {
                   this.$toasted.show("Twin creation/update failed!");
                   this.loadingEditTwin = false;
+                  this.ipEntered = "";
                 }
               }
             );
@@ -249,6 +241,7 @@ export default class TwinView extends Vue {
       console.log(err.message);
       this.$toasted.show("Twin creation/update failed!");
       this.loadingEditTwin = false;
+      this.ipEntered = "";
     });
   }
   openDeleteTwin() {
