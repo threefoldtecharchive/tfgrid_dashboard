@@ -19,7 +19,7 @@
           label="Receipient:"
           :rules="[
           () => !!receipientAddress || 'This field is required',
-          () => addressCheck() || 'invalid address',
+          () => transferAddressCheck() || 'invalid address',
         ]"
         ></v-combobox>
         <v-text-field
@@ -63,7 +63,7 @@ import { accountInterface } from "../store/state";
 export default class TransferView extends Vue {
   receipientAddress = "";
   accountsAddresses: any = [];
-  addressErrorMessages = "";
+
   balance: any = 0;
   $api: any;
   address = "";
@@ -106,7 +106,7 @@ export default class TransferView extends Vue {
     this.balance = 0;
     this.address = "";
   }
-  addressCheck() {
+  transferAddressCheck() {
     const isValid = checkAddress(this.receipientAddress);
 
     if (
@@ -114,25 +114,16 @@ export default class TransferView extends Vue {
       this.receipientAddress.length &&
       !this.receipientAddress.match(/\W/)
     ) {
-      this.addressErrorMessages = "";
-
       return true;
     } else {
-      this.addressErrorMessages = "invalid address";
-
       return false;
     }
   }
   clearInput() {
     this.receipientAddress = "";
     this.amount = 0;
-    this.addressErrorMessages = "";
   }
   transferTFT() {
-    if (this.amount === 0 || this.receipientAddress === "") {
-      this.addressErrorMessages = "No target specified";
-      return;
-    }
     transfer(
       this.address,
       this.$api,
