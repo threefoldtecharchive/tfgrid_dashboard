@@ -172,8 +172,7 @@
                         item-text="name"
                         item-value="id"
                         v-model="selectedFarm"
-                        :rules="[()=> !!selectedFarm || 'required field', 
-                        ()=> farmHasNodesCheck() || 'farm has no nodes']"
+                        :rules="rules.select"
                       >
                       </v-select>
                     </v-form>
@@ -270,6 +269,9 @@ export default class DaoView extends Vue {
     { title: "Archived", content: this.inactiveProposals },
   ];
   isValidFarm = false;
+  rules = {
+    select: [(v: string) => !!v || "required field"],
+  };
   async mounted() {
     if (this.$api) {
       this.id = this.$route.query.twinID;
@@ -321,15 +323,14 @@ export default class DaoView extends Vue {
     this.vote = vote;
     this.selectedProposal = hash;
   }
-  async farmHasNodesCheck() {
-    const nodes = await getNodesByFarm(this.selectedFarm);
 
-    if (nodes.length) {
-      return true;
-    }
-    return false;
-  }
   async castVote() {
+    const nodes = await getNodesByFarm(this.selectedFarm);
+    if (!nodes.length) {
+      this.$toasted.show(`Farm has no nodes`);
+      return;
+    }
+
     this.loadingVote = true;
     vote(
       this.$route.params.accountID,
