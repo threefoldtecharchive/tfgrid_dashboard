@@ -1,15 +1,25 @@
 <template>
   <v-app>
     <div>
-      <v-app-bar color="#064663" dense dark fixed height="65">
+      <v-app-bar
+        color="#064663"
+        dense
+        dark
+        fixed
+        height="65"
+      >
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
-        <v-toolbar-title class="font-weight-bold" @click="redirectToHomePage"
-          >THREEFOLD CHAIN</v-toolbar-title
-        >
+        <v-toolbar-title
+          class="font-weight-bold"
+          @click="redirectToHomePage"
+        >THREEFOLD CHAIN</v-toolbar-title>
 
         <v-spacer></v-spacer>
-        <v-btn icon @click="toggle_dark_mode">
+        <v-btn
+          icon
+          @click="toggle_dark_mode"
+        >
           <v-icon>mdi-theme-light-dark</v-icon>
         </v-btn>
         <v-card
@@ -23,11 +33,15 @@
               class=""
               color="#F44336"
               @click="$store.dispatch('portal/subscribeAccounts')"
-              >mdi-lan-disconnect</v-icon
-            >
+            >mdi-lan-disconnect</v-icon>
           </v-btn>
         </v-card>
-        <v-card outlined v-else color="transparent" class="mx-2 px-1">
+        <v-card
+          outlined
+          v-else
+          color="transparent"
+          class="mx-2 px-1"
+        >
           <v-btn icon>
             <v-tooltip>
               <template v-slot:activator="{ on, attrs }">
@@ -37,8 +51,7 @@
                   @click="disconnectWallet"
                   v-bind="attrs"
                   v-on="on"
-                  >mdi-lan-connect</v-icon
-                >
+                >mdi-lan-connect</v-icon>
               </template>
               <span>Disconnect Wallet</span>
             </v-tooltip>
@@ -62,11 +75,15 @@
             <v-img src="./assets/logo.png"></v-img>
           </v-list-item-avatar>
 
-          <v-list-item-title class="white--text" @click="redirectToHomePage"
-            >THREEFOLD CHAIN</v-list-item-title
-          >
+          <v-list-item-title
+            class="white--text"
+            @click="redirectToHomePage"
+          >THREEFOLD CHAIN</v-list-item-title>
 
-          <v-btn icon @click.stop="mini = !mini">
+          <v-btn
+            icon
+            @click.stop="mini = !mini"
+          >
             <v-icon class="white--text">mdi-chevron-left</v-icon>
           </v-btn>
         </v-list-item>
@@ -79,7 +96,10 @@
         >
           <template v-slot:activator>
             <v-list-item-icon>
-              <v-icon class="white--text" v-text="'mdi-' + route.icon" />
+              <v-icon
+                class="white--text"
+                v-text="'mdi-' + route.icon"
+              />
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="white--text">
@@ -136,6 +156,7 @@
                 @click="
                   redirectToSubchild(
                     subchild.label,
+                    subchild.path || '',
                     account.address,
                     account.meta.name
                   )
@@ -143,7 +164,10 @@
                 class="white--text pl-16"
               >
                 <v-list-item-icon>
-                  <v-icon class="white--text" v-text="'mdi-' + subchild.icon" />
+                  <v-icon
+                    class="white--text"
+                    v-text="'mdi-' + subchild.icon"
+                  />
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title
@@ -163,11 +187,20 @@
               :to="route.prefix + child.path"
               class="pl-16"
             >
-              <v-list-item-icon class="mr-4" v-if="child.icon">
-                <v-icon class="white--text" v-text="'mdi-' + child.icon" />
+              <v-list-item-icon
+                class="mr-4"
+                v-if="child.icon"
+              >
+                <v-icon
+                  class="white--text"
+                  v-text="'mdi-' + child.icon"
+                />
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title class="white--text" v-text="child.label">
+                <v-list-item-title
+                  class="white--text"
+                  v-text="child.label"
+                >
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -175,13 +208,23 @@
         </v-list-group>
       </v-list>
     </v-navigation-drawer>
-    <v-dialog v-model="loadingAPI" persistent class="loadingDialog">
-      <div class="d-flex justify-center" style="display: block; padding: 10%">
-        <v-progress-circular indeterminate color="green" :size="335" :width="7">
-          <span style="font-size: large; color: black"
-            >Connecting to Polkadot</span
-          ></v-progress-circular
+    <v-dialog
+      v-model="loadingAPI"
+      persistent
+      class="loadingDialog"
+    >
+      <div
+        class="d-flex justify-center"
+        style="display: block; padding: 10%"
+      >
+        <v-progress-circular
+          indeterminate
+          color="green"
+          :size="335"
+          :width="7"
         >
+          <span style="font-size: large; color: black">Connecting to Polkadot</span>
+        </v-progress-circular>
       </div>
     </v-dialog>
 
@@ -189,8 +232,15 @@
       <router-view />
     </div>
 
-    <v-footer padless fixed>
-      <v-card class="flex" flat tile>
+    <v-footer
+      padless
+      fixed
+    >
+      <v-card
+        class="flex"
+        flat
+        tile
+      >
         <v-card-text class="py-2 text-center">
           {{ new Date().getFullYear() }} — <strong>ThreeFoldTech</strong>
         </v-card-text>
@@ -220,8 +270,8 @@ interface SidenavItem {
     children?:
       | Array<{
           label: string;
-          icon: string;
           path?: string;
+          icon: string;
         }>
       | [];
   }>;
@@ -309,6 +359,7 @@ export default class Dashboard extends Vue {
 
   public async redirectToSubchild(
     label: string,
+    path: string,
     address: string,
     name: string
   ) {
@@ -320,12 +371,11 @@ export default class Dashboard extends Vue {
     if (this.twinID) {
       this.twin = await getTwin(this.$api, this.twinID);
       if (
-        !this.$route.path.includes(label) ||
+        !this.$route.path.includes(path) ||
         this.$route.params.accountID !== address
       ) {
         this.$router.push({
-          name: `${label}`,
-          path: `/:accountID/${label}`,
+          name: `${path}`,
           params: { accountID: `${address}` },
           query: {
             accountName: `${name}`,
@@ -365,21 +415,25 @@ export default class Dashboard extends Vue {
           showBeforeLogIn: true,
           children: [
             {
-              label: "account-twin",
+              label: "twin",
+              path: "account-twin",
               icon: "account-supervisor-outline",
             },
             {
-              label: "account-swap",
+              label: "swap",
+              path: "account-swap",
               icon: "swap-horizontal",
             },
             {
-              label: "account-transfer",
+              label: "transfer",
+              path: "account-transfer",
               icon: "account-arrow-right-outline",
             },
-            { label: "account-farms", icon: "silo" },
-            { label: "account-dao", icon: "note-check-outline" },
+            { label: "farms", path: "account-farms", icon: "silo" },
+            { label: "dao", path: "account-dao", icon: "note-check-outline" },
             {
-              label: "account-nodes",
+              label: "nodes",
+              path: "account-nodes",
               icon: "resistor-nodes",
             },
           ],
@@ -410,7 +464,7 @@ export default class Dashboard extends Vue {
           showBeforeLogIn: true,
         },
       ],
-    }
+    },
   ];
 
   getRouteSubChildren(route: SidenavItem) {
