@@ -222,7 +222,7 @@ export default class Farms extends Vue {
     const values = [...map.values()];
 
     for (let i = 0; i < values.length; i++) {
-      if (values[i] === value) return keys[i];
+      if (values[i] === value) return +keys[i];
     }
 
     return null;
