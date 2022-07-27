@@ -4,13 +4,13 @@ export function inputValidation(value: string, key: string) : string {
 
     const numericFields :string[] = ['nodeId', 'farmId', 'twinId', 'freePublicIPs'];
     const textualFields :string[] = ['countryFullName', 'farmingPolicyName', 'certificationType'];
-    const specialChars = /[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/;
+    const specialChars = /[ `!@#$%^&*()+\-=[\]{};':"\\|,.<>/?~]/;
     let errorMsg = ''
 
     if(numericFields.includes(key)){
         if(isNaN(+value)
         || specialChars.test(value)
-        || value.startsWith("0")
+        || +value < 0
         || value.includes("e")){
             errorMsg = 'This field must be a number.'; return errorMsg;
         }
