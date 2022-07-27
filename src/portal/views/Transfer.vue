@@ -1,20 +1,12 @@
 <template>
   <v-container>
-    <v-card
-      color="primary"
-      class="white--text pa-5 my-5"
-    >
-      <h2 class="text-center">
-        Howdy {{ accountName.toUpperCase() }}, want to transfer TFTs?
-      </h2>
-    </v-card>
 
     <v-card
       color="primary"
       class="white--text pa-5 my-5"
     >
       <h3 class="text-center">
-        You can also transfer from one account to another on the TFCHAIN:
+        Transfer TFTs on the TFChain
       </h3>
     </v-card>
     <v-card class="pa-5 my-5">
@@ -42,7 +34,10 @@
       </v-text-field>
       <v-card-actions>
         <v-spacer> </v-spacer>
-        <v-btn @click="clearInput" color="grey lighten-2 black--text">Clear</v-btn>
+        <v-btn
+          @click="clearInput"
+          color="grey lighten-2 black--text"
+        >Clear</v-btn>
         <v-btn
           class="primary white--text"
           @click="transferTFT"

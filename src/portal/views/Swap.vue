@@ -48,7 +48,10 @@
             </v-container>
           </v-card-text>
           <v-card-actions class="justify-end">
-            <v-btn @click="openDepositDialog = false" class="grey lighten-2 black--text">Close</v-btn>
+            <v-btn
+              @click="openDepositDialog = false"
+              class="grey lighten-2 black--text"
+            >Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -81,7 +84,10 @@
             ></v-text-field>
           </v-card-text>
           <v-card-actions class="justify-end">
-            <v-btn @click="openWithdrawDialog = false" color="grey lighten-2 black--text">Close</v-btn>
+            <v-btn
+              @click="openWithdrawDialog = false"
+              color="grey lighten-2 black--text"
+            >Close</v-btn>
             <v-btn
               class="primary white--text"
               @click="withdrawTFT(target, amount)"
@@ -95,13 +101,13 @@
       class="pa-5 my-5 white--text"
     >
       <h3 class="text-center">
-        We use bridges for transfer to and from the following:
+        Transfer TFT Across Chains
       </h3>
     </v-card>
     <v-card class="pa-5 my-5">
       <v-select
         :items="items"
-        label="Please select one:"
+        label="Please select a chain:"
         v-model="selectedItem.item_id"
         item-text="name"
         item-value="id"
@@ -127,8 +133,8 @@
         color="primary"
         :target="'blank'"
         class="text-decoration-none"
-        :href="'https://library.threefold.me/info/manual/#/manual__tfchain_portal_home?id=transfer-tft'"
-      >why do we use bridges?</a>
+        :href="'https://library.threefold.me/info/manual/#/manual__grid3_stellar_tfchain_bridge'"
+      >How is it done?</a>
     </v-container>
   </v-container>
 </template>
@@ -154,9 +160,7 @@ export default class TransferView extends Vue {
   addressErrorMessages = "";
   selectedName = "";
 
-  items = [
-    { id: 1, name: "stellar" }
-  ];
+  items = [{ id: 1, name: "stellar" }];
   balance: any;
   $api: any;
   address = "";
