@@ -11,7 +11,7 @@
       prefix="in:"
       solo
       type="text"
-      @input.native="checkInputValidation($event.srcElement.value, key2)"
+      @input.native="validated($event.srcElement.value, key2)"
       >
       <template v-slot:selection="{ attrs, item, select, selected }">
         <v-chip
@@ -34,6 +34,7 @@
 import { MutationTypes } from "../store/mutations";
 import { IState } from "../store/state";
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { inputValidation } from "../utils/validations"
 
 @Component({})
 export default class InFilter extends Vue {
@@ -78,22 +79,9 @@ export default class InFilter extends Vue {
   }
 
   errorMsg:any = ''
-  checkInputValidation(value: string, key: string) {
-    // value: Current value of the input.
-    // key: Current key of the input, e.g. [nodeId,farmId]..etc
-
-    const numericFields :string[] = ['nodeId', 'farmId', 'twinId', 'freePublicIPs']
-    if(numericFields.includes(key)) {
-      if(isNaN(+value)
-        || value.startsWith("+")
-        || value.startsWith("-")
-        || value.startsWith("0")
-        || value.includes("e")){
-        this.errorMsg = 'This field must be a number.'; return;
-      } else {
-        this.errorMsg = ''; return;
-      }
-    }
+  validated(value: string, key: string): string{
+    this.errorMsg = inputValidation(value, key);
+    return this.errorMsg;
   }
 
   created() {
