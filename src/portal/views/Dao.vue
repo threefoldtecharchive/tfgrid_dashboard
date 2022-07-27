@@ -164,21 +164,26 @@
                 <v-card>
                   <v-card-title>Cast Vote</v-card-title>
                   <v-card-text>
-                    <v-select
-                      :items="farms"
-                      label="Select a farm"
-                      outlined
-                      item-text="name"
-                      item-value="id"
-                      v-model="selectedFarm"
-                    >
-                    </v-select>
+                    <v-form v-model="isValidFarm">
+                      <v-select
+                        :items="farms"
+                        label="Select a farm"
+                        outlined
+                        item-text="name"
+                        item-value="id"
+                        v-model="selectedFarm"
+                        :rules="[()=> !!selectedFarm || 'required field', 
+                        ()=> farmHasNodesCheck() || 'farm has no nodes']"
+                      >
+                      </v-select>
+                    </v-form>
                   </v-card-text>
                   <v-card-actions class="justify-end">
                     <v-btn
                       @click="castVote"
                       :loading="loadingVote"
                       color="primary white--text"
+                      :disabled="!isValidFarm"
                     >Submit</v-btn>
                     <v-btn
                       @click="openVDialog = false"
@@ -264,6 +269,7 @@ export default class DaoView extends Vue {
     { title: "Active", content: this.activeProposals },
     { title: "Archived", content: this.inactiveProposals },
   ];
+  isValidFarm = false;
   async mounted() {
     if (this.$api) {
       this.id = this.$route.query.twinID;
@@ -282,11 +288,7 @@ export default class DaoView extends Vue {
       });
     }
   }
-  @Watch("proposals") async onProposalUpdate(value: any, oldValue: any) {
-    console.log(
-      `there were ${oldValue.length} proposals, now there is ${value.length} proposals`
-    );
-  }
+
   async updated() {
     this.id = this.$route.query.twinID;
     if (this.$api) {
@@ -319,13 +321,15 @@ export default class DaoView extends Vue {
     this.vote = vote;
     this.selectedProposal = hash;
   }
-  async castVote() {
+  async farmHasNodesCheck() {
     const nodes = await getNodesByFarm(this.selectedFarm);
 
-    if (!nodes.length) {
-      alert("no nodes in farm");
-      return;
+    if (nodes.length) {
+      return true;
     }
+    return false;
+  }
+  async castVote() {
     this.loadingVote = true;
     vote(
       this.$route.params.accountID,
