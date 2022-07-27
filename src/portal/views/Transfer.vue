@@ -10,28 +10,30 @@
       </h3>
     </v-card>
     <v-card class="pa-5 my-5">
-      <v-combobox
-        v-model="receipientAddress"
-        :items="accountsAddresses"
-        dense
-        filled
-        label="Receipient:"
-        :error-messages="addressErrorMessages"
-        :rules="[
+      <v-form v-model="isTransferValid">
+        <v-combobox
+          v-model="receipientAddress"
+          :items="accountsAddresses"
+          dense
+          filled
+          label="Receipient:"
+          :error-messages="addressErrorMessages"
+          :rules="[
           () => !!receipientAddress || 'This field is required',
           addressCheck(),
         ]"
-      ></v-combobox>
-      <v-text-field
-        v-model="amount"
-        label="Amount (TFT)"
-        type="number"
-        :rules="[
+        ></v-combobox>
+        <v-text-field
+          v-model="amount"
+          label="Amount (TFT)"
+          type="number"
+          :rules="[
           () => !!amount || 'This field is required',
           () => amount < balance || 'Amount cannot exceed balance',
         ]"
-      >
-      </v-text-field>
+        >
+        </v-text-field>
+      </v-form>
       <v-card-actions>
         <v-spacer> </v-spacer>
         <v-btn
@@ -42,6 +44,7 @@
           class="primary white--text"
           @click="transferTFT"
           :loading="loadingTransfer"
+          :disabled="!isTransferValid"
         >Submit</v-btn>
       </v-card-actions>
     </v-card>
@@ -70,6 +73,7 @@ export default class TransferView extends Vue {
   id: any = [];
   amount = 0;
   loadingTransfer = false;
+  isTransferValid = false;
 
   mounted() {
     if (this.$api) {
@@ -105,17 +109,25 @@ export default class TransferView extends Vue {
   }
   addressCheck() {
     const isValid = checkAddress(this.receipientAddress);
-    if (isValid) {
+
+    if (
+      isValid &&
+      this.receipientAddress.length &&
+      !this.receipientAddress.match(/\W/)
+    ) {
       this.addressErrorMessages = "";
+
       return true;
     } else {
       this.addressErrorMessages = "invalid address";
+
       return false;
     }
   }
   clearInput() {
     this.receipientAddress = "";
     this.amount = 0;
+    this.addressErrorMessages = "";
   }
   transferTFT() {
     if (this.amount === 0 || this.receipientAddress === "") {
