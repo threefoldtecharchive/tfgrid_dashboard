@@ -24,30 +24,33 @@
           class="white--text"
         >Create Farm</v-toolbar>
         <v-card-text>
-          <v-text-field
-            label="Farm Name"
-            v-model="farmName"
-            required
-            :error-messages="farmNameErrorMessage"
-            :rules="[
+          <v-form v-model="isValidFarmName">
+            <v-text-field
+              label="Farm Name"
+              v-model="farmName"
+              required
+              :error-messages="farmNameErrorMessage"
+              :rules="[
               () => !!farmName || 'This field is required',
               farmNameCheck,
               () =>
                 farmName.length < 20 ||
                 'Name too long, only 20 characters permitted',
             ]"
-          ></v-text-field>
+            ></v-text-field>
+          </v-form>
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn
-            color="primary white--text"
-            @click="createFarmFromName"
-            :loading="loadingCreateFarm"
-          >Submit</v-btn>
           <v-btn
             @click="openCreateFarmDialog = false"
             color="grey lighten-2 black--text"
           >Close</v-btn>
+          <v-btn
+            color="primary white--text"
+            @click="createFarmFromName"
+            :loading="loadingCreateFarm"
+            :disabled="!isValidFarmName"
+          >Submit</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -310,6 +313,7 @@ export default class FarmsView extends Vue {
   farmToDelete: any = {};
   searchTerm = "";
   loadingCreateFarm = false;
+  isValidFarmName = false;
   async mounted() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
