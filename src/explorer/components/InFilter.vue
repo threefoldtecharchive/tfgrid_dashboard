@@ -11,7 +11,8 @@
       prefix="in:"
       solo
       type="text"
-    >
+      @input.native="checkInputValidation($event.srcElement.value, key2)"
+      >
       <template v-slot:selection="{ attrs, item, select, selected }">
         <v-chip
           v-bind="attrs"
@@ -24,6 +25,9 @@
         </v-chip>
       </template>
     </v-combobox>
+    <v-alert dense type="error" v-if="errorMsg">
+        {{ errorMsg }}
+    </v-alert>
   </v-card>
 </template>
 <script lang="ts">
@@ -70,6 +74,25 @@ export default class InFilter extends Vue {
     if (idx > -1) {
       items.splice(idx, 1);
       this.items = items;
+    }
+  }
+
+  errorMsg:any = ''
+  checkInputValidation(value: string, key: string) {
+    // value: Current value of the input.
+    // key: Current key of the input, e.g. [nodeId,farmId]..etc
+
+    const numericFields :string[] = ['nodeId', 'farmId', 'twinId', 'freePublicIPs']
+    if(numericFields.includes(key)) {
+      if(isNaN(+value)
+        || value.startsWith("+")
+        || value.startsWith("-")
+        || value.startsWith("0")
+        || value.includes("e")){
+        this.errorMsg = 'This field must be a number.'; return;
+      } else {
+        this.errorMsg = ''; return;
+      }
     }
   }
 
