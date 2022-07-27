@@ -17,10 +17,9 @@
           dense
           filled
           label="Receipient:"
-          :error-messages="addressErrorMessages"
           :rules="[
           () => !!receipientAddress || 'This field is required',
-          addressCheck(),
+          () => addressCheck() || 'invalid address',
         ]"
         ></v-combobox>
         <v-text-field
