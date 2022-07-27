@@ -48,47 +48,35 @@
         Let’s get you connected to the TF Grid !
       </h2>
     </v-card>
-    <v-card class="text-center pa-5">
-      <h3>Choose your preferred method to create a Twin:</h3>
-    </v-card>
+
     <v-container
       fluid
       class="px-0"
     >
-      <v-row>
-        <v-col>
-          <v-card
-            class="pa-5 text-center"
-            height="175"
+
+      <v-card
+        class="pa-5 text-center"
+        height="175"
+      >
+        <h3>Planetary using Yggdrasil IPV6</h3>
+        <v-form v-model="isValidIPV6">
+          <v-text-field
+            label="Twin IP"
+            v-model="ip"
+            :error-messages="ipErrorMessage"
+            :rules="[() => !!ip || 'This field is required',
+            () => ipcheck() || 'invalid IP']"
           >
-            <h3>Planetary using Yggdrasil IPV6</h3>
-            <v-text-field
-              label="Twin IP ::1"
-              v-model="ip"
-              :error-messages="ipErrorMessage"
-              :rules="[() => !!ip || 'This field is required', ipcheck]"
-            >
-            </v-text-field>
-            <v-btn
-              class="primary"
-              :loading="loadingTwinCreate"
-              @click="createTwinFunc(ip)"
-            >create</v-btn>
-          </v-card>
-        </v-col>
-        <v-col>
-          <v-card
-            class="pa-5 text-center d-flex align-center justify-center"
-            height="175"
-          >
-            <v-btn
-              class="primary"
-              :loading="loadingTwinCreate"
-              @click="createTwinFunc('::1')"
-            >automatically</v-btn>
-          </v-card>
-        </v-col>
-      </v-row>
+          </v-text-field>
+        </v-form>
+        <v-btn
+          class="primary"
+          :loading="loadingTwinCreate"
+          @click="createTwinFunc(ip)"
+          :disabled="!isValidIPV6"
+        >create</v-btn>
+      </v-card>
+
       <v-row>
         <v-col>
           <v-card class="pa-5 text-center d-flex align-center justify-center">
@@ -131,13 +119,13 @@ export default class AccountView extends Vue {
   $api: any;
   balance: balanceInterface = { free: 0, reserved: 0 };
   twinID = 0;
-  ip = "";
+  ip = "::1";
   twin!: { id: any; ip: any };
   loadingTC = true;
   loadingTwinCreate = false;
   ipErrorMessage = "";
   loadingAcceptedTC = false;
-
+  isValidIPV6 = false;
   async updated() {
     if (this.$api) {
       this.address = this.$route.params.accountID;
@@ -195,17 +183,10 @@ export default class AccountView extends Vue {
     this.twinID = 0;
   }
   ipcheck() {
-    if (this.ip === "") return true;
-    const ip4Regex = new RegExp(
-      "^([0-9]{1,3}.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))$"
-    );
     const ip6Regex = new RegExp(
-      "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
+      "^(?:(?:(?:[A-F0-9]{1,4}:){5}[A-F0-9]{1,4}|(?:[A-F0-9]{1,4}:){4}:[A-F0-9]{1,4}|(?:[A-F0-9]{1,4}:){3}(?::[A-F0-9]{1,4}){1,2}|(?:[A-F0-9]{1,4}:){2}(?::[A-F0-9]{1,4}){1,3}|[A-F0-9]{1,4}:(?::[A-F0-9]{1,4}){1,4}|(?:[A-F0-9]{1,4}:){1,5}|:(?::[A-F0-9]{1,4}){1,5}|:):(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])|(?:[A-F0-9]{1,4}:){7}[A-F0-9]{1,4}|(?:[A-F0-9]{1,4}:){6}:[A-F0-9]{1,4}|(?:[A-F0-9]{1,4}:){5}(?::[A-F0-9]{1,4}){1,2}|(?:[A-F0-9]{1,4}:){4}(?::[A-F0-9]{1,4}){1,3}|(?:[A-F0-9]{1,4}:){3}(?::[A-F0-9]{1,4}){1,4}|(?:[A-F0-9]{1,4}:){2}(?::[A-F0-9]{1,4}){1,5}|[A-F0-9]{1,4}:(?::[A-F0-9]{1,4}){1,6}|(?:[A-F0-9]{1,4}:){1,7}:|:(?::[A-F0-9]{1,4}){1,7}|::)$"
     );
-    if (ip4Regex.test(this.ip)) {
-      this.ipErrorMessage = "";
-      return true;
-    } else if (ip6Regex.test(this.ip)) {
+    if (ip6Regex.test(this.ip)) {
       this.ipErrorMessage = "";
       return true;
     } else {

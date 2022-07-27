@@ -22,23 +22,26 @@
           >Edit Twin</v-toolbar>
           <v-card-text>
             <div class="text-h2 pa-12">
-              <v-text-field
-                v-model="ipv"
-                label="Twin IP ::1"
-                :error-messages="ipErrorMessage"
-                :rules="[() => !!ip || 'This field is required', ipcheck]"
-              ></v-text-field>
+              <v-form v-model="isValidTwinIP">
+                <v-text-field
+                  v-model="ipv"
+                  label="Twin IP ::1"
+                  :error-messages="ipErrorMessage"
+                  :rules="[() => !!ip || 'This field is required', ipcheck]"
+                ></v-text-field>
+              </v-form>
             </div>
           </v-card-text>
           <v-card-actions class="justify-end">
             <v-btn
-              @click="editingTwin = false"
+              @click="editingTwin = false;"
               class="grey lighten-2 black--text"
             >Close</v-btn>
             <v-btn
               class="primary white--text"
               @click="updateTwin"
               :loading="loadingEditTwin"
+              :disabled="!isValidTwinIP"
             >Submit</v-btn>
           </v-card-actions>
         </v-card>
@@ -121,33 +124,12 @@ export default class TwinView extends Vue {
   address = "";
   twin: { ip: string } = { ip: "" };
   accountName: string | (string | null)[] = "";
-
+  isValidTwinIP = false;
   loadingDeleteTwin = false;
   openDeleteTwinDialog = false;
   ipErrorMessage = "";
   loadingEditTwin = false;
-  links = [
-    {
-      label: "swap TFT",
-      path: "account-swap",
-    },
-    {
-      label: "transfer TFT",
-      path: "account-transfer",
-    },
-    {
-      label: "manage farms",
-      path: "account-farms",
-    },
-    {
-      label: "vote on proposals",
-      path: "account-dao",
-    },
-    {
-      label: "manage nodes",
-      path: "account-nodes",
-    },
-  ];
+
   updated() {
     this.address = this.$route.params.accountID;
     if (this.$route.query.twinIP && this.$route.query.twinID) {
