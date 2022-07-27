@@ -48,7 +48,10 @@
             </v-container>
           </v-card-text>
           <v-card-actions class="justify-end">
-            <v-btn @click="openDepositDialog = false" class="grey lighten-2 black--text">Close</v-btn>
+            <v-btn
+              @click="openDepositDialog = false"
+              class="grey lighten-2 black--text"
+            >Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -70,21 +73,37 @@
             {{ withdrawFee }} TFT)
           </v-card-title>
           <v-card-text>
-            <v-text-field
-              v-model="target"
-              :label="selectedName.toUpperCase() + ' Target Wallet Address'"
-            >
-            </v-text-field>
-            <v-text-field
-              label="Amount"
-              v-model="amount"
-            ></v-text-field>
+            <v-form v-model="isValidSwap">
+              <v-text-field
+                v-model="target"
+                :label="selectedName.toUpperCase() + ' Target Wallet Address'"
+                :rules="[
+          () => !!target || 'This field is required',
+          () => swapAddressCheck() || 'invalid address',
+        ]"
+              >
+              </v-text-field>
+              <v-text-field
+                label="Amount (TFT)"
+                v-model="amount"
+                type="number"
+                :rules="[
+          () => !!amount || 'This field is required',
+          () => amount < balance || 'Amount cannot exceed balance',
+        ]"
+              ></v-text-field>
+            </v-form>
           </v-card-text>
           <v-card-actions class="justify-end">
-            <v-btn @click="openWithdrawDialog = false" color="grey lighten-2 black--text">Close</v-btn>
+            <v-btn
+              @click="openWithdrawDialog = false"
+              color="grey lighten-2 black--text"
+            >Close</v-btn>
             <v-btn
               class="primary white--text"
               @click="withdrawTFT(target, amount)"
+              :disabled="!isValidSwap"
+              :loading="loadingWithdraw"
             >Submit</v-btn>
           </v-card-actions>
         </v-card>
@@ -95,13 +114,13 @@
       class="pa-5 my-5 white--text"
     >
       <h3 class="text-center">
-        We use bridges for transfer to and from the following:
+        Transfer TFT Across Chains
       </h3>
     </v-card>
     <v-card class="pa-5 my-5">
       <v-select
         :items="items"
-        label="Please select one:"
+        label="Please select a chain:"
         v-model="selectedItem.item_id"
         item-text="name"
         item-value="id"
@@ -127,8 +146,8 @@
         color="primary"
         :target="'blank'"
         class="text-decoration-none"
-        :href="'https://library.threefold.me/info/manual/#/manual__tfchain_portal_home?id=transfer-tft'"
-      >why do we use bridges?</a>
+        :href="'https://library.threefold.me/info/manual/#/manual__grid3_stellar_tfchain_bridge'"
+      >How is it done?</a>
     </v-container>
   </v-container>
 </template>
@@ -139,7 +158,7 @@ import config from "../config";
 import { getDepositFee, getWithdrawFee, withdraw } from "../lib/swap";
 import QrcodeVue from "qrcode.vue";
 import { balanceInterface, getBalance } from "../lib/balance";
-
+import { StrKey } from "stellar-sdk";
 @Component({
   name: "TransferView",
   components: { QrcodeVue },
@@ -151,12 +170,10 @@ export default class TransferView extends Vue {
   selectedItem = {
     item_id: 1,
   };
-  addressErrorMessages = "";
-  selectedName = "";
 
-  items = [
-    { id: 1, name: "stellar" }
-  ];
+  selectedName = "";
+  isValidSwap = false;
+  items = [{ id: 1, name: "stellar" }];
   balance: any;
   $api: any;
   address = "";
@@ -169,6 +186,7 @@ export default class TransferView extends Vue {
   withdrawFee = 0;
   amount = 0;
   target = "";
+  loadingWithdraw = false;
 
   mounted() {
     if (this.$api) {
@@ -213,8 +231,17 @@ export default class TransferView extends Vue {
     this.balance = 0;
     this.address = "";
   }
+  swapAddressCheck() {
+    const isValid = StrKey.isValidEd25519PublicKey(this.target);
 
+    if (isValid && this.target.length && !this.target.match(/\W/)) {
+      return true;
+    }
+
+    return false;
+  }
   public async withdrawTFT(target: string, amount: number) {
+    this.loadingWithdraw = true;
     withdraw(
       this.address,
       this.$api,
@@ -224,6 +251,7 @@ export default class TransferView extends Vue {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
+          this.loadingWithdraw = false;
           return;
         }
 
@@ -256,9 +284,15 @@ export default class TransferView extends Vue {
                     this.balance = balance.free;
                   }
                 );
+                this.target = "";
+                this.amount = 0;
+                this.loadingWithdraw = false;
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Withdraw failed!");
                 this.openWithdrawDialog = false;
+                this.target = "";
+                this.amount = 0;
+                this.loadingWithdraw = false;
               }
             });
           }
@@ -268,6 +302,9 @@ export default class TransferView extends Vue {
       console.log(err.message);
       this.$toasted.show("Withdraw failed!");
       this.openWithdrawDialog = false;
+      this.target = "";
+      this.amount = 0;
+      this.loadingWithdraw = false;
     });
   }
 }

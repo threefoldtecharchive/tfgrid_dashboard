@@ -1,52 +1,49 @@
 <template>
   <v-container>
-    <v-card
-      color="primary"
-      class="white--text pa-5 my-5"
-    >
-      <h2 class="text-center">
-        Howdy {{ accountName.toUpperCase() }}, want to transfer TFTs?
-      </h2>
-    </v-card>
 
     <v-card
       color="primary"
       class="white--text pa-5 my-5"
     >
       <h3 class="text-center">
-        You can also transfer from one account to another on the TFCHAIN:
+        Transfer TFTs on the TFChain
       </h3>
     </v-card>
     <v-card class="pa-5 my-5">
-      <v-combobox
-        v-model="receipientAddress"
-        :items="accountsAddresses"
-        dense
-        filled
-        label="Receipient:"
-        :error-messages="addressErrorMessages"
-        :rules="[
+      <v-form v-model="isTransferValid">
+        <v-combobox
+          v-model="receipientAddress"
+          :items="accountsAddresses"
+          dense
+          filled
+          label="Receipient:"
+          :rules="[
           () => !!receipientAddress || 'This field is required',
-          addressCheck(),
+          () => transferAddressCheck() || 'invalid address',
         ]"
-      ></v-combobox>
-      <v-text-field
-        v-model="amount"
-        label="Amount (TFT)"
-        type="number"
-        :rules="[
+        ></v-combobox>
+        <v-text-field
+          v-model="amount"
+          label="Amount (TFT)"
+          type="number"
+          :rules="[
           () => !!amount || 'This field is required',
           () => amount < balance || 'Amount cannot exceed balance',
         ]"
-      >
-      </v-text-field>
+        >
+        </v-text-field>
+      </v-form>
       <v-card-actions>
         <v-spacer> </v-spacer>
-        <v-btn @click="clearInput" color="grey lighten-2 black--text">Clear</v-btn>
+        <v-btn
+          @click="clearInput"
+          color="grey lighten-2 black--text"
+        >Clear</v-btn>
         <v-btn
           class="primary white--text"
           @click="transferTFT"
           :loading="loadingTransfer"
+          :disabled="!isTransferValid"
         >Submit</v-btn>
       </v-card-actions>
     </v-card>
@@ -66,7 +63,7 @@ import { accountInterface } from "../store/state";
 export default class TransferView extends Vue {
   receipientAddress = "";
   accountsAddresses: any = [];
-  addressErrorMessages = "";
+
   balance: any = 0;
   $api: any;
   address = "";
@@ -75,6 +72,7 @@ export default class TransferView extends Vue {
   id: any = [];
   amount = 0;
   loadingTransfer = false;
+  isTransferValid = false;
 
   mounted() {
     if (this.$api) {
@@ -108,13 +106,16 @@ export default class TransferView extends Vue {
     this.balance = 0;
     this.address = "";
   }
-  addressCheck() {
+  transferAddressCheck() {
     const isValid = checkAddress(this.receipientAddress);
-    if (isValid) {
-      this.addressErrorMessages = "";
+
+    if (
+      isValid &&
+      this.receipientAddress.length &&
+      !this.receipientAddress.match(/\W/)
+    ) {
       return true;
     } else {
-      this.addressErrorMessages = "invalid address";
       return false;
     }
   }
@@ -123,10 +124,6 @@ export default class TransferView extends Vue {
     this.amount = 0;
   }
   transferTFT() {
-    if (this.amount === 0 || this.receipientAddress === "") {
-      this.addressErrorMessages = "No target specified";
-      return;
-    }
     transfer(
       this.address,
       this.$api,
