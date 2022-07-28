@@ -11,7 +11,8 @@
       prefix="in:"
       solo
       type="text"
-    >
+      @input.native="validated($event.srcElement.value, key2)"
+      >
       <template v-slot:selection="{ attrs, item, select, selected }">
         <v-chip
           v-bind="attrs"
@@ -24,12 +25,16 @@
         </v-chip>
       </template>
     </v-combobox>
+    <v-alert dense type="error" v-if="errorMsg">
+        {{ errorMsg }}
+    </v-alert>
   </v-card>
 </template>
 <script lang="ts">
 import { MutationTypes } from "../store/mutations";
 import { IState } from "../store/state";
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { inputValidation } from "../utils/validations"
 
 @Component({})
 export default class InFilter extends Vue {
@@ -71,6 +76,12 @@ export default class InFilter extends Vue {
       items.splice(idx, 1);
       this.items = items;
     }
+  }
+
+  errorMsg:any = ''
+  validated(value: string, key: string): string{
+    this.errorMsg = inputValidation(value, key);
+    return this.errorMsg;
   }
 
   created() {

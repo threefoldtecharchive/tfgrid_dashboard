@@ -222,7 +222,7 @@ export default class Farms extends Vue {
     const values = [...map.values()];
 
     for (let i = 0; i < values.length; i++) {
-      if (values[i] === value) return keys[i];
+      if (values[i] === value) return +keys[i];
     }
 
     return null;
@@ -280,8 +280,8 @@ export default class Farms extends Vue {
       items: () => Promise.resolve([]),
       value: [],
       multiple: true,
-      type: "number",
       symbol: "farmId_in",
+      key: "farmID",
     },
     {
       component: InFilterV2,
@@ -300,6 +300,7 @@ export default class Farms extends Vue {
       value: [],
       multiple: true,
       symbol: "name_in",
+      key: "farmName",
     },
     {
       component: InFilterV2,
@@ -307,9 +308,9 @@ export default class Farms extends Vue {
       label: "Filter By Twin ID",
       items: (_) => Promise.resolve([]),
       value: [],
-      type: "number",
       multiple: true,
       symbol: "twinId_in",
+      key: "twinId",
     },
     {
       component: InFilterV2,
@@ -320,6 +321,7 @@ export default class Farms extends Vue {
       init: true,
       multiple: true,
       symbol: "certificationType_in",
+      key: "certificationType",
     },
     {
       component: InFilterV2,
@@ -330,6 +332,7 @@ export default class Farms extends Vue {
       init: true,
       multiple: true,
       symbol: "pricingPolicyId_in",
+      key: "pricingPolicyId",
       getValue: (f) => {
         return (f.value as string[]).map(this.getKeyByValue.bind(this));
       },

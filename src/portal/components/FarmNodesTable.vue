@@ -20,6 +20,7 @@
           <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
         </v-toolbar>
       </template>
+
       <template v-slot:[`item.nodeId`]="{ item }">
         <p class="text-left mt-1 mb-0">
           {{ item.nodeId }}
@@ -96,6 +97,7 @@
                   xs3
                   class="text-left pr-2"
                 >Certification </v-flex>
+
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.certification }}</span>
                 </v-flex>
