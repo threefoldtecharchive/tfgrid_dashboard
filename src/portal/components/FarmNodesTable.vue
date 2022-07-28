@@ -230,69 +230,68 @@
         </v-card-title>
 
         <v-card-text class="text">
-          <v-text-field
-            label="IPV4"
-            v-model="ip4"
-            required
-            outlined
-            dense
-            hint="IPV4 address in CIDR format xx.xx.xx.xx/xx"
-            persistent-hint
-            :error-messages="ip4ErrorMessage"
-            :validate-on-blur="true"
-            :rules="[() => !!ip4 || 'This field is required', ip4check]"
-          ></v-text-field>
+          <v-form v-model="isValidPublicConfig">
+            <v-text-field
+              label="IPV4"
+              v-model="ip4"
+              required
+              outlined
+              dense
+              hint="IPV4 address in CIDR format xx.xx.xx.xx/xx"
+              persistent-hint
+              :validate-on-blur="true"
+              :rules="[() => !!ip4 || 'This field is required', 
+            ()=> ip4check() || 'incorrect format']"
+            ></v-text-field>
 
-          <v-text-field
-            label="Gateway"
-            v-model="gw4"
-            required
-            outlined
-            dense
-            hint="Gateway for the IP in ipv4 format"
-            persistent-hint
-            :validate-on-blur="true"
-            :error-messages="gw4ErrorMessage"
-            :rules="[() => !!gw4 || 'This field is required', gw4Check]"
-          ></v-text-field>
+            <v-text-field
+              label="Gateway"
+              v-model="gw4"
+              required
+              outlined
+              dense
+              hint="Gateway for the IP in ipv4 format"
+              persistent-hint
+              :validate-on-blur="true"
+              :rules="[() => !!gw4 || 'This field is required', 
+              ()=> gw4Check() || 'incorrect format']"
+            ></v-text-field>
 
-          <v-divider></v-divider>
+            <v-divider></v-divider>
 
-          <v-text-field
-            label="IPV6"
-            v-model="ip6"
-            outlined
-            dense
-            hint="IPV6 address (not required)"
-            persistent-hint
-            :validate-on-blur="true"
-            :error-messages="ip6ErrorMessage"
-            :rules="[ip6check]"
-          ></v-text-field>
+            <v-text-field
+              label="IPV6"
+              v-model="ip6"
+              outlined
+              dense
+              hint="IPV6 address (not required)"
+              persistent-hint
+              :validate-on-blur="true"
+              :rules="[()=> ip6check() || 'incorrect format']"
+            ></v-text-field>
 
-          <v-text-field
-            label="Gateway IPV6"
-            v-model="gw6"
-            outlined
-            dense
-            hint="Gateway for the IP in ipv6 format (not required)"
-            persistent-hint
-            :validate-on-blur="true"
-            :error-messages="gw6ErrorMessage"
-            :rules="[gw6Check]"
-          ></v-text-field>
+            <v-text-field
+              label="Gateway IPV6"
+              v-model="gw6"
+              outlined
+              dense
+              hint="Gateway for the IP in ipv6 format (not required)"
+              persistent-hint
+              :validate-on-blur="true"
+              :rules="[() => gw6Check() || 'incorrect format']"
+            ></v-text-field>
 
-          <v-text-field
-            label="Domain"
-            v-model="domain"
-            outlined
-            dense
-            hint="Domain for webgateway (not required)"
-            persistent-hint
-            :validate-on-blur="true"
-            :error-messages="domainErrorMessage"
-            :rules="[domainCheck]"
-          ></v-text-field>
+            <v-text-field
+              label="Domain"
+              v-model="domain"
+              outlined
+              dense
+              hint="Domain for webgateway (not required)"
+              persistent-hint
+              :validate-on-blur="true"
+              :rules="[() => domainCheck || 'incorrect format']"
+            ></v-text-field>
+          </v-form>
         </v-card-text>
 
         <v-divider></v-divider>
@@ -316,6 +315,7 @@
             color="primary white--text"
             :loading="loadingPublicConfig"
             @click="saveConfig()"
+            :disabled="!isValidPublicConfig"
           >
             Save
           </v-btn>
@@ -424,16 +424,9 @@ export default class FarmNodesTable extends Vue {
   ip6 = "";
   gw6 = "";
   domain = "";
-  ip4ErrorMessage = "";
-  gw4ErrorMessage = "";
-  ip6ErrorMessage = "";
-  gw6ErrorMessage = "";
-  domainErrorMessage = "";
   loadingPublicConfig = false;
   $api: any;
-  mounted() {
-    console.log(this.nodes);
-  }
+  isValidPublicConfig = false;
   filteredNodes() {
     if (this.nodes.length > 0) {
       return this.nodes.filter(
@@ -567,12 +560,9 @@ export default class FarmNodesTable extends Vue {
       "^([0-9]{1,3}.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))$"
     );
     if (ipRegex.test(this.ip4)) {
-      this.ip4ErrorMessage = "";
       return true;
-    } else {
-      this.ip4ErrorMessage = "IP address is not formatted correctly";
-      return false;
     }
+    return false;
   }
   ip6check() {
     if (this.ip6 === "") return true;
@@ -581,23 +571,17 @@ export default class FarmNodesTable extends Vue {
       "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
     );
     if (ipRegex.test(this.ip6)) {
-      this.ip6ErrorMessage = "";
       return true;
-    } else {
-      this.ip6ErrorMessage = "IPV6 address is not formatted correctly";
-      return false;
     }
+    return false;
   }
   gw4Check() {
     if (this.gw4 === "") return true;
     const gatewayRegex = new RegExp("^(?:[0-9]{1,3}.){3}[0-9]{1,3}$");
     if (gatewayRegex.test(this.gw4)) {
-      this.gw4ErrorMessage = "";
       return true;
-    } else {
-      this.gw4ErrorMessage = "Gateway is not formatted correctly";
-      return false;
     }
+    return false;
   }
   gw6Check() {
     if (this.gw6 === "") return true;
@@ -605,12 +589,9 @@ export default class FarmNodesTable extends Vue {
       "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))[0-9]{1,3}$"
     );
     if (gatewayRegex.test(this.gw6)) {
-      this.gw6ErrorMessage = "";
       return true;
-    } else {
-      this.gw6ErrorMessage = "Gateway is not formatted correctly";
-      return false;
     }
+    return false;
   }
   domainCheck() {
     if (this.domain === "") return true;
