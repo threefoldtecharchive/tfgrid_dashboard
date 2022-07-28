@@ -105,7 +105,6 @@ export default class RangeFilter extends Vue {
 
   errorMsg:any = ''
   validated(value: string, key: string){
-    console.log(value)
     if (+value < 0){
       this.errorMsg = "Number must be positive."; return;
     }
