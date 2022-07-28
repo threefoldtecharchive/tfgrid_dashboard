@@ -212,6 +212,8 @@
                     <v-btn
                       @click="addV2Address"
                       color="primary white--text"
+                      :disabled="!isValidStellarV2Address"
+                      :loading="loadingAddStellar"
                     >Submit</v-btn>
                   </v-card-actions>
                 </v-card>
