@@ -1,7 +1,10 @@
 <template>
   <v-container>
     <v-card class="fund d-flex align-center font-weight-bold mr-4 primary">
-      <v-card-text style="padding: 5px" class="pr-0">
+      <v-card-text
+        style="padding: 5px"
+        class="pr-0"
+      >
         <v-tooltip>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -22,11 +25,13 @@
           @click="addTFT()"
           style="max-width: 60px"
           :loading="loadingAddTFT"
-          >+</v-btn
-        >
+        >+</v-btn>
       </v-card-actions>
     </v-card>
-    <v-dialog v-model="openBalance" max-width="600">
+    <v-dialog
+      v-model="openBalance"
+      max-width="600"
+    >
       <v-card>
         <v-toolbar color="primary"> Balance Summary </v-toolbar>
         <v-card-text class="pa-5">
@@ -36,9 +41,10 @@
           </v-container>
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn @click="openBalance = false" color="grey lighten-2 black--text"
-            >Close</v-btn
-          >
+          <v-btn
+            @click="openBalance = false"
+            color="grey lighten-2 black--text"
+          >Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -60,7 +66,7 @@ export default class FundsCard extends Vue {
   openBalance = false;
 
   async addTFT() {
-    if (config.network !== "dev") {
+    if (config.network !== "dev" && config.network !== "qa") {
       window.open(
         "https://gettft.com/auth/login?next_url=/gettft/shop/#/buy",
         "_blank"
