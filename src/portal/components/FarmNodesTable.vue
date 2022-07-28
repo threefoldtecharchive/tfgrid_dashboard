@@ -237,11 +237,12 @@
               required
               outlined
               dense
+              type="string"
               hint="IPV4 address in CIDR format xx.xx.xx.xx/xx"
               persistent-hint
+              :error-messages="ip4ErrorMessage"
               :validate-on-blur="true"
-              :rules="[() => !!ip4 || 'This field is required', 
-            ()=> ip4check() || 'incorrect format']"
+              :rules="[() => !!ip4 || 'This field is required', ip4check]"
             ></v-text-field>
 
             <v-text-field
@@ -253,8 +254,9 @@
               hint="Gateway for the IP in ipv4 format"
               persistent-hint
               :validate-on-blur="true"
-              :rules="[() => !!gw4 || 'This field is required', 
-              ()=> gw4Check() || 'incorrect format']"
+              type="string"
+              :error-messages="gw4ErrorMessage"
+              :rules="[() => !!gw4 || 'This field is required', gw4Check]"
             ></v-text-field>
 
             <v-divider></v-divider>
@@ -262,12 +264,14 @@
             <v-text-field
               label="IPV6"
               v-model="ip6"
+              type="string"
               outlined
               dense
-              hint="IPV6 address (not required)"
+              hint="IPV6 address "
               persistent-hint
               :validate-on-blur="true"
-              :rules="[()=> ip6check() || 'incorrect format']"
+              :error-messages="ip6ErrorMessage"
+              :rules="[() => !!ip6 || 'This field is required', ip6check]"
             ></v-text-field>
 
             <v-text-field
@@ -275,10 +279,12 @@
               v-model="gw6"
               outlined
               dense
-              hint="Gateway for the IP in ipv6 format (not required)"
+              type="string"
+              hint="Gateway for the IP in ipv6 format "
               persistent-hint
               :validate-on-blur="true"
-              :rules="[() => gw6Check() || 'incorrect format']"
+              :error-messages="gw6ErrorMessage"
+              :rules="[() => !!gw6 || 'This field is required', gw6Check]"
             ></v-text-field>
 
             <v-text-field
@@ -286,10 +292,12 @@
               v-model="domain"
               outlined
               dense
-              hint="Domain for webgateway (not required)"
+              type="string"
+              hint="Domain for webgateway"
               persistent-hint
               :validate-on-blur="true"
-              :rules="[() => domainCheck || 'incorrect format']"
+              :error-messages="domainErrorMessage"
+              :rules="[() => !!domain || 'This field is required', domainCheck]"
             ></v-text-field>
           </v-form>
         </v-card-text>
@@ -313,8 +321,7 @@
           </v-btn>
           <v-btn
             color="primary white--text"
-            :loading="loadingPublicConfig"
-            @click="saveConfig()"
+            @click=" openWarningDialog = true;"
             :disabled="!isValidPublicConfig"
           >
             Save
@@ -343,6 +350,23 @@
             @click="deleteItem()"
           >OK</v-btn>
           <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="openWarningDialog"
+      max-width="600"
+    >
+      <v-card>
+        <v-card-title class="text-h5">Are you certain you want to update this node's public config?</v-card-title>
+        <v-card-text> This action is
+          irreversible</v-card-text>
+        <v-card-actions>
+          <v-btn
+            @click="saveConfig()"
+            :loading="loadingPublicConfig"
+          >Submit</v-btn>
+          <v-btn @click="openWarningDialog = false">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -427,6 +451,12 @@ export default class FarmNodesTable extends Vue {
   loadingPublicConfig = false;
   $api: any;
   isValidPublicConfig = false;
+  openWarningDialog = false;
+  ip4ErrorMessage = "";
+  gw4ErrorMessage = "";
+  ip6ErrorMessage = "";
+  gw6ErrorMessage = "";
+  domainErrorMessage = "";
   filteredNodes() {
     if (this.nodes.length > 0) {
       return this.nodes.filter(
@@ -467,13 +497,11 @@ export default class FarmNodesTable extends Vue {
     domain: string;
   }) {
     this.loadingPublicConfig = true;
-    console.log(this.nodeToEdit.id);
-    console.log(this.nodeToEdit.farmID);
     addNodePublicConfig(
       this.$route.params.accountID,
       this.$store.state.api,
-      `${this.nodeToEdit.farmID}`,
-      this.nodeToEdit.id,
+      this.nodeToEdit.farmID,
+      this.nodeToEdit.nodeID,
       config,
       (res: {
         events?: never[] | undefined;
@@ -482,6 +510,11 @@ export default class FarmNodesTable extends Vue {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
+          this.ip4 = "";
+          this.ip6 = "";
+          this.gw4 = "";
+          this.gw6 = "";
+          this.domain = "";
           return;
         }
         const { events = [], status } = res;
@@ -508,9 +541,19 @@ export default class FarmNodesTable extends Vue {
                 this.$toasted.show("Node public config added!");
                 this.loadingPublicConfig = false;
                 this.openPublicConfigDialog = false;
+                this.ip4 = "";
+                this.ip6 = "";
+                this.gw4 = "";
+                this.gw6 = "";
+                this.domain = "";
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Adding Node public config failed");
                 this.loadingPublicConfig = false;
+                this.ip4 = "";
+                this.ip6 = "";
+                this.gw4 = "";
+                this.gw6 = "";
+                this.domain = "";
               }
             });
           }
@@ -521,6 +564,11 @@ export default class FarmNodesTable extends Vue {
       this.$toasted.show("Adding Node public config failed");
       this.loadingPublicConfig = false;
       this.openPublicConfigDialog = false;
+      this.ip4 = "";
+      this.ip6 = "";
+      this.gw4 = "";
+      this.gw6 = "";
+      this.domain = "";
     });
   }
   removeConfig() {
@@ -540,7 +588,6 @@ export default class FarmNodesTable extends Vue {
   }
   openPublicConfig(node: nodeInterface) {
     this.nodeToEdit = node;
-    console.log(this.nodeToEdit);
     if (this.nodeToEdit.publicConfig) {
       this.ip4 = this.nodeToEdit.publicConfig.ipv4;
       this.gw4 = this.nodeToEdit.publicConfig.gw4;
@@ -557,44 +604,52 @@ export default class FarmNodesTable extends Vue {
   ip4check() {
     if (this.ip4 === "") return true;
     const ipRegex = new RegExp(
-      "^([0-9]{1,3}.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))$"
+      "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.|$)){4}$"
     );
     if (ipRegex.test(this.ip4)) {
+      this.ip4ErrorMessage = "";
       return true;
+    } else {
+      this.ip4ErrorMessage = "IP address is not formatted correctly";
+      return false;
     }
-    return false;
   }
   ip6check() {
-    if (this.ip6 === "") return true;
-    /* eslint-disable */
     const ipRegex = new RegExp(
       "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
     );
     if (ipRegex.test(this.ip6)) {
+      this.ip6ErrorMessage = "";
       return true;
+    } else {
+      this.ip6ErrorMessage = "IPV6 address is not formatted correctly";
+      return false;
     }
-    return false;
   }
   gw4Check() {
-    if (this.gw4 === "") return true;
     const gatewayRegex = new RegExp("^(?:[0-9]{1,3}.){3}[0-9]{1,3}$");
     if (gatewayRegex.test(this.gw4)) {
+      this.gw4ErrorMessage = "";
       return true;
+    } else {
+      this.gw4ErrorMessage = "Gateway is not formatted correctly";
+      return false;
     }
-    return false;
   }
   gw6Check() {
-    if (this.gw6 === "") return true;
     const gatewayRegex = new RegExp(
       "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))[0-9]{1,3}$"
     );
     if (gatewayRegex.test(this.gw6)) {
+      this.gw6ErrorMessage = "";
       return true;
+    } else {
+      this.gw6ErrorMessage = "Gateway is not formatted correctly";
+      return false;
     }
-    return false;
   }
   domainCheck() {
-    if (this.domain === "") return true;
+    return true;
   }
   getStatus(node: { updatedAt: string }) {
     const { updatedAt } = node;

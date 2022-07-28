@@ -189,9 +189,15 @@ export async function getNodesByFarm(farmID: string) {
 export async function addNodePublicConfig(
   address: string,
   api: { tx: { tfgridModule: { addNodePublicConfig: (arg0: any, arg1: any, arg2: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; },
-  farmID: string,
-  nodeID: string,
-  config: any,
+  farmID: number,
+  nodeID: number,
+  config: {
+    ipv4: string;
+    ipv6: string;
+    gw4: string;
+    gw6: string;
+    domain: string;
+  },
   callback: any
 ) {
   const injector = await web3FromAddress(address);
