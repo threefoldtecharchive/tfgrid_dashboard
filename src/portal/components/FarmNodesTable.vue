@@ -201,7 +201,7 @@
                         color="light-green darken-2"
                       />
                       <template v-if="item.resourcesUsed">
-                        <span v-if="item.resourcesTotal[key] >> 1000">
+                        <span v-if="item.resourcesTotal[key] > 1000">
                           {{ byteToGB(item.resourcesUsed[key]) }} /
                           {{ byteToGB(item.resourcesTotal[key]) }} GB
                         </span>
