@@ -186,7 +186,6 @@ export default class Farms extends Vue {
   public onUpdatePage() {
     if (this.items) return;
     this.loading = true;
-    console.log("rawda", this._vars)
     this.$apollo
       .query<IFetchPaginatedData<IFarm>>({
         query: getFarmsQuery,
