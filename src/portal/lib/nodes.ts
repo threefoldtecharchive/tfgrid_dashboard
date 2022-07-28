@@ -46,7 +46,7 @@ export async function getRentStatus(api: { query: { smartContractModule: { activ
 }
 
 export async function getNodeUsedResources(nodeId: string) {
-  const res = await axios.get(`${config.gridproxyUrl}nodes/${nodeId}`, {
+  const res = await axios.get(`${config.gridproxyUrl}/nodes/${nodeId}`, {
     timeout: 1000,
   });
 
