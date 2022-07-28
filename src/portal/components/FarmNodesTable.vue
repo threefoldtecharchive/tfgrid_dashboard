@@ -3,7 +3,7 @@
     <v-text-field
       v-model="searchTerm"
       color="primary darken-2"
-      label="Search by node ID, serial number, certification type, farming policy ID"
+      label="Search by node ID, serial number, certification, farming policy ID"
     ></v-text-field>
     <v-data-table
       :headers="headers"
@@ -20,9 +20,9 @@
           <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
         </v-toolbar>
       </template>
-      <template v-slot:[`item.id`]="{ item }">
+      <template v-slot:[`item.nodeId`]="{ item }">
         <p class="text-left mt-1 mb-0">
-          {{ item.id }}
+          {{ item.nodeId }}
         </p>
       </template>
       <template v-slot:[`item.status`]="{ item }">
@@ -58,71 +58,107 @@
       </template>
       <!--expanded node view-->
       <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length" key="item.id">
+        <td
+          :colspan="headers.length"
+          key="item.id"
+        >
           <v-col>
             <v-container fluid>
               <v-row>
-                <v-flex xs3 class="text-left pr-2">Node ID</v-flex>
+                <v-flex
+                  xs3
+                  class="text-left pr-2"
+                >Node ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.id }}</span>
+                  <span>{{ item.nodeID}}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex xs3 class="text-left pr-2">Farm ID</v-flex>
+                <v-flex
+                  xs3
+                  class="text-left pr-2"
+                >Farm ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.farmID }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex xs3 class="text-left pr-2">Twin ID</v-flex>
+                <v-flex
+                  xs3
+                  class="text-left pr-2"
+                >Twin ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.twinID }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex xs3 class="text-left pr-2">Certification Type</v-flex>
+                <v-flex
+                  xs3
+                  class="text-left pr-2"
+                >Certification </v-flex>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.certificationType }}</span>
+                  <span>{{ item.certification }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex xs3 class="text-left pr-2">First boot at</v-flex>
+                <v-flex
+                  xs3
+                  class="text-left pr-2"
+                >First boot at</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ new Date(parseInt(item.createdAt)) }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex xs3 class="text-left pr-2">Uptime</v-flex>
+                <v-flex
+                  xs3
+                  class="text-left pr-2"
+                >Uptime</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.uptime }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex xs3 class="text-left pr-2">Updated at</v-flex>
+                <v-flex
+                  xs3
+                  class="text-left pr-2"
+                >Updated at</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ new Date(parseInt(item.updatedAt)) }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex xs3 class="text-left pr-2">Country</v-flex>
+                <v-flex
+                  xs3
+                  class="text-left pr-2"
+                >Country</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.country }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex xs3 class="text-left pr-2">City</v-flex>
+                <v-flex
+                  xs3
+                  class="text-left pr-2"
+                >City</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.city }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex xs3 class="text-left pr-2">Serial Number</v-flex>
+                <v-flex
+                  xs3
+                  class="text-left pr-2"
+                >Serial Number</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.serialNumber }}</span>
                 </v-flex>
               </v-row>
               <v-row>
-                <v-flex xs3 class="text-left pr-2">Farming Policy ID</v-flex>
+                <v-flex
+                  xs3
+                  class="text-left pr-2"
+                >Farming Policy ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
                   <span>{{ item.farmingPolicyId }}</span>
                 </v-flex>
@@ -136,7 +172,10 @@
 
           <v-col>
             <div class="title">
-              <v-icon small left>fa-chart-pie</v-icon>Resource units reserved
+              <v-icon
+                small
+                left
+              >fa-chart-pie</v-icon>Resource units reserved
             </div>
 
             <v-row>
@@ -179,7 +218,10 @@
       </template>
     </v-data-table>
     <!--public config dialog-->
-    <v-dialog v-model="openPublicConfigDialog" width="800">
+    <v-dialog
+      v-model="openPublicConfigDialog"
+      width="800"
+    >
       <v-card>
         <v-card-title class="text-h5">
           Add a public config to your node with ID: {{ nodeToEdit.id }}
@@ -254,7 +296,11 @@
         <v-divider></v-divider>
 
         <v-card-actions>
-          <v-btn text color="error" @click="removeConfig()">
+          <v-btn
+            text
+            color="error"
+            @click="removeConfig()"
+          >
             Remove config
           </v-btn>
           <v-spacer></v-spacer>
@@ -275,24 +321,25 @@
       </v-card>
     </v-dialog>
     <!-- delete item dialog-->
-    <v-dialog v-model="openDeleteDialog" max-width="700px">
+    <v-dialog
+      v-model="openDeleteDialog"
+      max-width="700px"
+    >
       <v-card>
-        <v-card-title class="text-h5"
-          >Are you certain you want to delete this node from your
-          farm?</v-card-title
-        >
-        <v-card-text
-          >This will delete the node on chain, this action is
-          irreversible</v-card-text
-        >
+        <v-card-title class="text-h5">Are you certain you want to delete this node from your
+          farm?</v-card-title>
+        <v-card-text>This will delete the node on chain, this action is
+          irreversible</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
             color="grey lighten-2 black--text"
             @click="openDeleteDialog = false"
-            >Cancel</v-btn
-          >
-          <v-btn color="primary white--text" @click="deleteItem()">OK</v-btn>
+          >Cancel</v-btn>
+          <v-btn
+            color="primary white--text"
+            @click="deleteItem()"
+          >OK</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
@@ -303,7 +350,11 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import moment from "moment";
 import { byteToGB } from "@/portal/lib/nodes";
-import { addNodePublicConfig, deleteNode } from "@/portal/lib/farms";
+import {
+  addNodePublicConfig,
+  deleteNode,
+  nodeInterface,
+} from "@/portal/lib/farms";
 import { hex2a } from "@/portal/lib/util";
 @Component({
   name: "FarmNodesTable",
@@ -312,7 +363,7 @@ export default class FarmNodesTable extends Vue {
   expanded: any = [];
   singleExpand = true;
   headers = [
-    { text: "Node ID", value: "id" },
+    { text: "Node ID", value: "nodeID" },
     { text: "Farm ID", value: "farmID" },
     { text: "Country", value: "country" },
     { text: "Serial Number", value: "serialNumber" },
@@ -323,32 +374,48 @@ export default class FarmNodesTable extends Vue {
   openDeleteDialog = false;
   editedIndex = -1;
   editedItem: any;
-  nodeToEdit: {
-    id: string;
-    farmId: string;
-    publicConfig: {
-      ipv4: string;
-      gw4: string;
-      ipv6: string;
-      gw6: string;
-      domain: string;
-    };
-  } = {
-    id: "",
-    farmId: "",
-    publicConfig: {
-      ipv4: "",
-      gw4: "",
-      ipv6: "",
-      gw6: "",
-      domain: "",
+  nodeToEdit: nodeInterface = {
+    resourcesTotal: {
+      cru: "",
+      hru: "",
+      mru: "",
+      sru: "",
     },
+    publicConfig: {
+      domain: "",
+      gw4: "",
+      gw6: "",
+      ipv4: "",
+      ipv6: "",
+    },
+    certification: "",
+    city: "",
+    connectionPrice: null,
+    country: "",
+    created: 0,
+    createdAt: "",
+    farmID: 0,
+    farmingPolicyId: 0,
+    gridVersion: 0,
+    id: "",
+    location: {
+      latitude: "",
+      longitude: "",
+    },
+    nodeID: 0,
+    secure: false,
+    serialNumber: "",
+    twinID: 0,
+    updatedAt: "",
+    uptime: "",
+    virtualized: false,
   };
   nodeToDelete: { id: string } = {
     id: "",
   };
   openPublicConfigDialog = false;
-  @Prop({ required: true }) nodes!: [];
+
+  @Prop({ required: true }) nodes!: nodeInterface[];
   searchTerm = "";
   ip4 = "";
   gw4 = "";
@@ -362,20 +429,18 @@ export default class FarmNodesTable extends Vue {
   domainErrorMessage = "";
   loadingPublicConfig = false;
   $api: any;
+  mounted() {
+    console.log(this.nodes);
+  }
   filteredNodes() {
     if (this.nodes.length > 0) {
       return this.nodes.filter(
-        (node: {
-          id: any;
-          serialNumber: string;
-          certificationType: string;
-          farmingPolicyId: number;
-        }) =>
-          `${node.id}`.includes(this.searchTerm) ||
+        (node: nodeInterface) =>
+          `${node.nodeID}`.includes(this.searchTerm) ||
           node.serialNumber
             .toLowerCase()
             .includes(this.searchTerm.toLowerCase()) ||
-          node.certificationType
+          node.certification
             .toLowerCase()
             .includes(this.searchTerm.toLowerCase()) ||
           `${node.farmingPolicyId}`.includes(this.searchTerm)
@@ -408,11 +473,11 @@ export default class FarmNodesTable extends Vue {
   }) {
     this.loadingPublicConfig = true;
     console.log(this.nodeToEdit.id);
-    console.log(this.nodeToEdit.farmId);
+    console.log(this.nodeToEdit.farmID);
     addNodePublicConfig(
       this.$route.params.accountID,
       this.$store.state.api,
-      this.nodeToEdit.farmId,
+      `${this.nodeToEdit.farmID}`,
       this.nodeToEdit.id,
       config,
       (res: {
@@ -478,17 +543,7 @@ export default class FarmNodesTable extends Vue {
     };
     this.save(config);
   }
-  openPublicConfig(node: {
-    id: string;
-    farmId: string;
-    publicConfig: {
-      ipv4: string;
-      gw4: string;
-      ipv6: string;
-      gw6: string;
-      domain: string;
-    };
-  }) {
+  openPublicConfig(node: nodeInterface) {
     this.nodeToEdit = node;
     console.log(this.nodeToEdit);
     if (this.nodeToEdit.publicConfig) {
@@ -558,7 +613,7 @@ export default class FarmNodesTable extends Vue {
   domainCheck() {
     if (this.domain === "") return true;
   }
-  getStatus(node: { updatedAt: any }) {
+  getStatus(node: { updatedAt: string }) {
     const { updatedAt } = node;
     const startTime = moment();
     const end = moment(new Date(parseInt(updatedAt)));

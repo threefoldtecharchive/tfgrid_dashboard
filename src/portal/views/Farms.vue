@@ -53,7 +53,10 @@
             @click="createFarmFromName"
             :loading="loadingCreateFarm"
           >Submit</v-btn>
-          <v-btn @click="openCreateFarmDialog = false" color="grey lighten-2 black--text">Close</v-btn>
+          <v-btn
+            @click="openCreateFarmDialog = false"
+            color="grey lighten-2 black--text"
+          >Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -73,7 +76,10 @@
       disable-pagination
     >
       <template v-slot:top>
-        <v-toolbar flat class="primary white--text">
+        <v-toolbar
+          flat
+          class="primary white--text"
+        >
           <v-toolbar-title>Your Farms</v-toolbar-title>
           <v-spacer></v-spacer>
         </v-toolbar>
@@ -195,8 +201,14 @@
                     </v-text-field>
                   </v-card-text>
                   <v-card-actions class="justify-end">
-                    <v-btn @click="openV2AddressDialog = false" color="grey lighten-2 black--text">Close</v-btn>
-                    <v-btn @click="addV2Address" color="primary white--text">Submit</v-btn>
+                    <v-btn
+                      @click="openV2AddressDialog = false"
+                      color="grey lighten-2 black--text"
+                    >Close</v-btn>
+                    <v-btn
+                      @click="addV2Address"
+                      color="primary white--text"
+                    >Submit</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -270,6 +282,7 @@ import {
   deleteIP,
   getFarm,
   getNodesByFarmID,
+  nodeInterface,
   setFarmPayoutV2Address,
 } from "../lib/farms";
 @Component({
