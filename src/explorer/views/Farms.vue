@@ -186,6 +186,7 @@ export default class Farms extends Vue {
   public onUpdatePage() {
     if (this.items) return;
     this.loading = true;
+    console.log("rawda", this._vars)
     this.$apollo
       .query<IFetchPaginatedData<IFarm>>({
         query: getFarmsQuery,
@@ -322,7 +323,7 @@ export default class Farms extends Vue {
       component: InFilterV2,
       chip_label: "Certification Type",
       label: "Filter By Certification Type",
-      items: (_) => Promise.resolve(["Diy", "Certified"]),
+      items: (_) => Promise.resolve(["Gold", "NotCertified"]),
       value: [],
       init: true,
       multiple: true,
