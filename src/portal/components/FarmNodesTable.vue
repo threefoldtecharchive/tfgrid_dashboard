@@ -3,7 +3,7 @@
     <v-text-field
       v-model="searchTerm"
       color="primary darken-2"
-      label="Search by node ID, serial number, certification type, farming policy ID"
+      label="Search by node ID, serial number, certification, farming policy ID"
     ></v-text-field>
     <v-data-table
       :headers="headers"
@@ -20,9 +20,10 @@
           <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
         </v-toolbar>
       </template>
-      <template v-slot:[`item.nodeID`]="{ item }">
+
+      <template v-slot:[`item.nodeId`]="{ item }">
         <p class="text-left mt-1 mb-0">
-          {{ item.id }}
+          {{ item.nodeId }}
         </p>
       </template>
       <template v-slot:[`item.status`]="{ item }">
@@ -70,7 +71,7 @@
                   class="text-left pr-2"
                 >Node ID</v-flex>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.id }}</span>
+                  <span>{{ item.nodeID}}</span>
                 </v-flex>
               </v-row>
               <v-row>
@@ -95,9 +96,10 @@
                 <v-flex
                   xs3
                   class="text-left pr-2"
-                >Certification Type</v-flex>
+                >Certification </v-flex>
+
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.certificationType }}</span>
+                  <span>{{ item.certification }}</span>
                 </v-flex>
               </v-row>
               <v-row>
@@ -228,69 +230,76 @@
         </v-card-title>
 
         <v-card-text class="text">
-          <v-text-field
-            label="IPV4"
-            v-model="ip4"
-            required
-            outlined
-            dense
-            hint="IPV4 address in CIDR format xx.xx.xx.xx/xx"
-            persistent-hint
-            :error-messages="ip4ErrorMessage"
-            :validate-on-blur="true"
-            :rules="[() => !!ip4 || 'This field is required', ip4check]"
-          ></v-text-field>
+          <v-form v-model="isValidPublicConfig">
+            <v-text-field
+              label="IPV4"
+              v-model="ip4"
+              required
+              outlined
+              dense
+              type="string"
+              hint="IPV4 address in CIDR format xx.xx.xx.xx/xx"
+              persistent-hint
+              :error-messages="ip4ErrorMessage"
+              :validate-on-blur="true"
+              :rules="[() => !!ip4 || 'This field is required', ip4check]"
+            ></v-text-field>
 
-          <v-text-field
-            label="Gateway"
-            v-model="gw4"
-            required
-            outlined
-            dense
-            hint="Gateway for the IP in ipv4 format"
-            persistent-hint
-            :validate-on-blur="true"
-            :error-messages="gw4ErrorMessage"
-            :rules="[() => !!gw4 || 'This field is required', gw4Check]"
-          ></v-text-field>
+            <v-text-field
+              label="Gateway"
+              v-model="gw4"
+              required
+              outlined
+              dense
+              hint="Gateway for the IP in ipv4 format"
+              persistent-hint
+              :validate-on-blur="true"
+              type="string"
+              :error-messages="gw4ErrorMessage"
+              :rules="[() => !!gw4 || 'This field is required', gw4Check]"
+            ></v-text-field>
 
-          <v-divider></v-divider>
+            <v-divider></v-divider>
 
-          <v-text-field
-            label="IPV6"
-            v-model="ip6"
-            outlined
-            dense
-            hint="IPV6 address (not required)"
-            persistent-hint
-            :validate-on-blur="true"
-            :error-messages="ip6ErrorMessage"
-            :rules="[ip6check]"
-          ></v-text-field>
+            <v-text-field
+              label="IPV6"
+              v-model="ip6"
+              type="string"
+              outlined
+              dense
+              hint="IPV6 address "
+              persistent-hint
+              :validate-on-blur="true"
+              :error-messages="ip6ErrorMessage"
+              :rules="[() => !!ip6 || 'This field is required', ip6check]"
+            ></v-text-field>
 
-          <v-text-field
-            label="Gateway IPV6"
-            v-model="gw6"
-            outlined
-            dense
-            hint="Gateway for the IP in ipv6 format (not required)"
-            persistent-hint
-            :validate-on-blur="true"
-            :error-messages="gw6ErrorMessage"
-            :rules="[gw6Check]"
-          ></v-text-field>
+            <v-text-field
+              label="Gateway IPV6"
+              v-model="gw6"
+              outlined
+              dense
+              type="string"
+              hint="Gateway for the IP in ipv6 format "
+              persistent-hint
+              :validate-on-blur="true"
+              :error-messages="gw6ErrorMessage"
+              :rules="[() => !!gw6 || 'This field is required', gw6Check]"
+            ></v-text-field>
 
-          <v-text-field
-            label="Domain"
-            v-model="domain"
-            outlined
-            dense
-            hint="Domain for webgateway (not required)"
-            persistent-hint
-            :validate-on-blur="true"
-            :error-messages="domainErrorMessage"
-            :rules="[domainCheck]"
-          ></v-text-field>
+            <v-text-field
+              label="Domain"
+              v-model="domain"
+              outlined
+              dense
+              type="string"
+              hint="Domain for webgateway"
+              persistent-hint
+              :validate-on-blur="true"
+              :error-messages="domainErrorMessage"
+              :rules="[() => !!domain || 'This field is required', domainCheck]"
+            ></v-text-field>
+          </v-form>
         </v-card-text>
 
         <v-divider></v-divider>
@@ -312,8 +321,8 @@
           </v-btn>
           <v-btn
             color="primary white--text"
-            :loading="loadingPublicConfig"
-            @click="saveConfig()"
+            @click=" openWarningDialog = true;"
+            :disabled="!isValidPublicConfig"
           >
             Save
           </v-btn>
@@ -344,13 +353,34 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="openWarningDialog"
+      max-width="600"
+    >
+      <v-card>
+        <v-card-title class="text-h5">Are you certain you want to update this node's public config?</v-card-title>
+        <v-card-text> This action is
+          irreversible</v-card-text>
+        <v-card-actions>
+          <v-btn
+            @click="saveConfig()"
+            :loading="loadingPublicConfig"
+          >Submit</v-btn>
+          <v-btn @click="openWarningDialog = false">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import moment from "moment";
 import { byteToGB } from "@/portal/lib/nodes";
-import { addNodePublicConfig, deleteNode } from "@/portal/lib/farms";
+import {
+  addNodePublicConfig,
+  deleteNode,
+  nodeInterface,
+} from "@/portal/lib/farms";
 import { hex2a } from "@/portal/lib/util";
 @Component({
   name: "FarmNodesTable",
@@ -359,7 +389,7 @@ export default class FarmNodesTable extends Vue {
   expanded: any = [];
   singleExpand = true;
   headers = [
-    { text: "Node ID", value: "id" },
+    { text: "Node ID", value: "nodeID" },
     { text: "Farm ID", value: "farmID" },
     { text: "Country", value: "country" },
     { text: "Serial Number", value: "serialNumber" },
@@ -370,59 +400,72 @@ export default class FarmNodesTable extends Vue {
   openDeleteDialog = false;
   editedIndex = -1;
   editedItem: any;
-  nodeToEdit: {
-    id: string;
-    farmId: string;
-    publicConfig: {
-      ipv4: string;
-      gw4: string;
-      ipv6: string;
-      gw6: string;
-      domain: string;
-    };
-  } = {
-    id: "",
-    farmId: "",
-    publicConfig: {
-      ipv4: "",
-      gw4: "",
-      ipv6: "",
-      gw6: "",
-      domain: "",
+  nodeToEdit: nodeInterface = {
+    resourcesTotal: {
+      cru: "",
+      hru: "",
+      mru: "",
+      sru: "",
     },
+    publicConfig: {
+      domain: "",
+      gw4: "",
+      gw6: "",
+      ipv4: "",
+      ipv6: "",
+    },
+    certification: "",
+    city: "",
+    connectionPrice: null,
+    country: "",
+    created: 0,
+    createdAt: "",
+    farmID: 0,
+    farmingPolicyId: 0,
+    gridVersion: 0,
+    id: "",
+    location: {
+      latitude: "",
+      longitude: "",
+    },
+    nodeID: 0,
+    secure: false,
+    serialNumber: "",
+    twinID: 0,
+    updatedAt: "",
+    uptime: "",
+    virtualized: false,
   };
   nodeToDelete: { id: string } = {
     id: "",
   };
   openPublicConfigDialog = false;
-  @Prop({ required: true }) nodes!: [];
+
+  @Prop({ required: true }) nodes!: nodeInterface[];
   searchTerm = "";
   ip4 = "";
   gw4 = "";
   ip6 = "";
   gw6 = "";
   domain = "";
+  loadingPublicConfig = false;
+  $api: any;
+  isValidPublicConfig = false;
+  openWarningDialog = false;
   ip4ErrorMessage = "";
   gw4ErrorMessage = "";
   ip6ErrorMessage = "";
   gw6ErrorMessage = "";
   domainErrorMessage = "";
-  loadingPublicConfig = false;
-  $api: any;
   filteredNodes() {
     if (this.nodes.length > 0) {
       return this.nodes.filter(
-        (node: {
-          id: any;
-          serialNumber: string;
-          certificationType: string;
-          farmingPolicyId: number;
-        }) =>
-          `${node.id}`.includes(this.searchTerm) ||
+        (node: nodeInterface) =>
+          `${node.nodeID}`.includes(this.searchTerm) ||
           node.serialNumber
             .toLowerCase()
             .includes(this.searchTerm.toLowerCase()) ||
-          node.certificationType
+          node.certification
             .toLowerCase()
             .includes(this.searchTerm.toLowerCase()) ||
           `${node.farmingPolicyId}`.includes(this.searchTerm)
@@ -454,13 +497,11 @@ export default class FarmNodesTable extends Vue {
     domain: string;
   }) {
     this.loadingPublicConfig = true;
-    console.log(this.nodeToEdit.id);
-    console.log(this.nodeToEdit.farmId);
     addNodePublicConfig(
       this.$route.params.accountID,
       this.$store.state.api,
-      this.nodeToEdit.farmId,
-      this.nodeToEdit.id,
+      this.nodeToEdit.farmID,
+      this.nodeToEdit.nodeID,
       config,
       (res: {
         events?: never[] | undefined;
@@ -469,6 +510,11 @@ export default class FarmNodesTable extends Vue {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
+          this.ip4 = "";
+          this.ip6 = "";
+          this.gw4 = "";
+          this.gw6 = "";
+          this.domain = "";
           return;
         }
         const { events = [], status } = res;
@@ -495,9 +541,19 @@ export default class FarmNodesTable extends Vue {
                 this.$toasted.show("Node public config added!");
                 this.loadingPublicConfig = false;
                 this.openPublicConfigDialog = false;
+                this.ip4 = "";
+                this.ip6 = "";
+                this.gw4 = "";
+                this.gw6 = "";
+                this.domain = "";
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Adding Node public config failed");
                 this.loadingPublicConfig = false;
+                this.ip4 = "";
+                this.ip6 = "";
+                this.gw4 = "";
+                this.gw6 = "";
+                this.domain = "";
               }
             });
           }
@@ -508,6 +564,11 @@ export default class FarmNodesTable extends Vue {
       this.$toasted.show("Adding Node public config failed");
       this.loadingPublicConfig = false;
       this.openPublicConfigDialog = false;
+      this.ip4 = "";
+      this.ip6 = "";
+      this.gw4 = "";
+      this.gw6 = "";
+      this.domain = "";
     });
   }
   removeConfig() {
@@ -525,19 +586,8 @@ export default class FarmNodesTable extends Vue {
     };
     this.save(config);
   }
-  openPublicConfig(node: {
-    id: string;
-    farmId: string;
-    publicConfig: {
-      ipv4: string;
-      gw4: string;
-      ipv6: string;
-      gw6: string;
-      domain: string;
-    };
-  }) {
+  openPublicConfig(node: nodeInterface) {
     this.nodeToEdit = node;
-    console.log(this.nodeToEdit);
     if (this.nodeToEdit.publicConfig) {
       this.ip4 = this.nodeToEdit.publicConfig.ipv4;
       this.gw4 = this.nodeToEdit.publicConfig.gw4;
@@ -554,7 +604,7 @@ export default class FarmNodesTable extends Vue {
   ip4check() {
     if (this.ip4 === "") return true;
     const ipRegex = new RegExp(
-      "^([0-9]{1,3}.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))$"
+      "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.|$)){4}$"
     );
     if (ipRegex.test(this.ip4)) {
       this.ip4ErrorMessage = "";
@@ -565,8 +615,6 @@ export default class FarmNodesTable extends Vue {
     }
   }
   ip6check() {
-    if (this.ip6 === "") return true;
-    /* eslint-disable */
     const ipRegex = new RegExp(
       "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
     );
@@ -579,7 +627,6 @@ export default class FarmNodesTable extends Vue {
     }
   }
   gw4Check() {
-    if (this.gw4 === "") return true;
     const gatewayRegex = new RegExp("^(?:[0-9]{1,3}.){3}[0-9]{1,3}$");
     if (gatewayRegex.test(this.gw4)) {
       this.gw4ErrorMessage = "";
@@ -590,7 +637,6 @@ export default class FarmNodesTable extends Vue {
     }
   }
   gw6Check() {
-    if (this.gw6 === "") return true;
     const gatewayRegex = new RegExp(
       "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))[0-9]{1,3}$"
     );
@@ -603,9 +649,9 @@ export default class FarmNodesTable extends Vue {
     }
   }
   domainCheck() {
-    if (this.domain === "") return true;
+    return true;
   }
-  getStatus(node: { updatedAt: any }) {
+  getStatus(node: { updatedAt: string }) {
     const { updatedAt } = node;
     const startTime = moment();
     const end = moment(new Date(parseInt(updatedAt)));
