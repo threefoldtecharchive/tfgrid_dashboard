@@ -282,6 +282,9 @@ export default class Farms extends Vue {
       multiple: true,
       symbol: "farmId_in",
       key: "farmID",
+      getValue: (f) => {
+        return (f.value as string[]).map((x) => +x );
+      },
     },
     {
       component: InFilterV2,
@@ -311,16 +314,19 @@ export default class Farms extends Vue {
       multiple: true,
       symbol: "twinId_in",
       key: "twinId",
+      getValue: (f) => {
+        return (f.value as string[]).map((x) => +x );
+      },
     },
     {
       component: InFilterV2,
       chip_label: "Certification Type",
       label: "Filter By Certification Type",
-      items: (_) => Promise.resolve(["Diy", "Certified"]),
+      items: (_) => Promise.resolve(["Gold", "NotCertified"]),
       value: [],
       init: true,
       multiple: true,
-      symbol: "certificationType_in",
+      symbol: "certification_in",
       key: "certificationType",
     },
     {
