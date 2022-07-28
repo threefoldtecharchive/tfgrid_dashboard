@@ -12,13 +12,18 @@
       @keydown="search"
       v-model="content"
       :multiple="options.multiple"
+      @input.native="validated($event.srcElement.value, options.key)"
     />
+    <v-alert dense type="error" v-if="errorMsg">
+        {{ errorMsg }}
+    </v-alert>
   </v-card>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import IFilterOptions from "../types/FilterOptions";
 import { debounce } from "lodash";
+import { inputValidation } from "../utils/validations"
 
 type TContent = string | number | Array<string | number>;
 
@@ -60,6 +65,12 @@ export default class InFilterV2 extends Vue {
     if (this.options.init) {
       this._search({ target: { value: null } } as any);
     }
+  }
+
+  errorMsg:any = ''
+  validated(value: string, key: string): string{
+    this.errorMsg = inputValidation(value, key);
+    return this.errorMsg;
   }
 }
 </script>
