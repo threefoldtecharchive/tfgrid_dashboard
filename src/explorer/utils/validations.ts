@@ -2,8 +2,13 @@ export function inputValidation(value: string, key: string) : string {
     // value: Current value of the input.
     // key: Current key of the input, e.g. [nodeId,farmId]..etc
 
-    const numericFields :string[] = ['nodeId', 'farmId', 'twinId', 'freePublicIPs'];
-    const textualFields :string[] = ['countryFullName', 'farmingPolicyName', 'certificationType'];
+    const numericFields :string[] = [
+        'nodeId', 'farmId', 'twinId', 'freePublicIPs', 'farmID'
+    ];
+    const textualFields :string[] = [
+        'countryFullName', 'farmingPolicyName', 'certificationType',
+        'farmName', 'pricingPolicyId',
+    ];
     const specialChars = /[ `!@#$%^&*()+\-=[\]{};':"\\|,.<>/?~]/;
     let errorMsg = ''
 

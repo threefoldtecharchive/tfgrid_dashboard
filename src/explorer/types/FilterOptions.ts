@@ -8,5 +8,6 @@ export default interface IFilterOptions {
   type?: "text" | "number";
   init?: boolean;
   symbol: string;
+  key: string;
   getValue?: (filter: IFilterOptions) => any;
 }
