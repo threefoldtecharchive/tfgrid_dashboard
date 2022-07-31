@@ -87,9 +87,10 @@
                 label="Amount (TFT)"
                 v-model="amount"
                 type="number"
+                onkeydown="javascript: return event.keyCode == 69 || /^\+$/.test(event.key) ? false : true" 
                 :rules="[
           () => !!amount || 'This field is required',
-          () => amount >= 0 || 'Amount cannot be negative',
+          () => amount > 0 || 'Amount cannot be negative or 0',
           () => (amount) < parseFloat(balance) || 'Amount cannot exceed balance',
         ]"
               ></v-text-field>
@@ -283,6 +284,7 @@ export default class TransferView extends Vue {
                 getBalance(this.$api, this.address).then(
                   (balance: balanceInterface) => {
                     this.balance = balance.free;
+                    this.$root.$emit('updateBalance', this.balance);
                   }
                 );
                 this.target = "";
