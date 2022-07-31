@@ -633,7 +633,7 @@ export default class FarmNodesTable extends Vue {
   ip4check() {
     if (this.ip4 === "") return true;
     const ipRegex = new RegExp(
-      "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.|$)){4}$"
+      "^(?:[0-9]{1,3}.){3}[0-9]{1,3}/(16|24)$"
     );
     if (ipRegex.test(this.ip4)) {
       this.ip4ErrorMessage = "";
