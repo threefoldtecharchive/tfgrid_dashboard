@@ -82,22 +82,6 @@
           <v-spacer></v-spacer>
         </v-toolbar>
       </template>
-      <template v-slot:[`item.actions`]="{ item }">
-        <!--delete node-->
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon
-              medium
-              v-on="on"
-              v-bind="attrs"
-              @click="openDeleteFarm(item)"
-            >
-              mdi-delete
-            </v-icon>
-          </template>
-          <span>Delete a farm</span>
-        </v-tooltip>
-      </template>
       <template v-slot:expanded-item="{ item }">
         <td :colspan="headers.length">
           <v-container
@@ -303,7 +287,6 @@ export default class FarmsView extends Vue {
     { text: "Linked Twin ID", value: "twin_id" },
     { text: "Certification type", value: "certification" },
     { text: "Pricing Policy ID", value: "pricing_policy_id" },
-    { text: "Actions", value: "actions" },
   ];
   farms: any = [];
   id: any = [];

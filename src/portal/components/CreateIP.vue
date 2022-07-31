@@ -93,7 +93,7 @@ export default class CreateIP extends Vue {
     this.$emit("create", this.publicIP, this.gateway);
   }
   ipcheck() {
-    const ipRegex = new RegExp("^(?:[0-9]{1,3}.){3}[0-9]{1,3}$");
+    const ipRegex = new RegExp("^(?:[0-9]{1,3}.){3}[0-9]{1,3}/(1[6-9]|2[0-9]|3[0-2])$");
     if (ipRegex.test(this.publicIP)) {
       return true;
     }
