@@ -132,7 +132,7 @@
               }"
                     >
                       <template>
-                        <strong>{{ proposal.ayesProgress }}%</strong>
+                        <strong>{{ !!(proposal.ayesProgress % 1) ? proposal.ayesProgress.toFixed(2) : proposal.ayesProgress }}%</strong>
                       </template>
                     </v-progress-linear>
                     <v-progress-linear
@@ -146,7 +146,7 @@
               }"
                     >
                       <template>
-                        <strong>{{ proposal.nayesProgress }}%</strong>
+                        <strong>{{ !!(proposal.nayesProgress % 1) ? proposal.nayesProgress.toFixed(2) : proposal.nayesProgress }}%</strong>
                       </template>
                     </v-progress-linear>
                   </v-row>
