@@ -499,7 +499,7 @@ export default class FarmNodesTable extends Vue {
     this.loadingPublicConfig = true;
     addNodePublicConfig(
       this.$route.params.accountID,
-      this.$store.state.api,
+      this.$api,
       this.nodeToEdit.farmID,
       this.nodeToEdit.nodeID,
       config,
@@ -530,6 +530,7 @@ export default class FarmNodesTable extends Vue {
           if (!events.length) {
             this.$toasted.show("Adding Node public config failed");
             this.loadingPublicConfig = false;
+            this.openWarningDialog = false;
           } else {
             // Loop through Vec<EventRecord> to display all events
             events.forEach(({ phase, event: { data, method, section } }) => {
@@ -541,6 +542,7 @@ export default class FarmNodesTable extends Vue {
                 this.$toasted.show("Node public config added!");
                 this.loadingPublicConfig = false;
                 this.openPublicConfigDialog = false;
+                this.openWarningDialog = false;
                 this.ip4 = "";
                 this.ip6 = "";
                 this.gw4 = "";
@@ -549,6 +551,7 @@ export default class FarmNodesTable extends Vue {
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Adding Node public config failed");
                 this.loadingPublicConfig = false;
+                this.openWarningDialog = false;
                 this.ip4 = "";
                 this.ip6 = "";
                 this.gw4 = "";
@@ -564,6 +567,7 @@ export default class FarmNodesTable extends Vue {
       this.$toasted.show("Adding Node public config failed");
       this.loadingPublicConfig = false;
       this.openPublicConfigDialog = false;
+      this.openWarningDialog = false;
       this.ip4 = "";
       this.ip6 = "";
       this.gw4 = "";
