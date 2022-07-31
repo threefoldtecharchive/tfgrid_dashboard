@@ -65,6 +65,12 @@ export default class FundsCard extends Vue {
   @Prop({ required: true }) balanceReserved!: number;
   openBalance = false;
 
+  mounted() { 
+    this.$root.$on('updateBalance', (balance: number) => { 
+     this.balanceFree = balance;
+    })
+  }
+
   async addTFT() {
     if (config.network !== "dev" && config.network !== "qa") {
       window.open(
