@@ -89,7 +89,8 @@
                 type="number"
                 :rules="[
           () => !!amount || 'This field is required',
-          () => amount < balance || 'Amount cannot exceed balance',
+          () => amount >= 0 || 'Amount cannot be negative',
+          () => (amount) < parseFloat(balance) || 'Amount cannot exceed balance',
         ]"
               ></v-text-field>
             </v-form>
