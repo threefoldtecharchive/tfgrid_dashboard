@@ -72,7 +72,7 @@ export interface INode {
   city?: string;
   interfaces: Interfaces[];
   status: any;
-  certificationType: "Diy" | "Certified";
+  certificationType: "Gold" | "NotCertified";
   farmingPolicyName: string;
   countryFullName: string;
 }

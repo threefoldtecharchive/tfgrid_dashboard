@@ -20,6 +20,7 @@
                   hide-details
                   single-line
                   type="number"
+                  @input.native="validated($event.srcElement.value, key2)"
                   @input="onChange({ min: $event })"
                   style="width: 52px; text-align: center"
                 ></v-text-field>
@@ -45,13 +46,16 @@
         </v-col>
       </v-row>
     </v-card-text>
+    <v-alert dense type="error" v-if="errorMsg">
+        {{ errorMsg }}
+    </v-alert>
   </v-card>
 </template>
 <script lang="ts">
 import { MutationTypes } from "../store/mutations";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import toTera from "../filters/toTera";
-
+// import { inputValidation } from "../utils/validations"
 @Component({})
 export default class RangeFilter extends Vue {
   @Prop({ required: true }) key1!: string;
@@ -60,15 +64,12 @@ export default class RangeFilter extends Vue {
   @Prop() min?: number;
   @Prop() max?: number;
   @Prop() unit?: string;
-
   get _min(): number {
     return this.min || 0;
   }
-
   get _max(): number {
     return this.max || Number.MAX_SAFE_INTEGER;
   }
-
   get range(): [number, number] {
     const { min, max } = this.$store.getters["explorer/getFilter"](
       this.key1,
@@ -76,7 +77,6 @@ export default class RangeFilter extends Vue {
     ).value;
     return [min, max];
   }
-
   set range([min, max]: [number, number]) {
     this.$store.commit("explorer/" + MutationTypes.SET_FILTER_VALUE, {
       key1: this.key1,
@@ -84,7 +84,6 @@ export default class RangeFilter extends Vue {
       value: { min, max },
     });
   }
-
   get_value(val: number) {
     const res = toTera(val.toString());
     return Number(res.split(" ")[0]).toFixed(0);
@@ -97,7 +96,13 @@ export default class RangeFilter extends Vue {
       max ? max * multiplier : __max,
     ];
   }
-
+  errorMsg:any = ''
+  validated(value: string, key: string){
+    if (+value < 0){
+      this.errorMsg = "Number must be positive."; return;
+    }
+    this.errorMsg = ''
+  }
   created() {
     this.$store.commit("explorer/" + MutationTypes.SET_FILTER_ENABLE, {
       key1: this.key1,
@@ -105,7 +110,6 @@ export default class RangeFilter extends Vue {
       value: true,
     });
   }
-
   destroyed() {
     this.$store.commit("explorer/" + MutationTypes.SET_FILTER_ENABLE, {
       key1: this.key1,

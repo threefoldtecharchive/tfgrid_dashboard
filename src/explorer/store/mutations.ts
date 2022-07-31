@@ -67,10 +67,10 @@ export default {
 
         totalPublicIPs: farms.find(
           (farm: any) => farm.farmId === nodes[i].farmId
-        ).publicIps.length,
+        )?.publicIps.length,
         freePublicIPs: farms
           .find((farm: any) => farm.farmId === nodes[i].farmId)
-          .publicIps.filter((ip: any) => ip.contractId === 0).length,
+          ?.publicIps.filter((ip: any) => ip.contractId === 0).length,
         hru: nodes[i].total_resources.hru,
         sru: nodes[i].total_resources.sru,
         cru: nodes[i].total_resources.cru,
