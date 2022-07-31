@@ -1,15 +1,6 @@
 <template>
   <v-container fluid>
-    <v-card
-      class="white--text my-3 pa-3 text-center"
-      color="primary"
-    >
-      <h2>
-        Greetings {{ $route.query.accountName }}, you can now
-        manage your farms & their nodes!
-      </h2>
-      <small>How cool is that?</small>
-    </v-card>
+
     <v-card
       color="primary"
       class="white--text my-3 pa-3 text-center d-flex justify-center align-baseline"
@@ -33,27 +24,33 @@
           class="white--text"
         >Create Farm</v-toolbar>
         <v-card-text>
-          <v-text-field
-            label="Farm Name"
-            v-model="farmName"
-            required
-            :error-messages="farmNameErrorMessage"
-            :rules="[
+          <v-form v-model="isValidFarmName">
+            <v-text-field
+              label="Farm Name"
+              v-model="farmName"
+              required
+              :error-messages="farmNameErrorMessage"
+              :rules="[
               () => !!farmName || 'This field is required',
               farmNameCheck,
               () =>
                 farmName.length < 20 ||
                 'Name too long, only 20 characters permitted',
             ]"
-          ></v-text-field>
+            ></v-text-field>
+          </v-form>
         </v-card-text>
         <v-card-actions class="justify-end">
+          <v-btn
+            @click="openCreateFarmDialog = false"
+            color="grey lighten-2 black--text"
+          >Close</v-btn>
           <v-btn
             color="primary white--text"
             @click="createFarmFromName"
             :loading="loadingCreateFarm"
+            :disabled="!isValidFarmName"
           >Submit</v-btn>
-          <v-btn @click="openCreateFarmDialog = false" color="grey lighten-2 black--text">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -73,7 +70,10 @@
       disable-pagination
     >
       <template v-slot:top>
-        <v-toolbar flat class="primary white--text">
+        <v-toolbar
+          flat
+          class="primary white--text"
+        >
           <v-toolbar-title>Your Farms</v-toolbar-title>
           <v-spacer></v-spacer>
         </v-toolbar>
@@ -126,7 +126,7 @@
               </v-col>
               <v-col>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.twinId }}</span>
+                  <span>{{ item.twin_id }}</span>
                 </v-flex>
               </v-col>
             </v-row>
@@ -146,7 +146,7 @@
               </v-col>
               <v-col>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.pricingPolicyId }}</span>
+                  <span>{{ item.pricing_policy_id }}</span>
                 </v-flex>
               </v-col>
             </v-row>
@@ -188,15 +188,29 @@
                 <v-card>
                   <v-toolbar color="primary">Add/Edit V2 Stellar Address</v-toolbar>
                   <v-card-text>
-                    <v-text-field
-                      v-model="v2_address"
-                      label="Stellar Wallet Address"
-                    >
-                    </v-text-field>
+                    <v-form v-model="isValidStellarV2Address">
+                      <v-text-field
+                        v-model="v2_address"
+                        label="Stellar Wallet Address"
+                        :rules="[
+          () => !!v2_address || 'This field is required',
+          () => stellarAddressCheck() || 'invalid address',
+        ]"
+                      >
+                      </v-text-field>
+                    </v-form>
                   </v-card-text>
                   <v-card-actions class="justify-end">
-                    <v-btn @click="openV2AddressDialog = false" color="grey lighten-2 black--text">Close</v-btn>
-                    <v-btn @click="addV2Address" color="primary white--text">Submit</v-btn>
+                    <v-btn
+                      @click="openV2AddressDialog = false"
+                      color="grey lighten-2 black--text"
+                    >Close</v-btn>
+                    <v-btn
+                      @click="addV2Address"
+                      color="primary white--text"
+                      :disabled="!isValidStellarV2Address"
+                      :loading="loadingAddStellar"
+                    >Submit</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -217,7 +231,7 @@
             </v-row>
 
             <PublicIPTable
-              :ips="item.publicIps"
+              :ips="item.public_ips"
               :deleteIP="deletePublicIP"
               :loadingDelete="loadingDeleteIP"
               :createIP="createPublicIP"
@@ -272,6 +286,7 @@ import {
   getNodesByFarmID,
   setFarmPayoutV2Address,
 } from "../lib/farms";
+import { StrKey } from "stellar-sdk";
 @Component({
   name: "FarmsView",
   components: { PublicIPTable, FarmNodesTable },
@@ -280,10 +295,10 @@ export default class FarmsView extends Vue {
   headers = [
     { text: "Farm ID", value: "id" },
     { text: "Farm name", value: "name" },
-    { text: "Linked Twin ID", value: "twinId" },
+    { text: "Linked Twin ID", value: "twin_id" },
     { text: "Certification type", value: "certification" },
-    { text: "Pricing Policy ID", value: "pricingPolicyId" },
-    // { text: "Actions", value: "actions" },
+    { text: "Pricing Policy ID", value: "pricing_policy_id" },
+    { text: "Actions", value: "actions" },
   ];
   farms: any = [];
   id: any = [];
@@ -307,6 +322,9 @@ export default class FarmsView extends Vue {
   farmToDelete: any = {};
   searchTerm = "";
   loadingCreateFarm = false;
+  isValidFarmName = false;
+  isValidStellarV2Address = false;
+  loadingAddStellar = false;
   async mounted() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
@@ -587,7 +605,16 @@ export default class FarmsView extends Vue {
       this.loadingCreateFarm = false;
     });
   }
+  stellarAddressCheck() {
+    const isValid = StrKey.isValidEd25519PublicKey(this.v2_address);
+    if (isValid && !this.v2_address.match(/\W/)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   public addV2Address() {
+    this.loadingAddStellar = true;
     setFarmPayoutV2Address(
       this.$route.params.accountID,
       this.$api,
@@ -600,6 +627,7 @@ export default class FarmsView extends Vue {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
+          this.loadingAddStellar = false;
           return;
         }
         const { events = [], status } = res;
@@ -628,9 +656,13 @@ export default class FarmsView extends Vue {
                   this.farms = farms;
                 });
                 this.openV2AddressDialog = false;
+                this.loadingAddStellar = false;
+                this.v2_address = "";
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Adding a V2 address failed!");
                 this.openV2AddressDialog = false;
+                this.loadingAddStellar = false;
+                this.v2_address = "";
               }
             });
           }
@@ -639,6 +671,8 @@ export default class FarmsView extends Vue {
     ).catch((err) => {
       this.$toasted.show(err.message);
       this.openV2AddressDialog = false;
+      this.loadingAddStellar = false;
+      this.v2_address = "";
     });
   }
 }
@@ -648,7 +682,6 @@ export default class FarmsView extends Vue {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .theme--dark.v-btn.v-btn--has-bg {
   background-color: #064663;
 }
