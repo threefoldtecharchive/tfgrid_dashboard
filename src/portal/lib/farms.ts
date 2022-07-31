@@ -1,14 +1,52 @@
+
+
 import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios from 'axios';
 import config from '../config';
 import { getNodeUsedResources } from './nodes';
 import { hex2a } from './util'
+export interface nodeInterface {
+  resourcesTotal: {
+    cru: string;
+    hru: string;
+    mru: string;
+    sru: string;
+  },
+  publicConfig: {
+    domain: string;
+    gw4: string;
+    gw6: string;
+    ipv4: string;
+    ipv6: string;
+  },
+  certification: string;
+  city: string;
+  connectionPrice: null;
+  country: string;
+  created: number;
+  createdAt: string;
+  farmID: number;
+  farmingPolicyId: number;
+  gridVersion: number;
+  id: string;
+  location: {
+    latitude: string;
+    longitude: string;
+  },
+  nodeID: number;
+  secure: boolean;
+  serialNumber: string;
+  twinID: number;
+  updatedAt: string;
+  uptime: string;
+  virtualized: boolean;
+}
 export async function getFarm(api: { query: any; }, twinID: number) {
   const farms = await api.query.tfgridModule.farms.entries()
 
-  const twinFarms = farms.filter((farm: { toJSON: () => { (): any; new(): any; twinId: number } }[]) => {
-    if (farm[1].toJSON().twinId === twinID) {
+  const twinFarms = farms.filter((farm: { toJSON: () => { (): any; new(): any; twin_id: number } }[]) => {
+    if (farm[1].toJSON().twin_id === twinID) {
       return farm
     }
   })
@@ -109,7 +147,42 @@ export async function getNodesByFarmID(farms: any[]) {
 }
 export async function getNodesByFarm(farmID: string) {
   const res = await axios.post(config.graphqlUrl, {
-    query: `{ nodes(where: {farmID_eq:${farmID}}) { id, farmID, twinID, resourcesTotal { sru, hru, mru, cru } , location { longitude, latitude }, country, city, publicConfig { ipv4, ipv6, gw4, gw6 }, created, farmingPolicyId, interfaces { name, mac, ips }, certification ,  secure, virtualized, serialNumber, connectionPrice }}`,
+    query: `{ nodes (where: {farmID_eq:${farmID}}) { 
+      resourcesTotal {
+        cru
+        hru
+        mru
+        sru
+      }
+      publicConfig {
+        domain
+        gw4
+        gw6
+        ipv4
+        ipv6
+      }
+      certification
+      city
+      connectionPrice
+      country
+      created
+      createdAt
+      farmID
+      farmingPolicyId
+      gridVersion
+      id
+      location {
+        latitude
+        longitude
+      }
+      nodeID
+      secure
+      serialNumber
+      twinID
+      updatedAt
+      uptime
+      virtualized
+    }}`,
     operation: "getNodes",
   });
 
@@ -118,9 +191,15 @@ export async function getNodesByFarm(farmID: string) {
 export async function addNodePublicConfig(
   address: string,
   api: { tx: { tfgridModule: { addNodePublicConfig: (arg0: any, arg1: any, arg2: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; },
-  farmID: string,
-  nodeID: string,
-  config: any,
+  farmID: number,
+  nodeID: number,
+  config: {
+    ipv4: string;
+    ipv6: string;
+    gw4: string;
+    gw6: string;
+    domain: string;
+  },
   callback: any
 ) {
   const injector = await web3FromAddress(address);

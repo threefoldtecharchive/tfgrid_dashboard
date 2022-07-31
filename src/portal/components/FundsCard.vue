@@ -1,7 +1,10 @@
 <template>
   <v-container>
     <v-card class="fund d-flex align-center font-weight-bold mr-4 primary">
-      <v-card-text style="padding: 5px" class="pr-0">
+      <v-card-text
+        style="padding: 5px"
+        class="pr-0"
+      >
         <v-tooltip>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -22,11 +25,13 @@
           @click="addTFT()"
           style="max-width: 60px"
           :loading="loadingAddTFT"
-          >+</v-btn
-        >
+        >+</v-btn>
       </v-card-actions>
     </v-card>
-    <v-dialog v-model="openBalance" max-width="600">
+    <v-dialog
+      v-model="openBalance"
+      max-width="600"
+    >
       <v-card>
         <v-toolbar color="primary"> Balance Summary </v-toolbar>
         <v-card-text class="pa-5">
@@ -36,9 +41,10 @@
           </v-container>
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn @click="openBalance = false" color="grey lighten-2 black--text"
-            >Close</v-btn
-          >
+          <v-btn
+            @click="openBalance = false"
+            color="grey lighten-2 black--text"
+          >Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -48,7 +54,6 @@
 import config from "@/portal/config";
 import { getBalance, getMoreFunds } from "@/portal/lib/balance";
 import { Component, Prop, Vue } from "vue-property-decorator";
-
 @Component({
   name: "FundsCard",
 })
@@ -58,9 +63,8 @@ export default class FundsCard extends Vue {
   @Prop({ required: true }) balanceFree!: number;
   @Prop({ required: true }) balanceReserved!: number;
   openBalance = false;
-
   async addTFT() {
-    if (config.network !== "dev") {
+    if (config.network !== "dev" && config.network !== "qa") {
       window.open(
         "https://gettft.com/auth/login?next_url=/gettft/shop/#/buy",
         "_blank"
@@ -79,14 +83,12 @@ export default class FundsCard extends Vue {
             console.log(res);
             return;
           }
-
           const { events = [], status } = res;
           console.log(`Current status is ${status.type}`);
           switch (status.type) {
             case "Ready":
               this.$toasted.show(`Transaction submitted`);
           }
-
           if (status.isFinalized) {
             console.log(
               `Transaction included at blockHash ${status.asFinalized}`

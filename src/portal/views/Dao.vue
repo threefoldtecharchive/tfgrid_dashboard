@@ -90,7 +90,7 @@
                   <v-btn
                     color="primary"
                     @click="openVoteDialog(proposal.hash, true)"
-                    :loading="loadingVote"
+                    :disabled="loadingVote"
                     :width="`${(proposal.ayes.length)/(proposal.ayes.length+ proposal.nayes.length) *100 + 100}`"
                   >Yes
                     <v-divider
@@ -111,7 +111,7 @@
                     color="grey lighten-2 black--text"
                     @click="openVoteDialog(proposal.hash, false)"
                     :width="`${proposal.nayes.length /(proposal.ayes.length+ proposal.nayes.length) *100 + 100}`"
-                    :loading="loadingVote"
+                    :disabled="loadingVote"
                   >No
                     <v-divider
                       class="mx-3"
@@ -164,21 +164,25 @@
                 <v-card>
                   <v-card-title>Cast Vote</v-card-title>
                   <v-card-text>
-                    <v-select
-                      :items="farms"
-                      label="Select a farm"
-                      outlined
-                      item-text="name"
-                      item-value="id"
-                      v-model="selectedFarm"
-                    >
-                    </v-select>
+                    <v-form v-model="isValidFarm">
+                      <v-select
+                        :items="farms"
+                        label="Select a farm"
+                        outlined
+                        item-text="name"
+                        item-value="id"
+                        v-model="selectedFarm"
+                        :rules="rules.select"
+                      >
+                      </v-select>
+                    </v-form>
                   </v-card-text>
                   <v-card-actions class="justify-end">
                     <v-btn
                       @click="castVote"
                       :loading="loadingVote"
                       color="primary white--text"
+                      :disabled="!isValidFarm"
                     >Submit</v-btn>
                     <v-btn
                       @click="openVDialog = false"
@@ -237,7 +241,6 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { getProposals, vote, proposalInterface } from "../lib/dao";
 import { getFarm, getNodesByFarm } from "../lib/farms";
-
 @Component({
   name: "Dao",
 })
@@ -264,6 +267,10 @@ export default class DaoView extends Vue {
     { title: "Active", content: this.activeProposals },
     { title: "Archived", content: this.inactiveProposals },
   ];
+  isValidFarm = false;
+  rules = {
+    select: [(v: string) => !!v || "required field"],
+  };
   async mounted() {
     if (this.$api) {
       this.id = this.$route.query.twinID;
@@ -281,11 +288,6 @@ export default class DaoView extends Vue {
         path: "/",
       });
     }
-  }
-  @Watch("proposals") async onProposalUpdate(value: any, oldValue: any) {
-    console.log(
-      `there were ${oldValue.length} proposals, now there is ${value.length} proposals`
-    );
   }
   async updated() {
     this.id = this.$route.query.twinID;
@@ -313,7 +315,6 @@ export default class DaoView extends Vue {
     }
     return selectedProposals;
   }
-
   openVoteDialog(hash: any, vote: boolean) {
     this.openVDialog = true;
     this.vote = vote;
@@ -321,9 +322,8 @@ export default class DaoView extends Vue {
   }
   async castVote() {
     const nodes = await getNodesByFarm(this.selectedFarm);
-
     if (!nodes.length) {
-      alert("no nodes in farm");
+      this.$toasted.show(`Farm has no nodes`);
       return;
     }
     this.loadingVote = true;
@@ -339,14 +339,12 @@ export default class DaoView extends Vue {
           console.log(res);
           return;
         }
-
         const { events = [], status } = res;
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
-
         if (status.isFinalized) {
           console.log(
             `Transaction included at blockHash ${status.asFinalized}`

@@ -51,6 +51,10 @@
             :loading="loadingCreateFarm"
             :disabled="!isValidFarmName"
           >Submit</v-btn>
+          <v-btn
+            @click="openCreateFarmDialog = false"
+            color="grey lighten-2 black--text"
+          >Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -284,6 +288,7 @@ import {
   deleteIP,
   getFarm,
   getNodesByFarmID,
+  nodeInterface,
   setFarmPayoutV2Address,
 } from "../lib/farms";
 import { StrKey } from "stellar-sdk";

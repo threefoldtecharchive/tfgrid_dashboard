@@ -6,8 +6,6 @@
     >
       <template v-slot:activator="{ on, attrs }">
         <v-btn
-          color="secondary"
-          dark
           v-bind="attrs"
           v-on="on"
           outlined
@@ -54,7 +52,6 @@
 <script lang="ts">
 import { hex2a } from "@/portal/lib/util";
 import { Component, Vue, Prop } from "vue-property-decorator";
-
 @Component({
   name: "DeleteIP",
 })
