@@ -549,7 +549,12 @@ export default class FarmNodesTable extends Vue {
             `Transaction included at blockHash ${status.asFinalized}`
           );
           if (!events.length) {
-            this.$toasted.show("Adding Node public config failed");
+            if (this.openWarningDialog)
+              this.$toasted.show("Adding Node public config failed");
+
+            else if (this.openRemoveConfigWarningDialog)
+              this.$toasted.show("Removing Node public config failed");
+            
             this.loadingPublicConfig = false;
             this.openWarningDialog = false;
             this.openRemoveConfigWarningDialog = false;
@@ -561,7 +566,12 @@ export default class FarmNodesTable extends Vue {
                 section === "tfgridModule" &&
                 method === "NodePublicConfigStored"
               ) {
-                this.$toasted.show("Node public config added!");
+                if (this.openWarningDialog)
+                  this.$toasted.show("Node public config added!");
+
+                else if (this.openRemoveConfigWarningDialog)
+                  this.$toasted.show("Node public config removed!");
+                
                 this.loadingPublicConfig = false;
                 this.openPublicConfigDialog = false;
                 this.openWarningDialog = false;
@@ -572,7 +582,11 @@ export default class FarmNodesTable extends Vue {
                 this.gw6 = "";
                 this.domain = "";
               } else if (section === "system" && method === "ExtrinsicFailed") {
-                this.$toasted.show("Adding Node public config failed");
+                if (this.openWarningDialog)
+                  this.$toasted.show("Adding Node public config failed");
+
+                else if (this.openRemoveConfigWarningDialog)
+                  this.$toasted.show("Removing Node public config failed");
                 this.loadingPublicConfig = false;
                 this.openWarningDialog = false;
                 this.openRemoveConfigWarningDialog = false;
@@ -588,7 +602,11 @@ export default class FarmNodesTable extends Vue {
       }
     ).catch((err: { message: string }) => {
       console.log(err.message);
-      this.$toasted.show("Adding Node public config failed");
+      if (this.openWarningDialog)
+        this.$toasted.show("Adding Node public config failed");
+
+      else if (this.openRemoveConfigWarningDialog)
+        this.$toasted.show("Removing Node public config failed");
       this.loadingPublicConfig = false;
       this.openPublicConfigDialog = false;
       this.openWarningDialog = false;
