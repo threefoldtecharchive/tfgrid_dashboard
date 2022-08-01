@@ -26,4 +26,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/tfgrid-dashboard:${{ steps.previoustag.outputs.tag }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/tfgrid_dashboard:${{ steps.previoustag.outputs.tag }}
