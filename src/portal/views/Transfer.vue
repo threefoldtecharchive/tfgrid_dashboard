@@ -26,9 +26,11 @@
           v-model="amount"
           label="Amount (TFT)"
           type="number"
+          onkeydown="javascript: return event.keyCode == 69 || /^\+$/.test(event.key) ? false : true" 
           :rules="[
           () => !!amount || 'This field is required',
-          () => amount < balance || 'Amount cannot exceed balance',
+          () => amount > 0 || 'Amount cannot be negative or 0',
+          () => amount < parseFloat(balance) || 'Amount cannot exceed balance',
         ]"
         >
         </v-text-field>
@@ -55,6 +57,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { checkAddress, transfer } from "../lib/transfer";
 import QrcodeVue from "qrcode.vue";
 import { accountInterface } from "../store/state";
+import { balanceInterface, getBalance } from "../lib/balance";
 @Component({
   name: "TransferView",
   components: { QrcodeVue },
@@ -152,6 +155,12 @@ export default class TransferView extends Vue {
               if (section === "balances" && method === "Transfer") {
                 this.$toasted.show("Transfer succeeded!");
                 this.loadingTransfer = false;
+                getBalance(this.$api, this.address).then(
+                  (balance: balanceInterface) => {
+                    this.balance = balance.free;
+                    this.$root.$emit('updateBalance', this.balance);
+                  }
+                );
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Transfer failed!");
                 this.loadingTransfer = false;
