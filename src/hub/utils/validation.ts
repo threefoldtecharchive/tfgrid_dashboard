@@ -1,41 +1,32 @@
-function checkKeplr(): Promise<any> {
-    return new Promise((res, rej) => {
-        function _checkKeplr() {
-            if (window.keplr) res(window.keplr);
-            else if (document.readyState == "complete") {
-                rej("Keplr is not installed");
-            } else {
-                setTimeout(_checkKeplr, 500);
-            }
+export function inputValidation(value: string, key: string): string {
+    // value: Current value of the input.
+    // key: Current key of the input, e.g. [nodeId,farmId]..etc
+
+    const numericFields: string[] = [
+        'nodeId', 'farmId', 'twinId', 'freePublicIPs', 'farmID'
+    ];
+    const textualFields: string[] = [
+        'countryFullName', 'farmingPolicyName', 'certificationType',
+        'farmName', 'pricingPolicyId',
+    ];
+    const specialChars = /[ `!@#$%^&*()+\-=[\]{};':"\\|,.<>/?~]/;
+    let errorMsg = ''
+
+    if (numericFields.includes(key)) {
+        if (isNaN(+value)
+            || specialChars.test(value)
+            || +value < 0
+            || value.includes("e")) {
+            errorMsg = 'This field must be a number.'; return errorMsg;
         }
-        _checkKeplr();
-    });
-}
-
-
-async function ensureKeplr(chain_id: string): Promise<any> {
-    let offlineSigner: any;
-    return checkKeplr()
-        .then((_) => {
-            return window.keplr.getOfflineSigner(chain_id)
-        })
-        .then((signer) => {
-            offlineSigner = signer
-            return signer.getAccounts()
-        })
-        .then(() => {
-            return offlineSigner
-        })
-        .catch((reason) => {
-            if (reason.toString().indexOf("key not found") != -1) {
-                throw new Error("Make sure there's at least one account configured in keplr")
-            } else {
-                throw reason
-            }
-        })
-}
-
-export {
-    ensureKeplr,
-    checkKeplr
+    } else if (textualFields.includes(key)) {
+        if (specialChars.test(value)) {
+            errorMsg = 'This field does not accept special characters.'; return errorMsg;
+        }
+        else if (value.match(".*\\d.*")) {
+            errorMsg = 'This field does not accept numbers.'; return errorMsg;
+        }
+    }
+    errorMsg = ''
+    return errorMsg
 }

@@ -201,7 +201,7 @@
                         color="light-green darken-2"
                       />
                       <template v-if="item.resourcesUsed">
-                        <span v-if="item.resourcesTotal[key] >> 1000">
+                        <span v-if="item.resourcesTotal[key] > 1000">
                           {{ byteToGB(item.resourcesUsed[key]) }} /
                           {{ byteToGB(item.resourcesTotal[key]) }} GB
                         </span>
@@ -308,7 +308,7 @@
           <v-btn
             text
             color="error"
-            @click="removeConfig()"
+            @click="openRemoveConfigWarningDialog = true;"
           >
             Remove config
           </v-btn>
@@ -353,9 +353,10 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
     <v-dialog
       v-model="openWarningDialog"
-      max-width="600"
+      max-width="700"
     >
       <v-card>
         <v-card-title class="text-h5">Are you certain you want to update this node's public config?</v-card-title>
@@ -370,6 +371,25 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+      v-model="openRemoveConfigWarningDialog"
+      max-width="700"
+    >
+      <v-card>
+        <v-card-title class="text-h5">Are you certain you want to remove this node's public config?</v-card-title>
+        <v-card-text> This action is
+          irreversible</v-card-text>
+        <v-card-actions>
+          <v-btn
+            @click="removeConfig()"
+            :loading="loadingPublicConfig"
+          >Submit</v-btn>
+          <v-btn @click="openRemoveConfigWarningDialog = false">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-container>
 </template>
 <script lang="ts">
@@ -451,6 +471,7 @@ export default class FarmNodesTable extends Vue {
   $api: any;
   isValidPublicConfig = false;
   openWarningDialog = false;
+  openRemoveConfigWarningDialog = false;
   ip4ErrorMessage = "";
   gw4ErrorMessage = "";
   ip6ErrorMessage = "";
@@ -498,7 +519,7 @@ export default class FarmNodesTable extends Vue {
     this.loadingPublicConfig = true;
     addNodePublicConfig(
       this.$route.params.accountID,
-      this.$store.state.api,
+      this.$api,
       this.nodeToEdit.farmID,
       this.nodeToEdit.nodeID,
       config,
@@ -529,6 +550,8 @@ export default class FarmNodesTable extends Vue {
           if (!events.length) {
             this.$toasted.show("Adding Node public config failed");
             this.loadingPublicConfig = false;
+            this.openWarningDialog = false;
+            this.openRemoveConfigWarningDialog = false;
           } else {
             // Loop through Vec<EventRecord> to display all events
             events.forEach(({ phase, event: { data, method, section } }) => {
@@ -540,6 +563,8 @@ export default class FarmNodesTable extends Vue {
                 this.$toasted.show("Node public config added!");
                 this.loadingPublicConfig = false;
                 this.openPublicConfigDialog = false;
+                this.openWarningDialog = false;
+                this.openRemoveConfigWarningDialog = false;
                 this.ip4 = "";
                 this.ip6 = "";
                 this.gw4 = "";
@@ -548,6 +573,8 @@ export default class FarmNodesTable extends Vue {
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Adding Node public config failed");
                 this.loadingPublicConfig = false;
+                this.openWarningDialog = false;
+                this.openRemoveConfigWarningDialog = false;
                 this.ip4 = "";
                 this.ip6 = "";
                 this.gw4 = "";
@@ -563,6 +590,8 @@ export default class FarmNodesTable extends Vue {
       this.$toasted.show("Adding Node public config failed");
       this.loadingPublicConfig = false;
       this.openPublicConfigDialog = false;
+      this.openWarningDialog = false;
+      this.openRemoveConfigWarningDialog = false;
       this.ip4 = "";
       this.ip6 = "";
       this.gw4 = "";
@@ -603,7 +632,7 @@ export default class FarmNodesTable extends Vue {
   ip4check() {
     if (this.ip4 === "") return true;
     const ipRegex = new RegExp(
-      "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.|$)){4}$"
+      "^(?:[0-9]{1,3}.){3}[0-9]{1,3}/(1[6-9]|2[0-9]|3[0-2])$"
     );
     if (ipRegex.test(this.ip4)) {
       this.ip4ErrorMessage = "";

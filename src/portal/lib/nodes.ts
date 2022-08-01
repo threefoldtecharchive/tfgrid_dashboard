@@ -22,7 +22,7 @@ export async function cancelRentContract(api: { tx: { smartContractModule: { can
 export async function getRentContractID(api: { query: { smartContractModule: { activeRentContractForNode: (arg0: any) => any; }; }; }, nodeID: string) {
   const rentContractID =
     await api.query.smartContractModule.activeRentContractForNode(nodeID);
-  return rentContractID.toJSON().contractId;
+  return rentContractID.toJSON().contract_id;
 }
 export async function getActiveContracts(api: { query: { smartContractModule: { activeNodeContracts: (arg0: any) => any; }; }; }, nodeID: string) {
   return await api.query.smartContractModule.activeNodeContracts(nodeID);
@@ -34,10 +34,10 @@ export async function getRentStatus(api: { query: { smartContractModule: { activ
 
   const activeRentContracts = data.toJSON();
 
-  if (activeRentContracts.contractId === 0) {
+  if (activeRentContracts.contract_id === 0) {
     return "free";
   } else {
-    if (activeRentContracts.twinId == currentTwinID) {
+    if (activeRentContracts.twin_id == currentTwinID) {
       return "yours";
     } else {
       return "taken";
@@ -46,7 +46,7 @@ export async function getRentStatus(api: { query: { smartContractModule: { activ
 }
 
 export async function getNodeUsedResources(nodeId: string) {
-  const res = await axios.get(`${config.gridproxyUrl}nodes/${nodeId}`, {
+  const res = await axios.get(`${config.gridproxyUrl}/nodes/${nodeId}`, {
     timeout: 1000,
   });
 
@@ -54,7 +54,7 @@ export async function getNodeUsedResources(nodeId: string) {
     if (res.data == "likely down") {
       throw Error("likely down");
     } else {
-      return res.data.capacity.usedResources;
+      return res.data.capacity.used_resources;
     }
   }
 }
@@ -137,9 +137,9 @@ export function countPrice(prices: { cu: { value: number; }; su: { value: number
 
   return usdPrice.toFixed(2);
 }
-export async function calDiscount(api: { query: { system: { account: (arg0: string) => { data: any; }; }; }; }, address: string, pricing: { discountForDedicationNodes: any; }, price: any) {
+export async function calDiscount(api: { query: { system: { account: (arg0: string) => { data: any; }; }; }; }, address: string, pricing: { discount_for_dedicated_nodes: any; }, price: any) {
   // discount for Dedicated Nodes
-  const discount = pricing.discountForDedicationNodes;
+  const discount = pricing.discount_for_dedicated_nodes;
 
   let totalPrice = price - price * (discount / 100);
 
@@ -230,7 +230,7 @@ export async function getDNodes(api: any, address: string) {
       nodeId: node.nodeID,
       price: price,
       discount: discount,
-      applyedDiscount: { first: pricing.discountForDedicatedNodes, second: discountLevel },
+      applyedDiscount: { first: pricing.discount_for_dedicated_nodes, second: discountLevel },
       location: {
         country: node.country,
         city: node.city,
