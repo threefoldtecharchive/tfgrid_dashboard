@@ -138,6 +138,7 @@
                     <v-progress-linear
                       :value="proposal.nayesProgress"
                       color="grey lighten-2"
+                      backgroundColor="#e0e0e0"
                       height="25"
                       :style="{
                 width: proposal.nayesProgress + '%',
