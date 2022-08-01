@@ -22,12 +22,12 @@
       </template>
 
       <template v-slot:[`item.nodeId`]="{ item }">
-        <p class="text-left mt-1 mb-0">
+        <p class="text-center mt-1 mb-0">
           {{ item.nodeId }}
         </p>
       </template>
       <template v-slot:[`item.status`]="{ item }">
-        <p class="text-left mt-1 mb-0">
+        <p class="text-center mt-1 mb-0">
           <v-chip :color="getStatus(item).color">{{
             getStatus(item).status
           }}</v-chip>
@@ -409,12 +409,12 @@ export default class FarmNodesTable extends Vue {
   expanded: any = [];
   singleExpand = true;
   headers = [
-    { text: "Node ID", value: "nodeID" },
-    { text: "Farm ID", value: "farmID" },
-    { text: "Country", value: "country" },
-    { text: "Serial Number", value: "serialNumber" },
-    { text: "Status", value: "status" },
-    { text: "Actions", value: "actions", sortable: false },
+    { text: "Node ID", value: "nodeID", align: "center" },
+    { text: "Farm ID", value: "farmID", align: "center" },
+    { text: "Country", value: "country", align: "center" },
+    { text: "Serial Number", value: "serialNumber", align: "center" },
+    { text: "Status", value: "status", align: "center" },
+    { text: "Actions", value: "actions", sortable: false, align: "center" },
   ];
   loadingDelete = false;
   openDeleteDialog = false;
