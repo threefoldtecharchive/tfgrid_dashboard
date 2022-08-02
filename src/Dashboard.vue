@@ -82,7 +82,7 @@
 
           <v-btn
             icon
-            @click.stop="mini = !mini"
+            @click.stop="toggle()"
           >
             <v-icon class="white--text">mdi-chevron-left</v-icon>
           </v-btn>
@@ -460,6 +460,10 @@ export default class Dashboard extends Vue {
   ];
   getRouteSubChildren(route: SidenavItem) {
     return route.children[0].children || [];
+  }
+  toggle(){
+    this.mini = !this.mini;
+    if (this.mini) this.routes[1].active = false;
   }
 }
 </script>
