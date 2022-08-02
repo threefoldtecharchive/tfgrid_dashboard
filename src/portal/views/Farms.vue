@@ -282,11 +282,11 @@ import { StrKey } from "stellar-sdk";
 })
 export default class FarmsView extends Vue {
   headers = [
-    { text: "Farm ID", value: "id" },
-    { text: "Farm name", value: "name" },
-    { text: "Linked Twin ID", value: "twin_id" },
-    { text: "Certification type", value: "certification" },
-    { text: "Pricing Policy ID", value: "pricing_policy_id" },
+    { text: "Farm ID", value: "id", align: "center" },
+    { text: "Farm name", value: "name", align: "center" },
+    { text: "Linked Twin ID", value: "twin_id", align: "center" },
+    { text: "Certification type", value: "certification", align: "center" },
+    { text: "Pricing Policy ID", value: "pricing_policy_id", align: "center" },
   ];
   farms: any = [];
   id: any = [];
