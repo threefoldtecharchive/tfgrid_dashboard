@@ -93,6 +93,7 @@
           v-for="route in routes"
           :key="route.label"
           class="white--text"
+          :style= "mini ? '' : 'margin: 10px !important;'"
         >
           <template v-slot:activator>
             <v-list-item-icon>
@@ -162,7 +163,6 @@
                   )
                 "
                 class="white--text pl-16"
-                style= "!mini? (border-radius: 20px; margin: 10px;) : ()"
               >
                 <v-list-item-icon>
                   <v-icon
@@ -187,7 +187,6 @@
               :key="child.label"
               :to="route.prefix + child.path"
               class="pl-16"
-              style= "!mini? (border-radius: 20px; margin: 10px;) : ()"
             >
               <v-list-item-icon
                 class="mr-4"
@@ -486,10 +485,11 @@ export default class Dashboard extends Vue {
 .v-list-item--link:before {
   background-color: #1982b1 !important;
   color: white !important;
+  border-radius: 20px;
 }
-.v-list .v-list-item--link:hover, .v-list .v-list-item--active {
-    border-radius: 20px; 
-    margin: 10px; 
+
+.v-list .v-list-item--active{
+  border-radius: 20px;
 }
 
 </style>
