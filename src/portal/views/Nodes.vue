@@ -95,7 +95,7 @@ export default class NodesView extends Vue {
     { text: "MRU (GB)", value: "resources.mru" , align: "center"},
     { text: "SRU (GB)", value: "resources.sru", align: "center" },
     { text: "Price (USD)", value: "discount", align: "center" },
-    { text: "Actions", value: "actions" , align: "center"},
+    { text: "Actions", value: "actions" , align: "center", sortable: false},
   ];
   nodes: any = [];
   $api: any;

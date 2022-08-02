@@ -82,7 +82,7 @@
 
           <v-btn
             icon
-            @click.stop="mini = !mini"
+            @click.stop="toggle()"
           >
             <v-icon class="white--text">mdi-chevron-left</v-icon>
           </v-btn>
@@ -93,6 +93,7 @@
           v-for="route in routes"
           :key="route.label"
           class="white--text"
+          :style= "mini ? '' : 'margin: 10px !important;'"
         >
           <template v-slot:activator>
             <v-list-item-icon>
@@ -460,6 +461,10 @@ export default class Dashboard extends Vue {
   getRouteSubChildren(route: SidenavItem) {
     return route.children[0].children || [];
   }
+  toggle(){
+    this.mini = !this.mini;
+    if (this.mini) this.routes[1].active = false;
+  }
 }
 </script>
 
@@ -484,5 +489,11 @@ export default class Dashboard extends Vue {
 .v-list-item--link:before {
   background-color: #1982b1 !important;
   color: white !important;
+  border-radius: 20px;
 }
+
+.v-list .v-list-item--active{
+  border-radius: 20px;
+}
+
 </style>

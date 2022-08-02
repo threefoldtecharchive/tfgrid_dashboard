@@ -137,9 +137,9 @@ export function countPrice(prices: { cu: { value: number; }; su: { value: number
 
   return usdPrice.toFixed(2);
 }
-export async function calDiscount(api: { query: { system: { account: (arg0: string) => { data: any; }; }; }; }, address: string, pricing: { discount_for_dedicated_nodes: any; }, price: any) {
+export async function calDiscount(api: { query: { system: { account: (arg0: string) => { data: any; }; }; }; }, address: string, pricing: { discountForDedicationNodes: any; }, price: any) {
   // discount for Dedicated Nodes
-  const discount = pricing.discount_for_dedicated_nodes;
+  const discount = pricing.discountForDedicationNodes;
 
   let totalPrice = price - price * (discount / 100);
 
