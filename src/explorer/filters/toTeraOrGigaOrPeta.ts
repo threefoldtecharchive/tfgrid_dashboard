@@ -1,5 +1,5 @@
 export default function toTeraOrGiga(value?: string) {
-  const giga = 1024^3;
+  const giga = 1024**3;
 
   if (!value) return "0";
 
@@ -8,7 +8,7 @@ export default function toTeraOrGiga(value?: string) {
 
   if (val < giga) return val.toString();
 
-  let gb = val / 1024 / 1024 / 1024;
+  let gb = val / giga;
 
   if (gb < 1024) return `${gb.toFixed(0)} GB`;
 
