@@ -1,21 +1,21 @@
 export default function toTeraOrGiga(value?: string) {
+  const giga = 1024^3;
+
   if (!value) return "0";
 
   const val = +value;
   if (val === 0 || isNaN(val)) return "0";
 
-  if (val < 1e9) return val.toString();
+  if (val < giga) return val.toString();
 
-  let gb = Math.round(val / 1e7) / 1e2;
+  let gb = val / 1024 / 1024 / 1024;
 
-  if (gb < 1000) return `${gb} GB`;
+  if (gb < 1024) return `${gb.toFixed(0)} GB`;
 
-  gb /= 10;
-  gb = Math.round(gb) / 1e2;
+  gb = gb / 1024;
 
-  if (gb < 1000) return `${gb} TB`;
+  if (gb < 1024) return `${gb.toFixed(0)} TB`;
 
-  gb /= 10;
-  gb = Math.round(gb) / 1e2;
-  return `${gb} PB`;
+  gb = gb / 1024;
+  return `${gb.toFixed(0)} PB`;
 }
