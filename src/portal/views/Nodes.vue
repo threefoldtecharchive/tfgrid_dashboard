@@ -88,14 +88,14 @@ import { byteToGB } from "../lib/nodes";
 })
 export default class NodesView extends Vue {
   headers = [
-    { text: "Node ID", value: "nodeId" },
-    { text: "Location", value: "location.country" },
-    { text: "CRU", value: "resources.cru" },
-    { text: "HRU (GB)", value: "resources.hru" },
-    { text: "MRU (GB)", value: "resources.mru" },
-    { text: "SRU (GB)", value: "resources.sru" },
-    { text: "Price (USD)", value: "discount" },
-    { text: "Actions", value: "actions" },
+    { text: "Node ID", value: "nodeId", align: "center" },
+    { text: "Location", value: "location.country", align: "center" },
+    { text: "CRU", value: "resources.cru", align: "center" },
+    { text: "HRU (GB)", value: "resources.hru", align: "center" },
+    { text: "MRU (GB)", value: "resources.mru" , align: "center"},
+    { text: "SRU (GB)", value: "resources.sru", align: "center" },
+    { text: "Price (USD)", value: "discount", align: "center" },
+    { text: "Actions", value: "actions" , align: "center"},
   ];
   nodes: any = [];
   $api: any;

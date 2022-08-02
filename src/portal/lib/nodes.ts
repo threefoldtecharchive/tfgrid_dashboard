@@ -169,7 +169,7 @@ export async function calDiscount(api: { query: { system: { account: (arg0: stri
     },
   };
 
-  let selectedPackage = discountPackages.none
+  let selectedPackage = "none"
 
 
   for (const pkg in discountPackages) {
