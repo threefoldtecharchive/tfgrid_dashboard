@@ -92,6 +92,15 @@
         <template v-slot:[`item.uptime`]="{ item }">
           {{ item.uptime | secondToRedable }}
         </template>
+
+        <template v-slot:[`item.status`]="{ item }">
+          <p class="text-left mt-1 mb-0">
+            <v-chip :color="getStatus(item).color">{{
+              getStatus(item).status
+            }}</v-chip>
+          </p>
+        </template>
+
       </v-data-table>
     </template>
 
@@ -157,6 +166,8 @@ export default class Nodes extends Vue {
     { text: "MRU", value: "mru", align: "center" },
     { text: "CRU", value: "cru", align: "center" },
     { text: "Up Time", value: "uptime", align: "center" },
+    { text: "Status", value: "status", align: "center" },
+    
   ];
 
   activeFiltersKeys: string[] = ["MRU", "HRU", "CRU"];
@@ -258,6 +269,13 @@ export default class Nodes extends Vue {
     return nodes;
   }
 
+  getStatus(node: { status: string }) {
+    if (node.status === "up")
+      return { color: "green", status: "up" };
+    else 
+      return { color: "red", status: "down" };
+  }
+
   toggleActive(label: string): void {
     this.activeFiltersKeys = this.activeFiltersKeys.filter((x) => x !== label);
   }
@@ -333,3 +351,4 @@ export default class Nodes extends Vue {
   }
 }
 </script>
+
