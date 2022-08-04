@@ -114,7 +114,7 @@
                 nodeId: node.nodeId,
                 farmId: node.farmId,
                 twinId: node.twinId,
-                country: node.country,
+                country: node.country === 'United States'? 'United States of America' : node.country,
               }
             : {}
         "
@@ -336,7 +336,7 @@ export default class Nodes extends Vue {
         ip
       }
 
-      country: countries(where: { name_eq: $country }) {
+      country: countries(where: { name_eq: $country, OR: {code_eq: $country}}) {
         code
       }
     }

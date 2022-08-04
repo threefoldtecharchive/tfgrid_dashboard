@@ -88,7 +88,10 @@ export default class CountryDetails extends Vue {
       this.country && this.country?.length > 2
         ? byCountry(this.country)?.internet
         : this.country;
-    return `https://www.worldatlas.com/r/w425/img/flag/${conuntryCode?.toLocaleLowerCase()}-flag.jpg`;
+
+    return conuntryCode?.toLocaleLowerCase() != "ch" 
+        ? `https://www.worldatlas.com/r/w425/img/flag/${conuntryCode?.toLocaleLowerCase()}-flag.jpg`
+        : `https://www.worldatlas.com/r/w425/img/flag/${conuntryCode?.toLocaleLowerCase()}-flag.png`;
   }
 }
 </script>
