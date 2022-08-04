@@ -483,10 +483,10 @@ export default class FarmNodesTable extends Vue {
         (node: nodeInterface) =>
           `${node.nodeID}`.includes(this.searchTerm) ||
           node.serialNumber
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(this.searchTerm.toLowerCase()) ||
           node.certification
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(this.searchTerm.toLowerCase()) ||
           `${node.farmingPolicyId}`.includes(this.searchTerm)
       );
