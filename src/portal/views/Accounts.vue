@@ -27,7 +27,7 @@
         >
           <div class="d-flex justify-space-between">
             <div class="d-inline-block text-truncate">
-              <v-card-title>{{ account.meta.name.toUpperCase() }}</v-card-title>
+              <v-card-title>{{ account.meta.name }}</v-card-title>
               <v-card-subtitle>
                 {{ account.address }}
               </v-card-subtitle>

@@ -13,7 +13,7 @@
         <v-toolbar-title
           class="font-weight-bold"
           @click="redirectToHomePage"
-        >THREEFOLD CHAIN</v-toolbar-title>
+        >Threefold Chain</v-toolbar-title>
 
         <v-spacer></v-spacer>
         <v-btn
@@ -78,7 +78,7 @@
           <v-list-item-title
             class="white--text"
             @click="redirectToHomePage"
-          >THREEFOLD CHAIN</v-list-item-title>
+          >Threefold Chain</v-list-item-title>
 
           <v-btn
             icon
@@ -139,7 +139,7 @@
                 <v-list-item-content dark>
                   <v-list-item-title
                     class="white--text"
-                    v-text="account.meta.name.toUpperCase()"
+                    v-text="account.meta.name"
                   >
                   </v-list-item-title>
                 </v-list-item-content>
