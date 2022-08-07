@@ -74,6 +74,8 @@ export default class AccountsView extends Vue {
     return this.accounts;
   }
   async addAccountRoute(account: accountInterface) {
+    this.accounts.map((account) => account.active = false)
+    account.active = true;
     this.$router.push({
       name: "account",
       path: "account",

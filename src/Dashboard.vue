@@ -13,6 +13,7 @@
         <v-toolbar-title
           class="font-weight-bold"
           @click="redirectToHomePage"
+          style="cursor: pointer;"
         >Threefold Chain</v-toolbar-title>
 
         <v-spacer></v-spacer>
@@ -78,6 +79,7 @@
           <v-list-item-title
             class="white--text"
             @click="redirectToHomePage"
+            style="cursor: pointer;"
           >Threefold Chain</v-list-item-title>
 
           <v-btn
@@ -129,7 +131,7 @@
 
           <div v-if="route.prefix === '/'">
             <v-list-group
-              :value="false"
+              :value="account.active"
               no-action
               sub-group
               v-for="account in filteredAccounts()"
@@ -284,6 +286,7 @@ interface SidenavItem {
 export default class Dashboard extends Vue {
   collapseOnScroll = true;
   mini = true;
+  close_drawer = false;
   drawer = true;
   twinID = 0;
   $api: any;
@@ -318,6 +321,12 @@ export default class Dashboard extends Vue {
     this.accounts = this.$store.state.portal.accounts;
     if (this.$api) {
       this.loadingAPI = false;
+    }
+
+    // update routes
+    if(this.$route.query.accountName && !this.close_drawer){
+      this.routes[0].active = true;
+      this.mini = false;
     }
   }
   async unmounted() {
@@ -463,6 +472,7 @@ export default class Dashboard extends Vue {
   }
   toggle(){
     this.mini = !this.mini;
+    this.close_drawer = !this.close_drawer;
     if (this.mini) this.routes[1].active = false;
   }
 }
