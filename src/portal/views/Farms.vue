@@ -147,9 +147,11 @@
                     overflow: hidden;
                   "
                 >
-                  <span style="font-size: small">
-                    {{ item.v2address }}
-                  </span>
+                  <v-row style="margin: 0;">
+                    <span style="font-size: small;">
+                      {{ item.v2address }}
+                    </span>
+                  </v-row>
                   <v-btn
                     x-small
                     @click="openV2AddressDialog = true"

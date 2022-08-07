@@ -1,9 +1,9 @@
 <template>
   <v-container fluid>
 
-    <v-container v-if="!proposals.active.length">
+    <v-container v-if="!proposals.active.length && !proposals.inactive.length">
       <v-card class="my-3 pa-3 d-flex justify-center">
-        <h3>No Active proposals at this time</h3>
+        <h3>No proposals at this time</h3>
       </v-card>
     </v-container>
     <v-container v-else>
@@ -14,7 +14,10 @@
         >
           <v-container>
             <v-row class="d-flex justify-center">
-              <h2>
+              <h2 v-if="!proposals.active.length">
+                No Active proposals at this time
+              </h2>
+              <h2 v-else>
                 Howdy {{ $route.query.accountName }}, you can now vote on proposals!
               </h2>
               <v-tooltip bottom>
@@ -32,8 +35,8 @@
                 <span> Click for more info </span>
               </v-tooltip>
             </v-row>
-
           </v-container>
+
           <template v-slot:extension>
             <v-tabs
               v-model="tabSelected"
