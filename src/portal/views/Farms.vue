@@ -42,10 +42,6 @@
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn
-            @click="openCreateFarmDialog = false"
-            color="grey lighten-2 black--text"
-          >Close</v-btn>
-          <v-btn
             color="primary white--text"
             @click="createFarmFromName"
             :loading="loadingCreateFarm"

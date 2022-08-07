@@ -39,6 +39,7 @@
                       :size="200"
                       level="M"
                       render-as="svg"
+                      style="background: white; padding: 6%;"
                     />
                   </div>
                 </v-col>
