@@ -144,6 +144,12 @@ export default class NodesView extends Vue {
   }
 }
 </script>
+<style>
+.v-data-table-header th {
+  white-space: nowrap;
+}
+</style>
+
 <style scoped>
 .v-tooltip__content {
   pointer-events: initial;
