@@ -169,10 +169,12 @@ export default class CreateIP extends Vue {
     this.addIPs();
     this.showIPs = false;
     this.open = false;
-    this.IPs.forEach(IP => {
+    
+    this.$emit("create", this.IPs, this.gateway);
+    /*this.IPs.forEach(IP => {
       this.$emit("create", IP, this.gateway);
     }
-    );
+    );*/
   }
   ipcheck() {
     const ipRegex = new RegExp("^(?:[0-9]{1,3}.){3}[0-9]{1,3}/(1[6-9]|2[0-9]|3[0-2])$");

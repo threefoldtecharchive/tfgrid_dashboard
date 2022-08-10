@@ -88,8 +88,8 @@ export default class PublicIPTable extends Vue {
   public decodeHex(input: string) {
     return hex2a(input);
   }
-  createPublicIP(ip: string, gateway: string) {
-    this.createIP(ip, gateway);
+  createPublicIP(ips: string[], gateway: string) {
+    this.createIP(ips, gateway);
   }
   deletePublicIP(ip: any) {
     this.deleteIP(ip);
