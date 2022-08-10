@@ -217,7 +217,7 @@
             </v-row>
 
             <PublicIPTable
-              :ips="item.public_ips"
+              :ips="item.publicIps"
               :deleteIP="deletePublicIP"
               :loadingDelete="loadingDeleteIP"
               :createIP="createPublicIP"
