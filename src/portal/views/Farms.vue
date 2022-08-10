@@ -479,7 +479,6 @@ export default class FarmsView extends Vue {
     this.loadingCreateIP = true;
     publicIPs.reduce(async (last, publicIP) => {
       await last;
-      console.log(publicIP)
       await this.createPublicIP(publicIP, gateway);
     }, Promise.resolve())
   }
