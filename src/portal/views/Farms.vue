@@ -478,14 +478,13 @@ export default class FarmsView extends Vue {
   public createPublicIPs(publicIPs: string[], gateway: string) {
     this.loadingCreateIP = true;
     publicIPs.reduce(async (last, publicIP) => {
-      this.loadingCreateIP = true;
       await last;
+      console.log(publicIP)
       await this.createPublicIP(publicIP, gateway);
-    }, Promise.resolve());
-
-    //this.loadingCreateIP = false;
+    }, Promise.resolve())
   }
   public createPublicIP(publicIP: string, gateway: string){
+    this.loadingCreateIP = true;
     return new Promise((resolve, reject) => {
           const callback = (res: {
             events?: never[] | undefined;
@@ -494,6 +493,7 @@ export default class FarmsView extends Vue {
             if (res instanceof Error) {
                 console.error(res);
                 reject(res);
+                this.loadingCreateIP = false;
             }
             const { events = [], status } = res;
             console.log(`Current status is ${status.type}`);
@@ -511,9 +511,11 @@ export default class FarmsView extends Vue {
                         this.farms = farms;
                       });
                       resolve("IP created!");
+                      this.loadingCreateIP = false;
                     } else if (section === "system" && method === "ExtrinsicFailed") {
                       this.$toasted.show("Adding an IP failed!");
                       reject("Adding an IP failed!");
+                      this.loadingCreateIP = false;
                     }
                 });
             }
@@ -529,6 +531,7 @@ export default class FarmsView extends Vue {
             )
           } catch (e) {
             reject(e);
+            this.loadingCreateIP = false;
           }
         })
   }
