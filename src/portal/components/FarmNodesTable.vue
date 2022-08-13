@@ -92,6 +92,7 @@
                   <span>{{ item.twinID }}</span>
                 </v-flex>
               </v-row>
+
               <v-row>
                 <v-flex
                   xs3
@@ -171,6 +172,9 @@
               </v-row>
             </v-container>
           </v-col>
+          <v-col>
+
+          </v-col>
 
           <v-col>
             <div class="title">
@@ -215,6 +219,33 @@
                 </v-flex>
               </v-col>
             </v-row>
+          </v-col>
+          <v-col>
+            <div class="title">
+              <v-icon
+                small
+                left
+              >fa-solid fa-battery-three-quarters</v-icon>Runtime Statistics
+            </div>
+
+            <div
+              v-for="receipt in item.receipts"
+              :key="receipt.hash"
+              align="center"
+            >
+
+              <div
+                class=""
+                v-if="receipt.mintingStart"
+              >
+                <v-row class="pa-3">
+                  <span class="">Runtime: {{ getTime(receipt.mintingStart, receipt.mintingEnd)   }}</span>
+
+                </v-row>
+              </div>
+
+            </div>
+
           </v-col>
         </td>
       </template>
@@ -434,6 +465,7 @@ export default class FarmNodesTable extends Vue {
       ipv4: "",
       ipv6: "",
     },
+    receipts: [],
     certification: "",
     city: "",
     connectionPrice: null,
@@ -493,6 +525,7 @@ export default class FarmNodesTable extends Vue {
     }
     return this.nodes;
   }
+
   convertHex(node: { id: string }) {
     return hex2a(node.id);
   }
@@ -552,7 +585,7 @@ export default class FarmNodesTable extends Vue {
               this.$toasted.show("Adding Node public config failed");
             else if (this.openRemoveConfigWarningDialog)
               this.$toasted.show("Removing Node public config failed");
-            
+
             this.loadingPublicConfig = false;
             this.openWarningDialog = false;
             this.openRemoveConfigWarningDialog = false;
@@ -568,7 +601,7 @@ export default class FarmNodesTable extends Vue {
                   this.$toasted.show("Node public config added!");
                 else if (this.openRemoveConfigWarningDialog)
                   this.$toasted.show("Node public config removed!");
-                
+
                 this.loadingPublicConfig = false;
                 this.openPublicConfigDialog = false;
                 this.openWarningDialog = false;
@@ -693,6 +726,10 @@ export default class FarmNodesTable extends Vue {
   domainCheck() {
     return true;
   }
+  getTime(start: number, end: number) {
+    return moment(moment(start).diff(end)).format("HH:mm:ss");
+  }
+
   getStatus(node: { updatedAt: string }) {
     const { updatedAt } = node;
     const startTime = moment();

@@ -4,6 +4,9 @@ import { web3FromAddress } from "@polkadot/extension-dapp";
 import axios from "axios";
 import config from "../config";
 import { getBalance } from "./balance";
+
+
+
 export function byteToGB(capacity: number) {
   return (capacity / 1024 / 1024 / 1024).toFixed(0);
 }
@@ -44,7 +47,49 @@ export async function getRentStatus(api: { query: { smartContractModule: { activ
     }
   }
 }
+export async function getNodeMintingReceipts(nodeId: string) {
+  let nodeReceipts: {
+    hash: string;
+    mintingStart?: number,
+    mintingEnd?: number,
+    measuredUptime?: number;
+    fixupStart?: number;
+    fixupEnd?: number
+  }[] = []
+  const res = await axios.get(`https://alpha.minting.tfchain.grid.tf/api/v1/node/${nodeId}`)
+    .then(res => res.data.map((rec:
+      {
+        hash: any;
+        receipt:
+        {
+          Minting:
+          {
+            period: { start: any; end: any; };
+            measured_uptime: any;
+          };
+          Fixup: { period: { start: any; end: any; }; };
+        };
+      }) => {
+      if (rec.receipt.Minting) {
+        nodeReceipts.push({
+          hash: rec.hash,
+          mintingStart: rec.receipt.Minting.period.start,
+          mintingEnd: rec.receipt.Minting.period.end,
+          measuredUptime: rec.receipt.Minting.measured_uptime || 0
+        })
+      } else {
+        nodeReceipts.push({
+          hash: rec.hash,
+          fixupStart: rec.receipt.Fixup.period.start || 0,
+          fixupEnd: rec.receipt.Fixup.period.end || 0,
+        })
+      }
+    }
+    ))
 
+  return nodeReceipts
+
+}
 export async function getNodeUsedResources(nodeId: string) {
   const res = await axios.get(`${config.gridproxyUrl}/nodes/${nodeId}`, {
     timeout: 1000,
