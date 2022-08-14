@@ -249,6 +249,14 @@
         </v-card-text>
       </v-card>
     </v-footer>
+
+    <script
+      v-for="el in elements"
+      :key="el"
+      type="application/javascript"
+      :src="`/elements/${el}.wc.js`"
+      defer
+    ></script>
   </v-app>
 </template>
 
@@ -545,6 +553,29 @@ export default class Dashboard extends Vue {
       ]
     }
   ];
+
+  elements = [
+    "vm",
+    "kubernetes",
+    "deployedlist",
+    "caprover",
+    "discourse",
+    "farmingcalculator",
+    "funkwhale",
+    "peertube",
+    "taiga",
+    "owncloud",
+    "contractslist",
+    "presearch",
+    "disclaimer",
+    "version",
+    "mattermost",
+    "casperlabs",
+    "tfhubvalidator",
+    "nodepilot",
+    "fullvm",
+  ];
+
   getRouteSubChildren(route: SidenavItem) {
     return route.children[0].children || [];
   }

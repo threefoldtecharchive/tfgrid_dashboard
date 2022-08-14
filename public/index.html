@@ -19,6 +19,10 @@
       defer
       src="https://cdn.jsdelivr.net/gh/threefoldtech/tf-map@0.0.3/dist/tf-map.js"
     ></script>
+
+    <script src="/elements/base.wc.js"></script>
+    <script defer src="/elements/notification.wc.js"></script>
+    <script defer src="/elements/profiles.wc.js"></script>
   </head>
 
   <body>
@@ -29,6 +33,8 @@
         continue.</strong
       >
     </noscript>
+    <tf-base></tf-base>
+    <tf-notification></tf-notification>
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
