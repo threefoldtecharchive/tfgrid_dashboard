@@ -193,9 +193,11 @@
                 v-if="child.icon"
               >
                 <v-icon
+                  v-if="!child.icon.includes('.')"
                   class="white--text"
                   v-text="'mdi-' + child.icon"
                 />
+                <v-img v-else :src="child.icon" :height="24" :width="24" :alt="child.icon" />
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title
@@ -457,6 +459,91 @@ export default class Dashboard extends Vue {
         },
       ],
     },
+    {
+      label: "Playground",
+      icon: "apps",
+      prefix: "/play/",
+      children: [
+        {
+          label: 'Full Virtual Machine',
+          path: 'full-vm',
+          icon: "/playground-icons/vm.png",
+          showBeforeLogIn: true
+        },
+        {
+          label: 'Micro Virtual Machine',
+          path: 'vm',
+          icon: "/playground-icons/vm.png",
+          showBeforeLogIn: true
+        },
+        {
+          label: 'Kubernetes',
+          path: 'kubernetes',
+          icon: "/playground-icons/kubernetes.png",
+          showBeforeLogIn: true
+        },
+        {
+          label: 'CapRover',
+          path: 'capRover',
+          icon: "/playground-icons/caprover.png",
+          showBeforeLogIn: true
+        },
+        {
+          label: 'Peertube',
+          path: 'peertube',
+          icon: "/playground-icons/peertube.png",
+          showBeforeLogIn: true
+        },
+        {
+          label: 'Funkwhale',
+          path: 'funkwhale',
+          icon: "/playground-icons/funkwhale.png",
+          showBeforeLogIn: true
+        },
+        {
+          label: 'Mattermost',
+          path: 'mattermost',
+          icon: "/playground-icons/mattermost.png",
+          showBeforeLogIn: true
+        },
+        {
+          label: 'Discourse',
+          path: 'discourse',
+          icon: "/playground-icons/discourse.png",
+          showBeforeLogIn: true
+        },
+        {
+          label: 'Taiga',
+          path: 'taiga',
+          icon: "/playground-icons/taiga.png",
+          showBeforeLogIn: true
+        },
+        {
+          label: 'Owncloud',
+          path: 'owncloud',
+          icon: "/playground-icons/owncloud.png",
+          showBeforeLogIn: true
+        },
+        {
+          label: 'Presearch',
+          path: 'presearch',
+          icon: "/playground-icons/presearch.png",
+          showBeforeLogIn: true
+        },
+        {
+          label: 'Casperlabs',
+          path: 'casperlabs',
+          icon: "/playground-icons/casperlabs.png",
+          showBeforeLogIn: true
+        },
+        {
+          label: 'Node Pilot',
+          path: 'nodepilot',
+          icon: "/playground-icons/vm.png",
+          showBeforeLogIn: true
+        }
+      ]
+    }
   ];
   getRouteSubChildren(route: SidenavItem) {
     return route.children[0].children || [];
