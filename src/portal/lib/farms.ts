@@ -4,7 +4,7 @@ import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios from 'axios';
 import config from '../config';
-import { getNodeMintingReceipts, getNodeUsedResources } from './nodes';
+import { getNodeMintingFixupReceipts, getNodeUsedResources } from './nodes';
 import { hex2a } from './util'
 export interface nodeInterface {
   resourcesTotal: {
@@ -48,7 +48,7 @@ export interface nodeInterface {
   serialNumber: string;
   twinID: number;
   updatedAt: string;
-  uptime: string;
+  uptime: number;
   virtualized: boolean;
 }
 export async function getFarm(api: { query: any; }, twinID: number) {
@@ -131,18 +131,14 @@ export async function getNodesByFarmID(farms: any[]) {
   const _nodes = data.flat();
 
   const nodesWithResources = _nodes.map(async (node) => {
-    try {
-      node.receipts = await getNodeMintingReceipts(node.nodeID);
 
-    } catch (err) {
-      console.log(err)
-      node.receipts = [];
-    }
     try {
       node.resourcesUsed = await getNodeUsedResources(node.nodeID);
       node.resources = node.resourcesTotal;
+      node.receipts = await getNodeMintingFixupReceipts(node.nodeID);
 
     } catch (error) {
+      node.receipts = [];
       node.resourcesUsed = {
         sru: 0,
         hru: 0,

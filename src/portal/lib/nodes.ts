@@ -47,7 +47,8 @@ export async function getRentStatus(api: { query: { smartContractModule: { activ
     }
   }
 }
-export async function getNodeMintingReceipts(nodeId: string) {
+
+export async function getNodeMintingFixupReceipts(nodeId: string) {
   let nodeReceipts: {
     hash: string;
     mintingStart?: number,
@@ -64,24 +65,24 @@ export async function getNodeMintingReceipts(nodeId: string) {
         {
           Minting:
           {
-            period: { start: any; end: any; };
-            measured_uptime: any;
+            period: { start: number; end: number; };
+            measured_uptime: number;
           };
-          Fixup: { period: { start: any; end: any; }; };
+          Fixup: { period: { start: number; end: number; }; };
         };
       }) => {
       if (rec.receipt.Minting) {
         nodeReceipts.push({
           hash: rec.hash,
-          mintingStart: rec.receipt.Minting.period.start,
-          mintingEnd: rec.receipt.Minting.period.end,
+          mintingStart: rec.receipt.Minting.period.start * 1000,
+          mintingEnd: rec.receipt.Minting.period.end * 1000,
           measuredUptime: rec.receipt.Minting.measured_uptime || 0
         })
       } else {
         nodeReceipts.push({
           hash: rec.hash,
-          fixupStart: rec.receipt.Fixup.period.start || 0,
-          fixupEnd: rec.receipt.Fixup.period.end || 0,
+          fixupStart: rec.receipt.Fixup.period.start * 1000 || 0,
+          fixupEnd: rec.receipt.Fixup.period.end * 1000 || 0,
         })
       }
     }

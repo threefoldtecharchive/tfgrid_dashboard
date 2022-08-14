@@ -63,136 +63,113 @@
           :colspan="headers.length"
           key="item.id"
         >
-          <v-col>
-            <v-container fluid>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Node ID</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.nodeID}}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Farm ID</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.farmID }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Twin ID</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.twinID }}</span>
-                </v-flex>
-              </v-row>
 
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Certification </v-flex>
+          <v-container fluid>
+            <v-row :justify="'space-around'">
+              <v-col cols="8">
+                <v-row>
+                  <v-flex
+                    xs3
+                    class="text-left pr-2"
+                  >Node ID</v-flex>
+                  <v-flex class="text-truncate font-weight-bold">
+                    <span>{{ item.nodeID}}</span>
+                  </v-flex>
+                </v-row>
+                <v-row>
+                  <v-flex
+                    xs3
+                    class="text-left pr-2"
+                  >Farm ID</v-flex>
+                  <v-flex class="text-truncate font-weight-bold">
+                    <span>{{ item.farmID }}</span>
+                  </v-flex>
+                </v-row>
+                <v-row>
+                  <v-flex
+                    xs3
+                    class="text-left pr-2"
+                  >Twin ID</v-flex>
+                  <v-flex class="text-truncate font-weight-bold">
+                    <span>{{ item.twinID }}</span>
+                  </v-flex>
+                </v-row>
 
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.certification }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >First boot at</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ new Date(parseInt(item.createdAt)) }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Uptime</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.uptime }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Updated at</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ new Date(parseInt(item.updatedAt)) }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Country</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.country }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >City</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.city }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Serial Number</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.serialNumber }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Farming Policy ID</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.farmingPolicyId }}</span>
-                </v-flex>
-              </v-row>
+                <v-row>
+                  <v-flex
+                    xs3
+                    class="text-left pr-2"
+                  >Certification </v-flex>
 
-              <v-row>
-                <span>For more information visit the Capacity Explorer</span>
-              </v-row>
-            </v-container>
-          </v-col>
-          <v-col>
+                  <v-flex class="text-truncate font-weight-bold">
+                    <span>{{ item.certification }}</span>
+                  </v-flex>
+                </v-row>
+                <v-row>
+                  <v-flex
+                    xs3
+                    class="text-left pr-2"
+                  >First boot at</v-flex>
+                  <v-flex class="text-truncate font-weight-bold">
+                    <span>{{ new Date(parseInt(item.createdAt)) }}</span>
+                  </v-flex>
+                </v-row>
+                <v-row>
+                  <v-flex
+                    xs3
+                    class="text-left pr-2"
+                  >Updated at</v-flex>
+                  <v-flex class="text-truncate font-weight-bold">
+                    <span>{{ new Date(parseInt(item.updatedAt)) }}</span>
+                  </v-flex>
+                </v-row>
+                <v-row>
+                  <v-flex
+                    xs3
+                    class="text-left pr-2"
+                  >Country</v-flex>
+                  <v-flex class="text-truncate font-weight-bold">
+                    <span>{{ item.country }}</span>
+                  </v-flex>
+                </v-row>
+                <v-row>
+                  <v-flex
+                    xs3
+                    class="text-left pr-2"
+                  >City</v-flex>
+                  <v-flex class="text-truncate font-weight-bold">
+                    <span>{{ item.city }}</span>
+                  </v-flex>
+                </v-row>
+                <v-row>
+                  <v-flex
+                    xs3
+                    class="text-left pr-2"
+                  >Serial Number</v-flex>
+                  <v-flex class="text-truncate font-weight-bold">
+                    <span>{{ item.serialNumber }}</span>
+                  </v-flex>
+                </v-row>
+                <v-row>
+                  <v-flex
+                    xs3
+                    class="text-left pr-2"
+                  >Farming Policy ID</v-flex>
+                  <v-flex class="text-truncate font-weight-bold">
+                    <span>{{ item.farmingPolicyId }}</span>
+                  </v-flex>
+                </v-row>
 
-          </v-col>
-
-          <v-col>
-            <div class="title">
-              <v-icon
-                small
-                left
-              >fa-chart-pie</v-icon>Resource units reserved
-            </div>
-
-            <v-row>
+                <v-row>
+                  <span>For more information visit the Capacity Explorer</span>
+                </v-row>
+              </v-col>
               <v-col
-                v-for="(value, key) in item.resourcesTotal"
-                :key="key"
-                align="center"
+                cols="4"
+                class="text-center"
+                :align-self="'center'"
               >
-                <v-flex class="text-center pr-2">
-                  <span class="text-uppercase">{{ key }}</span>
-                </v-flex>
+
                 <v-flex class="text-truncate font-weight-bold">
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
@@ -201,51 +178,119 @@
                         :rotate="-90"
                         :size="100"
                         :width="15"
-                        :value="getPercentage(key)"
+                        :value=" getNodeUptimePercentage(item)"
                         color="light-green darken-2"
                       />
-                      <template v-if="item.resourcesUsed">
-                        <span v-if="item.resourcesTotal[key] > 1000">
-                          {{ byteToGB(item.resourcesUsed[key]) }} /
-                          {{ byteToGB(item.resourcesTotal[key]) }} GB
-                        </span>
-                        <span v-else>
-                          {{ item.resourcesUsed[key] }} /
-                          {{ item.resourcesTotal[key] }}
-                        </span>
-                      </template>
+
+                      <span>
+                        Uptime: {{getNodeUptimePercentage(item) }} %
+
+                      </span>
                     </template>
+
                   </v-tooltip>
                 </v-flex>
+
               </v-col>
             </v-row>
+          </v-container>
+
+          <v-col>
+            <v-expansion-panels
+              v-model="resourcesPanel"
+              :disabled="disabledNodeResources"
+            >
+              <v-expansion-panel>
+                <v-expansion-panel-header>
+                  Resource units reserved
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-row>
+                    <v-col
+                      v-for="(value, key) in item.resourcesTotal"
+                      :key="key"
+                      align="center"
+                    >
+                      <v-flex class="text-center pr-2">
+                        <span class="text-uppercase">{{ key }}</span>
+                      </v-flex>
+                      <v-flex class="text-truncate font-weight-bold">
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on }">
+                            <v-progress-circular
+                              v-on="on"
+                              :rotate="-90"
+                              :size="100"
+                              :width="15"
+                              :value="getPercentage(key)"
+                              color="light-green darken-2"
+                            />
+                            <template v-if="item.resourcesUsed">
+                              <span v-if="item.resourcesTotal[key] > 1000">
+                                {{ byteToGB(item.resourcesUsed[key]) }} /
+                                {{ byteToGB(item.resourcesTotal[key]) }} GB
+                              </span>
+                              <span v-else>
+                                {{ item.resourcesUsed[key] }} /
+                                {{ item.resourcesTotal[key] }}
+                              </span>
+                            </template>
+                          </template>
+                        </v-tooltip>
+                      </v-flex>
+                    </v-col>
+                  </v-row>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+
           </v-col>
           <v-col>
-            <div class="title">
-              <v-icon
-                small
-                left
-              >fa-solid fa-battery-three-quarters</v-icon>Runtime Statistics
-            </div>
-
-            <div
-              v-for="receipt in item.receipts"
-              :key="receipt.hash"
-              align="center"
+            <v-expansion-panels
+              v-model="receiptsPanel"
+              :disabled="disabledReceiptsPanel"
             >
+              <v-expansion-panel>
+                <v-expansion-panel-header>
+                  Node Statistics
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <div
+                    v-for="receipt in item.receipts"
+                    :key="receipt.hash"
+                    align="center"
+                  >
 
-              <div
-                class=""
-                v-if="receipt.mintingStart"
-              >
-                <v-row class="pa-3">
-                  <span class="">Runtime: {{ getTime(receipt.mintingStart, receipt.mintingEnd)   }}</span>
+                    <v-card
+                      class="my-3"
+                      color="green"
+                      v-if="receipt.mintingStart"
+                    >
+                      <v-card-text>
+                        <p class="">start: {{ getTime(receipt.mintingStart) }}</p>
+                        <p>end: {{ getTime(receipt.mintingEnd)}}</p>
+                        <!-- <p>Period: {{getPeriod(receipt.mintingStart, receipt.mintingEnd)}}</p> -->
+                      </v-card-text>
 
-                </v-row>
-              </div>
+                    </v-card>
+                    <v-card
+                      class=""
+                      color="red"
+                      v-else
+                    >
+                      <v-card-text>
+                        <p class="">start: {{ getTime(receipt.fixupStart) }}</p>
+                        <p>end: {{ getTime(receipt.fixupEnd)}}</p>
+                        <!-- <p>Period: {{getPeriod(receipt.fixupStart, receipt.fixupEnd)}}</p> -->
+                      </v-card-text>
 
-            </div>
+                    </v-card>
 
+                  </div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+
+            </v-expansion-panels>
           </v-col>
         </td>
       </template>
@@ -439,6 +484,10 @@ import { hex2a } from "@/portal/lib/util";
 export default class FarmNodesTable extends Vue {
   expanded: any = [];
   singleExpand = true;
+  receiptsPanel = [0];
+  disabledReceiptsPanel = false;
+  resourcesPanel = [0];
+  disabledNodeResources = false;
   headers = [
     { text: "Node ID", value: "nodeID", align: "center" },
     { text: "Farm ID", value: "farmID", align: "center" },
@@ -485,7 +534,7 @@ export default class FarmNodesTable extends Vue {
     serialNumber: "",
     twinID: 0,
     updatedAt: "",
-    uptime: "",
+    uptime: 0,
     virtualized: false,
   };
   nodeToDelete: { id: string } = {
@@ -726,10 +775,22 @@ export default class FarmNodesTable extends Vue {
   domainCheck() {
     return true;
   }
-  getTime(start: number, end: number) {
+  getTime(num: number) {
+    return new Date(num);
+  }
+  getPeriod(start: number, end: number) {
     return moment(moment(start).diff(end)).format("HH:mm:ss");
   }
-
+  getNodeUptimePercentage(node: nodeInterface) {
+    const totalReceiptsUptime = node.receipts.reduce(
+      (total, receipt) =>
+        receipt.measuredUptime
+          ? (total += receipt.measuredUptime)
+          : (total += 0),
+      0
+    );
+    return ((totalReceiptsUptime / node.uptime) * 100).toFixed(2);
+  }
   getStatus(node: { updatedAt: string }) {
     const { updatedAt } = node;
     const startTime = moment();
