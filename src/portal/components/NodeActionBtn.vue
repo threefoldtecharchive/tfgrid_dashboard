@@ -61,6 +61,7 @@ export default class NodeActionBtn extends Vue {
   loadingReserveNode = false;
   @Prop({ required: true })
   nodeId!: string;
+  solutionProviderID!: string;
   $api: any;
   openUnreserveDialog = false;
   nodeIDToUnreserve = "";
@@ -81,6 +82,7 @@ export default class NodeActionBtn extends Vue {
     createRentContract(
       this.$api,
       this.$route.params.accountID,
+      this.solutionProviderID,
       nodeId,
       (res: {
         status: { type: string; asFinalized: string; isFinalized: string };

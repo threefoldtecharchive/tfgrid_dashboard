@@ -7,10 +7,10 @@ import { getBalance } from "./balance";
 export function byteToGB(capacity: number) {
   return (capacity / 1024 / 1024 / 1024).toFixed(0);
 }
-export async function createRentContract(api: { tx: { smartContractModule: { createRentContract: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, address: string, nodeId: string, callback: any) {
+export async function createRentContract(api: { tx: { smartContractModule: { createRentContract: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, address: string, nodeId: string, solutionProviderID: string, callback: any) {
   const injector = await web3FromAddress(address);
   return api.tx.smartContractModule
-    .createRentContract(nodeId)
+    .createRentContract(nodeId, solutionProviderID)
     .signAndSend(address, { signer: injector.signer }, callback);
 }
 export async function cancelRentContract(api: { tx: { smartContractModule: { cancelContract: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, address: string, contractId: string, callback: any) {
