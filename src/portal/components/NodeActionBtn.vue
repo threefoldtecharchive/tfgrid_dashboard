@@ -75,13 +75,14 @@ export default class NodeActionBtn extends Vue {
     );
     return await getRentStatus(this.$api, this.nodeId, currentTwinID);
   }
-  reserveNode(nodeId: string) {
+  reserveNode(nodeId: string, solutionProviderID:string) {
     this.loadingReserveNode = true;
     console.log(`reserving node ${nodeId}`);
     createRentContract(
       this.$api,
       this.$route.params.accountID,
       nodeId,
+      solutionProviderID,
       (res: {
         status: { type: string; asFinalized: string; isFinalized: string };
       }) => {
