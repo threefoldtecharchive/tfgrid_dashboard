@@ -56,6 +56,7 @@ export default class Sidebar extends Vue {
     { title: "Overview", icon: "mdi-monitor-dashboard", route: "/" },
     { title: "Nodes", icon: "mdi-resistor-nodes", route: "/nodes" },
     { title: "Farms", icon: "mdi-webpack", route: "/farms" },
+    { title: "Calculator", icon: "calculator", route: "/calculator" },
   ];
 }
 </script>

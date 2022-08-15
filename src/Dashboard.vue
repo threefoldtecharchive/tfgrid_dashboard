@@ -1,25 +1,15 @@
 <template>
   <v-app>
     <div>
-      <v-app-bar
-        color="#064663"
-        dense
-        dark
-        fixed
-        height="65"
-      >
+      <v-app-bar color="#064663" dense dark fixed height="65">
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
-        <v-toolbar-title
-          class="font-weight-bold"
-          @click="redirectToHomePage"
-        >Threefold Chain</v-toolbar-title>
+        <v-toolbar-title class="font-weight-bold" @click="redirectToHomePage"
+          >Threefold Chain</v-toolbar-title
+        >
 
         <v-spacer></v-spacer>
-        <v-btn
-          icon
-          @click="toggle_dark_mode"
-        >
+        <v-btn icon @click="toggle_dark_mode">
           <v-icon>mdi-theme-light-dark</v-icon>
         </v-btn>
         <v-card
@@ -33,15 +23,11 @@
               class=""
               color="#F44336"
               @click="$store.dispatch('portal/subscribeAccounts')"
-            >mdi-lan-disconnect</v-icon>
+              >mdi-lan-disconnect</v-icon
+            >
           </v-btn>
         </v-card>
-        <v-card
-          outlined
-          v-else
-          color="transparent"
-          class="mx-2 px-1"
-        >
+        <v-card outlined v-else color="transparent" class="mx-2 px-1">
           <v-btn icon>
             <v-tooltip>
               <template v-slot:activator="{ on, attrs }">
@@ -51,7 +37,8 @@
                   @click="disconnectWallet"
                   v-bind="attrs"
                   v-on="on"
-                >mdi-lan-connect</v-icon>
+                  >mdi-lan-connect</v-icon
+                >
               </template>
               <span>Disconnect Wallet</span>
             </v-tooltip>
@@ -75,15 +62,11 @@
             <v-img src="./assets/logo.png"></v-img>
           </v-list-item-avatar>
 
-          <v-list-item-title
-            class="white--text"
-            @click="redirectToHomePage"
-          >Threefold Chain</v-list-item-title>
-
-          <v-btn
-            icon
-            @click.stop="toggle()"
+          <v-list-item-title class="white--text" @click="redirectToHomePage"
+            >Threefold Chain</v-list-item-title
           >
+
+          <v-btn icon @click.stop="toggle()">
             <v-icon class="white--text">mdi-chevron-left</v-icon>
           </v-btn>
         </v-list-item>
@@ -93,14 +76,11 @@
           v-for="route in routes"
           :key="route.label"
           class="white--text"
-          :style= "mini ? '' : 'margin: 10px !important;'"
+          :style="mini ? '' : 'margin: 10px !important;'"
         >
           <template v-slot:activator>
             <v-list-item-icon>
-              <v-icon
-                class="white--text"
-                v-text="'mdi-' + route.icon"
-              />
+              <v-icon class="white--text" v-text="'mdi-' + route.icon" />
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="white--text">
@@ -165,10 +145,7 @@
                 class="white--text pl-16"
               >
                 <v-list-item-icon>
-                  <v-icon
-                    class="white--text"
-                    v-text="'mdi-' + subchild.icon"
-                  />
+                  <v-icon class="white--text" v-text="'mdi-' + subchild.icon" />
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title
@@ -188,20 +165,11 @@
               :to="route.prefix + child.path"
               class="pl-16"
             >
-              <v-list-item-icon
-                class="mr-4"
-                v-if="child.icon"
-              >
-                <v-icon
-                  class="white--text"
-                  v-text="'mdi-' + child.icon"
-                />
+              <v-list-item-icon class="mr-4" v-if="child.icon">
+                <v-icon class="white--text" v-text="'mdi-' + child.icon" />
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title
-                  class="white--text"
-                  v-text="child.label"
-                >
+                <v-list-item-title class="white--text" v-text="child.label">
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -209,22 +177,12 @@
         </v-list-group>
       </v-list>
     </v-navigation-drawer>
-    <v-dialog
-      v-model="loadingAPI"
-      persistent
-      class="loadingDialog"
-    >
-      <div
-        class="d-flex justify-center"
-        style="display: block; padding: 10%"
-      >
-        <v-progress-circular
-          indeterminate
-          color="green"
-          :size="335"
-          :width="7"
-        >
-          <span style="font-size: large; color: black">Connecting to Polkadot</span>
+    <v-dialog v-model="loadingAPI" persistent class="loadingDialog">
+      <div class="d-flex justify-center" style="display: block; padding: 10%">
+        <v-progress-circular indeterminate color="green" :size="335" :width="7">
+          <span style="font-size: large; color: black"
+            >Connecting to Polkadot</span
+          >
         </v-progress-circular>
       </div>
     </v-dialog>
@@ -233,15 +191,8 @@
       <router-view />
     </div>
 
-    <v-footer
-      padless
-      fixed
-    >
-      <v-card
-        class="flex"
-        flat
-        tile
-      >
+    <v-footer padless fixed>
+      <v-card class="flex" flat tile>
         <v-card-text class="py-2 text-center">
           {{ new Date().getFullYear() }} — <strong>ThreeFoldTech</strong>
         </v-card-text>
@@ -455,13 +406,19 @@ export default class Dashboard extends Vue {
           icon: "lan-connect",
           showBeforeLogIn: true,
         },
+        {
+          label: "Calculator",
+          path: "calculator",
+          icon: "calculator",
+          showBeforeLogIn: true,
+        },
       ],
     },
   ];
   getRouteSubChildren(route: SidenavItem) {
     return route.children[0].children || [];
   }
-  toggle(){
+  toggle() {
     this.mini = !this.mini;
     if (this.mini) this.routes[1].active = false;
   }
@@ -492,8 +449,7 @@ export default class Dashboard extends Vue {
   border-radius: 20px;
 }
 
-.v-list .v-list-item--active{
+.v-list .v-list-item--active {
   border-radius: 20px;
 }
-
 </style>
