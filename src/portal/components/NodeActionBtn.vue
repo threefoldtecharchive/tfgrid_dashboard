@@ -24,7 +24,7 @@
       color="#064663"
       style="background: white"
       v-if="status === 'free'"
-      @click="reserveNode(nodeId, solutionProviderID)"
+      @click="reserveNode(nodeId)"
     >
       Reserve
     </v-btn>
@@ -61,8 +61,8 @@ export default class NodeActionBtn extends Vue {
   loadingReserveNode = false;
   @Prop({ required: true })
   nodeId!: string;
-  solutionProviderID!: string;
   $api: any;
+  solutionProviderID!: string;
   openUnreserveDialog = false;
   nodeIDToUnreserve = "";
   loadingUnreserveNode = false;
@@ -76,14 +76,14 @@ export default class NodeActionBtn extends Vue {
     );
     return await getRentStatus(this.$api, this.nodeId, currentTwinID);
   }
-  reserveNode(nodeId: string, solutionProviderID:string) {
+  reserveNode(nodeId: string) {
     this.loadingReserveNode = true;
     console.log(`reserving node ${nodeId}`);
     createRentContract(
       this.$api,
       this.$route.params.accountID,
       nodeId,
-      solutionProviderID,
+      this.solutionProviderID,
       (res: {
         status: { type: string; asFinalized: string; isFinalized: string };
       }) => {
