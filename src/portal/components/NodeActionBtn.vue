@@ -24,7 +24,7 @@
       color="#064663"
       style="background: white"
       v-if="status === 'free'"
-      @click="reserveNode(nodeId)"
+      @click="reserveNode(nodeId, solutionProviderID)"
     >
       Reserve
     </v-btn>
@@ -61,6 +61,7 @@ export default class NodeActionBtn extends Vue {
   loadingReserveNode = false;
   @Prop({ required: true })
   nodeId!: string;
+  solutionProviderID!: string;
   $api: any;
   openUnreserveDialog = false;
   nodeIDToUnreserve = "";
