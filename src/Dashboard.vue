@@ -93,7 +93,7 @@
           v-for="route in routes"
           :key="route.label"
           class="white--text"
-          :style= "mini ? '' : 'margin: 10px !important;'"
+          :style="mini ? '' : 'margin: 10px !important;'"
         >
           <template v-slot:activator>
             <v-list-item-icon>
@@ -197,7 +197,13 @@
                   class="white--text"
                   v-text="'mdi-' + child.icon"
                 />
-                <v-img v-else :src="child.icon" :height="24" :width="24" :alt="child.icon" />
+                <v-img
+                  v-else
+                  :src="child.icon"
+                  :height="24"
+                  :width="24"
+                  :alt="child.icon"
+                />
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title
@@ -304,7 +310,8 @@ export default class Dashboard extends Vue {
   loadingAPI = true;
   async mounted() {
     this.accounts = this.$store.state.portal.accounts;
-    if (this.$route.path === "/" && !this.$api) {
+
+    if (!this.$api) {
       Vue.prototype.$api = await connect(); //declare global variable api
       console.log(`connecting to api`);
       this.loadingAPI = false;
@@ -473,85 +480,85 @@ export default class Dashboard extends Vue {
       prefix: "/play/",
       children: [
         {
-          label: 'Full Virtual Machine',
-          path: 'full-vm',
+          label: "Full Virtual Machine",
+          path: "full-vm",
           icon: "/playground-icons/vm.png",
-          showBeforeLogIn: true
+          showBeforeLogIn: true,
         },
         {
-          label: 'Micro Virtual Machine',
-          path: 'vm',
+          label: "Micro Virtual Machine",
+          path: "vm",
           icon: "/playground-icons/vm.png",
-          showBeforeLogIn: true
+          showBeforeLogIn: true,
         },
         {
-          label: 'Kubernetes',
-          path: 'kubernetes',
+          label: "Kubernetes",
+          path: "kubernetes",
           icon: "/playground-icons/kubernetes.png",
-          showBeforeLogIn: true
+          showBeforeLogIn: true,
         },
         {
-          label: 'CapRover',
-          path: 'capRover',
+          label: "CapRover",
+          path: "capRover",
           icon: "/playground-icons/caprover.png",
-          showBeforeLogIn: true
+          showBeforeLogIn: true,
         },
         {
-          label: 'Peertube',
-          path: 'peertube',
+          label: "Peertube",
+          path: "peertube",
           icon: "/playground-icons/peertube.png",
-          showBeforeLogIn: true
+          showBeforeLogIn: true,
         },
         {
-          label: 'Funkwhale',
-          path: 'funkwhale',
+          label: "Funkwhale",
+          path: "funkwhale",
           icon: "/playground-icons/funkwhale.png",
-          showBeforeLogIn: true
+          showBeforeLogIn: true,
         },
         {
-          label: 'Mattermost',
-          path: 'mattermost',
+          label: "Mattermost",
+          path: "mattermost",
           icon: "/playground-icons/mattermost.png",
-          showBeforeLogIn: true
+          showBeforeLogIn: true,
         },
         {
-          label: 'Discourse',
-          path: 'discourse',
+          label: "Discourse",
+          path: "discourse",
           icon: "/playground-icons/discourse.png",
-          showBeforeLogIn: true
+          showBeforeLogIn: true,
         },
         {
-          label: 'Taiga',
-          path: 'taiga',
+          label: "Taiga",
+          path: "taiga",
           icon: "/playground-icons/taiga.png",
-          showBeforeLogIn: true
+          showBeforeLogIn: true,
         },
         {
-          label: 'Owncloud',
-          path: 'owncloud',
+          label: "Owncloud",
+          path: "owncloud",
           icon: "/playground-icons/owncloud.png",
-          showBeforeLogIn: true
+          showBeforeLogIn: true,
         },
         {
-          label: 'Presearch',
-          path: 'presearch',
+          label: "Presearch",
+          path: "presearch",
           icon: "/playground-icons/presearch.png",
-          showBeforeLogIn: true
+          showBeforeLogIn: true,
         },
         {
-          label: 'Casperlabs',
-          path: 'casperlabs',
+          label: "Casperlabs",
+          path: "casperlabs",
           icon: "/playground-icons/casperlabs.png",
-          showBeforeLogIn: true
+          showBeforeLogIn: true,
         },
         {
-          label: 'Node Pilot',
-          path: 'nodepilot',
+          label: "Node Pilot",
+          path: "nodepilot",
           icon: "/playground-icons/vm.png",
-          showBeforeLogIn: true
-        }
-      ]
-    }
+          showBeforeLogIn: true,
+        },
+      ],
+    },
   ];
 
   elements = [
@@ -579,7 +586,7 @@ export default class Dashboard extends Vue {
   getRouteSubChildren(route: SidenavItem) {
     return route.children[0].children || [];
   }
-  toggle(){
+  toggle() {
     this.mini = !this.mini;
     if (this.mini) this.routes[1].active = false;
   }
@@ -610,8 +617,7 @@ export default class Dashboard extends Vue {
   border-radius: 20px;
 }
 
-.v-list .v-list-item--active{
+.v-list .v-list-item--active {
   border-radius: 20px;
 }
-
 </style>
