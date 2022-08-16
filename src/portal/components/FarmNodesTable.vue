@@ -255,7 +255,7 @@
                   Node Statistics
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <div
+                  <!-- <div
                     v-for="receipt in item.receipts"
                     :key="receipt.hash"
                     align="center"
@@ -266,10 +266,10 @@
                       color="green"
                       v-if="receipt.mintingStart"
                     >
+                      <v-card-title>Minting Receipt</v-card-title>
                       <v-card-text>
-                        <p class="">start: {{ getTime(receipt.mintingStart) }}</p>
-                        <p>end: {{ getTime(receipt.mintingEnd)}}</p>
-                        <!-- <p>Period: {{getPeriod(receipt.mintingStart, receipt.mintingEnd)}}</p> -->
+                        <p class=""><b>Start:</b> {{ getTime(receipt.mintingStart) }}</p>
+                        <p><b>End:</b> {{ getTime(receipt.mintingEnd)}}</p>
                       </v-card-text>
 
                     </v-card>
@@ -278,15 +278,46 @@
                       color="red"
                       v-else
                     >
+                      <v-card-title>Fixup Receipt</v-card-title>
                       <v-card-text>
-                        <p class="">start: {{ getTime(receipt.fixupStart) }}</p>
-                        <p>end: {{ getTime(receipt.fixupEnd)}}</p>
-                        <!-- <p>Period: {{getPeriod(receipt.fixupStart, receipt.fixupEnd)}}</p> -->
+                        <p class=""><b>Start:</b> {{ getTime(receipt.fixupStart) }}</p>
+                        <p><b>End:</b> {{ getTime(receipt.fixupEnd)}}</p>
                       </v-card-text>
 
                     </v-card>
 
-                  </div>
+                  </div> -->
+                  <v-row class="fill-height">
+                    <v-col>
+                      <v-sheet height="64">
+                        <v-toolbar flat>
+                          <v-btn
+                            outlined
+                            @click="setToday"
+                          >Today</v-btn>
+                          <v-btn
+                            fab
+                            text
+                            small
+                            @click="() => {$refs.calendar}"
+                          >
+                            <v-icon small>
+                              mdi-chevron-left
+                            </v-icon>
+                          </v-btn>
+
+                        </v-toolbar>
+                      </v-sheet>
+                      <v-sheet height="600">
+                        <!-- <v-calendar
+                          ref="calendar"
+                          v-model="focus"
+                          :type='type'
+                          :events="getEventsFromReceipts(item.receipts)"
+                        ></v-calendar> -->
+                      </v-sheet>
+                    </v-col>
+                  </v-row>
                 </v-expansion-panel-content>
               </v-expansion-panel>
 
@@ -471,13 +502,18 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import moment from "moment";
-import { byteToGB } from "@/portal/lib/nodes";
+import { byteToGB, receiptInterface } from "@/portal/lib/nodes";
 import {
   addNodePublicConfig,
   deleteNode,
   nodeInterface,
 } from "@/portal/lib/farms";
 import { hex2a } from "@/portal/lib/util";
+interface eventInterface {
+  start: Date;
+  end: Date;
+  name: string;
+}
 @Component({
   name: "FarmNodesTable",
 })
@@ -488,6 +524,7 @@ export default class FarmNodesTable extends Vue {
   disabledReceiptsPanel = false;
   resourcesPanel = [0];
   disabledNodeResources = false;
+
   headers = [
     { text: "Node ID", value: "nodeID", align: "center" },
     { text: "Farm ID", value: "farmID", align: "center" },
@@ -558,6 +595,36 @@ export default class FarmNodesTable extends Vue {
   ip6ErrorMessage = "";
   gw6ErrorMessage = "";
   domainErrorMessage = "";
+
+  focus = "";
+  type = "month";
+  selectedEvent = {};
+  selectedElement = null;
+  selectedOpen = false;
+  events: eventInterface[] = [];
+  calendar: any;
+
+  setToday() {
+    this.focus = "";
+  }
+
+  getEventsFromReceipts(receipts: receiptInterface[]) {
+    receipts.map((receipt: receiptInterface) => {
+      if (receipt.measuredUptime) {
+        this.events.push({
+          name: "minting",
+          start: this.getTime(receipt.mintingStart),
+          end: this.getTime(receipt.mintingEnd),
+        });
+      } else {
+        this.events.push({
+          name: "fixup",
+          start: this.getTime(receipt.fixupStart),
+          end: this.getTime(receipt.fixupEnd),
+        });
+      }
+    });
+  }
   filteredNodes() {
     if (this.nodes.length > 0) {
       return this.nodes.filter(
@@ -775,8 +842,11 @@ export default class FarmNodesTable extends Vue {
   domainCheck() {
     return true;
   }
-  getTime(num: number) {
-    return new Date(num);
+  getTime(num: number | undefined) {
+    if (num) {
+      return new Date(num);
+    }
+    return new Date();
   }
   getPeriod(start: number, end: number) {
     return moment(moment(start).diff(end)).format("HH:mm:ss");

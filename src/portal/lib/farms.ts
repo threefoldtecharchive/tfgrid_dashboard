@@ -4,7 +4,7 @@ import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios from 'axios';
 import config from '../config';
-import { getNodeMintingFixupReceipts, getNodeUsedResources } from './nodes';
+import { getNodeMintingFixupReceipts, getNodeUsedResources, receiptInterface } from './nodes';
 import { hex2a } from './util'
 export interface nodeInterface {
   resourcesTotal: {
@@ -20,15 +20,7 @@ export interface nodeInterface {
     ipv4: string;
     ipv6: string;
   },
-  receipts: {
-    hash: string;
-    mintingStart?: number,
-    mintingEnd?: number,
-    measuredUptime?: number;
-    fixupStart?: number;
-    fixupEnd?: number
-
-  }[];
+  receipts: receiptInterface[];
   certification: string;
   city: string;
   connectionPrice: null;

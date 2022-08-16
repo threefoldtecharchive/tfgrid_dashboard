@@ -5,7 +5,14 @@ import axios from "axios";
 import config from "../config";
 import { getBalance } from "./balance";
 
-
+export interface receiptInterface {
+  hash: string;
+  mintingStart?: number,
+  mintingEnd?: number,
+  measuredUptime?: number;
+  fixupStart?: number;
+  fixupEnd?: number
+}
 
 export function byteToGB(capacity: number) {
   return (capacity / 1024 / 1024 / 1024).toFixed(0);
@@ -49,14 +56,7 @@ export async function getRentStatus(api: { query: { smartContractModule: { activ
 }
 
 export async function getNodeMintingFixupReceipts(nodeId: string) {
-  let nodeReceipts: {
-    hash: string;
-    mintingStart?: number,
-    mintingEnd?: number,
-    measuredUptime?: number;
-    fixupStart?: number;
-    fixupEnd?: number
-  }[] = []
+  let nodeReceipts: receiptInterface[] = []
   const res = await axios.get(`https://alpha.minting.tfchain.grid.tf/api/v1/node/${nodeId}`)
     .then(res => res.data.map((rec:
       {
