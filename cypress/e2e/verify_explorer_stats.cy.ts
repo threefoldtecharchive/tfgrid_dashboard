@@ -8,7 +8,7 @@ describe('TF Grid Dashboard', function(){
 
 
     this.beforeEach(function(){
-        cy.visit("/explorer/statistics")
+        statsPage.Visit()
     })
 
 

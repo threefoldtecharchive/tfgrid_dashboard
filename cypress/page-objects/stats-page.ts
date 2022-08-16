@@ -51,6 +51,10 @@ class StatsPage{
         return cy.xpath('//*[@id="app"]/div[1]/div[3]/div/div[2]/section/div[12]/div/div/p')
     }
 
+    // Navigate to the Statistics Page in the dashboard
+    Visit(){
+        return cy.visit("/explorer/statistics")
+    }
 
 
     //Verify the stats of each card in the statistics page
