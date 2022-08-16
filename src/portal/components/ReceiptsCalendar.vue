@@ -18,6 +18,10 @@
                 mdi-chevron-left
               </v-icon>
             </v-btn>
+
+            <v-toolbar-title v-if="$refs.calendar">
+              {{ $refs.calendar.title }}
+            </v-toolbar-title>
             <v-btn
               fab
               text
@@ -29,9 +33,6 @@
                 mdi-chevron-right
               </v-icon>
             </v-btn>
-            <v-toolbar-title v-if="$refs.calendar">
-              {{ $refs.calendar.title }}
-            </v-toolbar-title>
 
           </v-toolbar>
         </v-sheet>
@@ -61,7 +62,7 @@
             {{selectedEvent.start}}</p>
           <p> <b> End:</b>
             {{selectedEvent.end}}</p>
-          <p><b>Period(Days):{{getPeriod(selectedEvent.start, selectedEvent.end)}}</b></p>
+          <p><b>Period(Days):</b>{{getPeriod(selectedEvent.start, selectedEvent.end)}}</p>
 
         </v-card-text>
       </v-card>

@@ -255,38 +255,7 @@
                   Node Statistics
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <div
-                    v-for="receipt in item.receipts"
-                    :key="receipt.hash"
-                    align="center"
-                  >
 
-                    <v-card
-                      class="my-3"
-                      color="green"
-                      v-if="receipt.mintingStart"
-                    >
-                      <v-card-title>Minting Receipt</v-card-title>
-                      <v-card-text>
-                        <p class=""><b>Start:</b> {{ getTime(receipt.mintingStart) }}</p>
-                        <p><b>End:</b> {{ getTime(receipt.mintingEnd)}}</p>
-                      </v-card-text>
-
-                    </v-card>
-                    <v-card
-                      class=""
-                      color="red"
-                      v-else
-                    >
-                      <v-card-title>Fixup Receipt</v-card-title>
-                      <v-card-text>
-                        <p class=""><b>Start:</b> {{ getTime(receipt.fixupStart) }}</p>
-                        <p><b>End:</b> {{ getTime(receipt.fixupEnd)}}</p>
-                      </v-card-text>
-
-                    </v-card>
-
-                  </div>
                   <ReceiptsCalendar :receipts="item.receipts" />
 
                 </v-expansion-panel-content>
