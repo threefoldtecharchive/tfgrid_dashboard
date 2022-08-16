@@ -255,7 +255,7 @@
                   Node Statistics
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <!-- <div
+                  <div
                     v-for="receipt in item.receipts"
                     :key="receipt.hash"
                     align="center"
@@ -286,38 +286,9 @@
 
                     </v-card>
 
-                  </div> -->
-                  <v-row class="fill-height">
-                    <v-col>
-                      <v-sheet height="64">
-                        <v-toolbar flat>
-                          <v-btn
-                            outlined
-                            @click="setToday"
-                          >Today</v-btn>
-                          <v-btn
-                            fab
-                            text
-                            small
-                            @click="() => {$refs.calendar}"
-                          >
-                            <v-icon small>
-                              mdi-chevron-left
-                            </v-icon>
-                          </v-btn>
+                  </div>
+                  <ReceiptsCalendar :receipts="item.receipts" />
 
-                        </v-toolbar>
-                      </v-sheet>
-                      <v-sheet height="600">
-                        <!-- <v-calendar
-                          ref="calendar"
-                          v-model="focus"
-                          :type='type'
-                          :events="getEventsFromReceipts(item.receipts)"
-                        ></v-calendar> -->
-                      </v-sheet>
-                    </v-col>
-                  </v-row>
                 </v-expansion-panel-content>
               </v-expansion-panel>
 
@@ -502,20 +473,18 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import moment from "moment";
-import { byteToGB, receiptInterface } from "@/portal/lib/nodes";
+import { byteToGB } from "@/portal/lib/nodes";
 import {
   addNodePublicConfig,
   deleteNode,
   nodeInterface,
 } from "@/portal/lib/farms";
 import { hex2a } from "@/portal/lib/util";
-interface eventInterface {
-  start: Date;
-  end: Date;
-  name: string;
-}
+import ReceiptsCalendar from "./ReceiptsCalendar.vue";
+
 @Component({
   name: "FarmNodesTable",
+  components: { ReceiptsCalendar },
 })
 export default class FarmNodesTable extends Vue {
   expanded: any = [];
@@ -596,35 +565,6 @@ export default class FarmNodesTable extends Vue {
   gw6ErrorMessage = "";
   domainErrorMessage = "";
 
-  focus = "";
-  type = "month";
-  selectedEvent = {};
-  selectedElement = null;
-  selectedOpen = false;
-  events: eventInterface[] = [];
-  calendar: any;
-
-  setToday() {
-    this.focus = "";
-  }
-
-  getEventsFromReceipts(receipts: receiptInterface[]) {
-    receipts.map((receipt: receiptInterface) => {
-      if (receipt.measuredUptime) {
-        this.events.push({
-          name: "minting",
-          start: this.getTime(receipt.mintingStart),
-          end: this.getTime(receipt.mintingEnd),
-        });
-      } else {
-        this.events.push({
-          name: "fixup",
-          start: this.getTime(receipt.fixupStart),
-          end: this.getTime(receipt.fixupEnd),
-        });
-      }
-    });
-  }
   filteredNodes() {
     if (this.nodes.length > 0) {
       return this.nodes.filter(
@@ -848,9 +788,7 @@ export default class FarmNodesTable extends Vue {
     }
     return new Date();
   }
-  getPeriod(start: number, end: number) {
-    return moment(moment(start).diff(end)).format("HH:mm:ss");
-  }
+
   getNodeUptimePercentage(node: nodeInterface) {
     const totalReceiptsUptime = node.receipts.reduce(
       (total, receipt) =>
