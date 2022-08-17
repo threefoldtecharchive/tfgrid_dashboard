@@ -43,7 +43,7 @@
             ref="calendar"
             v-model="focus"
             :type='type'
-            :events="events"
+            :events="getEvents()"
             @click:event="showEvent"
           ></v-calendar>
         </v-sheet>
@@ -103,7 +103,6 @@ export default class ReceiptsCalendar extends Vue {
   type = "month";
   selectedElement = null;
   selectedOpen = false;
-  events: eventInterface[] = [];
 
   selectedEvent: eventInterface = {
     name: "",
@@ -113,13 +112,14 @@ export default class ReceiptsCalendar extends Vue {
     color: "",
   };
 
-  @Watch("receipts") async onPropertyChanged(
-    value: receiptInterface[],
-    oldValue: receiptInterface[]
-  ) {
-    value.map((rec: receiptInterface) => {
+  @Watch("receipts") async onPropertyChanged() {
+    this.getEvents();
+  }
+  getEvents() {
+    let events: eventInterface[] = [];
+    this.receipts.map((rec: receiptInterface) => {
       if (rec.measuredUptime) {
-        this.events.push({
+        events.push({
           name: `Minting`,
           start: this.getTime(rec.mintingStart),
           end: this.getTime(rec.mintingEnd),
@@ -127,7 +127,7 @@ export default class ReceiptsCalendar extends Vue {
           hash: rec.hash,
         });
       } else {
-        this.events.push({
+        events.push({
           name: "Fixup",
           start: this.getTime(rec.fixupStart),
           end: this.getTime(rec.fixupEnd),
@@ -136,34 +136,13 @@ export default class ReceiptsCalendar extends Vue {
         });
       }
     });
+    return events;
   }
-
   unmounted() {
     this.receipts = [];
-    this.events = [];
   }
   mounted() {
     this.$refs.calendar.checkChange(); //.checkChange();
-    this.receipts.map((rec: receiptInterface) => {
-      if (rec.measuredUptime) {
-        this.events.push({
-          name: `Minting`,
-          start: this.getTime(rec.mintingStart),
-          end: this.getTime(rec.mintingEnd),
-          color: "green",
-          hash: rec.hash,
-        });
-      } else {
-        this.events.push({
-          name: "Fixup",
-          start: this.getTime(rec.fixupStart),
-          end: this.getTime(rec.fixupEnd),
-          color: "red",
-          hash: rec.hash,
-        });
-      }
-    });
-    console.log(this.events);
   }
 
   showEvent(event: { event: eventInterface }) {
