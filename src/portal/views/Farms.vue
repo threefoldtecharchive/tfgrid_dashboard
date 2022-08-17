@@ -270,7 +270,6 @@ import {
   deleteIP,
   getFarm,
   getNodesByFarmID,
-  nodeInterface,
   setFarmPayoutV2Address,
 } from "../lib/farms";
 import { StrKey } from "stellar-sdk";

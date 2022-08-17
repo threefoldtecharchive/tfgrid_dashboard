@@ -198,7 +198,8 @@
           <v-col>
             <v-expansion-panels
               v-model="resourcesPanel"
-              :disabled="disabledNodeResources"
+              :disabled="false"
+              focusable
             >
               <v-expansion-panel>
                 <v-expansion-panel-header>
@@ -248,7 +249,9 @@
           <v-col>
             <v-expansion-panels
               v-model="receiptsPanel"
-              :disabled="disabledReceiptsPanel"
+              :disabled="false"
+              focusable
+              single
             >
               <v-expansion-panel>
                 <v-expansion-panel-header>
@@ -440,7 +443,7 @@
   </v-container>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import moment from "moment";
 import { byteToGB } from "@/portal/lib/nodes";
 import {
@@ -458,10 +461,9 @@ import ReceiptsCalendar from "./ReceiptsCalendar.vue";
 export default class FarmNodesTable extends Vue {
   expanded: any = [];
   singleExpand = true;
-  receiptsPanel = [0];
-  disabledReceiptsPanel = false;
-  resourcesPanel = [0];
-  disabledNodeResources = false;
+  receiptsPanel = [];
+
+  resourcesPanel = [];
 
   headers = [
     { text: "Node ID", value: "nodeID", align: "center" },
@@ -533,7 +535,7 @@ export default class FarmNodesTable extends Vue {
   ip6ErrorMessage = "";
   gw6ErrorMessage = "";
   domainErrorMessage = "";
-
+  receipts = [];
   filteredNodes() {
     if (this.nodes.length > 0) {
       return this.nodes.filter(

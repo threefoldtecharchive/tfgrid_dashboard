@@ -1,9 +1,11 @@
-<template>
+<template >
+
   <v-container>
     <v-row class="fill-height">
       <v-col>
         <v-sheet height="64">
           <v-toolbar flat>
+
             <v-btn
               outlined
               @click="setToday"
@@ -62,7 +64,7 @@
             {{selectedEvent.start}}</p>
           <p> <b> End:</b>
             {{selectedEvent.end}}</p>
-          <p><b>Period(Days):</b>{{getPeriod(selectedEvent.start, selectedEvent.end)}}</p>
+          <!-- <p><b>Period(Days):</b>{{getPeriod(selectedEvent.start, selectedEvent.end)}}</p> -->
 
         </v-card-text>
       </v-card>
@@ -71,7 +73,8 @@
 </template>
 <script lang="ts">
 import moment from "moment";
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { VueConstructor } from "vue";
+import { Component, Vue, Prop, Ref } from "vue-property-decorator";
 import { receiptInterface } from "../lib/nodes";
 interface eventInterface {
   start: Date;
@@ -84,13 +87,24 @@ interface eventInterface {
   name: "ReceiptsCalendar",
 })
 export default class ReceiptsCalendar extends Vue {
+  $refs!: {
+    calendar: any;
+  };
+  @Ref() calendar!:
+    | Vue
+    | VueConstructor<Vue>
+    | Element
+    | (Vue | Element)[]
+    | undefined;
+
+  @Prop({ required: true }) receipts!: receiptInterface[];
+
   focus = "";
   type = "month";
-
   selectedElement = null;
   selectedOpen = false;
   events: eventInterface[] = [];
-  calendar: any;
+
   selectedEvent: eventInterface = {
     name: "",
     start: new Date(),
@@ -99,10 +113,8 @@ export default class ReceiptsCalendar extends Vue {
     color: "",
   };
 
-  @Prop({ required: true }) receipts!: receiptInterface[];
   mounted() {
-    this.$refs.calendar.checkChange();
-
+    this.$refs.calendar.checkChange(); //.checkChange();
     this.receipts.map((rec: receiptInterface) => {
       if (rec.measuredUptime) {
         this.events.push({
@@ -123,8 +135,9 @@ export default class ReceiptsCalendar extends Vue {
       }
     });
   }
-  showEvent({ event }) {
-    this.selectedEvent = event;
+
+  showEvent(event: { event: eventInterface }) {
+    this.selectedEvent = event.event;
     this.selectedOpen = true;
   }
   setToday() {
@@ -137,7 +150,7 @@ export default class ReceiptsCalendar extends Vue {
     this.$refs.calendar.next();
   }
   getPeriod(start: Date, end: Date) {
-    return moment(end - start).format("DD");
+    return moment(end.getMilliseconds() - start.getMilliseconds()).format("DD");
   }
   getTime(num: number | undefined) {
     if (num) {
