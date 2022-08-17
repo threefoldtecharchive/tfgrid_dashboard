@@ -8,7 +8,7 @@
     <v-data-table
       :headers="headers"
       :items="filteredNodes()"
-      :single-expand="singleExpand"
+      :single-expand="true"
       :expanded.sync="expanded"
       item-key="id"
       show-expand
@@ -259,7 +259,7 @@
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
 
-                  <ReceiptsCalendar :receipts="item.receipts" />
+                  <ReceiptsCalendar :receipts=" item.receipts" />
 
                 </v-expansion-panel-content>
               </v-expansion-panel>
@@ -443,7 +443,7 @@
   </v-container>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from "vue-property-decorator";
+import { Component, Vue, Prop } from "vue-property-decorator";
 import moment from "moment";
 import { byteToGB } from "@/portal/lib/nodes";
 import {
@@ -460,9 +460,7 @@ import ReceiptsCalendar from "./ReceiptsCalendar.vue";
 })
 export default class FarmNodesTable extends Vue {
   expanded: any = [];
-  singleExpand = true;
   receiptsPanel = [];
-
   resourcesPanel = [];
 
   headers = [
@@ -473,6 +471,7 @@ export default class FarmNodesTable extends Vue {
     { text: "Status", value: "status", align: "center" },
     { text: "Actions", value: "actions", sortable: false, align: "center" },
   ];
+
   loadingDelete = false;
   openDeleteDialog = false;
   editedIndex = -1;
@@ -536,6 +535,9 @@ export default class FarmNodesTable extends Vue {
   gw6ErrorMessage = "";
   domainErrorMessage = "";
   receipts = [];
+  updated() {
+    this.receiptsPanel = [];
+  }
   filteredNodes() {
     if (this.nodes.length > 0) {
       return this.nodes.filter(

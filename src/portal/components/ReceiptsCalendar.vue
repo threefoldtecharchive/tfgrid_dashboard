@@ -74,7 +74,7 @@
 <script lang="ts">
 import moment from "moment";
 import { VueConstructor } from "vue";
-import { Component, Vue, Prop, Ref } from "vue-property-decorator";
+import { Component, Vue, Prop, Ref, Watch } from "vue-property-decorator";
 import { receiptInterface } from "../lib/nodes";
 interface eventInterface {
   start: Date;
@@ -113,6 +113,35 @@ export default class ReceiptsCalendar extends Vue {
     color: "",
   };
 
+  @Watch("receipts") async onPropertyChanged(
+    value: receiptInterface[],
+    oldValue: receiptInterface[]
+  ) {
+    value.map((rec: receiptInterface) => {
+      if (rec.measuredUptime) {
+        this.events.push({
+          name: `Minting`,
+          start: this.getTime(rec.mintingStart),
+          end: this.getTime(rec.mintingEnd),
+          color: "green",
+          hash: rec.hash,
+        });
+      } else {
+        this.events.push({
+          name: "Fixup",
+          start: this.getTime(rec.fixupStart),
+          end: this.getTime(rec.fixupEnd),
+          color: "red",
+          hash: rec.hash,
+        });
+      }
+    });
+  }
+
+  unmounted() {
+    this.receipts = [];
+    this.events = [];
+  }
   mounted() {
     this.$refs.calendar.checkChange(); //.checkChange();
     this.receipts.map((rec: receiptInterface) => {
@@ -134,6 +163,7 @@ export default class ReceiptsCalendar extends Vue {
         });
       }
     });
+    console.log(this.events);
   }
 
   showEvent(event: { event: eventInterface }) {
