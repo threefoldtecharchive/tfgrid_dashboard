@@ -35,6 +35,10 @@
                 mdi-chevron-right
               </v-icon>
             </v-btn>
+            <v-btn
+              class="ml-auto"
+              @click="downloadReceipts()"
+            >Download Receipts</v-btn>
 
           </v-toolbar>
         </v-sheet>
@@ -64,7 +68,6 @@
             {{selectedEvent.start}}</p>
           <p> <b> End:</b>
             {{selectedEvent.end}}</p>
-          <!-- <p><b>Period(Days):</b>{{getPeriod(selectedEvent.start, selectedEvent.end)}}</p> -->
 
         </v-card-text>
       </v-card>
@@ -72,10 +75,11 @@
   </v-container>
 </template>
 <script lang="ts">
-import moment from "moment";
 import { VueConstructor } from "vue";
 import { Component, Vue, Prop, Ref, Watch } from "vue-property-decorator";
 import { receiptInterface } from "../lib/nodes";
+import { jsPDF } from "jspdf";
+
 interface eventInterface {
   start: Date;
   end: Date;
@@ -114,6 +118,82 @@ export default class ReceiptsCalendar extends Vue {
 
   @Watch("receipts") async onPropertyChanged() {
     this.getEvents();
+  }
+  downloadReceipts() {
+    let doc = new jsPDF();
+    doc.setFontSize(15);
+
+    let topY = 20;
+    const lineOffset = 5;
+    const cellOffset = 20;
+    let cellX = 15;
+    let cellY = topY + lineOffset * 5;
+
+    doc.text("Node Receipts Summary", 80, topY);
+    doc.setFontSize(10);
+    doc.text(
+      `Receipts total: ${this.receipts.length}`,
+      cellX,
+      topY + lineOffset
+    );
+    doc.text(
+      `Minting total: ${
+        this.receipts.filter((receipt) => receipt.measuredUptime).length
+      }`,
+      cellX,
+      topY + lineOffset * 2
+    );
+    doc.text(
+      `Fixup total: ${
+        this.receipts.filter((receipt) => receipt.fixupStart).length
+      }`,
+      cellX,
+      topY + lineOffset * 3
+    );
+
+    doc.line(cellX, topY + lineOffset * 4, cellX + 175, topY + lineOffset * 4);
+
+    this.receipts.map((receipt, i) => {
+      if (receipt.measuredUptime) {
+        doc.text(`Minting: ${receipt.hash}`, cellX, cellY + cellOffset * i);
+        doc.text(
+          `start: ${this.getTime(receipt.mintingStart)}`,
+          cellX,
+          cellY + cellOffset * i + lineOffset
+        );
+        doc.text(
+          `end: ${this.getTime(receipt.mintingEnd)}`,
+          cellX,
+          cellY + cellOffset * i + lineOffset * 2
+        );
+        doc.line(
+          cellX,
+          cellY + cellOffset * i + lineOffset * 3,
+          cellX + 175,
+          cellY + cellOffset * i + lineOffset * 3
+        );
+      } else {
+        doc.text(`Fixup: ${receipt.hash}`, cellX, cellY + cellOffset * i);
+        doc.text(
+          `start: ${this.getTime(receipt.fixupStart)}`,
+          cellX,
+          cellY + cellOffset * i + lineOffset
+        );
+        doc.text(
+          `end: ${this.getTime(receipt.fixupEnd)}`,
+          cellX,
+          cellY + cellOffset * i + lineOffset * 2
+        );
+        doc.line(
+          cellX,
+          cellY + cellOffset * lineOffset * 3,
+          cellX + 175,
+          cellY + cellOffset * lineOffset * 3
+        );
+      }
+    });
+
+    doc.save("receipt.pdf");
   }
   getEvents() {
     let events: eventInterface[] = [];
@@ -158,9 +238,7 @@ export default class ReceiptsCalendar extends Vue {
   next() {
     this.$refs.calendar.next();
   }
-  getPeriod(start: Date, end: Date) {
-    return moment(end.getMilliseconds() - start.getMilliseconds()).format("DD");
-  }
+
   getTime(num: number | undefined) {
     if (num) {
       return new Date(num);
