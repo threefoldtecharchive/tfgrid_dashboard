@@ -77,8 +77,9 @@
 <script lang="ts">
 import { VueConstructor } from "vue";
 import { Component, Vue, Prop, Ref, Watch } from "vue-property-decorator";
-import { receiptInterface } from "../lib/nodes";
+import { generateReceipt, getTime, receiptInterface } from "../lib/nodes";
 import { jsPDF } from "jspdf";
+import { nodeInterface } from "../lib/farms";
 
 interface eventInterface {
   start: Date;
@@ -101,7 +102,7 @@ export default class ReceiptsCalendar extends Vue {
     | (Vue | Element)[]
     | undefined;
 
-  @Prop({ required: true }) receipts!: receiptInterface[];
+  @Prop({ required: true }) node!: nodeInterface;
 
   focus = "";
   type = "month";
@@ -121,108 +122,25 @@ export default class ReceiptsCalendar extends Vue {
   }
   downloadReceipts() {
     let doc = new jsPDF();
-    doc.setFontSize(15);
-
-    let topY = 20;
-    const lineOffset = 5;
-    const cellOffset = 30;
-    let cellX = 15;
-    let cellY = topY + lineOffset * 6;
-
-    doc.text("Node Receipts Summary", 80, topY);
-    doc.setFontSize(10);
-    doc.text(
-      `Receipts total: ${this.receipts.length}`,
-      cellX,
-      topY + lineOffset
-    );
-    doc.text(
-      `Minting total: ${
-        this.receipts.filter((receipt) => receipt.measuredUptime).length
-      }`,
-      cellX,
-      topY + lineOffset * 2
-    );
-    doc.text(
-      `Fixup total: ${
-        this.receipts.filter((receipt) => receipt.fixupStart).length
-      }`,
-      cellX,
-      topY + lineOffset * 3
-    );
-
-    doc.text(
-      `TFT total(M): ${this.receipts
-        .reduce((total, receipt) => (total += receipt.tft || 0), 0)
-        .toFixed(2)}`,
-      cellX,
-      topY + lineOffset * 4
-    );
-    doc.line(cellX, topY + lineOffset * 5, cellX + 175, topY + lineOffset * 5);
-
-    this.receipts.map((receipt, i) => {
-      if (receipt.measuredUptime) {
-        doc.text(`Minting: ${receipt.hash}`, cellX, cellY + cellOffset * i);
-        doc.text(
-          `start: ${this.getTime(receipt.mintingStart)}`,
-          cellX,
-          cellY + cellOffset * i + lineOffset
-        );
-        doc.text(
-          `end: ${this.getTime(receipt.mintingEnd)}`,
-          cellX,
-          cellY + cellOffset * i + lineOffset * 2
-        );
-        doc.text(
-          `TFT(M): ${receipt.tft?.toFixed(2)}`,
-          cellX,
-          cellY + cellOffset * i + lineOffset * 3
-        );
-        doc.line(
-          cellX,
-          cellY + cellOffset * i + lineOffset * 4,
-          cellX + 175,
-          cellY + cellOffset * i + lineOffset * 4
-        );
-      } else {
-        doc.text(`Fixup: ${receipt.hash}`, cellX, cellY + cellOffset * i);
-        doc.text(
-          `start: ${this.getTime(receipt.fixupStart)}`,
-          cellX,
-          cellY + cellOffset * i + lineOffset
-        );
-        doc.text(
-          `end: ${this.getTime(receipt.fixupEnd)}`,
-          cellX,
-          cellY + cellOffset * i + lineOffset * 2
-        );
-        doc.line(
-          cellX,
-          cellY + cellOffset * i + lineOffset * 4,
-          cellX + 175,
-          cellY + cellOffset * i + lineOffset * 4
-        );
-      }
-    });
-
-    doc.save("receipt.pdf");
+    doc = generateReceipt(doc, this.node);
+    doc.save(`node_${this.node.nodeID}_receipts.pdf`);
   }
   getEvents() {
     let events: eventInterface[] = [];
-    this.receipts.map((rec: receiptInterface) => {
+    this.node.receipts.map((rec: receiptInterface) => {
       if (rec.measuredUptime) {
         events.push({
           name: `Minting`,
-          start: this.getTime(rec.mintingStart),
-          end: this.getTime(rec.mintingEnd),
+          start: getTime(rec.mintingStart),
+          end: getTime(rec.mintingEnd),
           color: "green",
           hash: rec.hash,
         });
       } else {
         events.push({
           name: "Fixup",
-          start: this.getTime(rec.fixupStart),
-          end: this.getTime(rec.fixupEnd),
+          start: getTime(rec.fixupStart),
+          end: getTime(rec.fixupEnd),
           color: "red",
           hash: rec.hash,
         });
@@ -230,9 +148,7 @@ export default class ReceiptsCalendar extends Vue {
     });
     return events;
   }
-  unmounted() {
-    this.receipts = [];
-  }
+
   mounted() {
     this.$refs.calendar.checkChange(); //.checkChange();
   }
@@ -249,13 +165,6 @@ export default class ReceiptsCalendar extends Vue {
   }
   next() {
     this.$refs.calendar.next();
-  }
-
-  getTime(num: number | undefined) {
-    if (num) {
-      return new Date(num);
-    }
-    return new Date();
   }
 }
 </script>

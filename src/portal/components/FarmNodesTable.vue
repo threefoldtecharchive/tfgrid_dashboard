@@ -20,6 +20,11 @@
         <template v-slot:top>
           <v-toolbar flat>
             <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
+            <v-btn
+              class="ml-auto"
+              @click="downloadAllReceipts()"
+            >Download Receipts</v-btn>
+
           </v-toolbar>
         </template>
 
@@ -180,7 +185,7 @@
                           :rotate="-90"
                           :size="100"
                           :width="15"
-                          :value=" getNodeUptimePercentage(item)"
+                          :value="getNodeUptimePercentage(item)"
                           color="light-green darken-2"
                         />
 
@@ -261,7 +266,7 @@
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
 
-                    <ReceiptsCalendar :receipts=" item.receipts" />
+                    <ReceiptsCalendar :node="item" />
 
                   </v-expansion-panel-content>
                 </v-expansion-panel>
@@ -453,7 +458,12 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import moment from "moment";
-import { byteToGB } from "@/portal/lib/nodes";
+import {
+  byteToGB,
+  generateNodeSummary,
+  generateReceipt,
+  getNodeUptimePercentage,
+} from "@/portal/lib/nodes";
 import {
   addNodePublicConfig,
   deleteNode,
@@ -461,6 +471,7 @@ import {
 } from "@/portal/lib/farms";
 import { hex2a } from "@/portal/lib/util";
 import ReceiptsCalendar from "./ReceiptsCalendar.vue";
+import jsPDF from "jspdf";
 
 @Component({
   name: "FarmNodesTable",
@@ -562,7 +573,18 @@ export default class FarmNodesTable extends Vue {
     }
     return this.nodes;
   }
+  downloadAllReceipts() {
+    let docSum = new jsPDF();
+    generateNodeSummary(docSum, this.nodes);
+    docSum.addPage();
 
+    this.nodes.map((node, i) => {
+      generateReceipt(docSum, node);
+      docSum.text(`${i + 1}`, 185, docSum.internal.pageSize.height - 10);
+      docSum.addPage();
+    });
+    docSum.save("nodes_receipts.pdf");
+  }
   convertHex(node: { id: string }) {
     return hex2a(node.id);
   }
@@ -771,14 +793,7 @@ export default class FarmNodesTable extends Vue {
   }
 
   getNodeUptimePercentage(node: nodeInterface) {
-    const totalReceiptsUptime = node.receipts.reduce(
-      (total, receipt) =>
-        receipt.measuredUptime
-          ? (total += receipt.measuredUptime)
-          : (total += 0),
-      0
-    );
-    return ((totalReceiptsUptime / node.uptime) * 100).toFixed(2);
+    return getNodeUptimePercentage(node);
   }
   getStatus(node: { updatedAt: string }) {
     const { updatedAt } = node;

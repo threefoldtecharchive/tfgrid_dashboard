@@ -4,7 +4,9 @@ import { web3FromAddress } from "@polkadot/extension-dapp";
 import axios from "axios";
 import config from "../config";
 import { getBalance } from "./balance";
-
+import { jsPDF } from "jspdf";
+import { nodeInterface } from "./farms";
+import moment from "moment";
 export interface receiptInterface {
   hash: string;
   mintingStart?: number;
@@ -14,7 +16,130 @@ export interface receiptInterface {
   fixupEnd?: number;
   tft?: number;
 }
+export function getNodeUptimePercentage(node: nodeInterface) {
+  const totalReceiptsUptime = node.receipts.reduce(
+    (total, receipt) =>
+      receipt.measuredUptime
+        ? (total += receipt.measuredUptime)
+        : (total += 0),
+    0
+  );
+  return ((totalReceiptsUptime / node.uptime) * 100).toFixed(2);
+}
+export function getTime(num: number | undefined) {
+  if (num) {
+    return new Date(num);
+  }
+  return new Date();
+}
+export function generateNodeSummary(doc: jsPDF, nodes: nodeInterface[]) {
+  doc.setFontSize(15);
+  const topY = 20;
+  const topX = 80;
+  const lineOffset = 10;
+  const cellOffset = 40;
+  const cellX = 15;
+  const cellY = topY + lineOffset
 
+  doc.text("Nodes Summary", topX, topY);
+  doc.setFontSize(10);
+
+
+  doc.text(`total nodes: ${nodes.length}`, cellX, cellY)
+  doc.text(`total receipts: ${nodes.reduce((total, node) => total += node.receipts.length, 0)}`, cellX, cellY + lineOffset)
+  doc.text(`total TFT: ${nodes.reduce((total, node) => total += node.receipts.reduce((totalTFT, receipt) => totalTFT += receipt.tft || 0, 0), 0)}`, cellX, cellY + lineOffset * 2)
+  doc.text(`total Uptime: ${nodes.reduce((total, node) => total += Math.floor(moment.duration(node.uptime, 'seconds').asDays()), 0)} days`, cellX, cellY + lineOffset * 3)
+
+}
+export function generateReceipt(doc: jsPDF, node: nodeInterface) {
+
+  doc.setFontSize(15);
+
+  const topY = 20;
+  const lineOffset = 5;
+  const cellOffset = 30;
+  const cellX = 15;
+  const cellY = topY + lineOffset * 8;
+
+  doc.text(`Node ${node.nodeID} Summary`, 80, topY);
+  doc.setFontSize(10);
+  doc.text(
+    `Receipts total: ${node.receipts.length}`,
+    cellX,
+    topY + lineOffset
+  );
+  doc.text(
+    `Minting total: ${node.receipts.filter((receipt) => receipt.measuredUptime).length
+    }`,
+    cellX,
+    topY + lineOffset * 2
+  );
+  doc.text(
+    `Fixup total: ${node.receipts.filter((receipt) => receipt.fixupStart).length
+    }`,
+    cellX,
+    topY + lineOffset * 3
+  );
+
+  doc.text(
+    `TFT total: ${node.receipts
+      .reduce((total, receipt) => (total += receipt.tft || 0), 0)
+      .toFixed(2)}`,
+    cellX,
+    topY + lineOffset * 4
+  );
+  doc.text(`Uptime: ${getNodeUptimePercentage(node)}% - ${Math.floor(moment.duration(node.uptime, 'seconds').asDays())} days`, cellX, topY + lineOffset * 5);
+
+  doc.line(cellX, topY + lineOffset * 6, cellX + 175, topY + lineOffset * 6);
+
+  node.receipts.map((receipt, i) => {
+    if (receipt.measuredUptime) {
+      doc.text(`Minting: ${receipt.hash}`, cellX, cellY + cellOffset * i);
+      doc.text(
+        `start: ${getTime(receipt.mintingStart)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset
+      );
+      doc.text(
+        `end: ${getTime(receipt.mintingEnd)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset * 2
+      );
+      doc.text(
+        `TFT: ${receipt.tft?.toFixed(2)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset * 3
+      );
+
+    } else {
+      doc.text(`Fixup: ${receipt.hash}`, cellX, cellY + cellOffset * i);
+      doc.text(
+        `start: ${getTime(receipt.fixupStart)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset
+      );
+      doc.text(
+        `end: ${getTime(receipt.fixupEnd)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset * 2
+      );
+
+
+    }
+    if (i !== node.receipts.length - 1) {
+      doc.line(
+        cellX,
+        cellY + cellOffset * i + lineOffset * 4,
+        cellX + 175,
+        cellY + cellOffset * i + lineOffset * 4
+      );
+    }
+
+  });
+
+
+  return doc
+}
 export function byteToGB(capacity: number) {
   return (capacity / 1024 / 1024 / 1024).toFixed(0);
 }
