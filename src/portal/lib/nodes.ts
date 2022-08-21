@@ -7,6 +7,7 @@ import { getBalance } from "./balance";
 import { jsPDF } from "jspdf";
 import { nodeInterface } from "./farms";
 import moment from "moment";
+import 'jspdf-autotable';
 export interface receiptInterface {
   hash: string;
   mintingStart?: number;
@@ -41,14 +42,17 @@ export function generateNodeSummary(doc: jsPDF, nodes: nodeInterface[]) {
   const cellX = 15;
   const cellY = topY + lineOffset
 
-  doc.text("Nodes Summary", topX, topY);
+  doc.text("Total Nodes Summary", topX, topY);
   doc.setFontSize(10);
 
 
-  doc.text(`total nodes: ${nodes.length}`, cellX, cellY)
-  doc.text(`total receipts: ${nodes.reduce((total, node) => total += node.receipts.length, 0)}`, cellX, cellY + lineOffset)
-  doc.text(`total TFT: ${nodes.reduce((total, node) => total += node.receipts.reduce((totalTFT, receipt) => totalTFT += receipt.tft || 0, 0), 0)}`, cellX, cellY + lineOffset * 2)
-  doc.text(`total Uptime: ${nodes.reduce((total, node) => total += Math.floor(moment.duration(node.uptime, 'seconds').asDays()), 0)} days`, cellX, cellY + lineOffset * 3)
+
+  doc.text(`Nodes: ${nodes.length}`, cellX, cellY)
+  doc.text(`Receipts: ${nodes.reduce((total, node) => total += node.receipts.length, 0)}`, cellX, cellY + lineOffset)
+  doc.text(`Minting Receipts: ${nodes.reduce((total, node) => total += node.receipts.filter((receipt) => receipt.measuredUptime).length, 0)}`, cellX, cellY + lineOffset * 2)
+  doc.text(`Fixup Receipts: ${nodes.reduce((total, node) => total += node.receipts.filter((receipt) => receipt.fixupStart).length, 0)}`, cellX, cellY + lineOffset * 3)
+  doc.text(`TFT: ${nodes.reduce((total, node) => total += node.receipts.reduce((totalTFT, receipt) => totalTFT += receipt.tft || 0, 0), 0)}`, cellX, cellY + lineOffset * 4)
+  doc.text(`Uptime: ${nodes.reduce((total, node) => total += Math.floor(moment.duration(node.uptime, 'seconds').asDays()), 0)} days`, cellX, cellY + lineOffset * 5)
 
 }
 export function generateReceipt(doc: jsPDF, node: nodeInterface) {
