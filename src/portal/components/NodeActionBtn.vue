@@ -61,7 +61,7 @@ export default class NodeActionBtn extends Vue {
   loadingReserveNode = false;
   @Prop({ required: true })
   nodeId!: string;
-  solutionProviderID = "3";
+  solutionProviderID = "";
   $api: any;
   openUnreserveDialog = false;
   nodeIDToUnreserve = "";
