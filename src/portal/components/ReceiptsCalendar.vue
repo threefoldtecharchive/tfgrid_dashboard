@@ -125,9 +125,9 @@ export default class ReceiptsCalendar extends Vue {
 
     let topY = 20;
     const lineOffset = 5;
-    const cellOffset = 20;
+    const cellOffset = 30;
     let cellX = 15;
-    let cellY = topY + lineOffset * 5;
+    let cellY = topY + lineOffset * 6;
 
     doc.text("Node Receipts Summary", 80, topY);
     doc.setFontSize(10);
@@ -151,7 +151,14 @@ export default class ReceiptsCalendar extends Vue {
       topY + lineOffset * 3
     );
 
-    doc.line(cellX, topY + lineOffset * 4, cellX + 175, topY + lineOffset * 4);
+    doc.text(
+      `TFT total(M): ${this.receipts
+        .reduce((total, receipt) => (total += receipt.tft || 0), 0)
+        .toFixed(2)}`,
+      cellX,
+      topY + lineOffset * 4
+    );
+    doc.line(cellX, topY + lineOffset * 5, cellX + 175, topY + lineOffset * 5);
 
     this.receipts.map((receipt, i) => {
       if (receipt.measuredUptime) {
@@ -166,11 +173,16 @@ export default class ReceiptsCalendar extends Vue {
           cellX,
           cellY + cellOffset * i + lineOffset * 2
         );
+        doc.text(
+          `TFT(M): ${receipt.tft?.toFixed(2)}`,
+          cellX,
+          cellY + cellOffset * i + lineOffset * 3
+        );
         doc.line(
           cellX,
-          cellY + cellOffset * i + lineOffset * 3,
+          cellY + cellOffset * i + lineOffset * 4,
           cellX + 175,
-          cellY + cellOffset * i + lineOffset * 3
+          cellY + cellOffset * i + lineOffset * 4
         );
       } else {
         doc.text(`Fixup: ${receipt.hash}`, cellX, cellY + cellOffset * i);
@@ -186,9 +198,9 @@ export default class ReceiptsCalendar extends Vue {
         );
         doc.line(
           cellX,
-          cellY + cellOffset * lineOffset * 3,
+          cellY + cellOffset * i + lineOffset * 4,
           cellX + 175,
-          cellY + cellOffset * lineOffset * 3
+          cellY + cellOffset * i + lineOffset * 4
         );
       }
     });

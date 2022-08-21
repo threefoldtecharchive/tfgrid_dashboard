@@ -7,11 +7,12 @@ import { getBalance } from "./balance";
 
 export interface receiptInterface {
   hash: string;
-  mintingStart?: number,
-  mintingEnd?: number,
+  mintingStart?: number;
+  mintingEnd?: number;
   measuredUptime?: number;
   fixupStart?: number;
-  fixupEnd?: number
+  fixupEnd?: number;
+  tft?: number;
 }
 
 export function byteToGB(capacity: number) {
@@ -67,6 +68,7 @@ export async function getNodeMintingFixupReceipts(nodeId: string) {
           {
             period: { start: number; end: number; };
             measured_uptime: number;
+            reward: { musd: number, tft: number }
           };
           Fixup: { period: { start: number; end: number; }; };
         };
@@ -76,7 +78,8 @@ export async function getNodeMintingFixupReceipts(nodeId: string) {
           hash: rec.hash,
           mintingStart: rec.receipt.Minting.period.start * 1000,
           mintingEnd: rec.receipt.Minting.period.end * 1000,
-          measuredUptime: rec.receipt.Minting.measured_uptime || 0
+          measuredUptime: rec.receipt.Minting.measured_uptime || 0,
+          tft: (rec.receipt.Minting.reward.tft / 1e7)
         })
       } else {
         nodeReceipts.push({
