@@ -69,6 +69,7 @@
           <p> <b> End:</b>
             {{selectedEvent.end}}</p>
 
+          <p v-if="selectedEvent.tft"><b>TFT:</b>{{selectedEvent.tft.toFixed(2)}}</p>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -87,6 +88,7 @@ interface eventInterface {
   name: string;
   color: string;
   hash: string;
+  tft?: number;
 }
 @Component({
   name: "ReceiptsCalendar",
@@ -115,6 +117,7 @@ export default class ReceiptsCalendar extends Vue {
     end: new Date(),
     hash: "",
     color: "",
+    tft: 0,
   };
 
   @Watch("receipts") async onPropertyChanged() {
@@ -135,6 +138,7 @@ export default class ReceiptsCalendar extends Vue {
           end: getTime(rec.mintingEnd),
           color: "green",
           hash: rec.hash,
+          tft: rec.tft,
         });
       } else {
         events.push({
