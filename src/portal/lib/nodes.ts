@@ -55,7 +55,6 @@ export function generateNodeSummary(doc: jsPDF, nodes: nodeInterface[]) {
   doc.text(`Uptime: ${(nodes.reduce((totalM, node) => totalM += node.receipts.reduce((total, receipt) => total += receipt.measuredUptime || 0, 0), 0)
     / nodes.reduce((totalU, node) => totalU += Math.floor(moment.duration(node.uptime, 'seconds').asSeconds()), 0) * 100).toFixed(2)}% - ${nodes.reduce((total, node) => total += Math.floor(moment.duration(node.uptime, 'seconds').asDays()), 0)} days`, cellX, cellY + lineOffset * 5)
 
-  //doc.text(`Uptime: ${nodes.reduce((total, node) => total += node.receipts.reduce((totalM, receipt) => totalM += receipt.measuredUptime || 0, 0), 0) / nodes.reduce((totalU, node) => totalU += node.uptime, 0)}% - ${nodes.reduce((total, node) => total += Math.floor(moment.duration(node.uptime, 'seconds').asDays()), 0)} days`, cellX, cellY + lineOffset * 5)
 
 }
 export function generateReceipt(doc: jsPDF, node: nodeInterface) {
