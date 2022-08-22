@@ -4,6 +4,146 @@ import { web3FromAddress } from "@polkadot/extension-dapp";
 import axios from "axios";
 import config from "../config";
 import { getBalance } from "./balance";
+import { jsPDF } from "jspdf";
+import { nodeInterface } from "./farms";
+import moment from "moment";
+import 'jspdf-autotable';
+export interface receiptInterface {
+  hash: string;
+  mintingStart?: number;
+  mintingEnd?: number;
+  measuredUptime?: number;
+  fixupStart?: number;
+  fixupEnd?: number;
+  tft?: number;
+}
+export function getNodeUptimePercentage(node: nodeInterface) {
+  const totalReceiptsUptime = node.receipts.reduce(
+    (total, receipt) =>
+      receipt.measuredUptime
+        ? (total += receipt.measuredUptime)
+        : (total += 0),
+    0
+  );
+  return ((totalReceiptsUptime / node.uptime) * 100).toFixed(2);
+}
+export function getTime(num: number | undefined) {
+  if (num) {
+    return new Date(num);
+  }
+  return new Date();
+}
+export function generateNodeSummary(doc: jsPDF, nodes: nodeInterface[]) {
+  doc.setFontSize(15);
+  const topY = 20;
+  const topX = 80;
+  const lineOffset = 10;
+  const cellOffset = 40;
+  const cellX = 15;
+  const cellY = topY + lineOffset
+
+  doc.text("Total Nodes Summary", topX, topY);
+  doc.setFontSize(10);
+
+
+
+  doc.text(`Nodes: ${nodes.length}`, cellX, cellY)
+  doc.text(`Receipts: ${nodes.reduce((total, node) => total += node.receipts.length, 0)}`, cellX, cellY + lineOffset)
+  doc.text(`Minting Receipts: ${nodes.reduce((total, node) => total += node.receipts.filter((receipt) => receipt.measuredUptime).length, 0)}`, cellX, cellY + lineOffset * 2)
+  doc.text(`Fixup Receipts: ${nodes.reduce((total, node) => total += node.receipts.filter((receipt) => receipt.fixupStart).length, 0)}`, cellX, cellY + lineOffset * 3)
+  doc.text(`TFT: ${nodes.reduce((total, node) => total += node.receipts.reduce((totalTFT, receipt) => totalTFT += receipt.tft || 0, 0), 0).toFixed(2)}`, cellX, cellY + lineOffset * 4)
+  doc.text(`Uptime: ${nodes.reduce((total, node) => total += Math.floor(moment.duration(node.uptime, 'seconds').asDays()), 0)} days`, cellX, cellY + lineOffset * 5)
+
+}
+export function generateReceipt(doc: jsPDF, node: nodeInterface) {
+
+  doc.setFontSize(15);
+
+  const topY = 20;
+  const lineOffset = 5;
+  const cellOffset = 30;
+  const cellX = 15;
+  const cellY = topY + lineOffset * 8;
+
+  doc.text(`Node ${node.nodeID} Summary`, 80, topY);
+  doc.setFontSize(10);
+  doc.text(
+    `Receipts total: ${node.receipts.length}`,
+    cellX,
+    topY + lineOffset
+  );
+  doc.text(
+    `Minting total: ${node.receipts.filter((receipt) => receipt.measuredUptime).length
+    }`,
+    cellX,
+    topY + lineOffset * 2
+  );
+  doc.text(
+    `Fixup total: ${node.receipts.filter((receipt) => receipt.fixupStart).length
+    }`,
+    cellX,
+    topY + lineOffset * 3
+  );
+
+  doc.text(
+    `TFT total: ${node.receipts
+      .reduce((total, receipt) => (total += receipt.tft || 0), 0)
+      .toFixed(2)}`,
+    cellX,
+    topY + lineOffset * 4
+  );
+  doc.text(`Uptime: ${getNodeUptimePercentage(node)}% - ${Math.floor(moment.duration(node.uptime, 'seconds').asDays())} days`, cellX, topY + lineOffset * 5);
+
+  doc.line(cellX, topY + lineOffset * 6, cellX + 175, topY + lineOffset * 6);
+
+  node.receipts.map((receipt, i) => {
+    if (receipt.measuredUptime) {
+      doc.text(`Minting: ${receipt.hash}`, cellX, cellY + cellOffset * i);
+      doc.text(
+        `start: ${getTime(receipt.mintingStart)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset
+      );
+      doc.text(
+        `end: ${getTime(receipt.mintingEnd)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset * 2
+      );
+      doc.text(
+        `TFT: ${receipt.tft?.toFixed(2)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset * 3
+      );
+
+    } else {
+      doc.text(`Fixup: ${receipt.hash}`, cellX, cellY + cellOffset * i);
+      doc.text(
+        `start: ${getTime(receipt.fixupStart)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset
+      );
+      doc.text(
+        `end: ${getTime(receipt.fixupEnd)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset * 2
+      );
+
+
+    }
+    if (i !== node.receipts.length - 1) {
+      doc.line(
+        cellX,
+        cellY + cellOffset * i + lineOffset * 4,
+        cellX + 175,
+        cellY + cellOffset * i + lineOffset * 4
+      );
+    }
+
+  });
+
+
+  return doc
+}
 export function byteToGB(capacity: number) {
   return (capacity / 1024 / 1024 / 1024).toFixed(0);
 }
@@ -45,6 +185,44 @@ export async function getRentStatus(api: { query: { smartContractModule: { activ
   }
 }
 
+export async function getNodeMintingFixupReceipts(nodeId: string) {
+  let nodeReceipts: receiptInterface[] = []
+  const res = await axios.get(`https://alpha.minting.tfchain.grid.tf/api/v1/node/${nodeId}`)
+    .then(res => res.data.map((rec:
+      {
+        hash: any;
+        receipt:
+        {
+          Minting:
+          {
+            period: { start: number; end: number; };
+            measured_uptime: number;
+            reward: { musd: number, tft: number }
+          };
+          Fixup: { period: { start: number; end: number; }; };
+        };
+      }) => {
+      if (rec.receipt.Minting) {
+        nodeReceipts.push({
+          hash: rec.hash,
+          mintingStart: rec.receipt.Minting.period.start * 1000,
+          mintingEnd: rec.receipt.Minting.period.end * 1000,
+          measuredUptime: rec.receipt.Minting.measured_uptime || 0,
+          tft: (rec.receipt.Minting.reward.tft / 1e7)
+        })
+      } else {
+        nodeReceipts.push({
+          hash: rec.hash,
+          fixupStart: rec.receipt.Fixup.period.start * 1000 || 0,
+          fixupEnd: rec.receipt.Fixup.period.end * 1000 || 0,
+        })
+      }
+    }
+    ))
+
+  return nodeReceipts
+
+}
 export async function getNodeUsedResources(nodeId: string) {
   const res = await axios.get(`${config.gridproxyUrl}/nodes/${nodeId}`, {
     timeout: 1000,

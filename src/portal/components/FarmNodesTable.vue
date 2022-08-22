@@ -1,413 +1,487 @@
 <template>
-  <v-container v-if="nodes.length">
-    <v-text-field
-      v-model="searchTerm"
-      color="primary darken-2"
-      label="Search by node ID, serial number, certification, farming policy ID"
-    ></v-text-field>
-    <v-data-table
-      :headers="headers"
-      :items="filteredNodes()"
-      :single-expand="singleExpand"
-      :expanded.sync="expanded"
-      item-key="id"
-      show-expand
-      class="elevation-1"
-      sort-by="id"
-    >
-      <template v-slot:top>
-        <v-toolbar flat>
-          <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
-        </v-toolbar>
-      </template>
+  <div>
 
-      <template v-slot:[`item.nodeId`]="{ item }">
-        <p class="text-center mt-1 mb-0">
-          {{ item.nodeId }}
-        </p>
-      </template>
-      <template v-slot:[`item.status`]="{ item }">
-        <p class="text-center mt-1 mb-0">
-          <v-chip :color="getStatus(item).color">{{
+    <div v-if="nodes.length">
+      <v-text-field
+        v-model="searchTerm"
+        color="primary darken-2"
+        label="Search by node ID, serial number, certification, farming policy ID"
+      ></v-text-field>
+      <v-data-table
+        :headers="headers"
+        :items="filteredNodes()"
+        :single-expand="true"
+        :expanded.sync="expanded"
+        item-key="id"
+        show-expand
+        class="elevation-1"
+        sort-by="id"
+      >
+        <template v-slot:top>
+          <v-toolbar flat>
+            <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
+            <v-btn
+              class="ml-auto"
+              @click="downloadAllReceipts()"
+            >Download Receipts</v-btn>
+
+          </v-toolbar>
+        </template>
+
+        <template v-slot:[`item.nodeId`]="{ item }">
+          <p class="text-center mt-1 mb-0">
+            {{ item.nodeId }}
+          </p>
+        </template>
+        <template v-slot:[`item.status`]="{ item }">
+          <p class="text-center mt-1 mb-0">
+            <v-chip :color="getStatus(item).color">{{
             getStatus(item).status
           }}</v-chip>
-        </p>
-      </template>
-      <template v-slot:[`item.actions`]="{ item }">
-        <v-progress-circular
-          v-if="loadingDelete"
-          indeterminate
-          color="primary"
-        ></v-progress-circular>
-        <!--delete node-->
-        <!--removed until fixed -->
-        <!--config Ips-->
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon
-              class="configIcon"
-              medium
-              v-on="on"
-              v-bind="attrs"
-              @click="openPublicConfig(item)"
-            >
-              mdi-earth
-            </v-icon>
-          </template>
-          <span>Add a public config</span>
-        </v-tooltip>
-      </template>
-      <!--expanded node view-->
-      <template v-slot:expanded-item="{ headers, item }">
-        <td
-          :colspan="headers.length"
-          key="item.id"
-        >
-          <v-col>
-            <v-container fluid>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Node ID</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.nodeID}}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Farm ID</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.farmID }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Twin ID</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.twinID }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Certification </v-flex>
-
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.certification }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >First boot at</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ new Date(parseInt(item.createdAt)) }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Uptime</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.uptime }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Updated at</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ new Date(parseInt(item.updatedAt)) }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Country</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.country }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >City</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.city }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Serial Number</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.serialNumber }}</span>
-                </v-flex>
-              </v-row>
-              <v-row>
-                <v-flex
-                  xs3
-                  class="text-left pr-2"
-                >Farming Policy ID</v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.farmingPolicyId }}</span>
-                </v-flex>
-              </v-row>
-
-              <v-row>
-                <span>For more information visit the Capacity Explorer</span>
-              </v-row>
-            </v-container>
-          </v-col>
-
-          <v-col>
-            <div class="title">
+          </p>
+        </template>
+        <template v-slot:[`item.actions`]="{ item }">
+          <v-progress-circular
+            v-if="loadingDelete"
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+          <!--delete node-->
+          <!--removed until fixed -->
+          <!--config Ips-->
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
               <v-icon
-                small
-                left
-              >fa-chart-pie</v-icon>Resource units reserved
-            </div>
-
-            <v-row>
-              <v-col
-                v-for="(value, key) in item.resourcesTotal"
-                :key="key"
-                align="center"
+                class="configIcon"
+                medium
+                v-on="on"
+                v-bind="attrs"
+                @click="openPublicConfig(item)"
               >
-                <v-flex class="text-center pr-2">
-                  <span class="text-uppercase">{{ key }}</span>
-                </v-flex>
-                <v-flex class="text-truncate font-weight-bold">
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-progress-circular
-                        v-on="on"
-                        :rotate="-90"
-                        :size="100"
-                        :width="15"
-                        :value="getPercentage(key)"
-                        color="light-green darken-2"
-                      />
-                      <template v-if="item.resourcesUsed">
-                        <span v-if="item.resourcesTotal[key] > 1000">
-                          {{ byteToGB(item.resourcesUsed[key]) }} /
-                          {{ byteToGB(item.resourcesTotal[key]) }} GB
-                        </span>
-                        <span v-else>
-                          {{ item.resourcesUsed[key] }} /
-                          {{ item.resourcesTotal[key] }}
+                mdi-earth
+              </v-icon>
+            </template>
+            <span>Add a public config</span>
+          </v-tooltip>
+        </template>
+        <!--expanded node view-->
+        <template v-slot:expanded-item="{ headers, item }">
+          <td
+            :colspan="headers.length"
+            key="item.id"
+          >
+
+            <v-container fluid>
+              <v-row :justify="'space-around'">
+                <v-col cols="8">
+                  <v-row>
+                    <v-flex
+                      xs3
+                      class="text-left pr-2"
+                    >Node ID</v-flex>
+                    <v-flex class="text-truncate font-weight-bold">
+                      <span>{{ item.nodeID}}</span>
+                    </v-flex>
+                  </v-row>
+                  <v-row>
+                    <v-flex
+                      xs3
+                      class="text-left pr-2"
+                    >Farm ID</v-flex>
+                    <v-flex class="text-truncate font-weight-bold">
+                      <span>{{ item.farmID }}</span>
+                    </v-flex>
+                  </v-row>
+                  <v-row>
+                    <v-flex
+                      xs3
+                      class="text-left pr-2"
+                    >Twin ID</v-flex>
+                    <v-flex class="text-truncate font-weight-bold">
+                      <span>{{ item.twinID }}</span>
+                    </v-flex>
+                  </v-row>
+
+                  <v-row>
+                    <v-flex
+                      xs3
+                      class="text-left pr-2"
+                    >Certification </v-flex>
+
+                    <v-flex class="text-truncate font-weight-bold">
+                      <span>{{ item.certification }}</span>
+                    </v-flex>
+                  </v-row>
+                  <v-row>
+                    <v-flex
+                      xs3
+                      class="text-left pr-2"
+                    >First boot at</v-flex>
+                    <v-flex class="text-truncate font-weight-bold">
+                      <span>{{ new Date(parseInt(item.createdAt)) }}</span>
+                    </v-flex>
+                  </v-row>
+                  <v-row>
+                    <v-flex
+                      xs3
+                      class="text-left pr-2"
+                    >Updated at</v-flex>
+                    <v-flex class="text-truncate font-weight-bold">
+                      <span>{{ new Date(parseInt(item.updatedAt)) }}</span>
+                    </v-flex>
+                  </v-row>
+                  <v-row>
+                    <v-flex
+                      xs3
+                      class="text-left pr-2"
+                    >Country</v-flex>
+                    <v-flex class="text-truncate font-weight-bold">
+                      <span>{{ item.country }}</span>
+                    </v-flex>
+                  </v-row>
+                  <v-row>
+                    <v-flex
+                      xs3
+                      class="text-left pr-2"
+                    >City</v-flex>
+                    <v-flex class="text-truncate font-weight-bold">
+                      <span>{{ item.city }}</span>
+                    </v-flex>
+                  </v-row>
+                  <v-row>
+                    <v-flex
+                      xs3
+                      class="text-left pr-2"
+                    >Serial Number</v-flex>
+                    <v-flex class="text-truncate font-weight-bold">
+                      <span>{{ item.serialNumber }}</span>
+                    </v-flex>
+                  </v-row>
+                  <v-row>
+                    <v-flex
+                      xs3
+                      class="text-left pr-2"
+                    >Farming Policy ID</v-flex>
+                    <v-flex class="text-truncate font-weight-bold">
+                      <span>{{ item.farmingPolicyId }}</span>
+                    </v-flex>
+                  </v-row>
+
+                  <v-row>
+                    <span>For more information visit the Capacity Explorer</span>
+                  </v-row>
+                </v-col>
+                <v-col
+                  cols="4"
+                  class="text-center"
+                  :align-self="'center'"
+                >
+
+                  <v-flex class="text-truncate font-weight-bold">
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-progress-circular
+                          v-on="on"
+                          :rotate="-90"
+                          :size="100"
+                          :width="15"
+                          :value="getNodeUptimePercentage(item)"
+                          color="light-green darken-2"
+                        />
+
+                        <span>
+                          Uptime: {{getNodeUptimePercentage(item) }} %
+
                         </span>
                       </template>
-                    </template>
-                  </v-tooltip>
-                </v-flex>
-              </v-col>
-            </v-row>
-          </v-col>
-        </td>
-      </template>
-    </v-data-table>
-    <!--public config dialog-->
-    <v-dialog
-      v-model="openPublicConfigDialog"
-      width="800"
-    >
-      <v-card>
-        <v-card-title class="text-h5">
-          Add a public config to your node with ID: {{ nodeToEdit.id }}
-        </v-card-title>
 
-        <v-card-text class="text">
-          <v-form v-model="isValidPublicConfig">
-            <v-text-field
-              label="IPV4"
-              v-model="ip4"
-              required
-              outlined
-              dense
-              type="string"
-              hint="IPV4 address in CIDR format xx.xx.xx.xx/xx"
-              persistent-hint
-              :error-messages="ip4ErrorMessage"
-              :validate-on-blur="true"
-              :rules="[() => !!ip4 || 'This field is required', ip4check]"
-            ></v-text-field>
+                    </v-tooltip>
+                  </v-flex>
 
-            <v-text-field
-              label="Gateway"
-              v-model="gw4"
-              required
-              outlined
-              dense
-              hint="Gateway for the IP in ipv4 format"
-              persistent-hint
-              :validate-on-blur="true"
-              type="string"
-              :error-messages="gw4ErrorMessage"
-              :rules="[() => !!gw4 || 'This field is required', gw4Check]"
-            ></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
 
-            <v-divider></v-divider>
+            <v-col>
+              <v-expansion-panels
+                v-model="resourcesPanel"
+                :disabled="false"
+                focusable
+              >
+                <v-expansion-panel>
+                  <v-expansion-panel-header>
+                    Resource units reserved
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-row>
+                      <v-col
+                        v-for="(value, key) in item.resourcesTotal"
+                        :key="key"
+                        align="center"
+                      >
+                        <v-flex class="text-center pr-2">
+                          <span class="text-uppercase">{{ key }}</span>
+                        </v-flex>
+                        <v-flex class="text-truncate font-weight-bold">
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                              <v-progress-circular
+                                v-on="on"
+                                :rotate="-90"
+                                :size="100"
+                                :width="15"
+                                :value="getPercentage(key)"
+                                color="light-green darken-2"
+                              />
+                              <template v-if="item.resourcesUsed">
+                                <span v-if="item.resourcesTotal[key] > 1000">
+                                  {{ byteToGB(item.resourcesUsed[key]) }} /
+                                  {{ byteToGB(item.resourcesTotal[key]) }} GB
+                                </span>
+                                <span v-else>
+                                  {{ item.resourcesUsed[key] }} /
+                                  {{ item.resourcesTotal[key] }}
+                                </span>
+                              </template>
+                            </template>
+                          </v-tooltip>
+                        </v-flex>
+                      </v-col>
+                    </v-row>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
 
-            <v-text-field
-              label="IPV6"
-              v-model="ip6"
-              type="string"
-              outlined
-              dense
-              hint="IPV6 address "
-              persistent-hint
-              :validate-on-blur="true"
-              :error-messages="ip6ErrorMessage"
-              :rules="[() => !!ip6 || 'This field is required', ip6check]"
-            ></v-text-field>
+            </v-col>
+            <v-col>
+              <v-expansion-panels
+                v-model="receiptsPanel"
+                :disabled="false"
+                focusable
+                single
+              >
+                <v-expansion-panel>
+                  <v-expansion-panel-header>
+                    Node Statistics
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
 
-            <v-text-field
-              label="Gateway IPV6"
-              v-model="gw6"
-              outlined
-              dense
-              type="string"
-              hint="Gateway for the IP in ipv6 format "
-              persistent-hint
-              :validate-on-blur="true"
-              :error-messages="gw6ErrorMessage"
-              :rules="[() => !!gw6 || 'This field is required', gw6Check]"
-            ></v-text-field>
+                    <ReceiptsCalendar :node="item" />
 
-            <v-text-field
-              label="Domain"
-              v-model="domain"
-              outlined
-              dense
-              type="string"
-              hint="Domain for webgateway"
-              persistent-hint
-              :validate-on-blur="true"
-              :error-messages="domainErrorMessage"
-              :rules="[() => !!domain || 'This field is required', domainCheck]"
-            ></v-text-field>
-          </v-form>
-        </v-card-text>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
 
-        <v-divider></v-divider>
+              </v-expansion-panels>
+            </v-col>
+          </td>
+        </template>
+      </v-data-table>
+      <!--public config dialog-->
+      <v-dialog
+        v-model="openPublicConfigDialog"
+        width="800"
+      >
+        <v-card>
+          <v-card-title class="text-h5">
+            Add a public config to your node with ID: {{ nodeToEdit.id }}
+          </v-card-title>
 
-        <v-card-actions>
-          <v-btn
-            text
-            color="error"
-            @click="openRemoveConfigWarningDialog = true;"
-          >
-            Remove config
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="grey lighten-2 black--text"
-            @click="openPublicConfigDialog = false"
-          >
-            Cancel
-          </v-btn>
-          <v-btn
-            color="primary white--text"
-            @click=" openWarningDialog = true;"
-            :disabled="!isValidPublicConfig"
-          >
-            Save
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <!-- delete item dialog-->
-    <v-dialog
-      v-model="openDeleteDialog"
-      max-width="700px"
-    >
-      <v-card>
-        <v-card-title class="text-h5">Are you certain you want to delete this node from your
-          farm?</v-card-title>
-        <v-card-text>This will delete the node on chain, this action is
-          irreversible</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="grey lighten-2 black--text"
-            @click="openDeleteDialog = false"
-          >Cancel</v-btn>
-          <v-btn
-            color="primary white--text"
-            @click="deleteItem()"
-          >OK</v-btn>
-          <v-spacer></v-spacer>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+          <v-card-text class="text">
+            <v-form v-model="isValidPublicConfig">
+              <v-text-field
+                label="IPV4"
+                v-model="ip4"
+                required
+                outlined
+                dense
+                type="string"
+                hint="IPV4 address in CIDR format xx.xx.xx.xx/xx"
+                persistent-hint
+                :error-messages="ip4ErrorMessage"
+                :validate-on-blur="true"
+                :rules="[() => !!ip4 || 'This field is required', ip4check]"
+              ></v-text-field>
 
-    <v-dialog
-      v-model="openWarningDialog"
-      max-width="700"
-    >
-      <v-card>
-        <v-card-title class="text-h5">Are you certain you want to update this node's public config?</v-card-title>
-        <v-card-text> This action is
-          irreversible</v-card-text>
-        <v-card-actions>
-          <v-btn
-            @click="saveConfig()"
-            :loading="loadingPublicConfig"
-          >Submit</v-btn>
-          <v-btn @click="openWarningDialog = false">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+              <v-text-field
+                label="Gateway"
+                v-model="gw4"
+                required
+                outlined
+                dense
+                hint="Gateway for the IP in ipv4 format"
+                persistent-hint
+                :validate-on-blur="true"
+                type="string"
+                :error-messages="gw4ErrorMessage"
+                :rules="[() => !!gw4 || 'This field is required', gw4Check]"
+              ></v-text-field>
 
-    <v-dialog
-      v-model="openRemoveConfigWarningDialog"
-      max-width="700"
-    >
-      <v-card>
-        <v-card-title class="text-h5">Are you certain you want to remove this node's public config?</v-card-title>
-        <v-card-text> This action is
-          irreversible</v-card-text>
-        <v-card-actions>
-          <v-btn
-            @click="removeConfig()"
-            :loading="loadingPublicConfig"
-          >Submit</v-btn>
-          <v-btn @click="openRemoveConfigWarningDialog = false">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+              <v-divider></v-divider>
 
-  </v-container>
+              <v-text-field
+                label="IPV6"
+                v-model="ip6"
+                type="string"
+                outlined
+                dense
+                hint="IPV6 address "
+                persistent-hint
+                :validate-on-blur="true"
+                :error-messages="ip6ErrorMessage"
+                :rules="[() => !!ip6 || 'This field is required', ip6check]"
+              ></v-text-field>
+
+              <v-text-field
+                label="Gateway IPV6"
+                v-model="gw6"
+                outlined
+                dense
+                type="string"
+                hint="Gateway for the IP in ipv6 format "
+                persistent-hint
+                :validate-on-blur="true"
+                :error-messages="gw6ErrorMessage"
+                :rules="[() => !!gw6 || 'This field is required', gw6Check]"
+              ></v-text-field>
+
+              <v-text-field
+                label="Domain"
+                v-model="domain"
+                outlined
+                dense
+                type="string"
+                hint="Domain for webgateway"
+                persistent-hint
+                :validate-on-blur="true"
+                :error-messages="domainErrorMessage"
+                :rules="[() => !!domain || 'This field is required', domainCheck]"
+              ></v-text-field>
+            </v-form>
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-btn
+              text
+              color="error"
+              @click="openRemoveConfigWarningDialog = true;"
+            >
+              Remove config
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="grey lighten-2 black--text"
+              @click="openPublicConfigDialog = false"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              color="primary white--text"
+              @click=" openWarningDialog = true;"
+              :disabled="!isValidPublicConfig"
+            >
+              Save
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!-- delete item dialog-->
+      <v-dialog
+        v-model="openDeleteDialog"
+        max-width="700px"
+      >
+        <v-card>
+          <v-card-title class="text-h5">Are you certain you want to delete this node from your
+            farm?</v-card-title>
+          <v-card-text>This will delete the node on chain, this action is
+            irreversible</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="grey lighten-2 black--text"
+              @click="openDeleteDialog = false"
+            >Cancel</v-btn>
+            <v-btn
+              color="primary white--text"
+              @click="deleteItem()"
+            >OK</v-btn>
+            <v-spacer></v-spacer>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog
+        v-model="openWarningDialog"
+        max-width="700"
+      >
+        <v-card>
+          <v-card-title class="text-h5">Are you certain you want to update this node's public config?</v-card-title>
+          <v-card-text> This action is
+            irreversible</v-card-text>
+          <v-card-actions>
+            <v-btn
+              @click="saveConfig()"
+              :loading="loadingPublicConfig"
+            >Submit</v-btn>
+            <v-btn @click="openWarningDialog = false">Cancel</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog
+        v-model="openRemoveConfigWarningDialog"
+        max-width="700"
+      >
+        <v-card>
+          <v-card-title class="text-h5">Are you certain you want to remove this node's public config?</v-card-title>
+          <v-card-text> This action is
+            irreversible</v-card-text>
+          <v-card-actions>
+            <v-btn
+              @click="removeConfig()"
+              :loading="loadingPublicConfig"
+            >Submit</v-btn>
+            <v-btn @click="openRemoveConfigWarningDialog = false">Cancel</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
+    <div v-else>
+      <v-data-table
+        loading
+        loading-text="loading nodes.."
+      ></v-data-table>
+    </div>
+  </div>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import moment from "moment";
-import { byteToGB } from "@/portal/lib/nodes";
+import {
+  byteToGB,
+  generateNodeSummary,
+  generateReceipt,
+  getNodeUptimePercentage,
+} from "@/portal/lib/nodes";
 import {
   addNodePublicConfig,
   deleteNode,
   nodeInterface,
 } from "@/portal/lib/farms";
 import { hex2a } from "@/portal/lib/util";
+import ReceiptsCalendar from "./ReceiptsCalendar.vue";
+import jsPDF from "jspdf";
+
 @Component({
   name: "FarmNodesTable",
+  components: { ReceiptsCalendar },
 })
 export default class FarmNodesTable extends Vue {
   expanded: any = [];
-  singleExpand = true;
+  receiptsPanel = [];
+  resourcesPanel = [];
+
   headers = [
     { text: "Node ID", value: "nodeID", align: "center" },
     { text: "Farm ID", value: "farmID", align: "center" },
@@ -416,6 +490,7 @@ export default class FarmNodesTable extends Vue {
     { text: "Status", value: "status", align: "center" },
     { text: "Actions", value: "actions", sortable: false, align: "center" },
   ];
+
   loadingDelete = false;
   openDeleteDialog = false;
   editedIndex = -1;
@@ -434,6 +509,7 @@ export default class FarmNodesTable extends Vue {
       ipv4: "",
       ipv6: "",
     },
+    receipts: [],
     certification: "",
     city: "",
     connectionPrice: null,
@@ -453,7 +529,7 @@ export default class FarmNodesTable extends Vue {
     serialNumber: "",
     twinID: 0,
     updatedAt: "",
-    uptime: "",
+    uptime: 0,
     virtualized: false,
   };
   nodeToDelete: { id: string } = {
@@ -477,6 +553,10 @@ export default class FarmNodesTable extends Vue {
   ip6ErrorMessage = "";
   gw6ErrorMessage = "";
   domainErrorMessage = "";
+  receipts = [];
+  updated() {
+    this.receiptsPanel = [];
+  }
   filteredNodes() {
     if (this.nodes.length > 0) {
       return this.nodes.filter(
@@ -492,6 +572,18 @@ export default class FarmNodesTable extends Vue {
       );
     }
     return this.nodes;
+  }
+  downloadAllReceipts() {
+    let docSum = new jsPDF();
+    generateNodeSummary(docSum, this.nodes);
+    docSum.addPage();
+
+    this.nodes.map((node, i) => {
+      generateReceipt(docSum, node);
+      docSum.text(`${i + 1}`, 185, docSum.internal.pageSize.height - 10);
+      docSum.addPage();
+    });
+    docSum.save("nodes_receipts.pdf");
   }
   convertHex(node: { id: string }) {
     return hex2a(node.id);
@@ -552,7 +644,7 @@ export default class FarmNodesTable extends Vue {
               this.$toasted.show("Adding Node public config failed");
             else if (this.openRemoveConfigWarningDialog)
               this.$toasted.show("Removing Node public config failed");
-            
+
             this.loadingPublicConfig = false;
             this.openWarningDialog = false;
             this.openRemoveConfigWarningDialog = false;
@@ -568,7 +660,7 @@ export default class FarmNodesTable extends Vue {
                   this.$toasted.show("Node public config added!");
                 else if (this.openRemoveConfigWarningDialog)
                   this.$toasted.show("Node public config removed!");
-                
+
                 this.loadingPublicConfig = false;
                 this.openPublicConfigDialog = false;
                 this.openWarningDialog = false;
@@ -692,6 +784,16 @@ export default class FarmNodesTable extends Vue {
   }
   domainCheck() {
     return true;
+  }
+  getTime(num: number | undefined) {
+    if (num) {
+      return new Date(num);
+    }
+    return new Date();
+  }
+
+  getNodeUptimePercentage(node: nodeInterface) {
+    return getNodeUptimePercentage(node);
   }
   getStatus(node: { updatedAt: string }) {
     const { updatedAt } = node;
