@@ -93,7 +93,7 @@
           v-for="route in routes"
           :key="route.label"
           class="white--text"
-          :style= "mini ? '' : 'margin: 10px !important;'"
+          :style="mini ? '' : 'margin: 10px !important;'"
         >
           <template v-slot:activator>
             <v-list-item-icon>
@@ -193,8 +193,16 @@
                 v-if="child.icon"
               >
                 <v-icon
+                  v-if="!child.icon.includes('.')"
                   class="white--text"
                   v-text="'mdi-' + child.icon"
+                />
+                <v-img
+                  v-else
+                  :src="child.icon"
+                  :height="24"
+                  :width="24"
+                  :alt="child.icon"
                 />
               </v-list-item-icon>
               <v-list-item-content>
@@ -247,6 +255,14 @@
         </v-card-text>
       </v-card>
     </v-footer>
+
+    <script
+      v-for="el in elements"
+      :key="el"
+      type="application/javascript"
+      :src="`/elements/${el}.wc.js`"
+      defer
+    ></script>
   </v-app>
 </template>
 
@@ -294,7 +310,8 @@ export default class Dashboard extends Vue {
   loadingAPI = true;
   async mounted() {
     this.accounts = this.$store.state.portal.accounts;
-    if (this.$route.path === "/" && !this.$api) {
+
+    if (!this.$api) {
       Vue.prototype.$api = await connect(); //declare global variable api
       console.log(`connecting to api`);
       this.loadingAPI = false;
@@ -457,11 +474,119 @@ export default class Dashboard extends Vue {
         },
       ],
     },
+    {
+      label: "Playground",
+      icon: "apps",
+      prefix: "/play/",
+      children: [
+        {
+          label: "Full Virtual Machine",
+          path: "full-vm",
+          icon: "/playground-icons/vm.png",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Micro Virtual Machine",
+          path: "vm",
+          icon: "/playground-icons/vm.png",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Kubernetes",
+          path: "kubernetes",
+          icon: "/playground-icons/kubernetes.png",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "CapRover",
+          path: "capRover",
+          icon: "/playground-icons/caprover.png",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Peertube",
+          path: "peertube",
+          icon: "/playground-icons/peertube.png",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Funkwhale",
+          path: "funkwhale",
+          icon: "/playground-icons/funkwhale.png",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Mattermost",
+          path: "mattermost",
+          icon: "/playground-icons/mattermost.png",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Discourse",
+          path: "discourse",
+          icon: "/playground-icons/discourse.png",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Taiga",
+          path: "taiga",
+          icon: "/playground-icons/taiga.png",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Owncloud",
+          path: "owncloud",
+          icon: "/playground-icons/owncloud.png",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Presearch",
+          path: "presearch",
+          icon: "/playground-icons/presearch.png",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Casperlabs",
+          path: "casperlabs",
+          icon: "/playground-icons/casperlabs.png",
+          showBeforeLogIn: true,
+        },
+        {
+          label: "Node Pilot",
+          path: "nodepilot",
+          icon: "/playground-icons/vm.png",
+          showBeforeLogIn: true,
+        },
+      ],
+    },
   ];
+
+  elements = [
+    "vm",
+    "kubernetes",
+    "deployedlist",
+    "caprover",
+    "discourse",
+    "farmingcalculator",
+    "funkwhale",
+    "peertube",
+    "taiga",
+    "owncloud",
+    "contractslist",
+    "presearch",
+    "disclaimer",
+    "version",
+    "mattermost",
+    "casperlabs",
+    "tfhubvalidator",
+    "nodepilot",
+    "fullvm",
+  ];
+
   getRouteSubChildren(route: SidenavItem) {
     return route.children[0].children || [];
   }
-  toggle(){
+  toggle() {
     this.mini = !this.mini;
     if (this.mini) this.routes[1].active = false;
   }
@@ -492,8 +617,7 @@ export default class Dashboard extends Vue {
   border-radius: 20px;
 }
 
-.v-list .v-list-item--active{
+.v-list .v-list-item--active {
   border-radius: 20px;
 }
-
 </style>

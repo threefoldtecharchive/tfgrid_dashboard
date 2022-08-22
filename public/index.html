@@ -19,7 +19,13 @@
       defer
       src="https://cdn.jsdelivr.net/gh/threefoldtech/tf-map@0.0.3/dist/tf-map.js"
     ></script>
+
+    <script src="/elements/base.wc.js"></script>
+    <script defer src="/elements/notification.wc.js"></script>
+    <script defer src="/elements/profiles.wc.js"></script>
+
     <script type="text/javascript"> window.$crisp = []; window.CRISP_WEBSITE_ID = "1a5a5241-91cb-4a41-8323-5ba5ec574da0"; (function () { d = document; s = d.createElement("script"); s.src = "https://client.crisp.chat/l.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })(); </script>
+
   </head>
 
   <body>
@@ -30,6 +36,8 @@
         continue.</strong
       >
     </noscript>
+    <tf-base></tf-base>
+    <tf-notification></tf-notification>
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>

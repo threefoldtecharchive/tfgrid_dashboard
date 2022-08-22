@@ -4,6 +4,7 @@ import ExplorerView from "@/explorer/Explorer.vue";
 import { explorerRouter } from "@/explorer/router";
 import PortalView from "@/portal/Portal.vue";
 import { portalRouter } from "@/portal/router";
+import PlaygroundView from "@/playground/Playground.vue";
 
 Vue.use(VueRouter);
 
@@ -17,7 +18,11 @@ const routes: Array<RouteConfig> = [
     component: ExplorerView,
     path: "/explorer",
     children: explorerRouter,
-  }
+  },
+  {
+    component: PlaygroundView,
+    path: "/play/:name",
+  },
 ];
 
 const router = new VueRouter({
