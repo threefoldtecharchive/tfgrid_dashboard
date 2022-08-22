@@ -52,7 +52,9 @@ export function generateNodeSummary(doc: jsPDF, nodes: nodeInterface[]) {
   doc.text(`Minting Receipts: ${nodes.reduce((total, node) => total += node.receipts.filter((receipt) => receipt.measuredUptime).length, 0)}`, cellX, cellY + lineOffset * 2)
   doc.text(`Fixup Receipts: ${nodes.reduce((total, node) => total += node.receipts.filter((receipt) => receipt.fixupStart).length, 0)}`, cellX, cellY + lineOffset * 3)
   doc.text(`TFT: ${nodes.reduce((total, node) => total += node.receipts.reduce((totalTFT, receipt) => totalTFT += receipt.tft || 0, 0), 0).toFixed(2)}`, cellX, cellY + lineOffset * 4)
-  doc.text(`Uptime: ${nodes.reduce((total, node) => total += Math.floor(moment.duration(node.uptime, 'seconds').asDays()), 0)} days`, cellX, cellY + lineOffset * 5)
+  doc.text(`Uptime: ${(nodes.reduce((totalM, node) => totalM += node.receipts.reduce((total, receipt) => total += receipt.measuredUptime || 0, 0), 0)
+    / nodes.reduce((totalU, node) => totalU += Math.floor(moment.duration(node.uptime, 'seconds').asSeconds()), 0) * 100).toFixed(2)}% - ${nodes.reduce((total, node) => total += Math.floor(moment.duration(node.uptime, 'seconds').asDays()), 0)} days`, cellX, cellY + lineOffset * 5)
+
 
 }
 export function generateReceipt(doc: jsPDF, node: nodeInterface) {
