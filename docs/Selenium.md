@@ -1,10 +1,12 @@
-## Selenium
+# Selenium
 
-### Prerequisites
-- [Python](https://www.python.org/downloads/)
-- pytest  `pip install pytest`
-- selenium  `pip install selenium`
-- webdriver-manager  `pip install webdriver-manager`
+Prerequisites | version | 
+--- | --- |
+[Python](https://www.python.org/downloads/) | `3.10.4` |
+[pytest](https://pypi.org/project/pytest/) | `7.1.2` |
+[selenium](https://pypi.org/project/selenium/) | `4.4.3` |
+[webdriver-manager](https://pypi.org/project/webdriver-manager/) | `3.8.3` |
+
 
 ## Running selenium
 
