@@ -217,7 +217,7 @@
             </v-row>
 
             <PublicIPTable
-              :ips="item.public_ips"
+              :ips="item.publicIps"
               :deleteIP="deletePublicIP"
               :loadingDelete="loadingDeleteIP"
               :createIP="createPublicIP"
@@ -270,7 +270,6 @@ import {
   deleteIP,
   getFarm,
   getNodesByFarmID,
-  nodeInterface,
   setFarmPayoutV2Address,
 } from "../lib/farms";
 import { StrKey } from "stellar-sdk";
