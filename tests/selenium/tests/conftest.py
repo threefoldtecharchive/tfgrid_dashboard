@@ -13,7 +13,6 @@ def browser():
   # Initialize the ChromeDriver instance with options
   options = webdriver.ChromeOptions()
   options.add_argument('--no-sandbox')
-  options.add_argument('--disable-dev-shm-usage')
   options.add_extension('tests/selenium/polka_extension_0_44_1_0.crx')  #PolkaDot Extension
   options.add_argument("--start-maximized")
   driver = webdriver.Chrome(options=options, service=Service(ChromeDriverManager().install()))
