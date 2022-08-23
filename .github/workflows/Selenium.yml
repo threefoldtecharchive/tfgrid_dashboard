@@ -17,6 +17,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.9'
+      - name: Install software
+        run: sudo apt-get install -y chromium-browser
       - name: Install the necessary packages
         run: pip install selenium pytest
       - name: Run the PytTest script
