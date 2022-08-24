@@ -1,6 +1,6 @@
-from frontend_selenium.pages.polka import PolkaPage
-from frontend_selenium.pages.dashboard import DashboardPage
-from frontend_selenium.utils.utils import generate_string
+from pages.polka import PolkaPage
+from pages.dashboard import DashboardPage
+from utils.utils import generate_string
 
 """
   Test Suite: TF Grid Dashboard

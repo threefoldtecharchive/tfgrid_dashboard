@@ -1,5 +1,5 @@
 from selenium.webdriver.common.by import By
-from frontend_selenium.utils.base import Base
+from utils.base import Base
 
 """
 This module contains Dashboard page elements.
