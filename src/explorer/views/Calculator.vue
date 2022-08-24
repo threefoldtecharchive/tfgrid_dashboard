@@ -102,7 +102,7 @@ export default class Calculator extends Vue {
     const cu3 = Math.max(Number(this.CRU) / 2, Number(this.MRU) / 4);
     const CU = Math.min(cu1, cu2, cu3);
     const SU = Number(this.HRU) / 1200 + Number(this.SRU) / 200;
-    const usd_month = CU * 30.56 + (SU * 19.44 * 24 * 30) / 1000;
+    const usd_month = (CU * 30.56 + SU * 19.44) * 24 * 30 / 1000;
     return usd_month.toFixed(3);
   }
 }
