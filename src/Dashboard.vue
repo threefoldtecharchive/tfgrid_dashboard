@@ -13,6 +13,7 @@
         <v-toolbar-title
           class="font-weight-bold"
           @click="redirectToHomePage"
+          style="cursor: pointer;"
         >Threefold Chain</v-toolbar-title>
 
         <v-spacer></v-spacer>
@@ -40,7 +41,6 @@
           outlined
           v-else
           color="transparent"
-          class="mx-2 px-1"
         >
           <v-btn icon>
             <v-tooltip>
@@ -57,6 +57,14 @@
             </v-tooltip>
           </v-btn>
         </v-card>
+        <v-btn
+          icon
+          class="mr-2"
+          @click="redirectToHomePage"
+          v-if="isAccountSelected()"
+        >
+          <v-icon>mdi-logout theme-light-dark</v-icon>
+        </v-btn>
       </v-app-bar>
     </div>
 
@@ -78,6 +86,7 @@
           <v-list-item-title
             class="white--text"
             @click="redirectToHomePage"
+            style="cursor: pointer;"
           >Threefold Chain</v-list-item-title>
 
           <v-btn
@@ -110,26 +119,10 @@
               </v-list-item-title>
             </v-list-item-content>
           </template>
-          <div
-            class="white--text px-5 d-flex row justify-center"
-            v-if="
-              route.label.toLocaleLowerCase() === 'portal' &&
-              $store.state.portal.accounts.length !== 0
-            "
-          >
-            <v-text-field
-              append-icon="mdi-account-search"
-              v-model="searchTerm"
-              color="primary darken-2"
-              class="white--text pl-3 pr-2 mr-2"
-              label="Account name/address"
-              dark
-            />
-          </div>
 
           <div v-if="route.prefix === '/'">
             <v-list-group
-              :value="false"
+              :value="account.active"
               no-action
               sub-group
               v-for="account in filteredAccounts()"
@@ -290,7 +283,6 @@ export default class Dashboard extends Vue {
   twin: { id: string; ip: string } = { id: "", ip: "" };
   balance: balanceInterface = { free: 0, reserved: 0 };
   accounts: accountInterface[] = [];
-  searchTerm = "";
   loadingAPI = true;
   async mounted() {
     this.accounts = this.$store.state.portal.accounts;
@@ -313,6 +305,10 @@ export default class Dashboard extends Vue {
       this.$vuetify.theme.dark = true;
       localStorage.setItem("dark_theme", this.$vuetify.theme.dark.toString());
     }
+    this.$root.$on('selectAccount', () => { 
+      this.routes[0].active = true;
+      this.mini = false;
+    })
   }
   updated() {
     this.accounts = this.$store.state.portal.accounts;
@@ -325,16 +321,15 @@ export default class Dashboard extends Vue {
     await this.$api.disconnect();
   }
   public filteredAccounts() {
-    if (this.searchTerm.length !== 0) {
-      return this.accounts.filter(
-        (account) =>
-          account.meta.name
-            .toLowerCase()
-            .includes(this.searchTerm.toLowerCase()) ||
-          account.address.toLowerCase().includes(this.searchTerm.toLowerCase())
-      );
+    return this.accounts.filter(
+      (account) => account.active
+    );
+  }
+  public isAccountSelected() {
+    if (this.$route.query.accountName) {
+      return true;
     }
-    return this.accounts;
+    return false;
   }
   public disconnectWallet() {
     this.$store.dispatch("portal/unsubscribeAccounts");
