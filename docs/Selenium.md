@@ -1,5 +1,7 @@
 # Selenium
 
+Install the recommended version of the pip package listed below for a stable run, or you can just use "pip install -r requirements.txt" in selenium directory.
+
 Prerequisites | version | 
 --- | --- |
 [Python](https://www.python.org/downloads/) | `3.10.4` |
