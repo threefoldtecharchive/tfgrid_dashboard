@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from tests.selenium.utils.base import Base
+from frontend_selenium.utils.base import Base
 
 """
 This module contains all polkadot needed utils.
