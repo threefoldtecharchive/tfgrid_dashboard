@@ -4,7 +4,11 @@ import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios from 'axios';
 import config from '../config';
+<<<<<<< HEAD
 import { getDedicatedNodes } from './nodes';
+=======
+import { getNodeMintingFixupReceipts, getNodeUsedResources, receiptInterface } from './nodes';
+>>>>>>> 94c7240ef7c1c306c405804901ae5f38e4bd657a
 import { hex2a } from './util'
 export interface nodeInterface {
   resourcesTotal: {
@@ -20,6 +24,7 @@ export interface nodeInterface {
     ipv4: string;
     ipv6: string;
   },
+  receipts: receiptInterface[];
   certification: string;
   city: string;
   connectionPrice: null;
@@ -39,7 +44,7 @@ export interface nodeInterface {
   serialNumber: string;
   twinID: number;
   updatedAt: string;
-  uptime: string;
+  uptime: number;
   virtualized: boolean;
 }
 export async function getFarm(api: { query: any; }, twinID: number) {
@@ -121,14 +126,18 @@ export async function getNodesByFarmID(farms: any[]) {
   if (data.length === 0) return [];
   const _nodes = data.flat();
 
-  const nodesWithResources = await _nodes.map(async (node) => {
+  const nodesWithResources = _nodes.map(async (node) => {
+
     try {
       const dedicatedNodes = await getDedicatedNodes();
       node.resourcesUsed = dedicatedNodes.filter((nodeResouces: any) => { nodeResouces === node.used_resources });
       console.log("node.resourcesUsed", node.resourcesUsed);
 
       node.resources = node.resourcesTotal;
+      node.receipts = await getNodeMintingFixupReceipts(node.nodeID);
+
     } catch (error) {
+      node.receipts = [];
       node.resourcesUsed = {
         sru: 0,
         hru: 0,

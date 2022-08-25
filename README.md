@@ -36,29 +36,19 @@ git clone https://github.com/threefoldtech/tfgrid_dashboard.git
 cd tfgrid_dashboard
 ```
 
-- Install all dependencies using:
+Adjust your config.js file as per your environment:
+
+```bash
+export GQL_URL="https://graphql.test.grid.tf/graphql"
+cd public
+source ../scripts/build-env.sh
 ```
+
+To Try the project locally you can easy clone the repo and run the following commands:
+
+```bash
 yarn install
-```
-
-- Run local server using:
-```
 yarn serve
-```
-
-- Compile and minify for production using:
-```
-yarn build
-```
-
-- Run unit tests using:
-```
-yarn test:unit
-```
-
-- Lint and fix files
-```
-yarn lint
 ```
 
 ### Prerequisites:

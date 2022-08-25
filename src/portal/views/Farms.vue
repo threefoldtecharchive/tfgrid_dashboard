@@ -110,7 +110,7 @@
               </v-col>
               <v-col>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.twin_id }}</span>
+                  <span>{{ item.twinId }}</span>
                 </v-flex>
               </v-col>
             </v-row>
@@ -130,7 +130,7 @@
               </v-col>
               <v-col>
                 <v-flex class="text-truncate font-weight-bold">
-                  <span>{{ item.pricing_policy_id }}</span>
+                  <span>{{ item.pricingPolicyId }}</span>
                 </v-flex>
               </v-col>
             </v-row>
@@ -270,7 +270,6 @@ import {
   deleteIP,
   getFarm,
   getNodesByFarmID,
-  nodeInterface,
   setFarmPayoutV2Address,
 } from "../lib/farms";
 import { StrKey } from "stellar-sdk";
@@ -282,9 +281,9 @@ export default class FarmsView extends Vue {
   headers = [
     { text: "Farm ID", value: "id", align: "center" },
     { text: "Farm name", value: "name", align: "center" },
-    { text: "Linked Twin ID", value: "twin_id", align: "center" },
+    { text: "Linked Twin ID", value: "twinId", align: "center" },
     { text: "Certification type", value: "certification", align: "center" },
-    { text: "Pricing Policy ID", value: "pricing_policy_id", align: "center" },
+    { text: "Pricing Policy ID", value: "pricingPolicyId", align: "center" },
   ];
   farms: any = [];
   id: any = [];
