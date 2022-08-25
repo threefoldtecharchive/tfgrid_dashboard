@@ -32,18 +32,15 @@ export async function getActiveContracts(api: { query: { smartContractModule: { 
 }
 
 
-export async function getRentStatus(api: { query: { smartContractModule: { activeRentContractForNode: (arg0: string) => any; }; }; }, nodeID: string, currentTwinID: string) {
-  const data = await api.query.smartContractModule.activeRentContractForNode(
-    nodeID
-  );
+export async function getRentStatus(nodeID: any, currentTwinID: any) {
+  const dNodes = await getDedicatedNodes();
+  const node = dNodes.filter((node: { nodeId: any }) => node.nodeId === nodeID);
 
-  const activeRentContracts = data.toJSON();
-  console.log("activeRentContracts", activeRentContracts);
-
-  if (activeRentContracts && activeRentContracts.contract_id === 0) {
+  console.log("node from rentStatus", node);
+  if (node[0].rentContractId === 0) {
     return "free";
   } else {
-    if (activeRentContracts && activeRentContracts.twin_id == currentTwinID) {
+    if (node[0].twinId == currentTwinID) {
       return "yours";
     } else {
       return "taken";
@@ -51,19 +48,19 @@ export async function getRentStatus(api: { query: { smartContractModule: { activ
   }
 }
 
-export async function getNodeUsedResources(nodeId: string) {
-  const res = await axios.get(`${config.gridproxyUrl}/nodes/${nodeId}`, {
-    timeout: 1000,
-  });
+// export async function getNodeUsedResources(nodeId: string) {
+//   const res = await axios.get(`${config.gridproxyUrl}/nodes/${nodeId}`, {
+//     timeout: 1000,
+//   });
 
-  if (res.status === 200) {
-    if (res.data == "likely down") {
-      throw Error("likely down");
-    } else {
-      return res.data.capacity.used_resources;
-    }
-  }
-}
+//   if (res.status === 200) {
+//     if (res.data == "likely down") {
+//       throw Error("likely down");
+//     } else {
+//       return res.data.capacity.used_resources;
+//     }
+//   }
+// }
 ////
 export async function getIpsForFarm(farmID: string) {
   const res = await axios.post(
@@ -232,16 +229,6 @@ export async function getDNodes(api: any, address: string) {
       rentContractId: node.rentContractId,
       rentedByTwinId: node.rentedByTwinId
     });
-    const currentTwinId = new URL(location.href).searchParams.get('twinID');
-    if (node.rentContractId === 0) {
-      return "free";
-    } else {
-      if (node.rentedByTwinId == currentTwinId) {
-        return "yours";
-      } else {
-        return "taken";
-      }
-    }
   });
   console.log("dNodes", dNodes);
 

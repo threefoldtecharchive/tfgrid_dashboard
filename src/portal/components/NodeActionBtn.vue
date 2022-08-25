@@ -81,7 +81,7 @@ export default class NodeActionBtn extends Vue {
       this.$api,
       this.$route.params.accountID
     );    
-    return await getRentStatus(this.$api, this.nodeId, currentTwinID);
+    return await getRentStatus(this.nodeId, currentTwinID);
   }
   reserveNode(nodeId: string) {
     this.loadingReserveNode = true;
