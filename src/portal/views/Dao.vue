@@ -369,7 +369,6 @@ export default class DaoView extends Vue {
                 this.$toasted.show("Voted for proposal!");
                 this.loadingVote = false;
                 this.openVDialog = false;
-                this.loadingProposals = true;
                 getProposals(this.$api).then(
                   (proposals) => {
                     this.proposals = proposals;
@@ -378,9 +377,7 @@ export default class DaoView extends Vue {
                       { title: "Archived", content: proposals.inactive },
                     ];
                   }
-                ).finally(() => {
-                  this.loadingProposals = false;
-                });
+                )
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Vote failed");
                 this.loadingVote = false;
