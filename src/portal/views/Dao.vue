@@ -289,7 +289,7 @@ export default class DaoView extends Vue {
         { title: "Executable", content: this.inactiveProposals },
       ];
       this.farms = await getFarm(this.$api, parseFloat(`${this.id}`));
-      requestAnimationFrame(() => this.loadingProposals = false);
+      this.loadingProposals = false;
     } else {
       this.$router.push({
         name: "accounts",
