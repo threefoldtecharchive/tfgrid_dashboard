@@ -48,7 +48,8 @@ import {
   cancelRentContract,
   createRentContract,
   getActiveContracts,
-  getRentContractID,
+  getDNodes,
+  getRentedNodes,
   getRentStatus,
 } from "@/portal/lib/nodes";
 import { getTwinID } from "@/portal/lib/twin";
@@ -66,14 +67,20 @@ export default class NodeActionBtn extends Vue {
   openUnreserveDialog = false;
   nodeIDToUnreserve = "";
   loadingUnreserveNode = false;
+  $dedicatedNodes: any = [];
+  address = ""
+    
   async created() {
     this.status = await this.getStatus();
+    this.address = this.$route.params.accountID;
+    this.$dedicatedNodes = await getDNodes(this.$api, this.address);
+    console.log("this.$dedicatedNodes", this.$dedicatedNodes);
   }
   async getStatus() {
     const currentTwinID = await getTwinID(
       this.$api,
       this.$route.params.accountID
-    );
+    );    
     return await getRentStatus(this.$api, this.nodeId, currentTwinID);
   }
   reserveNode(nodeId: string) {
@@ -132,10 +139,8 @@ export default class NodeActionBtn extends Vue {
       this.openUnreserveDialog = false;
     } else {
       this.$toasted.show(`unreserving node ${this.nodeIDToUnreserve}`);
-      const rentContractID = await getRentContractID(
-        this.$api,
-        this.nodeIDToUnreserve
-      );
+      const rentContractIDs = await getRentedNodes()
+      const rentContractID = rentContractIDs.filter((contractID: { nodeId: string; }) => contractID.nodeId === this.nodeIDToUnreserve);      
       cancelRentContract(
         this.$api,
         this.$route.params.accountID,
@@ -172,5 +177,7 @@ export default class NodeActionBtn extends Vue {
       });
     }
   }
+
+  
 }
 </script>

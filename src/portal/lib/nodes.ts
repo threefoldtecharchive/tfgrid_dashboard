@@ -4,6 +4,7 @@ import { web3FromAddress } from "@polkadot/extension-dapp";
 import axios from "axios";
 import config from "../config";
 import { getBalance } from "./balance";
+
 export function byteToGB(capacity: number) {
   return (capacity / 1024 / 1024 / 1024).toFixed(0);
 }
@@ -19,22 +20,25 @@ export async function cancelRentContract(api: { tx: { smartContractModule: { can
     .cancelContract(contractId)
     .signAndSend(address, { signer: injector.signer }, callback);
 }
-export async function getRentContractID(api: { query: { smartContractModule: { activeRentContractForNode: (arg0: any) => any; }; }; }, nodeID: string) {
-  const rentContractID =
-    await api.query.smartContractModule.activeRentContractForNode(nodeID);
-  return rentContractID.toJSON().contract_id;
-}
+// export async function getRentContractID(api: { query: { smartContractModule: { activeRentContractForNode: (arg0: any) => any; }; }; }, nodeID: string) {
+//   const rentContractID =
+//     await api.query.smartContractModule.activeRentContractForNode(nodeID);
+//   return rentContractID.toJSON().contract_id;
+// }
 export async function getActiveContracts(api: { query: { smartContractModule: { activeNodeContracts: (arg0: any) => any; }; }; }, nodeID: string) {
+  console.log("getActiveContracts", api.query.smartContractModule.activeNodeContracts(nodeID));
+
   return await api.query.smartContractModule.activeNodeContracts(nodeID);
 }
+
+
 export async function getRentStatus(api: { query: { smartContractModule: { activeRentContractForNode: (arg0: string) => any; }; }; }, nodeID: string, currentTwinID: string) {
   const data = await api.query.smartContractModule.activeRentContractForNode(
     nodeID
   );
 
   const activeRentContracts = data.toJSON();
-  // console.log(data, activeRentContracts);
-
+  console.log("activeRentContracts", activeRentContracts);
 
   if (activeRentContracts && activeRentContracts.contract_id === 0) {
     return "free";
@@ -170,15 +174,17 @@ export async function calDiscount(api: { query: { system: { account: (arg0: stri
 }
 export async function getRentableNodes() {
   const res = await fetch(
-    `${config.gridproxyUrl}/nodes?rentable=true`
+    `${config.gridproxyUrl}/nodes?rentable=true&status=up`
   ).then((res) => res.json())
   return res;
 }
 
 export async function getRentedNodes() {
   const res = await fetch(
-    `${config.gridproxyUrl}/nodes?rented=true`
+    `${config.gridproxyUrl}/nodes?rented=true&status=up`
   ).then((res) => res.json())
+  console.log("rented Nodes", res);
+
   return res;
 }
 
@@ -187,14 +193,14 @@ export async function getDedicatedNodes() {
   const rentableNodes = await getRentedNodes();
   let dedicatedNodes: any[] = [];
   dedicatedNodes = dedicatedNodes.concat(rentedNodes, rentableNodes);
+  console.log("dedicatedNodes", dedicatedNodes);
   return dedicatedNodes;
 }
 export async function getDNodes(api: any, address: string) {
   let nodes: any[] = [];
   nodes = await getDedicatedNodes();
 
-  const pricing = await getPrices(api);
-  const dNodes: { nodeId: string; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; }[] = [];
+  const pricing = await getPrices(api); let dNodes: { nodeId: string; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; rentContractId: any, rentedByTwinId: any; usedResources: { cru: any; mru: any; hru: any; sru: any; }; }[] = [];
   nodes.forEach(async (node) => {
     const price = countPrice(pricing, node);
     const [discount, discountLevel] = await calDiscount(api, address, pricing, price);
@@ -216,9 +222,31 @@ export async function getDNodes(api: any, address: string) {
         hru: node.total_resources.hru,
         sru: node.total_resources.sru,
       },
+      usedResources: {
+        cru: node.used_resources.cru,
+        mru: node.used_resources.mru,
+        hru: node.used_resources.hru,
+        sru: node.used_resources.sru,
+      },
       pubIps: ips,
+      rentContractId: node.rentContractId,
+      rentedByTwinId: node.rentedByTwinId
     });
+    const currentTwinId = new URL(location.href).searchParams.get('twinID');
+    if (node.rentContractId === 0) {
+      return "free";
+    } else {
+      if (node.rentedByTwinId == currentTwinId) {
+        return "yours";
+      } else {
+        return "taken";
+      }
+    }
   });
+  console.log("dNodes", dNodes);
 
   return dNodes;
 }
+
+
+
