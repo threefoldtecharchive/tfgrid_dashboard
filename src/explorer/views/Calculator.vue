@@ -53,7 +53,7 @@
           </v-col>
         </v-row>
       </div>
-      <div class="row pb-5 px-4 mx-2 mx-sm-4">
+      <div class="row pb-5 px-4 mx-5">
         <div
           class="col-5 price-box"
           v-for="price in calculate"
