@@ -53,16 +53,34 @@
           </v-col>
         </v-row>
       </div>
-      <div class="total">
-        <span>Total : $ {{ calculate }}</span>
+      <div class="row pb-5 px-4 mx-2 mx-sm-4">
+        <div
+          class="col-5 price-box"
+          v-for="price in calculate"
+          :key="price.price"
+          :style="{ color: price.color, background: price.backgroundColor }"
+        >
+          <span class="price">
+            <span class="name">{{ price.packageName }}</span>
+            : $ {{ price.price }}
+          </span>
+
+        </div>
       </div>
     </v-card>
   </Layout>
 </template>
 
 <script lang="ts">
+import { filter } from "lodash";
 import { Component, Vue } from "vue-property-decorator";
 import Layout from "../components/Layout.vue";
+type priceType = {
+  color: string;
+  price: string;
+  packageName: string;
+  backgroundColor: string;
+};
 
 @Component({
   components: {
@@ -74,6 +92,33 @@ export default class Calculator extends Vue {
   SRU = "0";
   MRU = "0";
   HRU = "0";
+  discountPackages: any = {
+    none: {
+      backgroundColor: "#CCCCCC",
+      color: "#868686",
+      discount: 0,
+    },
+    default: {
+      backgroundColor: "#3b3b3b",
+      color: "black",
+      discount: 20,
+    },
+    bronze: {
+      backgroundColor: "#F7B370",
+      color: "#C17427",
+      discount: 30,
+    },
+    silver: {
+      backgroundColor: "#eeeeee",
+      color: "#a9a9a9",
+      discount: 40,
+    },
+    gold: {
+      backgroundColor: "#ffed8b",
+      color: "#FFD700",
+      discount: 60,
+    },
+  };
   formHasErrors = false;
 
   inputValidators = [
@@ -85,7 +130,7 @@ export default class Calculator extends Vue {
   get formHasErrrs() {
     return this.$refs.form;
   }
-  get calculate() {
+  get calculate(): priceType[] {
     if (
       isNaN(Number(this.CRU)) ||
       isNaN(Number(this.HRU)) ||
@@ -96,14 +141,34 @@ export default class Calculator extends Vue {
       Number(this.SRU) < 0 ||
       Number(this.MRU) < 0
     )
-      return 0;
+      return [
+        {
+          price: "0.0",
+          color: "black",
+          packageName: "none",
+          backgroundColor: "#DaDaDa",
+        },
+      ];
     const cu1 = Math.max(Number(this.CRU) / 2, Number(this.MRU) / 4);
     const cu2 = Math.max(Number(this.CRU), Number(this.MRU) / 8);
     const cu3 = Math.max(Number(this.CRU) / 2, Number(this.MRU) / 4);
     const CU = Math.min(cu1, cu2, cu3);
     const SU = Number(this.HRU) / 1200 + Number(this.SRU) / 200;
-    const usd_month = (CU * 30.56 + SU * 19.44) * 24 * 30 / 1000;
-    return usd_month.toFixed(3);
+    const usd_month = ((CU * 30.56 + SU * 19.44) * 24 * 30) / 1000;
+    const prices: priceType[] = [];
+
+    for (const key in this.discountPackages) {
+      prices.push({
+        price: `${(
+          (usd_month * (100 - this.discountPackages[key].discount)) /
+          100
+        ).toFixed(3)}`,
+        color: this.discountPackages[key].color,
+        packageName: key,
+        backgroundColor: this.discountPackages[key].backgroundColor,
+      });
+    }
+    return prices;
   }
 }
 </script>
@@ -121,15 +186,24 @@ export default class Calculator extends Vue {
 .card {
   padding: 5rem;
 }
-.total {
-  font-size: 1.7em;
+.price-box {
+  font-size: 1.3rem;
   font-weight: bold;
-  color: #000;
-  background-color: #fff;
-  padding-bottom: 5rem;
+  text-align: center;
+
+  margin: 0.2rem auto;
+  border-radius: 5px;
+}
+.price {
+  display: block;
+  padding: 0.7rem;
+  display: inline-block;
+  margin: 0 auto;
   text-align: center;
 }
-.total span {
-  border-bottom: #888 1px solid;
+
+.name {
+  font-weight: 900;
+  text-transform: capitalize;
 }
 </style>
