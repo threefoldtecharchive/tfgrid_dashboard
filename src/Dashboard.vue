@@ -418,6 +418,18 @@ export default class Dashboard extends Vue {
           showBeforeLogIn: true,
         },
       ],
+    },  {
+      label: "Calculator",
+      icon: "calculator",
+      prefix: "/calculator/",
+      children: [
+        {
+          label: "Calculator",
+          path: "",
+          icon: "calculator",
+          showBeforeLogIn: true,
+        },
+      ],
     },
   ];
   getRouteSubChildren(route: SidenavItem) {
