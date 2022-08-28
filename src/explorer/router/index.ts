@@ -15,9 +15,5 @@ export const explorerRouter: RouteConfig[] = [
     path: "/explorer/farms",
     name: "Farms",
     component: () => import("../views/Farms.vue"),
-  },  {
-    path: "/explorer/calculator",
-    name: "Calculator",
-    component: () => import("../views/Calculator.vue"),
-  },
+  }
 ];

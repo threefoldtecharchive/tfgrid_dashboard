@@ -410,13 +410,7 @@ export default class Dashboard extends Vue {
           path: "farms",
           icon: "lan-connect",
           showBeforeLogIn: true,
-        },
-        {
-          label: "Calculator",
-          path: "calculator",
-          icon: "calculator",
-          showBeforeLogIn: true,
-        },
+        }
       ],
     },  {
       label: "Calculator",
@@ -425,7 +419,7 @@ export default class Dashboard extends Vue {
       children: [
         {
           label: "Calculator",
-          path: "",
+          path: "calculator",
           icon: "calculator",
           showBeforeLogIn: true,
         },
