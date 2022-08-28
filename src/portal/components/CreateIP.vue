@@ -22,8 +22,28 @@
         </v-card-title>
 
         <v-card-text class="text">
+          <v-combobox
+            v-model="IPType"
+            :items="['Single', 'Range']"
+            chips
+            label="Choose how to enter IP"
+            solo
+            type="text"
+            @input.native="IPType=$event.srcElement.value"
+            >
+            <template v-slot:selection="{ attrs, item, select, selected }">
+              <v-chip
+                v-bind="attrs"
+                :input-value="selected"
+                @click="select"
+              >
+                <strong>{{ item }}</strong>
+              </v-chip>
+            </template>
+          </v-combobox>
+
           <v-text-field
-            label="IP"
+            :label="IPType === 'Range' ? 'From IP' : 'IP'"
             v-model="publicIP"
             required
             outlined
@@ -32,6 +52,24 @@
             persistent-hint
             :rules="[
               () => !!publicIP || 'This field is required',
+              () => ipcheck() || 'incorrect format',
+            ]"
+          ></v-text-field>
+          <v-text-field
+            v-if="IPType === 'Range'"
+            label="To IP"
+            v-model="toPublicIP"
+            required
+            outlined
+            dense
+            hint="IP address in CIDR format xxx.xx.xx.xx/xx"
+            persistent-hint
+            :rules="[
+              () => !!toPublicIP || 'This field is required',
+              () => toPublicIP.substring(0, toPublicIP.lastIndexOf('.')) == publicIP.substring(0, publicIP.lastIndexOf('.')) || 'IPs are not the same',
+              () => toPublicIP.split('/')[1] === publicIP.split('/')[1] || 'Subnet is different',
+              () => parseInt(toPublicIP.split('/')[0].split('.')[3]) > parseInt(publicIP.split('/')[0].split('.')[3]) || 'To IP must be bigger than From IP',
+              () => parseInt(toPublicIP.split('/')[0].split('.')[3]) - parseInt(publicIP.split('/')[0].split('.')[3]) <= 16 || 'Range must not exceed 16',
               () => ipcheck() || 'incorrect format'
             ]"
           ></v-text-field>
@@ -64,6 +102,14 @@
           <v-btn
             color="primary white--text"
             text
+            @click="addIPs()"
+            :disabled="!!ipErrorMessage || !!gatewayErrorMessage || publicIP === '' || gateway === ''"
+          >
+            Show IPs range
+          </v-btn>
+          <v-btn
+            color="primary white--text"
+            text
             @click="createPublicIP()"
             :disabled="!!ipErrorMessage || !!gatewayErrorMessage || publicIP === '' || gateway === ''"
           >
@@ -72,23 +118,59 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+      v-model="showIPs"
+      max-width="500"
+    >
+      <v-card>
+        <v-card-title class="text-h5">IP Ranges</v-card-title>
+        <v-card-text v-for="(IP, i) in IPs" :key="IP">{{i+1}}- {{IP}}</v-card-text>
+        <v-card-actions>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-container>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
+import { getIPRange } from 'get-ip-range';
+
 @Component({
   name: "CreateIP",
 })
 export default class CreateIP extends Vue {
+  IPs: Array<string> = [];
+  IPType = "Single";
+  toPublicIP = "";
   publicIP = "";
   gateway = "";
   ipErrorMessage = "";
   gatewayErrorMessage = "";
   open = false;
+  showIPs = false;
   @Prop({ required: true }) loadingCreate!: boolean;
+  addIPs(){
+    this.showIPs = true;
+    let sub = this.publicIP.split('/')[1];
+    let start = this.publicIP.split('/')[0];
+    let end = this.toPublicIP.split('/')[0];
+
+    if (this.IPType == "Single")
+      end = start;
+
+    this.IPs = getIPRange(start, end);
+    this.IPs.forEach((ip, i) => {
+      this.IPs[i] = ip + '/' + sub;
+    });
+  }
   createPublicIP() {
+    this.addIPs();
+    this.showIPs = false;
     this.open = false;
-    this.$emit("create", this.publicIP, this.gateway);
+    
+    this.$emit("create", this.IPs, this.gateway);
   }
   ipcheck() {
     const ipRegex = new RegExp("^(?:[0-9]{1,3}.){3}[0-9]{1,3}/(1[6-9]|2[0-9]|3[0-2])$");
