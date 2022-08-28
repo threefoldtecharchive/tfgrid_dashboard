@@ -617,7 +617,7 @@ export default class FarmNodesTable extends Vue {
   }
   save(config: {
     ip4: {ip: string, gw: string},
-    ip6?: {ip: string, gw: string},
+    ip6?: {ip: string | undefined, gw: string | undefined},
     domain?: string
   }) {
     this.loadingPublicConfig = true;
@@ -724,7 +724,12 @@ export default class FarmNodesTable extends Vue {
       ip4: {
           ip: this.ip4,
           gw: this.gw4,
-      }
+      },
+      ip6: {
+          ip: undefined,
+          gw: undefined,
+      },
+      domain: undefined
     };
     this.save(config);
   }

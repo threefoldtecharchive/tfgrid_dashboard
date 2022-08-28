@@ -200,7 +200,7 @@ export async function addNodePublicConfig(
   nodeID: number,
   config: {
     ip4: {ip: string, gw: string},
-    ip6?: {ip: string, gw: string},
+    ip6?: {ip: string | undefined, gw: string | undefined},
     domain?: string
   },
   callback: any
