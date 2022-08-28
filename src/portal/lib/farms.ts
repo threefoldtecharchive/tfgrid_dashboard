@@ -199,11 +199,9 @@ export async function addNodePublicConfig(
   farmID: number,
   nodeID: number,
   config: {
-    ipv4: string;
-    ipv6: string;
-    gw4: string;
-    gw6: string;
-    domain: string;
+    ip4: {ip: string, gw: string},
+    ip6?: {ip: string, gw: string},
+    domain?: string
   },
   callback: any
 ) {
