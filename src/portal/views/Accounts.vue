@@ -27,7 +27,7 @@
         >
           <div class="d-flex justify-space-between">
             <div class="d-inline-block text-truncate">
-              <v-card-title>{{ account.meta.name.toUpperCase() }}</v-card-title>
+              <v-card-title>{{ account.meta.name }}</v-card-title>
               <v-card-subtitle>
                 {{ account.address }}
               </v-card-subtitle>
@@ -74,6 +74,9 @@ export default class AccountsView extends Vue {
     return this.accounts;
   }
   async addAccountRoute(account: accountInterface) {
+    this.accounts.map((account) => account.active = false)
+    account.active = true;
+    this.$root.$emit('selectAccount');
     this.$router.push({
       name: "account",
       path: "account",

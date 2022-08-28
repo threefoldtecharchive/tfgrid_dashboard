@@ -42,10 +42,6 @@
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn
-            @click="openCreateFarmDialog = false"
-            color="grey lighten-2 black--text"
-          >Close</v-btn>
-          <v-btn
             color="primary white--text"
             @click="createFarmFromName"
             :loading="loadingCreateFarm"
@@ -151,9 +147,11 @@
                     overflow: hidden;
                   "
                 >
-                  <span style="font-size: small">
-                    {{ item.v2address }}
-                  </span>
+                  <v-row style="margin: 0;">
+                    <span style="font-size: small;">
+                      {{ item.v2address }}
+                    </span>
+                  </v-row>
                   <v-btn
                     x-small
                     @click="openV2AddressDialog = true"
@@ -219,7 +217,7 @@
             </v-row>
 
             <PublicIPTable
-              :ips="item.public_ips"
+              :ips="item.publicIps"
               :deleteIP="deletePublicIP"
               :loadingDelete="loadingDeleteIP"
               :createIP="createPublicIPs"
@@ -272,7 +270,6 @@ import {
   deleteIP,
   getFarm,
   getNodesByFarmID,
-  nodeInterface,
   setFarmPayoutV2Address,
 } from "../lib/farms";
 import { StrKey } from "stellar-sdk";

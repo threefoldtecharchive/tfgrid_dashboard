@@ -267,14 +267,14 @@ export default class Farms extends Vue {
       chip_label: "Name",
       label: "Filter By Farm Name",
       items(sub_string: string) {
-        return apollo.defaultClient
-          .query<IFilterQuery>({
-            query: filterQuery("name"),
-            variables: { sub_string },
-          })
-          .then(({ data }: any) => {
-            return data.items.map((x: any) => x.value);
-          });
+        return fetch(`${window.configs.APP_GRIDPROXY_URL}/farms?name_contains=${sub_string}`)
+        .then((res) =>{
+          return res.json()
+        })
+        .then(( data : any) => {
+          console.log(data);
+          return data.map((x: any) => x.name);
+        });
       },
       value: [],
       multiple: true,
