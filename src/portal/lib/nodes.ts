@@ -149,7 +149,7 @@ export function generateReceipt(doc: jsPDF, node: nodeInterface) {
 export function byteToGB(capacity: number) {
   return (capacity / 1024 / 1024 / 1024).toFixed(0);
 }
-export async function createRentContract(api: { tx: { smartContractModule: { createRentContract: (arg0: any, arg1: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, address: string, nodeId: string, solutionProviderID: string, callback: any) {
+export async function createRentContract(api: { tx: { smartContractModule: { createRentContract: (arg0: any, arg1: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, address: string, nodeId: string, solutionProviderID: string | null, callback: any) {
   const injector = await web3FromAddress(address);
   return api.tx.smartContractModule
     .createRentContract(nodeId, solutionProviderID)
@@ -161,11 +161,7 @@ export async function cancelRentContract(api: { tx: { smartContractModule: { can
     .cancelContract(contractId)
     .signAndSend(address, { signer: injector.signer }, callback);
 }
-// export async function getRentContractID(api: { query: { smartContractModule: { activeRentContractForNode: (arg0: any) => any; }; }; }, nodeID: string) {
-//   const rentContractID =
-//     await api.query.smartContractModule.activeRentContractForNode(nodeID);
-//   return rentContractID.toJSON().contract_id;
-// }
+
 export async function getActiveContracts(api: { query: { smartContractModule: { activeNodeContracts: (arg0: any) => any; }; }; }, nodeID: string) {
   console.log("getActiveContracts", api.query.smartContractModule.activeNodeContracts(nodeID));
 
@@ -176,12 +172,11 @@ export async function getActiveContracts(api: { query: { smartContractModule: { 
 export async function getRentStatus(nodeID: any, currentTwinID: any) {
   const dNodes = await getDedicatedNodes();
   const node = dNodes.filter((node: { nodeId: any }) => node.nodeId === nodeID);
-
-  console.log("node from rentStatus", node);
+  console.log("node[0]", node[0]);
   if (node[0].rentContractId === 0) {
     return "free";
   } else {
-    if (node[0].twinId == currentTwinID) {
+    if (node[0].rentedByTwinId == currentTwinID) {
       return "yours";
     } else {
       return "taken";
@@ -370,14 +365,13 @@ export async function getDedicatedNodes() {
   const rentableNodes = await getRentedNodes();
   let dedicatedNodes: any[] = [];
   dedicatedNodes = dedicatedNodes.concat(rentedNodes, rentableNodes);
-  console.log("dedicatedNodes", dedicatedNodes);
   return dedicatedNodes;
 }
 export async function getDNodes(api: any, address: string) {
   let nodes: any[] = [];
   nodes = await getDedicatedNodes();
 
-  const pricing = await getPrices(api); let dNodes: { nodeId: string; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; rentContractId: any, rentedByTwinId: any; usedResources: { cru: any; mru: any; hru: any; sru: any; }; }[] = [];
+  const pricing = await getPrices(api); let dNodes: { nodeId: string; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; rentContractId: any, rentedByTwinId: any; usedResources: { cru: any; mru: any; hru: any; sru: any; }; status: any }[] = [];
   nodes.forEach(async (node) => {
     const price = countPrice(pricing, node);
     const [discount, discountLevel] = await calDiscount(api, address, pricing, price);
@@ -407,10 +401,13 @@ export async function getDNodes(api: any, address: string) {
       },
       pubIps: ips,
       rentContractId: node.rentContractId,
-      rentedByTwinId: node.rentedByTwinId
+      rentedByTwinId: node.rentedByTwinId,
+      status: await getRentStatus(node.nodeId, address)
     });
   });
   console.log("dNodes", dNodes);
+  console.log("address from nodes", address);
+
 
   return dNodes;
 }

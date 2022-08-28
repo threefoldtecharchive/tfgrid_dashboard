@@ -62,14 +62,14 @@ export default class NodeActionBtn extends Vue {
   loadingReserveNode = false;
   @Prop({ required: true })
   nodeId!: string;
-  solutionProviderID = "";
+  solutionProviderID = null;
   $api: any;
   openUnreserveDialog = false;
   nodeIDToUnreserve = "";
   loadingUnreserveNode = false;
   $dedicatedNodes: any = [];
   address = ""
-    
+  currentTwinID = 0;  
   async created() {
     this.status = await this.getStatus();
     this.address = this.$route.params.accountID;
@@ -77,11 +77,13 @@ export default class NodeActionBtn extends Vue {
     console.log("this.$dedicatedNodes", this.$dedicatedNodes);
   }
   async getStatus() {
-    const currentTwinID = await getTwinID(
+    this.currentTwinID = await getTwinID(
       this.$api,
       this.$route.params.accountID
     );    
-    return await getRentStatus(this.nodeId, currentTwinID);
+    console.log("getRentStatus", await getRentStatus(this.nodeId, this.currentTwinID));
+    
+    return await getRentStatus(this.nodeId, this.currentTwinID);
   }
   reserveNode(nodeId: string) {
     this.loadingReserveNode = true;
