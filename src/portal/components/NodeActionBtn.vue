@@ -89,8 +89,8 @@ export default class NodeActionBtn extends Vue {
     createRentContract(
       this.$api,
       this.$route.params.accountID,
-      this.solutionProviderID,
       nodeId,
+      this.solutionProviderID,
       (res: {
         status: { type: string; asFinalized: string; isFinalized: string };
       }) => {

@@ -4,9 +4,6 @@ import { web3FromAddress } from "@polkadot/extension-dapp";
 import axios from "axios";
 import config from "../config";
 import { getBalance } from "./balance";
-<<<<<<< HEAD
-
-=======
 import { jsPDF } from "jspdf";
 import { nodeInterface } from "./farms";
 import moment from "moment";
@@ -149,7 +146,6 @@ export function generateReceipt(doc: jsPDF, node: nodeInterface) {
 
   return doc
 }
->>>>>>> 94c7240ef7c1c306c405804901ae5f38e4bd657a
 export function byteToGB(capacity: number) {
   return (capacity / 1024 / 1024 / 1024).toFixed(0);
 }
@@ -193,21 +189,7 @@ export async function getRentStatus(nodeID: any, currentTwinID: any) {
   }
 }
 
-<<<<<<< HEAD
-// export async function getNodeUsedResources(nodeId: string) {
-//   const res = await axios.get(`${config.gridproxyUrl}/nodes/${nodeId}`, {
-//     timeout: 1000,
-//   });
 
-//   if (res.status === 200) {
-//     if (res.data == "likely down") {
-//       throw Error("likely down");
-//     } else {
-//       return res.data.capacity.used_resources;
-//     }
-//   }
-// }
-=======
 export async function getNodeMintingFixupReceipts(nodeId: string) {
   let nodeReceipts: receiptInterface[] = []
   const res = await axios.get(`https://alpha.minting.tfchain.grid.tf/api/v1/node/${nodeId}`)
@@ -259,8 +241,7 @@ export async function getNodeUsedResources(nodeId: string) {
     }
   }
 }
->>>>>>> 94c7240ef7c1c306c405804901ae5f38e4bd657a
-////
+
 export async function getIpsForFarm(farmID: string) {
   const res = await axios.post(
     config.graphqlUrl,

@@ -4,11 +4,8 @@ import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios from 'axios';
 import config from '../config';
-<<<<<<< HEAD
 import { getDedicatedNodes } from './nodes';
-=======
 import { getNodeMintingFixupReceipts, getNodeUsedResources, receiptInterface } from './nodes';
->>>>>>> 94c7240ef7c1c306c405804901ae5f38e4bd657a
 import { hex2a } from './util'
 export interface nodeInterface {
   resourcesTotal: {
