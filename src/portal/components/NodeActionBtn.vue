@@ -68,19 +68,7 @@ export default class NodeActionBtn extends Vue {
   nodeIDToUnreserve = "";
   loadingUnreserveNode = false;
   currentTwinID:any;
-  // async created() {
-  //   console.log(this.nodeId);
-  //   console.log(this.status);
-  //   this.status = await this.getStatus();
-  //   console.log(this.status);
-  // }
-  // async getStatus() {
-  //   this.currentTwinID = await getTwinID(
-  //     this.$api,
-  //     this.$route.params.accountID
-  //   );      
-  //   return await getRentStatus(this.nodeId, this.currentTwinID);
-  // }
+
   reserveNode(nodeId: string) {
     this.loadingReserveNode = true;
     console.log(`reserving node ${nodeId}`);
@@ -89,7 +77,7 @@ export default class NodeActionBtn extends Vue {
       this.$route.params.accountID,
       nodeId,
       this.solutionProviderID,
-      (res: {
+      async (res: {
         status: { type: string; asFinalized: string; isFinalized: string };
       }) => {
         console.log(res);
@@ -103,7 +91,7 @@ export default class NodeActionBtn extends Vue {
             this.$toasted.show(
               `Transaction successed: Node ${nodeId} reserved`
             );
-            this.status = status;              
+            this.status = await getRentStatus(this.nodeId, this.currentTwinID);              
             this.loadingReserveNode = false;
             break;
         }
@@ -141,7 +129,7 @@ export default class NodeActionBtn extends Vue {
         this.$api,
         this.$route.params.accountID,
         rentContractID,
-        (res: {
+        async (res: {
           status: { type: string; asFinalized: string; isFinalized: string };
         }) => {
           console.log(res);
@@ -155,7 +143,7 @@ export default class NodeActionBtn extends Vue {
               this.$toasted.show(
                 `Transaction successed: Node ${this.nodeIDToUnreserve} Unreserved`
               );
-              this.status = status;
+              this.status = await getRentStatus(this.nodeId, this.currentTwinID);
                 this.loadingUnreserveNode = false;
                 this.openUnreserveDialog = false;
               break;

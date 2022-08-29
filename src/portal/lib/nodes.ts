@@ -403,6 +403,8 @@ export async function getDNodes(api: any, address: string, currentTwinID: string
       rentedByTwinId: node.rentedByTwinId,
       rentStatus: await getRentStatus(node.nodeId, currentTwinID)
     });
+    console.log("dNodes", dNodes);
+
   });
   return dNodes;
 }
