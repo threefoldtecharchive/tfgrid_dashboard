@@ -18,7 +18,7 @@
                 No Active proposals at this time
               </h2>
               <h2 v-else>
-                Howdy {{ $route.query.accountName }}, you can now vote on proposals!
+              {{ $route.query.accountName }}, you can now vote on proposals!
               </h2>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
