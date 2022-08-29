@@ -69,6 +69,10 @@ export default class NodeActionBtn extends Vue {
   loadingUnreserveNode = false;
   currentTwinID:any;
 
+  created(){
+    this.currentTwinID = this.$route.query.twinID;
+  }
+
   reserveNode(nodeId: string) {
     this.loadingReserveNode = true;
     console.log(`reserving node ${nodeId}`);
@@ -91,7 +95,8 @@ export default class NodeActionBtn extends Vue {
             this.$toasted.show(
               `Transaction successed: Node ${nodeId} reserved`
             );
-            this.status = await getRentStatus(this.nodeId, this.currentTwinID);              
+            this.status = "yours"
+            console.log("creating status", this.status);
             this.loadingReserveNode = false;
             break;
         }
@@ -123,12 +128,14 @@ export default class NodeActionBtn extends Vue {
       this.openUnreserveDialog = false;
     } else {
       this.$toasted.show(`unreserving node ${this.nodeIDToUnreserve}`);
-      const rentContractIDs = await getRentedNodes()
-      const rentContractID = rentContractIDs.filter((contractID: { nodeId: string; }) => contractID.nodeId === this.nodeIDToUnreserve);      
+      const rentedNodes = await getRentedNodes()
+      const rentedNode = rentedNodes.filter((contractID: { nodeId: string; }) => contractID.nodeId === this.nodeIDToUnreserve);
+      console.log("rentContractID", rentedNode);
+            
       cancelRentContract(
         this.$api,
         this.$route.params.accountID,
-        rentContractID,
+        rentedNode[0].rentContractId,
         async (res: {
           status: { type: string; asFinalized: string; isFinalized: string };
         }) => {
@@ -143,9 +150,12 @@ export default class NodeActionBtn extends Vue {
               this.$toasted.show(
                 `Transaction successed: Node ${this.nodeIDToUnreserve} Unreserved`
               );
-              this.status = await getRentStatus(this.nodeId, this.currentTwinID);
-                this.loadingUnreserveNode = false;
-                this.openUnreserveDialog = false;
+              this.status = "free"
+              console.log(this.nodeId, this.currentTwinID);
+              console.log("unreserving status", this.status);
+
+              this.loadingUnreserveNode = false;
+              this.openUnreserveDialog = false;
               break;
           }
         }
