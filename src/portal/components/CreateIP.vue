@@ -48,7 +48,7 @@
             required
             outlined
             dense
-            hint="IP address in CIDR format xxx.xx.xx.xx/xx"
+            hint="IP address in CIDR format xxx.xxx.xxx.xxx/xx"
             persistent-hint
             :error-messages="ipErrorMessage"
             :rules="[
@@ -63,7 +63,7 @@
             required
             outlined
             dense
-            hint="IP address in CIDR format xxx.xx.xx.xx/xx"
+            hint="IP address in CIDR format xxx.xxx.xxx.xxx/xx"
             persistent-hint
             :error-messages="toIpErrorMessage"
             :rules="[
@@ -136,7 +136,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import { getIPRange } from 'get-ip-range';
 import { default as PrivateIp } from "private-ip";
 
-const ipRegex = new RegExp("^[0-9]{1,3}.(?:[0-9]{1,2}.){2}[0-9]{1,2}/(1[6-9]|2[0-9]|3[0-2])$");
+const ipRegex = new RegExp("^(?:[0-9]{1}[0-5]{0,1}[0-5]{0,1}.){3}[0-9]{1}[0-5]{0,1}[0-5]{0,1}/(1[6-9]|2[0-9]|3[0-2])$");
 
 @Component({
   name: "CreateIP",
