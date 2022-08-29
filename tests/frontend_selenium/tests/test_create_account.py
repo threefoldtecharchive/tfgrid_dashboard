@@ -32,7 +32,7 @@ def test_create_account(browser):
  
 def test_import_account(browser):
 
-  seed = 'search vague feature catch correct drama involve hello swallow lend orchard resemble'
+  seed = '' # Put mnemonics for test account here 
 
   #Create instance
   dashboard_page = DashboardPage(browser)
