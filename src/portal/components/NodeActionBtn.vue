@@ -92,7 +92,7 @@ export default class NodeActionBtn extends Vue {
             break;
           case "Finalized":
             this.$toasted.show(
-              `Transaction successed: Node ${nodeId} reserved`
+              `Transaction succeeded: Node ${nodeId} reserved`
             );
             this.status = "yours"
             this.loadingReserveNode = false;
@@ -144,7 +144,7 @@ export default class NodeActionBtn extends Vue {
               break;
             case "Finalized":
               this.$toasted.show(
-                `Transaction successed: Node ${this.nodeIDToUnreserve} Unreserved`
+                `Transaction succeeded: Node ${this.nodeIDToUnreserve} Unreserved`
               );
               this.status = "free"
               this.loadingUnreserveNode = false;
