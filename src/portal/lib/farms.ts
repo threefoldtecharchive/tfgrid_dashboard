@@ -126,10 +126,8 @@ export async function getNodesByFarmID(farms: any[]) {
   const nodesWithResources = _nodes.map(async (node) => {
 
     try {
-      const dedicatedNodes = await getDedicatedNodes();
-      node.resourcesUsed = dedicatedNodes.filter((nodeResouces: any) => { nodeResouces === node.used_resources });
-      console.log("node.resourcesUsed", node.resourcesUsed);
-
+      node.resourcesUsed = await getNodeUsedResources(node.nodeID);
+      
       node.resources = node.resourcesTotal;
       node.receipts = await getNodeMintingFixupReceipts(node.nodeID);
 
