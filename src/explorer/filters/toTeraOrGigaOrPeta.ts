@@ -14,7 +14,7 @@ export default function toTeraOrGiga(value?: string) {
 
   gb = gb / 1024;
 
-  if (gb < 1024) return `${gb.toFixed(1)} TB`;
+  if (gb < 1024) return `${gb.toFixed(0)} TB`;
 
   gb = gb / 1024;
   return `${gb.toFixed(0)} PB`;
