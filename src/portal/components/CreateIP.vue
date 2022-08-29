@@ -50,9 +50,10 @@
             dense
             hint="IP address in CIDR format xxx.xx.xx.xx/xx"
             persistent-hint
+            :error-messages="ipErrorMessage"
             :rules="[
               () => !!publicIP || 'This field is required',
-              () => ipcheck() || 'incorrect format',
+              ipcheck,
             ]"
           ></v-text-field>
           <v-text-field
@@ -64,13 +65,11 @@
             dense
             hint="IP address in CIDR format xxx.xx.xx.xx/xx"
             persistent-hint
+            :error-messages="toIpErrorMessage"
             :rules="[
               () => !!toPublicIP || 'This field is required',
-              () => toPublicIP.substring(0, toPublicIP.lastIndexOf('.')) == publicIP.substring(0, publicIP.lastIndexOf('.')) || 'IPs are not the same',
-              () => toPublicIP.split('/')[1] === publicIP.split('/')[1] || 'Subnet is different',
-              () => parseInt(toPublicIP.split('/')[0].split('.')[3]) > parseInt(publicIP.split('/')[0].split('.')[3]) || 'To IP must be bigger than From IP',
-              () => parseInt(toPublicIP.split('/')[0].split('.')[3]) - parseInt(publicIP.split('/')[0].split('.')[3]) <= 16 || 'Range must not exceed 16',
-              () => ipcheck() || 'incorrect format'
+              toIpCheck,
+              ipcheck
             ]"
           ></v-text-field>
           <v-text-field
@@ -111,7 +110,7 @@
             color="primary white--text"
             text
             @click="createPublicIP()"
-            :disabled="!!ipErrorMessage || !!gatewayErrorMessage || publicIP === '' || gateway === ''"
+            :disabled="!!ipErrorMessage || !!gatewayErrorMessage || (IPType == 'Range' && !!toIpErrorMessage) || publicIP === '' || gateway === ''"
           >
             Save
           </v-btn>
@@ -146,6 +145,7 @@ export default class CreateIP extends Vue {
   toPublicIP = "";
   publicIP = "";
   gateway = "";
+  toIpErrorMessage = "";
   ipErrorMessage = "";
   gatewayErrorMessage = "";
   open = false;
@@ -172,11 +172,38 @@ export default class CreateIP extends Vue {
     
     this.$emit("create", this.IPs, this.gateway);
   }
+  toIpCheck() {
+    let check_same_IPs = true;
+    let check_same_subnet = true;
+    let check_from_bigger_than_to = true;
+    let check_limit_ips = true;
+    this.toIpErrorMessage = "";
+    
+    if (this.toPublicIP.substring(0, this.toPublicIP.lastIndexOf('.')) != this.publicIP.substring(0, this.publicIP.lastIndexOf('.'))) {
+      this.toIpErrorMessage = "IPs are not the same";
+      check_same_IPs = false;
+    }
+    if (this.toPublicIP.split('/')[1] !== this.publicIP.split('/')[1]) {
+      this.toIpErrorMessage = "Subnet is different";
+      check_same_subnet = false;
+    }
+    if (parseInt(this.toPublicIP.split('/')[0].split('.')[3]) <= parseInt(this.publicIP.split('/')[0].split('.')[3])) {
+      this.toIpErrorMessage = "To IP must be bigger than From IP";
+      check_from_bigger_than_to = false;
+    }
+    if (parseInt(this.toPublicIP.split('/')[0].split('.')[3]) - parseInt(this.publicIP.split('/')[0].split('.')[3]) > 16) {
+      this.toIpErrorMessage = "Range must not exceed 16";
+      check_limit_ips = false;
+    }
+    return check_same_IPs && check_same_subnet && check_from_bigger_than_to && check_limit_ips;      
+  }
   ipcheck() {
     const ipRegex = new RegExp("^(?:[0-9]{1,3}.){3}[0-9]{1,3}/(1[6-9]|2[0-9]|3[0-2])$");
     if (ipRegex.test(this.publicIP)) {
+      this.ipErrorMessage = "";
       return true;
     }
+    this.ipErrorMessage = "Incorrect format";
     return false;
   }
   gatewayCheck() {
