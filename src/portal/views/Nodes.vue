@@ -27,7 +27,7 @@
         {{ byteToGB(item.resources.hru) }}
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <NodeActionBtn :nodeId="item.nodeId" />
+        <NodeActionBtn :nodeId="item.nodeId" :status="item.rentStatus" />
       </template>
       <template v-slot:top>
         <v-toolbar
@@ -80,7 +80,7 @@
 import NodeActionBtn from "../components/NodeActionBtn.vue";
 import NodeDetails from "../components/NodeDetails.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { getDNodes } from "../lib/nodes";
+import { getDNodes, getRentStatus } from "../lib/nodes";
 import { byteToGB } from "../lib/nodes";
 @Component({
   name: "NodesView",
@@ -105,11 +105,13 @@ export default class NodesView extends Vue {
   address = "";
   searchTerm = "";
   accountName: any = "";
+  $currentTwinID: any = 0;
   async mounted() {
     this.address = this.$route.params.accountID;
     this.accountName = this.$route.query.accountName;
+    this.$currentTwinID = this.$route.query.twinID;
     if (this.$api) {
-      this.nodes = await getDNodes(this.$api, this.address);
+      this.nodes = await getDNodes(this.$api, this.address, this.$currentTwinID)      
     } else {
       this.$router.push({
         name: "accounts",
@@ -125,7 +127,7 @@ export default class NodesView extends Vue {
     oldValue: string
   ) {
     console.log(`removing nodes of ${oldValue}, putting in nodes of ${value}`);
-    this.nodes = await getDNodes(this.$api, value);
+    this.nodes = await getDNodes(this.$api, value, this.$currentTwinID);
   }
   public filteredDNodes() {
     if (this.searchTerm.length !== 0 && this.nodes.length !== 0) {

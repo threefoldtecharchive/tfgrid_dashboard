@@ -164,19 +164,18 @@ export async function cancelRentContract(api: { tx: { smartContractModule: { can
 
 export async function getActiveContracts(api: { query: { smartContractModule: { activeNodeContracts: (arg0: any) => any; }; }; }, nodeID: string) {
   console.log("getActiveContracts", api.query.smartContractModule.activeNodeContracts(nodeID));
-
   return await api.query.smartContractModule.activeNodeContracts(nodeID);
 }
 
 
 export async function getRentStatus(nodeID: any, currentTwinID: any) {
-  const dNodes = await getDedicatedNodes();
-  const node = dNodes.filter((node: { nodeId: any }) => node.nodeId === nodeID);
-  console.log("node[0]", node[0]);
-  if (node[0].rentContractId === 0) {
+  const node = await fetch(
+    `${config.gridproxyUrl}/nodes/${nodeID}`
+  ).then((res) => res.json())
+  if (node.rentContractId === 0) {
     return "free";
   } else {
-    if (node[0].rentedByTwinId == currentTwinID) {
+    if (node.rentedByTwinId == currentTwinID) {
       return "yours";
     } else {
       return "taken";
@@ -367,11 +366,11 @@ export async function getDedicatedNodes() {
   dedicatedNodes = dedicatedNodes.concat(rentedNodes, rentableNodes);
   return dedicatedNodes;
 }
-export async function getDNodes(api: any, address: string) {
+export async function getDNodes(api: any, address: string, currentTwinID: string) {
   let nodes: any[] = [];
   nodes = await getDedicatedNodes();
 
-  const pricing = await getPrices(api); let dNodes: { nodeId: string; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; rentContractId: any, rentedByTwinId: any; usedResources: { cru: any; mru: any; hru: any; sru: any; }; status: any }[] = [];
+  const pricing = await getPrices(api); let dNodes: { nodeId: string; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; rentContractId: any, rentedByTwinId: any; usedResources: { cru: any; mru: any; hru: any; sru: any; }; rentStatus: any }[] = [];
   nodes.forEach(async (node) => {
     const price = countPrice(pricing, node);
     const [discount, discountLevel] = await calDiscount(api, address, pricing, price);
@@ -402,13 +401,9 @@ export async function getDNodes(api: any, address: string) {
       pubIps: ips,
       rentContractId: node.rentContractId,
       rentedByTwinId: node.rentedByTwinId,
-      status: await getRentStatus(node.nodeId, address)
+      rentStatus: await getRentStatus(node.nodeId, currentTwinID)
     });
   });
-  console.log("dNodes", dNodes);
-  console.log("address from nodes", address);
-
-
   return dNodes;
 }
 
