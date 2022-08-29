@@ -149,10 +149,10 @@ export function generateReceipt(doc: jsPDF, node: nodeInterface) {
 export function byteToGB(capacity: number) {
   return (capacity / 1024 / 1024 / 1024).toFixed(0);
 }
-export async function createRentContract(api: { tx: { smartContractModule: { createRentContract: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, address: string, nodeId: string, callback: any) {
+export async function createRentContract(api: { tx: { smartContractModule: { createRentContract: (arg0: any, arg1: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, address: string, nodeId: string, solutionProviderID: string | null, callback: any) {
   const injector = await web3FromAddress(address);
   return api.tx.smartContractModule
-    .createRentContract(nodeId)
+    .createRentContract(nodeId, solutionProviderID)
     .signAndSend(address, { signer: injector.signer }, callback);
 }
 export async function cancelRentContract(api: { tx: { smartContractModule: { cancelContract: (arg0: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, address: string, contractId: string, callback: any) {
@@ -161,30 +161,10 @@ export async function cancelRentContract(api: { tx: { smartContractModule: { can
     .cancelContract(contractId)
     .signAndSend(address, { signer: injector.signer }, callback);
 }
-export async function getRentContractID(api: { query: { smartContractModule: { activeRentContractForNode: (arg0: any) => any; }; }; }, nodeID: string) {
-  const rentContractID =
-    await api.query.smartContractModule.activeRentContractForNode(nodeID);
-  return rentContractID.toJSON().contract_id;
-}
+
 export async function getActiveContracts(api: { query: { smartContractModule: { activeNodeContracts: (arg0: any) => any; }; }; }, nodeID: string) {
+  console.log("getActiveContracts", api.query.smartContractModule.activeNodeContracts(nodeID));
   return await api.query.smartContractModule.activeNodeContracts(nodeID);
-}
-export async function getRentStatus(api: { query: { smartContractModule: { activeRentContractForNode: (arg0: string) => any; }; }; }, nodeID: string, currentTwinID: string) {
-  const data = await api.query.smartContractModule.activeRentContractForNode(
-    nodeID
-  );
-
-  const activeRentContracts = data.toJSON();
-
-  if (activeRentContracts.contract_id === 0) {
-    return "free";
-  } else {
-    if (activeRentContracts.twin_id == currentTwinID) {
-      return "yours";
-    } else {
-      return "taken";
-    }
-  }
 }
 
 export async function getNodeMintingFixupReceipts(nodeId: string) {
@@ -238,7 +218,7 @@ export async function getNodeUsedResources(nodeId: string) {
     }
   }
 }
-////
+
 export async function getIpsForFarm(farmID: string) {
   const res = await axios.post(
     config.graphqlUrl,
@@ -282,30 +262,14 @@ export async function getPrices(api: { query: { tfgridModule: { pricingPolicies:
   const pricing = await api.query.tfgridModule.pricingPolicies(1);
   return pricing.toJSON();
 }
-export async function getDedicatedFarms() {
-  const res = await axios.post(
-    config.graphqlUrl,
-    {
-      query: `{
-        farms(where: {dedicatedFarm_eq: true}) {
-          farmID
-        }
-      }
-      `,
-      operation: "getDedicatedFarms",
-    },
-    { timeout: 1000 }
-  );
-  return res.data.data.farms.map((farm: { farmID: string; }) => farm.farmID);
-}
 
-export function countPrice(prices: { cu: { value: number; }; su: { value: number; }; }, node: { resourcesTotal: { sru: number; hru: number; mru: number; cru: any; }; }) {
+export function countPrice(prices: { cu: { value: number; }; su: { value: number; }; }, node: { total_resources: { sru: number; hru: number; mru: number; cru: any; }; }) {
 
   const resources = {
-    sru: node.resourcesTotal.sru / 1024 / 1024 / 1024,
-    hru: node.resourcesTotal.hru / 1024 / 1024 / 1024,
-    mru: node.resourcesTotal.mru / 1024 / 1024 / 1024,
-    cru: node.resourcesTotal.cru,
+    sru: node.total_resources.sru / 1024 / 1024 / 1024,
+    hru: node.total_resources.hru / 1024 / 1024 / 1024,
+    mru: node.total_resources.mru / 1024 / 1024 / 1024,
+    cru: node.total_resources.cru,
   };
   const SU = calSU(resources.hru, resources.sru);
   const CU = calCU(resources.cru, resources.mru);
@@ -362,52 +326,45 @@ export async function calDiscount(api: { query: { system: { account: (arg0: stri
 
   return [totalPrice.toFixed(2), discountPackages[selectedPackage].discount];
 }
-export async function getDedicatedNodes(farmID: string) {
-  const res = await axios.post(
-    config.graphqlUrl,
-    {
-      query: `query MyQuery {
-          nodes(where: {farmID_eq: ${farmID}}) {
-            resourcesTotal {
-              cru
-              hru
-              mru
-              sru
-            }
-            nodeID
-            location {
-              latitude
-              longitude
-            }
-            country
-            city
-            farmID
-          }
-        }      
-        `,
-      operation: "getNodes",
-    },
-    { timeout: 1000 }
-  );
-  return res.data.data.nodes;
+
+export async function getNodeByID(nodeID: any) {
+  const node = await fetch(
+    `${config.gridproxyUrl}/nodes/${nodeID}`
+  ).then((res) => res.json())
+  return node;
 }
-export async function getDNodes(api: any, address: string) {
-  const farmsIDs = await getDedicatedFarms();
+export async function getRentableNodes() {
+  const res = await fetch(
+    `${config.gridproxyUrl}/nodes?rentable=true&status=up`
+  ).then((res) => res.json())
+  return res;
+}
 
+export async function getRentedNodes() {
+  const res = await fetch(
+    `${config.gridproxyUrl}/nodes?rented=true&status=up`
+  ).then((res) => res.json())
+  return res;
+}
+
+export async function getDedicatedNodes() {
+  const rentedNodes = await getRentableNodes();
+  const rentableNodes = await getRentedNodes();
+  let dedicatedNodes: any[] = [];
+  dedicatedNodes = dedicatedNodes.concat(rentedNodes, rentableNodes);
+  return dedicatedNodes;
+}
+export async function getDNodes(api: any, address: string, currentTwinID: string) {
   let nodes: any[] = [];
-  for (const farmID of farmsIDs) {
-    const _nodes = await getDedicatedNodes(farmID);
-    nodes = nodes.concat(_nodes);
-  }
+  nodes = await getDedicatedNodes();
 
-  const pricing = await getPrices(api);
-  const dNodes: { nodeId: string; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; }[] = [];
+  const pricing = await getPrices(api); let dNodes: { nodeId: string; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; rentContractId: any, rentedByTwinId: any; usedResources: { cru: any; mru: any; hru: any; sru: any; }; rentStatus: any }[] = [];
   nodes.forEach(async (node) => {
     const price = countPrice(pricing, node);
     const [discount, discountLevel] = await calDiscount(api, address, pricing, price);
-    const ips = await getIpsForFarm(node.farmID);
+    const ips = await getIpsForFarm(node.farmId);
     dNodes.push({
-      nodeId: node.nodeID,
+      nodeId: node.nodeId,
       price: price,
       discount: discount,
       applyedDiscount: { first: pricing.discount_for_dedicated_nodes, second: discountLevel },
@@ -418,13 +375,25 @@ export async function getDNodes(api: any, address: string) {
         lat: node.location.latitude,
       },
       resources: {
-        cru: node.resourcesTotal.cru,
-        mru: node.resourcesTotal.mru,
-        hru: node.resourcesTotal.hru,
-        sru: node.resourcesTotal.sru,
+        cru: node.total_resources.cru,
+        mru: node.total_resources.mru,
+        hru: node.total_resources.hru,
+        sru: node.total_resources.sru,
+      },
+      usedResources: {
+        cru: node.used_resources.cru,
+        mru: node.used_resources.mru,
+        hru: node.used_resources.hru,
+        sru: node.used_resources.sru,
       },
       pubIps: ips,
+      rentContractId: node.rentContractId,
+      rentedByTwinId: node.rentedByTwinId,
+      rentStatus: node.rentContractId === 0 ? "free" : node.rentedByTwinId == currentTwinID ? "yours" : "taken"
     });
   });
   return dNodes;
 }
+
+
+

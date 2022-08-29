@@ -4,6 +4,7 @@ import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios from 'axios';
 import config from '../config';
+import { getDedicatedNodes } from './nodes';
 import { getNodeMintingFixupReceipts, getNodeUsedResources, receiptInterface } from './nodes';
 import { hex2a } from './util'
 export interface nodeInterface {
@@ -125,7 +126,10 @@ export async function getNodesByFarmID(farms: any[]) {
   const nodesWithResources = _nodes.map(async (node) => {
 
     try {
-      node.resourcesUsed = await getNodeUsedResources(node.nodeID);
+      const dedicatedNodes = await getDedicatedNodes();
+      node.resourcesUsed = dedicatedNodes.filter((nodeResouces: any) => { nodeResouces === node.used_resources });
+      console.log("node.resourcesUsed", node.resourcesUsed);
+
       node.resources = node.resourcesTotal;
       node.receipts = await getNodeMintingFixupReceipts(node.nodeID);
 

@@ -48,33 +48,30 @@ import {
   cancelRentContract,
   createRentContract,
   getActiveContracts,
-  getRentContractID,
-  getRentStatus,
+  getRentedNodes,
+  getNodeByID,
 } from "@/portal/lib/nodes";
-import { getTwinID } from "@/portal/lib/twin";
 import { Component, Prop, Vue } from "vue-property-decorator";
 @Component({
   name: "NodeActionBtn",
 })
 export default class NodeActionBtn extends Vue {
-  status = "free";
+  @Prop({ required: true })
+  status!: string;
   loadingReserveNode = false;
   @Prop({ required: true })
   nodeId!: string;
+  solutionProviderID = null;
   $api: any;
   openUnreserveDialog = false;
   nodeIDToUnreserve = "";
   loadingUnreserveNode = false;
-  async created() {
-    this.status = await this.getStatus();
+  currentTwinID:any;
+
+  created(){
+    this.currentTwinID = this.$route.query.twinID;
   }
-  async getStatus() {
-    const currentTwinID = await getTwinID(
-      this.$api,
-      this.$route.params.accountID
-    );
-    return await getRentStatus(this.$api, this.nodeId, currentTwinID);
-  }
+
   reserveNode(nodeId: string) {
     this.loadingReserveNode = true;
     console.log(`reserving node ${nodeId}`);
@@ -82,7 +79,8 @@ export default class NodeActionBtn extends Vue {
       this.$api,
       this.$route.params.accountID,
       nodeId,
-      (res: {
+      this.solutionProviderID,
+      async (res: {
         status: { type: string; asFinalized: string; isFinalized: string };
       }) => {
         console.log(res);
@@ -96,10 +94,8 @@ export default class NodeActionBtn extends Vue {
             this.$toasted.show(
               `Transaction successed: Node ${nodeId} reserved`
             );
-            this.getStatus().then((status) => {
-              this.status = status;
-              this.loadingReserveNode = false;
-            });
+            this.status = "yours"
+            this.loadingReserveNode = false;
             break;
         }
       }
@@ -128,17 +124,15 @@ export default class NodeActionBtn extends Vue {
       );
       this.loadingUnreserveNode = false;
       this.openUnreserveDialog = false;
-    } else {
+    } else {      
       this.$toasted.show(`unreserving node ${this.nodeIDToUnreserve}`);
-      const rentContractID = await getRentContractID(
-        this.$api,
-        this.nodeIDToUnreserve
-      );
+      const rentedNode = await getNodeByID(this.nodeIDToUnreserve);
+        
       cancelRentContract(
         this.$api,
         this.$route.params.accountID,
-        rentContractID,
-        (res: {
+        rentedNode.rentContractId,
+        async (res: {
           status: { type: string; asFinalized: string; isFinalized: string };
         }) => {
           console.log(res);
@@ -152,11 +146,9 @@ export default class NodeActionBtn extends Vue {
               this.$toasted.show(
                 `Transaction successed: Node ${this.nodeIDToUnreserve} Unreserved`
               );
-              this.getStatus().then((status) => {
-                this.status = status;
-                this.loadingUnreserveNode = false;
-                this.openUnreserveDialog = false;
-              });
+              this.status = "free"
+              this.loadingUnreserveNode = false;
+              this.openUnreserveDialog = false;
               break;
           }
         }
@@ -170,5 +162,7 @@ export default class NodeActionBtn extends Vue {
       });
     }
   }
+
+  
 }
 </script>
