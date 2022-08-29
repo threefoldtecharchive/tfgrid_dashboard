@@ -30,3 +30,25 @@ def test_create_account(browser):
   polka_page.add_account(user, password)
   assert dashboard_page.check_for_only_twin_name() == user
  
+def test_import_account(browser):
+
+  seed = 'search vague feature catch correct drama involve hello swallow lend orchard resemble'
+
+  #Create instance
+  dashboard_page = DashboardPage(browser)
+  polka_page = PolkaPage(browser)
+
+  #Generate user
+  user = generate_string()
+  password = generate_string()
+
+  """
+   1. Open dashboard page
+   2. Authenticate polka
+   3. import account in polka
+   4. Verify account created
+  """
+  dashboard_page.load()
+  polka_page.authenticate()
+  polka_page.import_account(seed, user, password)
+  assert dashboard_page.check_for_only_twin_name() == user

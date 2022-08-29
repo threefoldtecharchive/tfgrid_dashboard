@@ -10,9 +10,13 @@ Prerequisites | version |
 [webdriver-manager](https://pypi.org/project/webdriver-manager/) | `3.8.3` |
 
 
-## Running selenium
-
-- First change direcotry to frontend_selenium through the command line using `cd tests/frontend_selenium`
+# Running selenium
+## First
+- in the root directory run `yarn install & yarn serve --port 3060`
+## Second
+- You need to leave the server running and open new terminal.
+- Change direcotry to frontend selenium through the command line using `cd tests/frontend_selenium`
 - You can run selenium with pytest through the command line using  `python3 -m pytest`
+### More options to run tests
 - You can also run single test file through the command line using `python3 -m pytest tests/test_file.py`
 - You can also run specific test case through the command line using `python3 -m pytest tests/test_file.py::test_func` 
