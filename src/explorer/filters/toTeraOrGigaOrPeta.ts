@@ -1,5 +1,5 @@
 export default function toTeraOrGiga(value?: string) {
-  const giga = 1024**3;
+  const giga = 1024 ** 3;
 
   if (!value) return "0";
 
