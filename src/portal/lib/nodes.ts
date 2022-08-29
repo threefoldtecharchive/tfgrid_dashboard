@@ -167,23 +167,6 @@ export async function getActiveContracts(api: { query: { smartContractModule: { 
   return await api.query.smartContractModule.activeNodeContracts(nodeID);
 }
 
-
-export async function getRentStatus(nodeID: any, currentTwinID: any) {
-  const node = await fetch(
-    `${config.gridproxyUrl}/nodes/${nodeID}`
-  ).then((res) => res.json())
-  if (node.rentContractId === 0) {
-    return "free";
-  } else {
-    if (node.rentedByTwinId == currentTwinID) {
-      return "yours";
-    } else {
-      return "taken";
-    }
-  }
-}
-
-
 export async function getNodeMintingFixupReceipts(nodeId: string) {
   let nodeReceipts: receiptInterface[] = []
   const res = await axios.get(`https://alpha.minting.tfchain.grid.tf/api/v1/node/${nodeId}`)
@@ -343,6 +326,13 @@ export async function calDiscount(api: { query: { system: { account: (arg0: stri
 
   return [totalPrice.toFixed(2), discountPackages[selectedPackage].discount];
 }
+
+export async function getNodeByID(nodeID: any) {
+  const node = await fetch(
+    `${config.gridproxyUrl}/nodes/${nodeID}`
+  ).then((res) => res.json())
+  return node;
+}
 export async function getRentableNodes() {
   const res = await fetch(
     `${config.gridproxyUrl}/nodes?rentable=true&status=up`
@@ -354,8 +344,6 @@ export async function getRentedNodes() {
   const res = await fetch(
     `${config.gridproxyUrl}/nodes?rented=true&status=up`
   ).then((res) => res.json())
-  console.log("rented Nodes", res);
-
   return res;
 }
 
@@ -401,10 +389,8 @@ export async function getDNodes(api: any, address: string, currentTwinID: string
       pubIps: ips,
       rentContractId: node.rentContractId,
       rentedByTwinId: node.rentedByTwinId,
-      rentStatus: await getRentStatus(node.nodeId, currentTwinID)
+      rentStatus: node.rentContractId === 0 ? "free" : node.rentedByTwinId == currentTwinID ? "yours" : "taken"
     });
-    console.log("dNodes", dNodes);
-
   });
   return dNodes;
 }

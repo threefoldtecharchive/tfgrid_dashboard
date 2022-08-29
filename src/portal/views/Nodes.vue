@@ -80,7 +80,7 @@
 import NodeActionBtn from "../components/NodeActionBtn.vue";
 import NodeDetails from "../components/NodeDetails.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { getDNodes, getRentStatus } from "../lib/nodes";
+import { getDNodes } from "../lib/nodes";
 import { byteToGB } from "../lib/nodes";
 @Component({
   name: "NodesView",
