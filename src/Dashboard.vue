@@ -222,7 +222,7 @@
       </div>
     </v-dialog>
 
-    <div :style="'padding-left:' + (mini ? 0 : '300px')">
+    <div :style="'padding-left:' + (mini ? '56px' : '300px')">
       <router-view />
     </div>
 
@@ -452,6 +452,25 @@ export default class Dashboard extends Vue {
         },
       ],
     },
+    {
+      label: "Other",
+      icon: "chart-scatter-plot",
+      prefix: "/other/",
+      children: [
+        {
+          label: "Bootstrap",
+          icon: "access-point",
+          showBeforeLogIn: true,
+          path: "bootstrap"
+        },
+        {
+          label: "Hub",
+          icon: "access-point",
+          showBeforeLogIn: true,
+          path: "hub"
+        },
+      ]
+    }
   ];
   getRouteSubChildren(route: SidenavItem) {
     return route.children[0].children || [];
