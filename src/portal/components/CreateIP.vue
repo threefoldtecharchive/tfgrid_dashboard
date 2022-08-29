@@ -69,7 +69,6 @@
             :rules="[
               () => !!toPublicIP || 'This field is required',
               toIpCheck,
-              ipcheck
             ]"
           ></v-text-field>
           <v-text-field
@@ -135,6 +134,9 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { getIPRange } from 'get-ip-range';
+import { default as PrivateIp } from "private-ip";
+
+const ipRegex = new RegExp("^[0-9]{1,3}.(?:[0-9]{1,2}.){2}[0-9]{1,2}/(1[6-9]|2[0-9]|3[0-2])$");
 
 @Component({
   name: "CreateIP",
@@ -177,8 +179,14 @@ export default class CreateIP extends Vue {
     let check_same_subnet = true;
     let check_from_bigger_than_to = true;
     let check_limit_ips = true;
+    let check_ip = true;
+    let check_pub_ip = true;
     this.toIpErrorMessage = "";
     
+    if (ipRegex.test(this.publicIP)) {
+      this.toIpErrorMessage = "Incorrect format";
+      check_ip = false;
+    }
     if (this.toPublicIP.substring(0, this.toPublicIP.lastIndexOf('.')) != this.publicIP.substring(0, this.publicIP.lastIndexOf('.'))) {
       this.toIpErrorMessage = "IPs are not the same";
       check_same_IPs = false;
@@ -195,10 +203,17 @@ export default class CreateIP extends Vue {
       this.toIpErrorMessage = "Range must not exceed 16";
       check_limit_ips = false;
     }
-    return check_same_IPs && check_same_subnet && check_from_bigger_than_to && check_limit_ips;      
+    if (PrivateIp(this.publicIP.split("/")[0])) {
+      this.toIpErrorMessage = "IP is not public";
+      check_pub_ip = false;
+    }
+    return check_pub_ip && check_ip && check_same_IPs && check_same_subnet && check_from_bigger_than_to && check_limit_ips;      
   }
   ipcheck() {
-    const ipRegex = new RegExp("^(?:[0-9]{1,3}.){3}[0-9]{1,3}/(1[6-9]|2[0-9]|3[0-2])$");
+    if (PrivateIp(this.publicIP.split("/")[0])) {
+      this.ipErrorMessage = "IP is not public";
+      return false;
+    }
     if (ipRegex.test(this.publicIP)) {
       this.ipErrorMessage = "";
       return true;
