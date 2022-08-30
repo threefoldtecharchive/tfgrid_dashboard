@@ -21,6 +21,7 @@
           <v-toolbar flat>
             <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
             <v-btn
+              v-if="network == 'main'"
               class="ml-auto"
               @click="downloadAllReceipts()"
             >Download Receipts</v-btn>
@@ -253,7 +254,7 @@
               </v-expansion-panels>
 
             </v-col>
-            <v-col>
+            <v-col v-if="network == 'main'">
               <v-expansion-panels
                 v-model="receiptsPanel"
                 :disabled="false"
@@ -472,6 +473,7 @@ import {
 import { hex2a } from "@/portal/lib/util";
 import ReceiptsCalendar from "./ReceiptsCalendar.vue";
 import jsPDF from "jspdf";
+import config from "@/portal/config";
 
 @Component({
   name: "FarmNodesTable",
@@ -555,6 +557,7 @@ export default class FarmNodesTable extends Vue {
   gw6ErrorMessage = "";
   domainErrorMessage = "";
   receipts = [];
+  network = config.network;
   updated() {
     this.receiptsPanel = [];
   }
