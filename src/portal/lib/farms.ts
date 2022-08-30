@@ -129,7 +129,10 @@ export async function getNodesByFarmID(farms: any[]) {
       node.resourcesUsed = await getNodeUsedResources(node.nodeID);
       
       node.resources = node.resourcesTotal;
-      node.receipts = await getNodeMintingFixupReceipts(node.nodeID);
+      const network = config.network;
+      node.receipts = [];
+      if (network == 'main')
+        node.receipts = await getNodeMintingFixupReceipts(node.nodeID);
 
     } catch (error) {
       node.receipts = [];
