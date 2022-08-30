@@ -229,6 +229,7 @@
     </v-data-table>
     <FarmNodesTable
       :nodes="nodes"
+      :loadingNodes="loadingNodes"
       @on:delete="getNodes()"
     />
     <v-dialog
@@ -299,7 +300,7 @@ export default class FarmsView extends Vue {
   loadingCreateIP = false;
   loadingDeleteIP = false;
   nodes: any = [];
-  loadingNodes = false;
+  loadingNodes = true;
   loadingNodeDelete = false;
   loadingAddNodePublicConfig = false;
   loadingDeleteFarm = false;
@@ -365,6 +366,7 @@ export default class FarmsView extends Vue {
   }
   async getNodes() {
     this.nodes = await getNodesByFarmID(this.farms);
+    this.loadingNodes = false;
   }
   openDeleteFarm(farm: any) {
     this.farmToDelete = farm;

@@ -447,7 +447,7 @@
         </v-card>
       </v-dialog>
     </div>
-    <div v-else>
+    <div v-if="loadingNodes">
       <v-data-table
         loading
         loading-text="loading nodes.."
@@ -537,6 +537,7 @@ export default class FarmNodesTable extends Vue {
   };
   openPublicConfigDialog = false;
   @Prop({ required: true }) nodes!: nodeInterface[];
+  @Prop({ required: true }) loadingNodes!: boolean;
   searchTerm = "";
   ip4 = "";
   gw4 = "";
