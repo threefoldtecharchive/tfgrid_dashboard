@@ -97,27 +97,47 @@
           </v-btn>
         </v-list-item>
         <v-divider></v-divider>
-        <v-list-group
-          v-model="route.active"
-          v-for="route in routes"
-          :key="route.label"
-          class="white--text"
-          :style= "mini ? '' : 'margin: 10px !important;'"
-        >
-          <template v-slot:activator>
+        <template v-for="route in routes">
+          <v-list-item
+            :key="route.label"
+            v-if="!route.children.length"
+            :to="route.prefix"
+          >
             <v-list-item-icon>
-              <v-icon
-                class="white--text"
-                v-text="'mdi-' + route.icon"
-              />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title class="white--text">
-                <strong>
-                  {{ route.label }}
-                </strong>
-              </v-list-item-title>
-            </v-list-item-content>
+                <v-icon
+                  class="white--text"
+                  v-text="'mdi-' + route.icon"
+                />
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title class="white--text">
+                  <strong>
+                    {{ route.label }}
+                  </strong>
+                </v-list-item-title>
+              </v-list-item-content>
+          </v-list-item>
+          <v-list-group
+            v-else
+            :key="route.label"
+            v-model="route.active"
+            class="white--text"
+            :style= "mini ? '' : 'margin: 10px !important;'"
+          >
+          <template v-slot:activator>
+              <v-list-item-icon>
+                <v-icon
+                  class="white--text"
+                  v-text="'mdi-' + route.icon"
+                />
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title class="white--text">
+                  <strong>
+                    {{ route.label }}
+                  </strong>
+                </v-list-item-title>
+              </v-list-item-content>
           </template>
 
           <div v-if="route.prefix === '/'">
@@ -200,6 +220,7 @@
             </v-list-item>
           </div>
         </v-list-group>
+      </template>
       </v-list>
     </v-navigation-drawer>
     <v-dialog
@@ -453,23 +474,10 @@ export default class Dashboard extends Vue {
       ],
     },
     {
-      label: "Other",
+      label: "Bootstrap",
       icon: "chart-scatter-plot",
-      prefix: "/other/",
-      children: [
-        {
-          label: "Bootstrap",
-          icon: "access-point",
-          showBeforeLogIn: true,
-          path: "bootstrap"
-        },
-        {
-          label: "Hub",
-          icon: "access-point",
-          showBeforeLogIn: true,
-          path: "hub"
-        },
-      ]
+      prefix: "/other/bootstrap",
+      children: []
     }
   ];
   getRouteSubChildren(route: SidenavItem) {
