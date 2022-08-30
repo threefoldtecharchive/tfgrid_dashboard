@@ -34,7 +34,8 @@ export async function getProposals(api: any) {
     const activeProposals: proposalInterface[] = [];
     const inactiveProposals: proposalInterface[] = [];
     const hashes = await api.query.dao.proposalList()
-    hashes.map(async (hash: { toJSON: () => any; }) => {
+    
+    for await (const hash of hashes) {
         const daoProposal = await getDaoProposal(api, hash)
         const proposal = await getProposal(api, hash)
         const proposalVotes = await getProposalVotes(api, hash)
@@ -71,10 +72,8 @@ export async function getProposals(api: any) {
                 nayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, false)
             })
         }
-
-    })
-
-    return { active: activeProposals, inactive: inactiveProposals }
+    }
+    return { active: activeProposals, inactive: inactiveProposals };
 }
 export function getVotesWithWeights(votes: ayesAndNayesInterface[]) {
     return votes.reduce((total: number, vote: ayesAndNayesInterface) => {
