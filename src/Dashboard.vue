@@ -102,7 +102,7 @@
           v-for="route in routes"
           :key="route.label"
           class="white--text"
-          :style= "mini ? '' : 'margin: 10px !important;'"
+          :style="mini ? '' : 'margin: 10px !important;'"
         >
           <template v-slot:activator>
             <v-list-item-icon>
@@ -305,10 +305,10 @@ export default class Dashboard extends Vue {
       this.$vuetify.theme.dark = true;
       localStorage.setItem("dark_theme", this.$vuetify.theme.dark.toString());
     }
-    this.$root.$on('selectAccount', () => { 
+    this.$root.$on("selectAccount", () => {
       this.routes[0].active = true;
       this.mini = false;
-    })
+    });
   }
   updated() {
     this.accounts = this.$store.state.portal.accounts;
@@ -321,9 +321,7 @@ export default class Dashboard extends Vue {
     await this.$api.disconnect();
   }
   public filteredAccounts() {
-    return this.accounts.filter(
-      (account) => account.active
-    );
+    return this.accounts.filter((account) => account.active);
   }
   public isAccountSelected() {
     if (this.$route.query.accountName) {
@@ -452,11 +450,24 @@ export default class Dashboard extends Vue {
         },
       ],
     },
+    {
+      label: "Validation",
+      icon: "account-check",
+      prefix: "/l2validators/",
+      children: [
+        {
+          label: "Validators",
+          path: "validators",
+          icon: "account-multiple-check",
+          showBeforeLogIn: true,
+        },
+      ],
+    },
   ];
   getRouteSubChildren(route: SidenavItem) {
     return route.children[0].children || [];
   }
-  toggle(){
+  toggle() {
     this.mini = !this.mini;
     if (this.mini) this.routes[1].active = false;
   }
@@ -487,8 +498,7 @@ export default class Dashboard extends Vue {
   border-radius: 20px;
 }
 
-.v-list .v-list-item--active{
+.v-list .v-list-item--active {
   border-radius: 20px;
 }
-
 </style>
