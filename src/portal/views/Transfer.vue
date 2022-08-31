@@ -35,6 +35,7 @@
         ]"
         >
         </v-text-field>
+        <span class="fee">0.145 transaction fee will be deducted</span>
       </v-form>
       <v-card-actions>
         <v-spacer> </v-spacer>
@@ -140,7 +141,6 @@ export default class TransferView extends Vue {
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
-            this.$toasted.show(`.145 tft transaction fees will be deducted`);
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
@@ -182,5 +182,9 @@ export default class TransferView extends Vue {
 <style scoped>
 .theme--dark.v-application a {
   color: white;
+}
+.fee{
+  font-size: .7rem;
+  color: grey;
 }
 </style>
