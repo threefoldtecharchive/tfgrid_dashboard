@@ -136,7 +136,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import { getIPRange } from 'get-ip-range';
 import { default as PrivateIp } from "private-ip";
 
-const ipRegex = new RegExp("^(?:[0].|([1-9]{1}[0-5]{0,1}[0-5]{0,1}).){3}([0]|([1-9]{1}[0-5]{0,1}[0-5]{0,1}))/(1[6-9]|2[0-9]|3[0-2])$");
+const ipRegex = new RegExp("^((0|[1-9][0-9]?|1[0-9][0-9]|2[0-4][0-9]|25[0-5]).){3}(0|[1-9][0-9]?|1[0-9][0-9]|2[0-4][0-9]|25[0-5]){1}/(1[6-9]|2[0-9]|3[0-2])$");
 
 @Component({
   name: "CreateIP",
