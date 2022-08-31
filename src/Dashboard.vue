@@ -99,6 +99,7 @@
         <v-divider></v-divider>
         <template v-for="route in routes">
           <v-list-item
+            :class="{ 'mr-2 ml-2': !mini }"
             :key="route.label"
             v-if="!route.children.length"
             :to="route.prefix"
