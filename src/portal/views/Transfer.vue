@@ -35,6 +35,7 @@
         ]"
         >
         </v-text-field>
+        <span class="fee">0.01 transaction fee will be deducted</span>
       </v-form>
       <v-card-actions>
         <v-spacer> </v-spacer>
@@ -181,5 +182,9 @@ export default class TransferView extends Vue {
 <style scoped>
 .theme--dark.v-application a {
   color: white;
+}
+.fee{
+  font-size: .7rem;
+  color: grey;
 }
 </style>
