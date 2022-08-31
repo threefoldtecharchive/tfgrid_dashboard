@@ -35,7 +35,7 @@
         ]"
         >
         </v-text-field>
-        <span class="fee">0.145 transaction fee will be deducted</span>
+        <span class="fee">0.01 transaction fee will be deducted</span>
       </v-form>
       <v-card-actions>
         <v-spacer> </v-spacer>
