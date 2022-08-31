@@ -140,6 +140,7 @@ export default class TransferView extends Vue {
         console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
+            this.$toasted.show(`.145 tft transaction fees will be deducted`);
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
