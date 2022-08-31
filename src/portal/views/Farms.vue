@@ -220,7 +220,7 @@
               :ips="item.publicIps"
               :deleteIP="deletePublicIP"
               :loadingDelete="loadingDeleteIP"
-              :createIP="createPublicIP"
+              :createIP="createPublicIPs"
               :loadingCreate="loadingCreateIP"
             />
           </v-container>
@@ -229,6 +229,7 @@
     </v-data-table>
     <FarmNodesTable
       :nodes="nodes"
+      :loadingNodes="loadingNodes"
       @on:delete="getNodes()"
     />
     <v-dialog
@@ -299,7 +300,7 @@ export default class FarmsView extends Vue {
   loadingCreateIP = false;
   loadingDeleteIP = false;
   nodes: any = [];
-  loadingNodes = false;
+  loadingNodes = true;
   loadingNodeDelete = false;
   loadingAddNodePublicConfig = false;
   loadingDeleteFarm = false;
@@ -365,6 +366,7 @@ export default class FarmsView extends Vue {
   }
   async getNodes() {
     this.nodes = await getNodesByFarmID(this.farms);
+    this.loadingNodes = false;
   }
   openDeleteFarm(farm: any) {
     this.farmToDelete = farm;
@@ -472,55 +474,64 @@ export default class FarmsView extends Vue {
       this.loadingDeleteIP = false;
     });
   }
-  public createPublicIP(publicIP: string, gateway: string) {
+  public createPublicIPs(publicIPs: string[], gateway: string) {
     this.loadingCreateIP = true;
-    createIP(
-      this.$route.params.accountID,
-      this.$api,
-      this.expanded[0].id,
-      publicIP,
-      gateway,
-      (res: {
-        events?: never[] | undefined;
-        status: { type: string; asFinalized: string; isFinalized: string };
-      }) => {
-        console.log(res);
-        if (res instanceof Error) {
-          console.log(res);
-          return;
-        }
-        const { events = [], status } = res;
-        console.log(`Current status is ${status.type}`);
-        switch (status.type) {
-          case "Ready":
-            this.$toasted.show(`Transaction submitted`);
-        }
-        if (status.isFinalized) {
-          console.log(
-            `Transaction included at blockHash ${status.asFinalized}`
-          );
-          if (!events.length) {
-            this.$toasted.show("Adding an IP failed!");
-          } else {
-            // Loop through Vec<EventRecord> to display all events
-            events.forEach(({ phase, event: { data, method, section } }) => {
-              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-              if (section === "tfgridModule" && method === "FarmUpdated") {
-                this.$toasted.show("IP created!");
-                getFarm(this.$api, this.id).then((farms) => {
-                  this.farms = farms;
-                  this.loadingCreateIP = false;
+    publicIPs.reduce(async (last, publicIP) => {
+      await last;
+      await this.createPublicIP(publicIP, gateway);
+    }, Promise.resolve())
+  }
+  public createPublicIP(publicIP: string, gateway: string){
+    this.loadingCreateIP = true;
+    return new Promise((resolve, reject) => {
+          const callback = (res: {
+            events?: never[] | undefined;
+            status: { type: string; asFinalized: string; isFinalized: string };
+          }) => {
+            if (res instanceof Error) {
+                console.error(res);
+                reject(res);
+                this.loadingCreateIP = false;
+            }
+            const { events = [], status } = res;
+            console.log(`Current status is ${status.type}`);
+            switch (status.type) {
+              case "Ready":
+                this.$toasted.show(`Transaction submitted`);
+            }
+
+            if (status.isFinalized) {
+                events.forEach(({ phase, event: { data, method, section } }) => {
+                    console.log(`phase: ${phase}, section: ${section}, method: ${method}`);
+                    if (section === "tfgridModule" && method === "FarmUpdated") {
+                      this.$toasted.show("IP created!");
+                      getFarm(this.$api, this.id).then((farms) => {
+                        this.farms = farms;
+                      });
+                      resolve("IP created!");
+                      this.loadingCreateIP = false;
+                    } else if (section === "system" && method === "ExtrinsicFailed") {
+                      this.$toasted.show("Adding an IP failed!");
+                      reject("Adding an IP failed!");
+                      this.loadingCreateIP = false;
+                    }
                 });
-              } else if (section === "system" && method === "ExtrinsicFailed") {
-                this.$toasted.show("Adding an IP failed!");
-              }
-            });
+            }
           }
-        }
-      }
-    ).catch((err) => {
-      this.$toasted.show(err.message);
-    });
+          try {
+            createIP(
+              this.$route.params.accountID,
+              this.$api,
+              this.expanded[0].id,
+              publicIP,
+              gateway,
+              callback
+            )
+          } catch (e) {
+            reject(e);
+            this.loadingCreateIP = false;
+          }
+        })
   }
   public farmNameCheck() {
     const nameRegex = new RegExp("^[a-zA-Z0-9_-]*$");

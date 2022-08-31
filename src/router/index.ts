@@ -6,6 +6,9 @@ import { explorerRouter } from "@/explorer/router";
 import PortalView from "@/portal/Portal.vue";
 import { portalRouter } from "@/portal/router";
 import { l2validatorRouter } from "@/l2validators/router";
+import OtherView from "@/other/OtherView.vue";
+import { otherRoutes } from "@/other/router";
+
 
 Vue.use(VueRouter);
 
@@ -24,7 +27,12 @@ const routes: Array<RouteConfig> = [
     component: L2ValidatorsView,
     path: "/l2validators",
     children: l2validatorRouter,
-  }
+  },{
+    component: OtherView,
+    path: "/other",
+    children: otherRoutes,
+  },
+
 ];
 
 const router = new VueRouter({

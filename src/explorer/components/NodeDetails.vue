@@ -42,14 +42,6 @@
           </v-list-item>
           <v-divider />
 
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title> Grid Version </v-list-item-title>
-            </v-list-item-content>
-            {{ node.gridVersion }}
-          </v-list-item>
-          <v-divider />
-
           <v-list-item v-if="nodeStatus">
             <v-list-item-content>
               <v-list-item-title> Uptime </v-list-item-title>
@@ -255,7 +247,6 @@ export default class NodeDetails_ extends Vue {
 
   items = [
     createItem("ID"),
-    createItem("Grid Version", "gridVersion"),
     createItem("Uptime"),
     createItem("HRU"),
     createItem("SRU"),
