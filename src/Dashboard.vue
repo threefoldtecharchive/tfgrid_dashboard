@@ -105,27 +105,27 @@
             :to="route.prefix"
           >
             <v-list-item-icon>
-                <v-icon
-                  class="white--text"
-                  v-text="'mdi-' + route.icon"
-                />
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title class="white--text">
-                  <strong>
-                    {{ route.label }}
-                  </strong>
-                </v-list-item-title>
-              </v-list-item-content>
+              <v-icon
+                class="white--text"
+                v-text="'mdi-' + route.icon"
+              />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="white--text">
+                <strong>
+                  {{ route.label }}
+                </strong>
+              </v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
           <v-list-group
             v-else
             :key="route.label"
             v-model="route.active"
             class="white--text"
-            :style= "mini ? '' : 'margin: 10px !important;'"
+            :style="mini ? '' : 'margin: 10px !important;'"
           >
-          <template v-slot:activator>
+            <template v-slot:activator>
               <v-list-item-icon>
                 <v-icon
                   class="white--text"
@@ -139,36 +139,36 @@
                   </strong>
                 </v-list-item-title>
               </v-list-item-content>
-          </template>
+            </template>
 
-          <div v-if="route.prefix === '/'">
-            <v-list-group
-              :value="account.active"
-              no-action
-              sub-group
-              v-for="account in filteredAccounts()"
-              :key="account.address"
-            >
-              <template v-slot:activator>
-                <v-list-item-content dark>
-                  <v-list-item-title
-                    class="white--text"
-                    v-text="account.meta.name"
-                  >
-                  </v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-icon>
-                  <v-icon
-                    class="white--text"
-                    v-text="'mdi-' + route.children[0].icon"
-                  />
-                </v-list-item-icon>
-              </template>
+            <div v-if="route.prefix === '/'">
+              <v-list-group
+                :value="account.active"
+                no-action
+                sub-group
+                v-for="account in filteredAccounts()"
+                :key="account.address"
+              >
+                <template v-slot:activator>
+                  <v-list-item-content dark>
+                    <v-list-item-title
+                      class="white--text"
+                      v-text="account.meta.name"
+                    >
+                    </v-list-item-title>
+                  </v-list-item-content>
+                  <v-list-item-icon>
+                    <v-icon
+                      class="white--text"
+                      v-text="'mdi-' + route.children[0].icon"
+                    />
+                  </v-list-item-icon>
+                </template>
 
-              <v-list-item
-                v-for="subchild in getRouteSubChildren(route)"
-                :key="subchild.label"
-                @click="
+                <v-list-item
+                  v-for="subchild in getRouteSubChildren(route)"
+                  :key="subchild.label"
+                  @click="
                   redirectToSubchild(
                     subchild.label,
                     subchild.path || '',
@@ -176,52 +176,52 @@
                     account.meta.name
                   )
                 "
-                class="white--text pl-16"
+                  class="white--text pl-16"
+                >
+                  <v-list-item-icon>
+                    <v-icon
+                      class="white--text"
+                      v-text="'mdi-' + subchild.icon"
+                    />
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      class="white--text text-capitalize"
+                      v-text="subchild.label"
+                    >
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-group>
+            </div>
+            <div v-else>
+              <v-list-item
+                active
+                v-for="child in route.children"
+                :key="child.label"
+                :to="route.prefix + child.path"
+                class="pl-16"
               >
-                <v-list-item-icon>
+                <v-list-item-icon
+                  class="mr-4"
+                  v-if="child.icon"
+                >
                   <v-icon
                     class="white--text"
-                    v-text="'mdi-' + subchild.icon"
+                    v-text="'mdi-' + child.icon"
                   />
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title
-                    class="white--text text-capitalize"
-                    v-text="subchild.label"
+                    class="white--text"
+                    v-text="child.label"
                   >
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-            </v-list-group>
-          </div>
-          <div v-else>
-            <v-list-item
-              active
-              v-for="child in route.children"
-              :key="child.label"
-              :to="route.prefix + child.path"
-              class="pl-16"
-            >
-              <v-list-item-icon
-                class="mr-4"
-                v-if="child.icon"
-              >
-                <v-icon
-                  class="white--text"
-                  v-text="'mdi-' + child.icon"
-                />
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title
-                  class="white--text"
-                  v-text="child.label"
-                >
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </div>
-        </v-list-group>
-      </template>
+            </div>
+          </v-list-group>
+        </template>
       </v-list>
     </v-navigation-drawer>
     <v-dialog
@@ -327,14 +327,16 @@ export default class Dashboard extends Vue {
       this.$vuetify.theme.dark = true;
       localStorage.setItem("dark_theme", this.$vuetify.theme.dark.toString());
     }
-    this.$root.$on('selectAccount', () => { 
+    this.$root.$on("selectAccount", () => {
       this.routes[0].active = true;
       this.mini = false;
-    })
+    });
   }
   updated() {
     this.accounts = this.$store.state.portal.accounts;
-    if (this.$api) {
+    if (this.$api && this.$route.path == "/") {
+      this.loadingAPI = false;
+    } else if (this.$route.path !== "/") {
       this.loadingAPI = false;
     }
   }
@@ -343,9 +345,7 @@ export default class Dashboard extends Vue {
     await this.$api.disconnect();
   }
   public filteredAccounts() {
-    return this.accounts.filter(
-      (account) => account.active
-    );
+    return this.accounts.filter((account) => account.active);
   }
   public isAccountSelected() {
     if (this.$route.query.accountName) {
@@ -478,13 +478,13 @@ export default class Dashboard extends Vue {
       label: "Bootstrap",
       icon: "chart-scatter-plot",
       prefix: "/other/bootstrap",
-      children: []
-    }
+      children: [],
+    },
   ];
   getRouteSubChildren(route: SidenavItem) {
     return route.children[0].children || [];
   }
-  toggle(){
+  toggle() {
     this.mini = !this.mini;
     if (this.mini) this.routes[1].active = false;
   }
@@ -515,8 +515,7 @@ export default class Dashboard extends Vue {
   border-radius: 20px;
 }
 
-.v-list .v-list-item--active{
+.v-list .v-list-item--active {
   border-radius: 20px;
 }
-
 </style>
