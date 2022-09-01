@@ -102,7 +102,8 @@
             :class="{ 'mr-2 ml-2': !mini }"
             :key="route.label"
             v-if="!route.children.length"
-            :to="route.prefix"
+            :to="route.hypelink ? undefined : route.prefix"
+            @click="route.hypelink ? openLink(route.prefix) : undefined"
           >
             <v-list-item-icon>
               <v-icon
@@ -277,6 +278,7 @@ interface SidenavItem {
   icon: string;
   prefix: string;
   active?: boolean;
+  hypelink?: boolean;
   children: Array<{
     label?: string;
     path?: string;
@@ -332,6 +334,11 @@ export default class Dashboard extends Vue {
       this.mini = false;
     });
   }
+
+  openLink(url: string): void {
+    window.open(url, "_blank");
+  }
+
   updated() {
     this.accounts = this.$store.state.portal.accounts;
     if (this.$api && this.$route.path == "/") {
@@ -478,6 +485,20 @@ export default class Dashboard extends Vue {
       label: "Bootstrap",
       icon: "chart-scatter-plot",
       prefix: "/other/bootstrap",
+      children: [],
+    },
+    {
+      label: "Hub",
+      icon: "chart-scatter-plot",
+      prefix: "https://hub.grid.tf/",
+      hypelink: true,
+      children: [],
+    },
+    {
+      label: "Playground",
+      icon: "chart-scatter-plot",
+      prefix: "https://play.grid.tf/",
+      hypelink: true,
       children: [],
     },
   ];
