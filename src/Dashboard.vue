@@ -148,7 +148,7 @@
               >
                 <v-list-item
                   :active="account.active"
-                  v-for="subchild in getRouteSubChildren(route)"
+                  v-for="subchild in route.children"
                   :key="subchild.label"
                   @click="
                   redirectToSubchild(
@@ -402,33 +402,31 @@ export default class Dashboard extends Vue {
       prefix: "/",
       children: [
         {
-          icon: "account",
-          showBeforeLogIn: true,
-          children: [
-            {
-              label: "twin",
-              path: "account-twin",
-              icon: "account-supervisor-outline",
-            },
-            {
-              label: "swap",
-              path: "account-swap",
-              icon: "swap-horizontal",
-            },
-            {
-              label: "transfer",
-              path: "account-transfer",
-              icon: "account-arrow-right-outline",
-            },
-            { label: "farms", path: "account-farms", icon: "silo" },
-            {
-              label: "dedicated nodes",
-              path: "account-nodes",
-              icon: "resistor-nodes",
-            },
-            { label: "dao", path: "account-dao", icon: "note-check-outline" },
-          ],
+          label: "twin",
+          path: "account-twin",
+          icon: "account-supervisor-outline",
+          showBeforeLogIn: false,
         },
+        {
+          label: "swap",
+          path: "account-swap",
+          icon: "swap-horizontal",
+          showBeforeLogIn: false,
+        },
+        {
+          label: "transfer",
+          path: "account-transfer",
+          icon: "account-arrow-right-outline",
+          showBeforeLogIn: false,
+        },
+        { label: "farms", path: "account-farms", icon: "silo", showBeforeLogIn: false, },
+        {
+          label: "dedicated nodes",
+          path: "account-nodes",
+          icon: "resistor-nodes",
+          showBeforeLogIn: false,
+        },
+        { label: "dao", path: "account-dao", icon: "note-check-outline", showBeforeLogIn: false, },
       ],
     },
     {
@@ -463,9 +461,6 @@ export default class Dashboard extends Vue {
       children: [],
     },
   ];
-  getRouteSubChildren(route: SidenavItem) {
-    return route.children[0].children || [];
-  }
   toggle() {
     this.mini = !this.mini;
     if (this.mini) this.routes[1].active = false;
