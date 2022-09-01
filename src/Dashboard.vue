@@ -331,6 +331,14 @@ export default class Dashboard extends Vue {
       this.routes[0].active = true;
       this.mini = false;
     });
+
+    this.$root.$on("closeSidebar", () => {
+      this.mini = !this.mini;
+      if (this.mini){
+        this.routes[0].active = false;
+        this.routes[1].active = false;
+      }
+    });
   }
 
   openLink(url: string): void {
@@ -368,6 +376,7 @@ export default class Dashboard extends Vue {
     }
   }
   public redirectToHomePage() {
+    this.accounts.map((account) => account.active = false);
     if (this.$route.path !== "/") {
       this.$router.push({
         name: "accounts",
@@ -499,8 +508,7 @@ export default class Dashboard extends Vue {
     },
   ];
   toggle() {
-    this.mini = !this.mini;
-    if (this.mini) this.routes[1].active = false;
+    this.$root.$emit('closeSidebar');
   }
 }
 </script>
