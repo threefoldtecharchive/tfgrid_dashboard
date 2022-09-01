@@ -57,14 +57,30 @@
             </v-tooltip>
           </v-btn>
         </v-card>
-        <v-btn
-          icon
-          class="mr-2"
-          @click="redirectToHomePage"
-          v-if="isAccountSelected()"
-        >
-          <v-icon>mdi-logout theme-light-dark</v-icon>
-        </v-btn>
+        <v-theme-provider root>
+        <v-card v-if="isAccountSelected()">
+          <v-card-text
+            style="padding: 10px 0px 10px 30px;"
+            v-for="account in filteredAccounts()"
+            :key="account.address"
+          >
+            <v-row class="d-flex align-center mx-0">
+              <p
+                class="font-weight-black"
+                style="font-size: 15px;"
+              >{{ account.meta.name }}</p>
+
+              <v-btn
+                icon
+                class="mr-2"
+                @click="redirectToHomePage"
+              >
+                <v-icon>mdi-logout theme-light-dark</v-icon>
+              </v-btn>
+            </v-row>
+          </v-card-text>
+        </v-card>
+        </v-theme-provider>
       </v-app-bar>
     </div>
 
@@ -143,31 +159,13 @@
             </template>
 
             <div v-if="route.prefix === '/'">
-              <v-list-group
-                :value="account.active"
-                no-action
-                sub-group
+              <div 
                 v-for="account in filteredAccounts()"
                 :key="account.address"
               >
-                <template v-slot:activator>
-                  <v-list-item-content dark>
-                    <v-list-item-title
-                      class="white--text"
-                      v-text="account.meta.name"
-                    >
-                    </v-list-item-title>
-                  </v-list-item-content>
-                  <v-list-item-icon>
-                    <v-icon
-                      class="white--text"
-                      v-text="'mdi-' + route.children[0].icon"
-                    />
-                  </v-list-item-icon>
-                </template>
-
                 <v-list-item
-                  v-for="subchild in getRouteSubChildren(route)"
+                  :active="account.active"
+                  v-for="subchild in route.children"
                   :key="subchild.label"
                   @click="
                   redirectToSubchild(
@@ -193,7 +191,7 @@
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
-              </v-list-group>
+              </div>
             </div>
             <div v-else>
               <v-list-item
@@ -427,33 +425,31 @@ export default class Dashboard extends Vue {
       prefix: "/",
       children: [
         {
-          icon: "account",
-          showBeforeLogIn: true,
-          children: [
-            {
-              label: "twin",
-              path: "account-twin",
-              icon: "account-supervisor-outline",
-            },
-            {
-              label: "swap",
-              path: "account-swap",
-              icon: "swap-horizontal",
-            },
-            {
-              label: "transfer",
-              path: "account-transfer",
-              icon: "account-arrow-right-outline",
-            },
-            { label: "farms", path: "account-farms", icon: "silo" },
-            {
-              label: "dedicated nodes",
-              path: "account-nodes",
-              icon: "resistor-nodes",
-            },
-            { label: "dao", path: "account-dao", icon: "note-check-outline" },
-          ],
+          label: "twin",
+          path: "account-twin",
+          icon: "account-supervisor-outline",
+          showBeforeLogIn: false,
         },
+        {
+          label: "swap",
+          path: "account-swap",
+          icon: "swap-horizontal",
+          showBeforeLogIn: false,
+        },
+        {
+          label: "transfer",
+          path: "account-transfer",
+          icon: "account-arrow-right-outline",
+          showBeforeLogIn: false,
+        },
+        { label: "farms", path: "account-farms", icon: "silo", showBeforeLogIn: false, },
+        {
+          label: "dedicated nodes",
+          path: "account-nodes",
+          icon: "resistor-nodes",
+          showBeforeLogIn: false,
+        },
+        { label: "dao", path: "account-dao", icon: "note-check-outline", showBeforeLogIn: false, },
       ],
     },
     {
@@ -502,9 +498,6 @@ export default class Dashboard extends Vue {
       children: [],
     },
   ];
-  getRouteSubChildren(route: SidenavItem) {
-    return route.children[0].children || [];
-  }
   toggle() {
     this.mini = !this.mini;
     if (this.mini) this.routes[1].active = false;
@@ -538,5 +531,14 @@ export default class Dashboard extends Vue {
 
 .v-list .v-list-item--active {
   border-radius: 20px;
+}
+.theme--dark.v-card > .v-card__text, .theme--dark.v-card > .v-card__subtitle {
+    color: rgb(255, 255, 255);
+}
+.theme--light.v-card > .v-card__text, .theme--light.v-card > .v-card__subtitle {
+    color: rgb(0, 0, 0);
+}
+.theme--light.v-btn.v-btn--icon {
+    color: rgba(0, 0, 0);
 }
 </style>

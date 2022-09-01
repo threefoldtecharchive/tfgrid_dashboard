@@ -29,7 +29,7 @@
           onkeydown="javascript: return event.keyCode == 69 || /^\+$/.test(event.key) ? false : true" 
           :rules="[
           () => !!amount || 'This field is required',
-          () => amount.toString().split('.')[1].length <= 3 || 'Amount must have 3 decimals only',
+          () => (amount.toString().split('.').length > 1 ? amount.toString().split('.')[1].length <= 3 : true) || 'Amount must have 3 decimals only',
           () => amount > 0 || 'Amount cannot be negative or 0',
           () => amount < parseFloat(balance) || 'Amount cannot exceed balance',
         ]"

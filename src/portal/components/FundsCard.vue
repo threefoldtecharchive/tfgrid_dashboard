@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card class="fund d-flex align-center font-weight-bold mr-4 primary" style="margin-right: 7% !important;">
+    <v-card class="fund d-flex align-center font-weight-bold mr-4 primary" style="margin-right: 10% !important;">
       <v-card-text
         style="padding: 5px;"
         class="pr-0"
