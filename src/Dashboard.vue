@@ -142,30 +142,12 @@
             </template>
 
             <div v-if="route.prefix === '/'">
-              <v-list-group
-                :value="account.active"
-                no-action
-                sub-group
+              <div 
                 v-for="account in filteredAccounts()"
                 :key="account.address"
               >
-                <template v-slot:activator>
-                  <v-list-item-content dark>
-                    <v-list-item-title
-                      class="white--text"
-                      v-text="account.meta.name"
-                    >
-                    </v-list-item-title>
-                  </v-list-item-content>
-                  <v-list-item-icon>
-                    <v-icon
-                      class="white--text"
-                      v-text="'mdi-' + route.children[0].icon"
-                    />
-                  </v-list-item-icon>
-                </template>
-
                 <v-list-item
+                  :active="account.active"
                   v-for="subchild in getRouteSubChildren(route)"
                   :key="subchild.label"
                   @click="
@@ -192,7 +174,7 @@
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
-              </v-list-group>
+              </div>
             </div>
             <div v-else>
               <v-list-item
