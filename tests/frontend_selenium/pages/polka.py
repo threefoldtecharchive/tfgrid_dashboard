@@ -1,7 +1,7 @@
+from utils.base import Base
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from utils.base import Base
 
 """
 This module contains all polkadot needed utils.
@@ -69,7 +69,7 @@ class PolkaPage:
     self.browser.close()
     self.browser.switch_to.window(self.browser.window_handles[0])
 
-  def AuthenticateWithPass(self, Pass):
+  def authenticate_with_pass(self, Pass):
     WebDriverWait(self.browser, 20).until(EC.number_of_windows_to_be(2))
     self.browser.switch_to.window(self.browser.window_handles[1])
     self.browser.find_element(*self.polka_auth_pass).send_keys(Pass)

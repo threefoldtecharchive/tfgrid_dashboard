@@ -13,6 +13,7 @@ Prerequisites | version |
 # Running selenium
 ## First
 - in the root directory run `yarn install & yarn serve --port 3060`
+- If the port in serve changes for any reason, you should change the variable `port` in `tests/frontend selenium/utils/base.py` to the new value.
 ## Second
 - You need to leave the server running and open new terminal.
 - Change direcotry to frontend selenium through the command line using `cd tests/frontend_selenium`

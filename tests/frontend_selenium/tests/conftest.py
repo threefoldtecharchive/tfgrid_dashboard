@@ -17,7 +17,7 @@ def browser():
   driver = webdriver.Chrome(options=options, service=Service(ChromeDriverManager().install()))
 
   # Make its calls wait up to 20 seconds for elements to appear
-  driver.implicitly_wait(20)
+  driver.implicitly_wait(60)
 
   # Return the WebDriver instance for the setup
   yield driver
