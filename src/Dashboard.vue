@@ -102,8 +102,8 @@
             :class="{ 'mr-2 ml-2': !mini }"
             :key="route.label"
             v-if="!route.children.length"
-            :to="route.hypelink ? undefined : route.prefix"
-            @click="route.hypelink ? openLink(route.prefix) : undefined"
+            :to="route.hyperlink ? undefined : route.prefix"
+            @click="route.hyperlink ? openLink(route.prefix) : undefined"
           >
             <v-list-item-icon>
               <v-icon
@@ -278,7 +278,7 @@ interface SidenavItem {
   icon: string;
   prefix: string;
   active?: boolean;
-  hypelink?: boolean;
+  hyperlink?: boolean;
   children: Array<{
     label?: string;
     path?: string;
@@ -491,14 +491,14 @@ export default class Dashboard extends Vue {
       label: "Hub",
       icon: "chart-scatter-plot",
       prefix: "https://hub.grid.tf/",
-      hypelink: true,
+      hyperlink: true,
       children: [],
     },
     {
       label: "Playground",
       icon: "chart-scatter-plot",
-      prefix: "https://play.grid.tf/",
-      hypelink: true,
+      prefix: window.configs.PLAYGROUND_URL,
+      hyperlink: true,
       children: [],
     },
   ];
