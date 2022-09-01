@@ -22,6 +22,7 @@ interface AppConfigs {
   APP_TENDERMINT_RPC: string;
   APP_GAS_PRICE: string;
   APP_CHAIN_ID: string;
+  PLAYGROUND_URL: string;
 }
 declare let process: {
   env: {
