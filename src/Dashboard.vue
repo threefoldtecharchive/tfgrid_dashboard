@@ -137,6 +137,7 @@
           </v-list-item>
           <v-list-group
             v-else
+            :active="route.active"
             :key="route.label"
             v-model="route.active"
             class="white--text"
@@ -377,6 +378,7 @@ export default class Dashboard extends Vue {
   }
   public redirectToHomePage() {
     this.accounts.map((account) => account.active = false);
+    this.routes[0].active = false;
     if (this.$route.path !== "/") {
       this.$router.push({
         name: "accounts",
@@ -432,6 +434,7 @@ export default class Dashboard extends Vue {
       label: "Portal",
       icon: "account-convert-outline",
       prefix: "/",
+      active: this.mini ? false: true,
       children: [
         {
           label: "twin",
@@ -465,6 +468,7 @@ export default class Dashboard extends Vue {
       label: "Explorer",
       icon: "database-search-outline",
       prefix: "/explorer/",
+      active: this.mini ? false: true,
       children: [
         {
           label: "Statistics",
