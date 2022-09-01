@@ -57,14 +57,30 @@
             </v-tooltip>
           </v-btn>
         </v-card>
-        <v-btn
-          icon
-          class="mr-2"
-          @click="redirectToHomePage"
-          v-if="isAccountSelected()"
-        >
-          <v-icon>mdi-logout theme-light-dark</v-icon>
-        </v-btn>
+        <v-theme-provider root>
+        <v-card v-if="isAccountSelected()">
+          <v-card-text
+            style="padding: 10px 0px 10px 30px;"
+            v-for="account in filteredAccounts()"
+            :key="account.address"
+          >
+            <v-row class="d-flex align-center mx-0">
+              <p
+                class="font-weight-black"
+                style="font-size: 15px;"
+              >{{ account.meta.name }}</p>
+
+              <v-btn
+                icon
+                class="mr-2"
+                @click="redirectToHomePage"
+              >
+                <v-icon>mdi-logout theme-light-dark</v-icon>
+              </v-btn>
+            </v-row>
+          </v-card-text>
+        </v-card>
+        </v-theme-provider>
       </v-app-bar>
     </div>
 
@@ -494,5 +510,14 @@ export default class Dashboard extends Vue {
 
 .v-list .v-list-item--active {
   border-radius: 20px;
+}
+.theme--dark.v-card > .v-card__text, .theme--dark.v-card > .v-card__subtitle {
+    color: rgb(255, 255, 255);
+}
+.theme--light.v-card > .v-card__text, .theme--light.v-card > .v-card__subtitle {
+    color: rgb(0, 0, 0);
+}
+.theme--light.v-btn.v-btn--icon {
+    color: rgba(0, 0, 0);
 }
 </style>
