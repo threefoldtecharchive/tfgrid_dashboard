@@ -122,7 +122,7 @@
       max-width="500"
     >
       <v-card>
-        <v-card-title class="text-h5">IP Ranges</v-card-title>
+        <v-card-title class="text-h5">IPs range</v-card-title>
         <v-card-text v-for="(IP, i) in IPs" :key="IP">{{i+1}}- {{IP}}</v-card-text>
         <v-card-actions>
         </v-card-actions>
