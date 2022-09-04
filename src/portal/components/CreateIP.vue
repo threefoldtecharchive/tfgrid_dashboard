@@ -101,7 +101,7 @@
             color="primary white--text"
             text
             @click="addIPs()"
-            :disabled="!!ipErrorMessage || !!gatewayErrorMessage || publicIP === '' || gateway === ''"
+            :disabled="!!ipErrorMessage || !!gatewayErrorMessage || (IPType == 'Range' && !!toIpErrorMessage) || publicIP === '' || gateway === ''"
           >
             Show IPs range
           </v-btn>
@@ -183,7 +183,7 @@ export default class CreateIP extends Vue {
     let check_pub_ip = true;
     this.toIpErrorMessage = "";
     
-    if (ipRegex.test(this.publicIP)) {
+    if (!ipRegex.test(this.publicIP)) {
       this.toIpErrorMessage = "Incorrect format";
       check_ip = false;
     }
