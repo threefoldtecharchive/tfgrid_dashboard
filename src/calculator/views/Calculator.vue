@@ -64,7 +64,6 @@
             <span class="name">{{ price.packageName }}</span>
             : $ {{ price.price }}
           </span>
-
         </div>
       </div>
     </v-card>
@@ -91,6 +90,7 @@ export default class Calculator extends Vue {
   SRU = "0";
   MRU = "0";
   HRU = "0";
+  $api: any;
   discountPackages: any = {
     none: {
       backgroundColor: "#CCCCCC",
@@ -129,45 +129,57 @@ export default class Calculator extends Vue {
   get formHasErrrs() {
     return this.$refs.form;
   }
-  get calculate(): priceType[] {
-    if (
-      isNaN(Number(this.CRU)) ||
-      isNaN(Number(this.HRU)) ||
-      isNaN(Number(this.SRU)) ||
-      isNaN(Number(this.MRU)) ||
-      Number(this.CRU) < 0 ||
-      Number(this.HRU) < 0 ||
-      Number(this.SRU) < 0 ||
-      Number(this.MRU) < 0
-    )
-      return [
-        {
-          price: "0.0",
-          color: "black",
-          packageName: "none",
-          backgroundColor: "#DaDaDa",
-        },
-      ];
-    const cu1 = Math.max(Number(this.CRU) / 2, Number(this.MRU) / 4);
-    const cu2 = Math.max(Number(this.CRU), Number(this.MRU) / 8);
-    const cu3 = Math.max(Number(this.CRU) / 2, Number(this.MRU) / 4);
-    const CU = Math.min(cu1, cu2, cu3);
-    const SU = Number(this.HRU) / 1200 + Number(this.SRU) / 200;
-    const usd_month = ((CU * 30.56 + SU * 19.44) * 24 * 30) / 1000;
-    const prices: priceType[] = [];
+  get calculate(): priceType[] | [] {
+    // todo: calculate the price
+    console.log(this.$api+"sss");
+    console.log(this.$store.state.portal.accounts);
 
-    for (const key in this.discountPackages) {
-      prices.push({
-        price: `${(
-          (usd_month * (100 - this.discountPackages[key].discount)) /
-          100
-        ).toFixed(3)}`,
-        color: this.discountPackages[key].color,
-        packageName: key,
-        backgroundColor: this.discountPackages[key].backgroundColor,
+    if (this.$api) {
+      if (
+        isNaN(Number(this.CRU)) ||
+        isNaN(Number(this.HRU)) ||
+        isNaN(Number(this.SRU)) ||
+        isNaN(Number(this.MRU)) ||
+        Number(this.CRU) < 0 ||
+        Number(this.HRU) < 0 ||
+        Number(this.SRU) < 0 ||
+        Number(this.MRU) < 0
+      )
+        return [
+          {
+            price: "0.0",
+            color: "black",
+            packageName: "none",
+            backgroundColor: "#DaDaDa",
+          },
+        ];
+      const cu1 = Math.max(Number(this.CRU) / 2, Number(this.MRU) / 4);
+      const cu2 = Math.max(Number(this.CRU), Number(this.MRU) / 8);
+      const cu3 = Math.max(Number(this.CRU) / 2, Number(this.MRU) / 4);
+      const CU = Math.min(cu1, cu2, cu3);
+      const SU = Number(this.HRU) / 1200 + Number(this.SRU) / 200;
+      const usd_month = ((CU * 30.56 + SU * 19.44) * 24 * 30) / 1000;
+      const prices: priceType[] = [];
+
+      for (const key in this.discountPackages) {
+        prices.push({
+          price: `${(
+            (usd_month * (100 - this.discountPackages[key].discount)) /
+            100
+          ).toFixed(3)}`,
+          color: this.discountPackages[key].color,
+          packageName: key,
+          backgroundColor: this.discountPackages[key].backgroundColor,
+        });
+      }
+      return prices;
+    } else {
+      this.$router.push({
+        name: "accounts",
+        path: "/",
       });
+      return [];
     }
-    return prices;
   }
 }
 </script>

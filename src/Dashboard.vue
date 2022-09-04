@@ -421,7 +421,7 @@ export default class Dashboard extends Vue {
           label: "Calculator",
           path: "calculator",
           icon: "calculator",
-          showBeforeLogIn: true,
+          showBeforeLogIn: false,
         },
       ],
     },
