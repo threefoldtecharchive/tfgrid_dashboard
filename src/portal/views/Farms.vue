@@ -34,8 +34,8 @@
               () => !!farmName || 'This field is required',
               farmNameCheck,
               () =>
-                farmName.length < 20 ||
-                'Name too long, only 20 characters permitted',
+                farmName.length < 40 ||
+                'Name too long, only 40 characters permitted',
             ]"
             ></v-text-field>
           </v-form>
