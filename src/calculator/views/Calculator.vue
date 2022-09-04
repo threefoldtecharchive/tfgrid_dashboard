@@ -52,11 +52,30 @@
             ></v-text-field>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col cols="5" class="mx-auto">
+            <v-text-field
+              placeholder="Your Balance"
+              :rules="[...inputValidators]"
+              label="Your Balance"
+              suffix="TFT"
+              v-model="balance"
+              outlined
+            ></v-text-field>
+          </v-col>
+          <v-col cols="5" class="mx-auto">
+            <v-switch
+              color="primary"
+              :label="`${switchLabel ? 'Dedicated Nodes' : 'Shared Nodes'}`"
+              v-model="switchLabel"
+            ></v-switch>
+          </v-col>
+        </v-row>
       </div>
       <div class="row pb-5 px-4 mx-5">
         <div
           class="col-5 price-box"
-          v-for="price in calculate"
+          v-for="price in prices"
           :key="price.price"
           :style="{ color: price.color, background: price.backgroundColor }"
         >
@@ -73,6 +92,8 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Layout from "../components/Layout.vue";
+import { getPrices } from "../../portal/lib/nodes";
+
 type priceType = {
   color: string;
   price: string;
@@ -88,8 +109,11 @@ type priceType = {
 export default class Calculator extends Vue {
   CRU = "0";
   SRU = "0";
+  switchLabel = "Dedicated Nodes";
   MRU = "0";
   HRU = "0";
+  balance = "0";
+  prices: priceType[] | [] = [];
   $api: any;
   discountPackages: any = {
     none: {
@@ -118,6 +142,7 @@ export default class Calculator extends Vue {
       discount: 60,
     },
   };
+
   formHasErrors = false;
 
   inputValidators = [
@@ -129,13 +154,17 @@ export default class Calculator extends Vue {
   get formHasErrrs() {
     return this.$refs.form;
   }
-  get calculate(): priceType[] | [] {
+  updated(){
+    this.calculate();
+  }
+  async calculate(){
     // todo: calculate the price
-    console.log(this.$api+"sss");
+    console.log(this.$api + "sss");
     console.log(this.$store.state.portal.accounts);
 
     if (this.$api) {
       if (
+        isNaN(Number(this.balance)) ||
         isNaN(Number(this.CRU)) ||
         isNaN(Number(this.HRU)) ||
         isNaN(Number(this.SRU)) ||
@@ -145,7 +174,7 @@ export default class Calculator extends Vue {
         Number(this.SRU) < 0 ||
         Number(this.MRU) < 0
       )
-        return [
+        this.prices= [
           {
             price: "0.0",
             color: "black",
@@ -159,9 +188,8 @@ export default class Calculator extends Vue {
       const CU = Math.min(cu1, cu2, cu3);
       const SU = Number(this.HRU) / 1200 + Number(this.SRU) / 200;
       const usd_month = ((CU * 30.56 + SU * 19.44) * 24 * 30) / 1000;
-      const prices: priceType[] = [];
 
-      for (const key in this.discountPackages) {
+      /*   for (const key in this.discountPackages) {
         prices.push({
           price: `${(
             (usd_month * (100 - this.discountPackages[key].discount)) /
@@ -171,8 +199,19 @@ export default class Calculator extends Vue {
           packageName: key,
           backgroundColor: this.discountPackages[key].backgroundColor,
         });
-      }
-      return prices;
+      } */
+      const [priceNumber, selectedPackage] = await this.calDiscount(usd_month);
+      const price = [
+        {
+          price: `${priceNumber}`,
+          color: this.discountPackages[selectedPackage].color,
+          packageName: selectedPackage,
+          backgroundColor:
+            this.discountPackages[selectedPackage].backgroundColor,
+        },
+      ];
+
+      this.prices = price;
     } else {
       this.$router.push({
         name: "accounts",
@@ -180,6 +219,52 @@ export default class Calculator extends Vue {
       });
       return [];
     }
+  }
+  async calDiscount(price: number): Promise<[string, string]> {
+    // discount for Dedicated Nodes
+
+    const pricing = await getPrices(this.$api);
+    const discount = pricing.discountForDedicationNodes;
+    let totalPrice = price - price * (discount / 100);
+
+    // discount for Twin Balance
+
+    const discountPackages: any = {
+      none: {
+        duration: 0,
+        discount: 0,
+      },
+      default: {
+        duration: 3,
+        discount: 20,
+      },
+      bronze: {
+        duration: 6,
+        discount: 30,
+      },
+      silver: {
+        duration: 12,
+        discount: 40,
+      },
+      gold: {
+        duration: 36,
+        discount: 60,
+      },
+    };
+
+    let selectedPackage = "none";
+
+    for (const pkg in discountPackages) {
+      if (Number(this.balance) > totalPrice * discountPackages[pkg].duration) {
+        selectedPackage = pkg;
+      }
+    }
+
+    totalPrice =
+      totalPrice -
+      totalPrice * (discountPackages[selectedPackage].discount / 100);
+
+    return [totalPrice.toFixed(2), selectedPackage];
   }
 }
 </script>
