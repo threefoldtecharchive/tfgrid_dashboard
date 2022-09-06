@@ -173,6 +173,7 @@
                   </v-row>
                 </v-col>
                 <v-col
+                  v-if="network == 'main' "
                   cols="4"
                   class="text-center"
                   :align-self="'center'"
@@ -483,6 +484,7 @@ export default class FarmNodesTable extends Vue {
   expanded: any = [];
   receiptsPanel = [];
   resourcesPanel = [];
+  network = config.network;
 
   headers = [
     { text: "Node ID", value: "nodeID", align: "center" },
@@ -557,7 +559,7 @@ export default class FarmNodesTable extends Vue {
   gw6ErrorMessage = "";
   domainErrorMessage = "";
   receipts = [];
-  network = config.network;
+
   updated() {
     this.receiptsPanel = [];
   }
@@ -595,34 +597,32 @@ export default class FarmNodesTable extends Vue {
   byteToGB(capacity: number) {
     return byteToGB(capacity);
   }
-  saveConfig() 
-  {
-    var config : {
-      ip4: {ip: string, gw: string},
-      ip6?: {ip: string, gw: string},
-      domain?: string
+  saveConfig() {
+    var config: {
+      ip4: { ip: string; gw: string };
+      ip6?: { ip: string; gw: string };
+      domain?: string;
     } = {
-        ip4: {
-            ip: this.ip4,
-            gw: this.gw4,
-        }
-      };
+      ip4: {
+        ip: this.ip4,
+        gw: this.gw4,
+      },
+    };
 
-    if (this.ip6 != "") 
+    if (this.ip6 != "")
       config.ip6 = {
-          ip: this.ip6,
-          gw: this.gw6,
+        ip: this.ip6,
+        gw: this.gw6,
       };
 
-    if (this.domain != "") 
-      config.domain = this.domain;
+    if (this.domain != "") config.domain = this.domain;
 
     this.save(config);
   }
   save(config: {
-    ip4: {ip: string, gw: string},
-    ip6?: {ip: string | undefined, gw: string | undefined},
-    domain?: string
+    ip4: { ip: string; gw: string };
+    ip6?: { ip: string | undefined; gw: string | undefined };
+    domain?: string;
   }) {
     this.loadingPublicConfig = true;
     addNodePublicConfig(
@@ -726,14 +726,14 @@ export default class FarmNodesTable extends Vue {
     this.gw4 = "";
     const config = {
       ip4: {
-          ip: this.ip4,
-          gw: this.gw4,
+        ip: this.ip4,
+        gw: this.gw4,
       },
       ip6: {
-          ip: undefined,
-          gw: undefined,
+        ip: undefined,
+        gw: undefined,
       },
-      domain: undefined
+      domain: undefined,
     };
     this.save(config);
   }
@@ -766,8 +766,7 @@ export default class FarmNodesTable extends Vue {
     }
   }
   ip6check() {
-    if (!this.ip6)
-      return true;
+    if (!this.ip6) return true;
     const ipRegex = new RegExp(
       "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
     );
@@ -790,8 +789,7 @@ export default class FarmNodesTable extends Vue {
     }
   }
   gw6Check() {
-    if (!this.gw6)
-      return true;
+    if (!this.gw6) return true;
     const gatewayRegex = new RegExp(
       "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))[0-9]{1,3}$"
     );
