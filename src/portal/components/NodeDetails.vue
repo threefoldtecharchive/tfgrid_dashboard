@@ -57,7 +57,7 @@
                 <v-list-item-content>
                   <v-list-item-title> Memory Resource Unit </v-list-item-title>
                 </v-list-item-content>
-                {{ node.resources.sru | toTeraOrGigaOrPeta }}
+                {{ node.resources.mru | toTeraOrGigaOrPeta }}
               </v-list-item>
             </v-list>
           </v-col>
