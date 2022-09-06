@@ -4,7 +4,6 @@ import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios from 'axios';
 import config from '../config';
-import { getDedicatedNodes } from './nodes';
 import { getNodeMintingFixupReceipts, getNodeUsedResources, receiptInterface } from './nodes';
 import { hex2a } from './util'
 export interface nodeInterface {
@@ -127,7 +126,7 @@ export async function getNodesByFarmID(farms: any[]) {
 
     try {
       node.resourcesUsed = await getNodeUsedResources(node.nodeID);
-      
+
       node.resources = node.resourcesTotal;
       const network = config.network;
       node.receipts = [];
@@ -204,8 +203,8 @@ export async function addNodePublicConfig(
   farmID: number,
   nodeID: number,
   config: {
-    ip4: {ip: string, gw: string},
-    ip6?: {ip: string | undefined, gw: string | undefined},
+    ip4: { ip: string, gw: string },
+    ip6?: { ip: string | undefined, gw: string | undefined },
     domain?: string
   },
   callback: any

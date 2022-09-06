@@ -38,7 +38,6 @@ export function generateNodeSummary(doc: jsPDF, nodes: nodeInterface[]) {
   const topY = 20;
   const topX = 80;
   const lineOffset = 10;
-  const cellOffset = 40;
   const cellX = 15;
   const cellY = topY + lineOffset
 
