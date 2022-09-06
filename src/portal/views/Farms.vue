@@ -68,6 +68,8 @@
       show-expand
       class="elevation-1"
       disable-pagination
+      :loading="loadingFarms"
+      :loading-text="'loading farms ...'"
     >
       <template v-slot:top>
         <v-toolbar
@@ -311,11 +313,13 @@ export default class FarmsView extends Vue {
   isValidFarmName = false;
   isValidStellarV2Address = false;
   loadingAddStellar = false;
+  loadingFarms = true;
   async mounted() {
     this.address = this.$route.params.accountID;
     this.id = this.$route.query.twinID;
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
+      this.loadingFarms = false;
       this.nodes = this.getNodes();
     } else {
       this.$router.push({
@@ -345,6 +349,7 @@ export default class FarmsView extends Vue {
     this.id = this.$route.query.twinID;
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
+      this.loadingFarms = false;
     } else {
       this.$router.push({
         name: "accounts",
@@ -479,59 +484,61 @@ export default class FarmsView extends Vue {
     publicIPs.reduce(async (last, publicIP) => {
       await last;
       await this.createPublicIP(publicIP, gateway);
-    }, Promise.resolve())
+    }, Promise.resolve());
   }
-  public createPublicIP(publicIP: string, gateway: string){
+  public createPublicIP(publicIP: string, gateway: string) {
     this.loadingCreateIP = true;
     return new Promise((resolve, reject) => {
-          const callback = (res: {
-            events?: never[] | undefined;
-            status: { type: string; asFinalized: string; isFinalized: string };
-          }) => {
-            if (res instanceof Error) {
-                console.error(res);
-                reject(res);
-                this.loadingCreateIP = false;
-            }
-            const { events = [], status } = res;
-            console.log(`Current status is ${status.type}`);
-            switch (status.type) {
-              case "Ready":
-                this.$toasted.show(`Transaction submitted`);
-            }
+      const callback = (res: {
+        events?: never[] | undefined;
+        status: { type: string; asFinalized: string; isFinalized: string };
+      }) => {
+        if (res instanceof Error) {
+          console.error(res);
+          reject(res);
+          this.loadingCreateIP = false;
+        }
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            this.$toasted.show(`Transaction submitted`);
+        }
 
-            if (status.isFinalized) {
-                events.forEach(({ phase, event: { data, method, section } }) => {
-                    console.log(`phase: ${phase}, section: ${section}, method: ${method}`);
-                    if (section === "tfgridModule" && method === "FarmUpdated") {
-                      this.$toasted.show("IP created!");
-                      getFarm(this.$api, this.id).then((farms) => {
-                        this.farms = farms;
-                      });
-                      resolve("IP created!");
-                      this.loadingCreateIP = false;
-                    } else if (section === "system" && method === "ExtrinsicFailed") {
-                      this.$toasted.show("Adding an IP failed!");
-                      reject("Adding an IP failed!");
-                      this.loadingCreateIP = false;
-                    }
-                });
+        if (status.isFinalized) {
+          events.forEach(({ phase, event: { data, method, section } }) => {
+            console.log(
+              `phase: ${phase}, section: ${section}, method: ${method}`
+            );
+            if (section === "tfgridModule" && method === "FarmUpdated") {
+              this.$toasted.show("IP created!");
+              getFarm(this.$api, this.id).then((farms) => {
+                this.farms = farms;
+              });
+              resolve("IP created!");
+              this.loadingCreateIP = false;
+            } else if (section === "system" && method === "ExtrinsicFailed") {
+              this.$toasted.show("Adding an IP failed!");
+              reject("Adding an IP failed!");
+              this.loadingCreateIP = false;
             }
-          }
-          try {
-            createIP(
-              this.$route.params.accountID,
-              this.$api,
-              this.expanded[0].id,
-              publicIP,
-              gateway,
-              callback
-            )
-          } catch (e) {
-            reject(e);
-            this.loadingCreateIP = false;
-          }
-        })
+          });
+        }
+      };
+      try {
+        createIP(
+          this.$route.params.accountID,
+          this.$api,
+          this.expanded[0].id,
+          publicIP,
+          gateway,
+          callback
+        );
+      } catch (e) {
+        reject(e);
+        this.loadingCreateIP = false;
+      }
+    });
   }
   public farmNameCheck() {
     const nameRegex = new RegExp("^[a-zA-Z0-9_-]*$");
