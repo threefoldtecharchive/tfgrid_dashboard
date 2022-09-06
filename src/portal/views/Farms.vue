@@ -36,6 +36,9 @@
               () =>
                 farmName.length <= 40 ||
                 'Name too long, only 40 characters permitted',
+                () =>
+                farmName.length >= 3 ||
+                'Name should be more than or equal 3 characters',
             ]"
             ></v-text-field>
           </v-form>
