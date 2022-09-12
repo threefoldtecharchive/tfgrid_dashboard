@@ -26,6 +26,9 @@ class PolkaPage:
   polka_import_pass = (By.XPATH ,'//*[@id="root"]/main/div[4]/div/input')
   polka_import_repass = (By.XPATH ,'//*[@id="root"]/main/div[5]/div/input')
   polka_add_import_account = (By.XPATH ,'//*[@id="root"]/main/div[7]/button[2]')
+  polka_account_settings = (By.XPATH ,'//*[@id="root"]/main/div[2]/div[1]/div/div/div[3]')
+  polka_forget_account = (By.XPATH ,'//*[@id="root"]/main/div[2]/div[1]/div/div/div[4]/a[4]')
+  polka_submit_forget = (By.XPATH ,'//*[@id="root"]/main/div[2]/div/div[3]/button')
   polka_auth_pass = (By.XPATH ,'//*[@id="root"]/main/div[3]/div[1]/div/input')
   polka_auth_submit = (By.XPATH ,'//*[@id="root"]/main/div[3]/button/div[1]')
 
@@ -66,6 +69,16 @@ class PolkaPage:
     self.browser.find_element(*self.polka_import_pass).send_keys(password)
     self.browser.find_element(*self.polka_import_repass).send_keys(password)
     self.browser.find_element(*self.polka_add_import_account).click()
+    self.browser.close()
+    self.browser.switch_to.window(self.browser.window_handles[0])
+  
+  def forget_account(self):
+    self.browser.execute_script("window.open('');")
+    self.browser.switch_to.window(self.browser.window_handles[1])
+    self.browser.get(Base.extension_url)
+    self.browser.find_element(*self.polka_account_settings).click()
+    self.browser.find_element(*self.polka_forget_account).click()
+    self.browser.find_element(*self.polka_submit_forget).click()
     self.browser.close()
     self.browser.switch_to.window(self.browser.window_handles[0])
 
