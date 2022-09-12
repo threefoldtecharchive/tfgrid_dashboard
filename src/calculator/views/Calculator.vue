@@ -17,6 +17,7 @@
               suffix="cores"
               v-model="CRU"
               outlined
+              @input="calculate"
             ></v-text-field>
           </v-col>
           <v-col cols="5" class="mx-auto">
@@ -27,6 +28,7 @@
               suffix="GB"
               v-model="MRU"
               outlined
+              @input="calculate"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -39,6 +41,7 @@
               suffix="GB"
               v-model="SRU"
               outlined
+              @input="calculate"
             ></v-text-field>
           </v-col>
           <v-col cols="5" class="mx-auto">
@@ -49,6 +52,7 @@
               suffix="GB"
               v-model="HRU"
               outlined
+              @input="calculate"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -61,14 +65,8 @@
               suffix="TFT"
               v-model="balance"
               outlined
+              @input="calculate"
             ></v-text-field>
-          </v-col>
-          <v-col cols="5" class="mx-auto">
-            <v-switch
-              color="primary"
-              :label="`${switchLabel ? 'Dedicated Nodes' : 'Shared Nodes'}`"
-              v-model="switchLabel"
-            ></v-switch>
           </v-col>
         </v-row>
       </div>
@@ -80,10 +78,16 @@
           :style="{ color: price.color, background: price.backgroundColor }"
         >
           <span class="price">
-            <span class="name">{{ price.packageName }}</span>
+            <span class="name">
+              {{ price.label !== undefined ? price.label + " " : " " }}
+              {{ price.packageName + " Package" }}</span
+            >
             : $ {{ price.price }}
           </span>
         </div>
+        <span class="right"
+          >learn more about pricing through this <a>Link</a></span
+        >
       </div>
     </v-card>
   </Layout>
@@ -95,6 +99,7 @@ import Layout from "../components/Layout.vue";
 import { getPrices } from "../../portal/lib/nodes";
 
 type priceType = {
+  label?: string;
   color: string;
   price: string;
   packageName: string;
@@ -109,7 +114,6 @@ type priceType = {
 export default class Calculator extends Vue {
   CRU = "0";
   SRU = "0";
-  switchLabel = "Dedicated Nodes";
   MRU = "0";
   HRU = "0";
   balance = "0";
@@ -154,14 +158,10 @@ export default class Calculator extends Vue {
   get formHasErrrs() {
     return this.$refs.form;
   }
-  updated(){
+  /* updated() {
     this.calculate();
-  }
-  async calculate(){
-    // todo: calculate the price
-    console.log(this.$api + "sss");
-    console.log(this.$store.state.portal.accounts);
-
+  } */
+  async calculate() {
     if (this.$api) {
       if (
         isNaN(Number(this.balance)) ||
@@ -169,12 +169,13 @@ export default class Calculator extends Vue {
         isNaN(Number(this.HRU)) ||
         isNaN(Number(this.SRU)) ||
         isNaN(Number(this.MRU)) ||
+        Number(this.balance) < 0 ||
         Number(this.CRU) < 0 ||
         Number(this.HRU) < 0 ||
         Number(this.SRU) < 0 ||
         Number(this.MRU) < 0
-      )
-        this.prices= [
+      ) {
+        this.prices = [
           {
             price: "0.0",
             color: "black",
@@ -182,6 +183,8 @@ export default class Calculator extends Vue {
             backgroundColor: "#DaDaDa",
           },
         ];
+        return;
+      }
       const cu1 = Math.max(Number(this.CRU) / 2, Number(this.MRU) / 4);
       const cu2 = Math.max(Number(this.CRU), Number(this.MRU) / 8);
       const cu3 = Math.max(Number(this.CRU) / 2, Number(this.MRU) / 4);
@@ -189,35 +192,32 @@ export default class Calculator extends Vue {
       const SU = Number(this.HRU) / 1200 + Number(this.SRU) / 200;
       const usd_month = ((CU * 30.56 + SU * 19.44) * 24 * 30) / 1000;
 
-      /*   for (const key in this.discountPackages) {
-        prices.push({
-          price: `${(
-            (usd_month * (100 - this.discountPackages[key].discount)) /
-            100
-          ).toFixed(3)}`,
-          color: this.discountPackages[key].color,
-          packageName: key,
-          backgroundColor: this.discountPackages[key].backgroundColor,
-        });
-      } */
       const [priceNumber, selectedPackage] = await this.calDiscount(usd_month);
-      const price = [
+      console.log({ usd_month, priceNumber, selectedPackage });
+      this.prices = [
         {
+          label: "Dedicated Node Price",
           price: `${priceNumber}`,
           color: this.discountPackages[selectedPackage].color,
           packageName: selectedPackage,
           backgroundColor:
             this.discountPackages[selectedPackage].backgroundColor,
         },
+        {
+          label: "Shared Node Price",
+          price: `${usd_month}`,
+          color: this.discountPackages["none"].color,
+          packageName: "none",
+          backgroundColor: this.discountPackages["none"].backgroundColor,
+        },
       ];
-
-      this.prices = price;
     } else {
       this.$router.push({
         name: "accounts",
         path: "/",
       });
-      return [];
+
+      return;
     }
   }
   async calDiscount(price: number): Promise<[string, string]> {
@@ -229,46 +229,37 @@ export default class Calculator extends Vue {
 
     // discount for Twin Balance
 
-    const discountPackages: any = {
-      none: {
-        duration: 0,
-        discount: 0,
-      },
-      default: {
-        duration: 3,
-        discount: 20,
-      },
-      bronze: {
-        duration: 6,
-        discount: 30,
-      },
-      silver: {
-        duration: 12,
-        discount: 40,
-      },
-      gold: {
-        duration: 36,
-        discount: 60,
-      },
-    };
-
     let selectedPackage = "none";
 
-    for (const pkg in discountPackages) {
-      if (Number(this.balance) > totalPrice * discountPackages[pkg].duration) {
+    for (const pkg in this.discountPackages) {
+      console.log({
+        pkg,
+        package: this.discountPackages[pkg],
+        balance: this.balance,
+        totalPrice,
+      });
+      if (
+        Number(this.balance) >
+        totalPrice * this.discountPackages[pkg].discount
+      ) {
         selectedPackage = pkg;
       }
     }
 
     totalPrice =
       totalPrice -
-      totalPrice * (discountPackages[selectedPackage].discount / 100);
+      totalPrice * (this.discountPackages[selectedPackage].discount / 100);
 
     return [totalPrice.toFixed(2), selectedPackage];
   }
 }
 </script>
 <style>
+.right {
+  text-align: right;
+  margin-right: 0;
+  margin-left: auto;
+}
 .calc_input {
   width: 100px;
   border-bottom: 1px solid rgb(175, 47, 47);
