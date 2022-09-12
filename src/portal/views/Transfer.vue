@@ -23,6 +23,7 @@
         ]"
         ></v-combobox>
         <v-text-field
+         @paste.prevent
           v-model="amount"
           label="Amount (TFT)"
           type="number"
