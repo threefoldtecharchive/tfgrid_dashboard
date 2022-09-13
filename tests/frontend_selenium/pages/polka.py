@@ -11,8 +11,8 @@ class PolkaPage:
   
   polka_understand = (By.XPATH ,'//*[@id="root"]/main/div[4]/button')
   polka_allow = (By.XPATH ,'//*[@id="root"]/main/div[1]/div[2]/div/button')
-  polka_menu = (By.XPATH ,'//*[@id="root"]/main/div[1]/div/div[2]/div[1]')
-  polka_add_account = (By.XPATH ,'//*[@id="root"]/main/div[1]/div/div[3]/div[1]/a')
+  polka_menu = (By.XPATH , '//div[@class="popupMenus"]/div[1]')
+  polka_add_account = (By.XPATH ,'//*[contains(text(), "Create new account")]') 
   polka_checkbox = (By.XPATH ,'//*[@id="root"]/main/div[6]/label/span')
   polka_next_step = (By.XPATH ,'//*[@id="root"]/main/div[7]/button')
   polka_user_name = (By.XPATH ,'//*[@id="root"]/main/div[4]/div/input')
