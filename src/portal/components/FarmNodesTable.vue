@@ -779,7 +779,9 @@ export default class FarmNodesTable extends Vue {
     }
   }
   gw4Check() {
-    const gatewayRegex = new RegExp("^(?:[0-9]{1,3}.){3}[0-9]{1,3}$");
+    const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
+    const gatewayRegex = new RegExp(`^${IPv4AddressFormat}$`);
     if (gatewayRegex.test(this.gw4)) {
       this.gw4ErrorMessage = "";
       return true;
