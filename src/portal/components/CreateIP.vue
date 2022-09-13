@@ -223,11 +223,13 @@ export default class CreateIP extends Vue {
     return false;
   }
   gatewayCheck() {
+    const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
+    const gatewayRegex = new RegExp(`^${IPv4AddressFormat}$`);
     if (this.gateway === "") {
       this.ipErrorMessage = "";
       return true;
     }
-    const gatewayRegex = new RegExp("^(?:[0-9]{1,3}.){3}[0-9]{1,3}$");
     if (gatewayRegex.test(this.gateway)) {
       this.gatewayErrorMessage = "";
       return true;
