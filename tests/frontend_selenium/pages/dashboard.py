@@ -58,6 +58,7 @@ class DashboardPage:
 
     def navigate_to_manual(self):
         self.browser.find_element(*self.swipe_left).click()
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div/div[1]/div/div[2]/div/div/div/div[1]/div[2]')))
         self.browser.find_element(*self.learn_more).click()
         WebDriverWait(self.browser, 30).until(EC.number_of_windows_to_be(2))
         self.browser.switch_to.window(self.browser.window_handles[1])
