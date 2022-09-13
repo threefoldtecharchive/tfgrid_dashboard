@@ -1,9 +1,8 @@
 name: Cypress Tests
 
 on:
-  push:
-    branches:
-      - development_cypress_workflow
+  schedule:
+    - cron: "0 6 * * *"
 
 jobs:
   cypress-run:
