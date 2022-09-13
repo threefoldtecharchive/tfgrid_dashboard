@@ -271,7 +271,7 @@ import PublicIPTable from "../components/PublicIPTable.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import {
   createFarm,
-  createIP,
+  batchCreateIP,
   deleteFarm,
   deleteIP,
   getFarm,
@@ -484,13 +484,6 @@ export default class FarmsView extends Vue {
   }
   public createPublicIPs(publicIPs: string[], gateway: string) {
     this.loadingCreateIP = true;
-    publicIPs.reduce(async (last, publicIP) => {
-      await last;
-      await this.createPublicIP(publicIP, gateway);
-    }, Promise.resolve());
-  }
-  public createPublicIP(publicIP: string, gateway: string) {
-    this.loadingCreateIP = true;
     return new Promise((resolve, reject) => {
       const callback = (res: {
         events?: never[] | undefined;
@@ -513,14 +506,14 @@ export default class FarmsView extends Vue {
             console.log(
               `phase: ${phase}, section: ${section}, method: ${method}`
             );
-            if (section === "tfgridModule" && method === "FarmUpdated") {
+            if (section === "utility" && method === "BatchCompleted") {
               this.$toasted.show("IP created!");
               getFarm(this.$api, this.id).then((farms) => {
                 this.farms = farms;
               });
               resolve("IP created!");
               this.loadingCreateIP = false;
-            } else if (section === "system" && method === "ExtrinsicFailed") {
+            } else if (section === "utility" && method === "BatchInterrupted") {
               this.$toasted.show("Adding an IP failed!");
               reject("Adding an IP failed!");
               this.loadingCreateIP = false;
@@ -529,11 +522,11 @@ export default class FarmsView extends Vue {
         }
       };
       try {
-        createIP(
+        batchCreateIP(
           this.$route.params.accountID,
           this.$api,
           this.expanded[0].id,
-          publicIP,
+          publicIPs,
           gateway,
           callback
         );
