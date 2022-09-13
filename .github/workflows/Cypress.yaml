@@ -12,14 +12,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Yarn
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - run: yarn install
-      - run: yarn serve
       - name: Cypress run
         uses: cypress-io/github-action@v4.2.0
         with:
-          build: npm i -D cypress
+          build: yarn add -D cypress
+          run: yarn serve
           browser: chrome
