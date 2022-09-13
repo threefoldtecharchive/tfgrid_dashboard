@@ -85,6 +85,7 @@
               >
               </v-text-field>
               <v-text-field
+                @paste.prevent
                 label="Amount (TFT)"
                 v-model="amount"
                 type="number"
