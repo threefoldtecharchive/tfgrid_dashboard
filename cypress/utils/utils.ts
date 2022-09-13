@@ -1,7 +1,7 @@
 
 class Utils{
 
-    formatBytes(bytes, decimals = 2) {    
+    formatBytes(bytes, decimals = 0) {    
         const k = 1024;
         const dm = decimals < 0 ? 0 : decimals;
     

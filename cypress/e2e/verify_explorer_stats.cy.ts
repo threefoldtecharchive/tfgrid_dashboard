@@ -24,7 +24,7 @@ describe('TF Grid Dashboard', function(){
 
         cy.request({
             method: 'GET',
-            url:'https://gridproxy.qa.grid.tf/stats?status=up',
+            url:'https://gridproxy.dev.grid.tf/stats?status=up',
 
         }).should((res)=>{
             
