@@ -754,9 +754,9 @@ export default class FarmNodesTable extends Vue {
   }
   ip4check() {
     if (this.ip4 === "") return true;
-    const ipRegex = new RegExp(
-      "^(?:[0-9]{1,3}.){3}[0-9]{1,3}/(1[6-9]|2[0-9]|3[0-2])$"
-    );
+    const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
+    const ipRegex = new RegExp(`^${IPv4AddressFormat}/(1[6-9]|2[0-9]|3[0-2])$`);
     if (ipRegex.test(this.ip4)) {
       this.ip4ErrorMessage = "";
       return true;
