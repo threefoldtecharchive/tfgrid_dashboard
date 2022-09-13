@@ -165,8 +165,8 @@ export default class TwinView extends Vue {
       `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
       `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
       `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
-      ')(%[0-9a-zA-Z-.:]{1,})?$');
-    if (ip6Regex.test(this.ipEntered)) {
+      ')([0-9a-zA-Z]{1})?$');
+      if (ip6Regex.test(this.ipEntered)) {
       return true;
     }
     return false;
