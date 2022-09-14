@@ -1,5 +1,6 @@
 import random
 import string
+import requests
 
 # Generate Random 10 char (uppercase and digits) string 
 def generate_string():
@@ -48,4 +49,34 @@ def generate_inavalid_gateway():
       gateway+=''.join(random.choice(first))+''.join(random.choice(second)) +''.join(random.choice(second))+'.'
       gateway+=''.join(random.choice(first))+''.join(random.choice(second))+''.join(random.choice(second))+'.'
       gateway+=''.join(random.choice(first))+''.join(random.choice(second))+''.join(random.choice(second))
-      return gateway            
+      return gateway
+
+def valid_amount():
+      decimal= ((random.randrange(1,99)))
+      rational= (str(random.uniform(0.009,0.1)))
+      sum = rational[0:5]
+      list=[decimal,float(sum)]
+      return(random.choice(list))
+      
+def invalid_amount():
+      rational= (str(random.uniform(100,10000)))
+      return rational
+
+def invalid_amount_negtive():
+      negative= (str(random.randrange(1,99)))
+      negative='-'+negative
+      return negative
+
+def invalid_address():
+      chars  =string.ascii_uppercase +string.digits
+      begin='5'
+      return (begin+''.join(random.choice(chars) for _ in range(47)))
+
+def valid_address ():
+      r = requests.get("https://gridproxy.test.grid.tf/twins?twin_id=224")
+      output=r.json()
+      return (output[0]['accountId'])
+
+def invalid_exceed_balance():
+      rational= (str(random.randrange(100,10000)))
+      return rational
