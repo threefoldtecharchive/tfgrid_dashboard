@@ -91,6 +91,20 @@ export async function createIP(address: string, api: { tx: { tfgridModule: { add
     .addFarmIp(farmID, ip, gateway)
     .signAndSend(address, { signer: injector.signer }, callback)
 }
+
+export async function batchCreateIP(address: string, api: any, farmID: number, ips: string[], gateway: string, callback: any) {
+  const injector = await web3FromAddress(address)
+
+  const calls: any[] = [];
+  ips.map((ip) => calls.push(
+    api.tx.tfgridModule.addFarmIp(farmID, ip, gateway)
+  ))
+
+  return api.tx.utility
+    .batch(calls)
+    .signAndSend(address, { signer: injector.signer }, callback)
+}
+
 export async function deleteIP(address: string, api: { tx: { tfgridModule: { removeFarmIp: (arg0: number, arg1: any) => { (): any; new(): any; signAndSend: { (arg0: string, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; }, farmID: number, ip: { ip: string }, callback: any) {
   const injector = await web3FromAddress(address)
 
