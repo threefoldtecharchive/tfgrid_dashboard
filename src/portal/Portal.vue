@@ -8,7 +8,7 @@
 </template>
 <script lang="ts">
 import FundsCard from "./components/FundsCard.vue";
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 
 @Component({
   name: "PortalView",
