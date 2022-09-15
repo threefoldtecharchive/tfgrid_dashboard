@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card class="fund d-flex align-center font-weight-bold mr-4 primary" style="margin-right: 10% !important;">
+    <v-card class="fund d-flex align-center font-weight-bold mr-4 primary">
       <v-card-text
         style="padding: 5px;"
         class="pr-0"
@@ -135,12 +135,12 @@ export default class FundsCard extends Vue {
 }
 </script>
 <style scoped>
-.fund {
+/* .fund {
   background-color: transparent;
   box-shadow: none !important;
   position: fixed;
   top: 7px;
   right: 8.5%;
   z-index: 1000;
-}
+} */
 </style>
