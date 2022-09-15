@@ -18,5 +18,4 @@ export default class PortalView extends Vue {
 
 }
 </script>
-<style scoped>
-</style>
+

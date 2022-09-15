@@ -10,11 +10,11 @@
       >
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
-        <!-- <v-toolbar-title
+        <v-toolbar-title
           class="font-weight-bold"
           @click="redirectToHomePage"
           style="cursor: pointer;"
-        >Threefold Chain</v-toolbar-title> -->
+        >Threefold Chain</v-toolbar-title>
 
         <v-spacer></v-spacer>
         <div class="d-flex">
@@ -335,19 +335,6 @@ export default class Dashboard extends Vue {
     this.balanceReserved = this.$route.query.balanceReserved;
     console.log(`balance went from ${oldValue}, to ${value}`);
   }
-  // mounted() {
-  //   this.$store.dispatch("portal/subscribeAccounts");
-  //   this.balanceFree = this.$route.query.balanceFree;
-  //   this.balanceReserved = this.$route.query.balanceReserved;
-  // }
-  // updated() {
-  //   this.balanceFree = this.$route.query.balanceFree;
-  //   this.balanceReserved = this.$route.query.balanceReserved;
-  // }
-  // unmounted() {
-  //   this.$store.dispatch("portal/unsubscribeAccounts");
-  // }
-
   async mounted() {
     this.$store.dispatch("portal/subscribeAccounts");
     this.balanceFree = this.$route.query.balanceFree;
