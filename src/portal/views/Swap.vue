@@ -80,9 +80,9 @@
                 :label="selectedName.toUpperCase() + ' Target Wallet Address'"
                 :error-messages="targetError"
                 :rules="[
-          () => !!target || 'This field is required',
-          swapAddressCheck,
-        ]"
+                  () => !!target || 'This field is required',
+                  swapAddressCheck,
+                ]"
               >
               </v-text-field>
               <v-text-field
