@@ -78,9 +78,10 @@
               <v-text-field
                 v-model="target"
                 :label="selectedName.toUpperCase() + ' Target Wallet Address'"
+                :error-messages="target_error"
                 :rules="[
           () => !!target || 'This field is required',
-          () => swapAddressCheck() || 'invalid address',
+          swapAddressCheck,
         ]"
               >
               </v-text-field>
@@ -163,7 +164,8 @@ import config from "../config";
 import { getDepositFee, getWithdrawFee, withdraw } from "../lib/swap";
 import QrcodeVue from "qrcode.vue";
 import { balanceInterface, getBalance } from "../lib/balance";
-import { StrKey } from "stellar-sdk";
+import { default as StellarSdk, StrKey } from "stellar-sdk";
+
 @Component({
   name: "TransferView",
   components: { QrcodeVue },
@@ -190,6 +192,8 @@ export default class TransferView extends Vue {
   amount = 0;
   target = "";
   loadingWithdraw = false;
+  target_error = "";
+  server = new StellarSdk.Server(config.horizonUrl);
   mounted() {
     if (this.$api) {
       this.address = this.$route.params.accountID;
@@ -231,12 +235,29 @@ export default class TransferView extends Vue {
     this.balance = 0;
     this.address = "";
   }
-  swapAddressCheck() {
+  async swapAddressCheck() {
     const isValid = StrKey.isValidEd25519PublicKey(this.target);
-    if (isValid && this.target.length && !this.target.match(/\W/)) {
-      return true;
+    if (!isValid || this.target.match(/\W/)) {
+      this.target_error = "invalid address";
+      return false;
     }
-    return false;
+
+    if (this.selectedName == "stellar"){
+      try {
+        // check if the account provided exists on stellar
+        const account = await this.server.loadAccount(this.target)
+        // check if the account provided has the appropriate trustlines
+        const includes = account.balances.find((b: { asset_code: string; asset_issuer: string; }) => b.asset_code === 'TFT' && b.asset_issuer === config.tftAssetIssuer)
+        if (!includes) {
+          this.target_error = 'Address does not have a valid trustline to TFT';
+          return false;
+        }
+      } catch (error) {
+        this.target_error = 'Address not found';
+        return false;
+      }
+    }
+    return true;
   }
   public async withdrawTFT(target: string, amount: number) {
     this.loadingWithdraw = true;
