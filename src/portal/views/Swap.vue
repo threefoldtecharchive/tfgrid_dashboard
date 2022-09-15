@@ -78,7 +78,7 @@
               <v-text-field
                 v-model="target"
                 :label="selectedName.toUpperCase() + ' Target Wallet Address'"
-                :error-messages="target_error"
+                :error-messages="targetError"
                 :rules="[
           () => !!target || 'This field is required',
           swapAddressCheck,
@@ -192,7 +192,7 @@ export default class TransferView extends Vue {
   amount = 0;
   target = "";
   loadingWithdraw = false;
-  target_error = "";
+  targetError = "";
   server = new StellarSdk.Server(config.horizonUrl);
   mounted() {
     if (this.$api) {
@@ -238,7 +238,7 @@ export default class TransferView extends Vue {
   async swapAddressCheck() {
     const isValid = StrKey.isValidEd25519PublicKey(this.target);
     if (!isValid || this.target.match(/\W/)) {
-      this.target_error = "invalid address";
+      this.targetError = "invalid address";
       return false;
     }
 
@@ -249,14 +249,15 @@ export default class TransferView extends Vue {
         // check if the account provided has the appropriate trustlines
         const includes = account.balances.find((b: { asset_code: string; asset_issuer: string; }) => b.asset_code === 'TFT' && b.asset_issuer === config.tftAssetIssuer)
         if (!includes) {
-          this.target_error = 'Address does not have a valid trustline to TFT';
+          this.targetError = 'Address does not have a valid trustline to TFT';
           return false;
         }
       } catch (error) {
-        this.target_error = 'Address not found';
+        this.targetError = 'Address not found';
         return false;
       }
     }
+    this.targetError = "";
     return true;
   }
   public async withdrawTFT(target: string, amount: number) {
