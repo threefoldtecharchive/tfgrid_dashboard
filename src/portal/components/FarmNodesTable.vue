@@ -324,7 +324,7 @@
                 type="string"
                 outlined
                 dense
-                hint="IPV6 address "
+                hint="IPV6 address in CIDR format"
                 persistent-hint
                 :error-messages="ip6ErrorMessage"
                 :rules="[ip6check]"
@@ -617,7 +617,7 @@ export default class FarmNodesTable extends Vue {
     ip4: { ip: string; gw: string };
     ip6?: { ip: string | undefined; gw: string | undefined };
     domain?: string;
-  }) {
+  } | null) {
     this.loadingPublicConfig = true;
     addNodePublicConfig(
       this.$route.params.accountID,
@@ -668,18 +668,19 @@ export default class FarmNodesTable extends Vue {
               ) {
                 if (this.openWarningDialog)
                   this.$toasted.show("Node public config added!");
-                else if (this.openRemoveConfigWarningDialog)
+                else if (this.openRemoveConfigWarningDialog) {
                   this.$toasted.show("Node public config removed!");
+                  this.ip4 = "";
+                  this.ip6 = "";
+                  this.gw4 = "";
+                  this.gw6 = "";
+                  this.domain = "";
+                }
 
                 this.loadingPublicConfig = false;
                 this.openPublicConfigDialog = false;
                 this.openWarningDialog = false;
                 this.openRemoveConfigWarningDialog = false;
-                this.ip4 = "";
-                this.ip6 = "";
-                this.gw4 = "";
-                this.gw6 = "";
-                this.domain = "";
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 if (this.openWarningDialog)
                   this.$toasted.show("Adding Node public config failed");
@@ -688,11 +689,6 @@ export default class FarmNodesTable extends Vue {
                 this.loadingPublicConfig = false;
                 this.openWarningDialog = false;
                 this.openRemoveConfigWarningDialog = false;
-                this.ip4 = "";
-                this.ip6 = "";
-                this.gw4 = "";
-                this.gw6 = "";
-                this.domain = "";
               }
             });
           }
@@ -708,28 +704,10 @@ export default class FarmNodesTable extends Vue {
       this.openPublicConfigDialog = false;
       this.openWarningDialog = false;
       this.openRemoveConfigWarningDialog = false;
-      this.ip4 = "";
-      this.ip6 = "";
-      this.gw4 = "";
-      this.gw6 = "";
-      this.domain = "";
     });
   }
   removeConfig() {
-    this.ip4 = "";
-    this.gw4 = "";
-    const config = {
-      ip4: {
-        ip: this.ip4,
-        gw: this.gw4,
-      },
-      ip6: {
-        ip: undefined,
-        gw: undefined,
-      },
-      domain: undefined,
-    };
-    this.save(config);
+    this.save(null);
   }
   openPublicConfig(node: nodeInterface) {
     this.nodeToEdit = node;
@@ -774,7 +752,7 @@ export default class FarmNodesTable extends Vue {
       `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
       `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
       `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
-      ')([0-9a-fA-F]{1})?$');
+      ')([0-9a-fA-F]{1})?/(1[6-9]|([2-5][0-9])|6[0-4])$');
     if (ipRegex.test(this.ip6)) {
       this.ip6ErrorMessage = "";
       return true;
