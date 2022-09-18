@@ -221,7 +221,7 @@ export async function addNodePublicConfig(
     ip4: {ip: string, gw: string},
     ip6?: {ip: string | undefined, gw: string | undefined},
     domain?: string
-  },
+  } | null,
   callback: any
 ) {
   const injector = await web3FromAddress(address);
