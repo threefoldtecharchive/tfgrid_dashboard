@@ -17,70 +17,83 @@
         >Threefold Chain</v-toolbar-title>
 
         <v-spacer></v-spacer>
-        <v-btn
-          icon
-          @click="toggle_dark_mode"
-        >
-          <v-icon>mdi-theme-light-dark</v-icon>
-        </v-btn>
-        <v-card
-          class="mx-2 px-1"
-          color="transparent"
-          outlined
-          v-if="$store.state.portal.accounts.length === 0"
-        >
-          <v-btn icon>
-            <v-icon
-              class=""
-              color="#F44336"
-              @click="$store.dispatch('portal/subscribeAccounts')"
-            >mdi-lan-disconnect</v-icon>
-          </v-btn>
-        </v-card>
-        <v-card
-          outlined
-          v-else
-          color="transparent"
-        >
-          <v-btn icon>
-            <v-tooltip>
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                  color="#4CAF50"
-                  class=""
-                  @click="disconnectWallet"
-                  v-bind="attrs"
-                  v-on="on"
-                >mdi-lan-connect</v-icon>
-              </template>
-              <span>Disconnect Wallet</span>
-            </v-tooltip>
-          </v-btn>
-        </v-card>
-        <v-theme-provider root>
-        <v-card v-if="isAccountSelected()">
-          <v-card-text
-            style="padding: 10px 0px 10px 30px;"
-            v-for="account in filteredAccounts()"
-            :key="account.address"
+        <div class="d-flex">
+          <FundsCard
+          v-if="$route.path !='/' && $route.query.balanceFree"
+          :balanceFree.sync='balanceFree'
+          :balanceReserved.sync='balanceReserved'
+          @update:balanceFree="$route.query.balanceFree=$event"
+          @update:balanceReserved="$route.query.balanceReserved=$event"
+        />
+          <div class="d-flex" style="align-items: center;">
+            <v-btn
+            icon
+            @click="toggle_dark_mode"
           >
-            <v-row class="d-flex align-center mx-0">
-              <p
-                class="font-weight-black"
-                style="font-size: 15px;"
-              >{{ account.meta.name }}</p>
+            <v-icon>mdi-theme-light-dark</v-icon>
+          </v-btn>
+            <v-card
+            class="mx-2 px-1"
+            color="transparent"
+            outlined
+            v-if="$store.state.portal.accounts.length === 0"
+          >
+            <v-btn icon>
+              <v-icon
+                class=""
+                color="#F44336"
+                @click="$store.dispatch('portal/subscribeAccounts')"
+              >mdi-lan-disconnect</v-icon>
+            </v-btn>
+          </v-card>
+          <v-card
+            outlined
+            v-else
+            color="transparent"
+          >
+            <v-btn icon>
+              <v-tooltip>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                    color="#4CAF50"
+                    class=""
+                    @click="disconnectWallet"
+                    v-bind="attrs"
+                    v-on="on"
+                  >mdi-lan-connect</v-icon>
+                </template>
+                <span>Disconnect Wallet</span>
+              </v-tooltip>
+            </v-btn>
+          </v-card>
+          <v-theme-provider root>
+          <v-card v-if="isAccountSelected()" style="width: max-content;">
+            <v-card-text
+              style="padding: 10px 0px 10px 30px;"
+              v-for="account in filteredAccounts()"
+              :key="account.address"
+            >
+              <v-row class="d-flex align-center mx-0">
+                <p
+                  class="font-weight-black"
+                  style="font-size: 15px;"
+                >{{ account.meta.name }}</p>
 
-              <v-btn
-                icon
-                class="mr-2"
-                @click="redirectToHomePage"
-              >
-                <v-icon>mdi-logout theme-light-dark</v-icon>
-              </v-btn>
-            </v-row>
-          </v-card-text>
-        </v-card>
-        </v-theme-provider>
+                <v-btn
+                  icon
+                  class="mr-2"
+                  @click="redirectToHomePage"
+                >
+                  <v-icon>mdi-logout theme-light-dark</v-icon>
+                </v-btn>
+              </v-row>
+            </v-card-text>
+          </v-card>
+          </v-theme-provider>
+          </div>
+        </div>
+
+
       </v-app-bar>
     </div>
 
@@ -266,12 +279,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { balanceInterface, getBalance } from "./portal/lib/balance";
 import { connect } from "./portal/lib/connect";
 import { getTwin, getTwinID } from "./portal/lib/twin";
 import { accountInterface } from "./portal/store/state";
 import WelcomeWindow from "./portal/components/WelcomeWindow.vue";
+import FundsCard from "./portal/components/FundsCard.vue"
+
 interface SidenavItem {
   label: string;
   icon: string;
@@ -295,7 +310,7 @@ interface SidenavItem {
 }
 @Component({
   name: "Dashboard",
-  components: { WelcomeWindow },
+  components: { WelcomeWindow, FundsCard },
 })
 export default class Dashboard extends Vue {
   collapseOnScroll = true;
@@ -307,7 +322,24 @@ export default class Dashboard extends Vue {
   balance: balanceInterface = { free: 0, reserved: 0 };
   accounts: accountInterface[] = [];
   loadingAPI = true;
+
+
+  balanceFree: string | (string | null)[] = "";
+  balanceReserved: string | (string | null)[] = "";
+
+  @Watch("this.$route.query.balance") async onBalanceUpdate(
+    value: number,
+    oldValue: number
+  ) {
+    this.balanceFree = this.$route.query.balanceFree;
+    this.balanceReserved = this.$route.query.balanceReserved;
+    console.log(`balance went from ${oldValue}, to ${value}`);
+  }
   async mounted() {
+    this.$store.dispatch("portal/subscribeAccounts");
+    this.balanceFree = this.$route.query.balanceFree;
+    this.balanceReserved = this.$route.query.balanceReserved;
+
     this.accounts = this.$store.state.portal.accounts;
     if (this.$route.path === "/" && !this.$api) {
       Vue.prototype.$api = await connect(); //declare global variable api
@@ -353,10 +385,13 @@ export default class Dashboard extends Vue {
     } else if (this.$route.path !== "/") {
       this.loadingAPI = false;
     }
+    this.balanceFree = this.$route.query.balanceFree;
+    this.balanceReserved = this.$route.query.balanceReserved;
   }
   async unmounted() {
     console.log(`disconnecting from api`);
     await this.$api.disconnect();
+    this.$store.dispatch("portal/unsubscribeAccounts");
   }
   public filteredAccounts() {
     return this.accounts.filter((account) => account.active);
