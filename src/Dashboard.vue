@@ -499,15 +499,28 @@ export default class Dashboard extends Vue {
         }
       ],
     },  {
-      label: "Calculator",
+      label: "Calculators",
       icon: "calculator",
       prefix: "/calculator/",
       children: [
         {
-          label: "Calculator",
+          label: "Resource Pricing",
           path: "calculator",
-          icon: "calculator",
+          icon: "currency-usd",
           showBeforeLogIn: false,
+        },      
+        {
+          label: "Simulator",
+          path: "simulator/",
+          icon: "chart-scatter-plot",
+          showBeforeLogIn: false,
+          children: [
+            {
+              label: "Farming",
+              path: "farm",
+              icon: "lan-connect",
+            }
+          ],
         },
       ],
     },
