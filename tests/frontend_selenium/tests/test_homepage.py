@@ -5,6 +5,11 @@ from pages.dashboard import DashboardPage
 from utils.utils import generate_string
 from utils.base import Base
 
+#  Time required for the run (12 cases) is approximately 2 minutes.
+
+def get_seed():
+  return 'expect flame equal life foster riot march own drum gas portion spy'
+
 """
   Test Case: TC974 - Download polkadot{.js} extension
   Steps:
@@ -121,14 +126,13 @@ def test_create_account(browser):
   Result: Account should be listed on the connected account.
 """
 def test_import_account(browser):
-  seed = 'expect flame equal life foster riot march own drum gas portion spy' 
   dashboard_page = DashboardPage(browser)
   polka_page = PolkaPage(browser)
   user = generate_string()
   password = generate_string()
   dashboard_page.load()
   polka_page.authenticate()
-  polka_page.import_account(seed, user, password)
+  polka_page.import_account(get_seed(), user, password)
   assert  user in dashboard_page.accounts_list()
 
 

@@ -4,6 +4,10 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+
+"""
+This module contains Twin page elements.
+"""
 class TwinPage:
 
     Account=(By.XPATH,'//*[@id="app"]/div[1]/div[3]/div/div/div/div[2]/div')

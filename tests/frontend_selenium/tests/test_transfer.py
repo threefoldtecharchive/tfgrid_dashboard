@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pytest
 
+#  Time required for the run (10 cases) is approximately 12 minutes.
 
 """
   Test Case: TC982 - Navigate to transfer

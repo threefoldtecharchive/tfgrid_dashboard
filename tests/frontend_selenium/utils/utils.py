@@ -2,6 +2,14 @@ import random
 import string
 import requests
 
+def get_seed():
+      seed = ''
+      return seed
+
+def get_stellar_address():
+      address = ''
+      return address
+      
 # Generate Random 10 char (uppercase and digits) string 
 def generate_string():
     chars = string.ascii_uppercase + string.digits
@@ -12,10 +20,10 @@ def generate_leters():
     return (''.join(random.choice(chars) for _ in range(10)))
 
 def generate_ip():
-      first = ['1','2']
+      first = ['2']
       second=['','0','1','2','3','4','5']
       port=['16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32']
-      ip=''.join(random.choice(first))+''.join(random.choice(second))+''.join(random.choice(second))+'.'
+      ip=''.join(random.choice(first))+''.join(random.choice(second))+'.'
       ip+=''.join(random.choice(first))+''.join(random.choice(second)) +''.join(random.choice(second))+'.'
       ip+=''.join(random.choice(first))+''.join(random.choice(second))+''.join(random.choice(second))+'.'
       ip+=''.join(random.choice(first))+''.join(random.choice(second))+''.join(random.choice(second))+'/'

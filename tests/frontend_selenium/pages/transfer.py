@@ -29,11 +29,11 @@ class TransferPage:
     def navigate(self, user):
         self.browser.find_element(By.XPATH, "//*[contains(text(), '"+ user +"')]").click()
         self.browser.find_element(*self.transfer_page).click()
-        WebDriverWait(self.browser, 30).until(EC.presence_of_element_located((By.XPATH,'//*[@id="app"]/div[1]/div[3]/div/div[2]/div[1]/h3')))
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH,'//*[@id="app"]/div[1]/div[3]/div/div[2]/div[1]/h3')))
 
     def amount_TFT_valid_input(self,cases):
         self.browser.find_element(*self.add_balance).click()
-        WebDriverWait(self.browser, 15).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[1]/div[1]/div[2]/button/span')))
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[1]/div[1]/div[2]/button/span')))
         self.browser.find_element(*self.receipient_textfield).send_keys('5FWW1F7XHaiRgPEqJdkv9nVgz94AVKXkTKNyfbLcY4rqpaNM')
         self.browser.find_element(*self.amount_textfield).send_keys(Keys.BACKSPACE)
         self.browser.find_element(*self.amount_textfield).send_keys(cases)
@@ -43,7 +43,7 @@ class TransferPage:
     
     def amount_TFT_invalid_input(self,cases):
         self.browser.find_element(*self.add_balance).click()
-        WebDriverWait(self.browser, 15).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[1]/div[1]/div[2]/button/span')))
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[1]/div[1]/div[2]/button/span')))
         self.browser.find_element(*self.amount_textfield).send_keys(Keys.BACKSPACE)
         self.browser.find_element(*self.amount_textfield).send_keys(cases)
     
@@ -52,11 +52,12 @@ class TransferPage:
         self.browser.find_element(By.XPATH,'//*[@id="app"]/div[1]/div[3]/div/div[2]/div[1]/h3').click()
  
     def recipient_list(self):
-        #WebDriverWait(self.browser, 15).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div[2]/div[3]/div/div[2]/div[2]/form/div[1]/div/div[1]')))
         self.browser.find_element(*self.list).click()
         self.browser.find_element(*self.address).click()
 
     def recipient_valid_input(self,receipient_cases,cases):
+        self.browser.find_element(*self.add_balance).click()
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[1]/div[1]/div[2]/button/span')))
         self.browser.find_element(*self.receipient_textfield).send_keys(receipient_cases)
         self.browser.find_element(*self.amount_textfield).send_keys(Keys.BACKSPACE)
         self.browser.find_element(*self.amount_textfield).send_keys(cases)
@@ -65,6 +66,8 @@ class TransferPage:
         return element
 
     def transfer_TFTs_on_TFChain(self,cases1,cases2):
+        self.browser.find_element(*self.add_balance).click()
+        WebDriverWait(self.browser, 30).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[1]/div[1]/div[2]/button/span')))
         self.browser.find_element(*self.receipient_textfield).send_keys(cases1)
         self.browser.find_element(*self.amount_textfield).send_keys(Keys.BACKSPACE)
         self.browser.find_element(*self.amount_textfield).send_keys(cases2)

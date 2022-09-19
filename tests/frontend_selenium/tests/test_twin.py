@@ -6,6 +6,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+#  Time required for the run (18 cases) is approximately 17 minutes.
+
 """
   Test Case: TC924 - Accept terms and conditions
   Steps:
