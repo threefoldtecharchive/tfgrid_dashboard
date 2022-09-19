@@ -1,9 +1,9 @@
 <template>
   <v-container fluid>
-
     <v-container v-if="!proposals.active.length && !proposals.inactive.length">
       <v-card class="my-3 pa-3 d-flex justify-center">
-        <h3>No proposals at this time</h3>
+        <v-progress-circular indeterminate v-if="loadingProposals"/>
+        <h3 v-else>No proposals at this time</h3>
       </v-card>
     </v-container>
     <v-container v-else>
@@ -18,7 +18,7 @@
                 No Active proposals at this time
               </h2>
               <h2 v-else>
-                Howdy {{ $route.query.accountName }}, you can now vote on proposals!
+              {{ $route.query.accountName }}, you can now vote on proposals!
               </h2>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
@@ -275,9 +275,12 @@ export default class DaoView extends Vue {
   rules = {
     select: [(v: string) => !!v || "required field"],
   };
+  loadingProposals = false;
+
   async mounted() {
     if (this.$api) {
       this.id = this.$route.query.twinID;
+      this.loadingProposals = true;
       this.proposals = await getProposals(this.$api);
       this.activeProposals = this.proposals.active;
       this.inactiveProposals = this.proposals.inactive;
@@ -286,6 +289,7 @@ export default class DaoView extends Vue {
         { title: "Executable", content: this.inactiveProposals },
       ];
       this.farms = await getFarm(this.$api, parseFloat(`${this.id}`));
+      this.loadingProposals = false;
     } else {
       this.$router.push({
         name: "accounts",
@@ -373,7 +377,7 @@ export default class DaoView extends Vue {
                       { title: "Archived", content: proposals.inactive },
                     ];
                   }
-                );
+                )
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Vote failed");
                 this.loadingVote = false;

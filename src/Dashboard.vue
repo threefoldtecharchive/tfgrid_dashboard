@@ -11,53 +11,83 @@
         >Threefold Chain</v-toolbar-title>
 
         <v-spacer></v-spacer>
-        <v-btn icon @click="toggle_dark_mode">
-          <v-icon>mdi-theme-light-dark</v-icon>
-        </v-btn>
-        <v-card
-          class="mx-2 px-1"
-          color="transparent"
-          outlined
-          v-if="$store.state.portal.accounts.length === 0"
-        >
-          <v-btn icon>
-            <v-icon
-              class=""
-              color="#F44336"
-              @click="$store.dispatch('portal/subscribeAccounts')"
-              >mdi-lan-disconnect</v-icon
+        <div class="d-flex">
+          <FundsCard
+          v-if="$route.path !='/' && $route.query.balanceFree"
+          :balanceFree.sync='balanceFree'
+          :balanceReserved.sync='balanceReserved'
+          @update:balanceFree="$route.query.balanceFree=$event"
+          @update:balanceReserved="$route.query.balanceReserved=$event"
+        />
+          <div class="d-flex" style="align-items: center;">
+            <v-btn
+            icon
+            @click="toggle_dark_mode"
+          >
+            <v-icon>mdi-theme-light-dark</v-icon>
+          </v-btn>
+            <v-card
+            class="mx-2 px-1"
+            color="transparent"
+            outlined
+            v-if="$store.state.portal.accounts.length === 0"
+          >
+            <v-btn icon>
+              <v-icon
+                class=""
+                color="#F44336"
+                @click="$store.dispatch('portal/subscribeAccounts')"
+              >mdi-lan-disconnect</v-icon>
+            </v-btn>
+          </v-card>
+          <v-card
+            outlined
+            v-else
+            color="transparent"
+          >
+            <v-btn icon>
+              <v-tooltip>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                    color="#4CAF50"
+                    class=""
+                    @click="disconnectWallet"
+                    v-bind="attrs"
+                    v-on="on"
+                  >mdi-lan-connect</v-icon>
+                </template>
+                <span>Disconnect Wallet</span>
+              </v-tooltip>
+            </v-btn>
+          </v-card>
+          <v-theme-provider root>
+          <v-card v-if="isAccountSelected()" style="width: max-content;">
+            <v-card-text
+              style="padding: 10px 0px 10px 30px;"
+              v-for="account in filteredAccounts()"
+              :key="account.address"
             >
-          </v-btn>
-        </v-card>
-        <v-card
-          outlined
-          v-else
-          color="transparent"
-        >
-          <v-btn icon>
-            <v-tooltip>
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                  color="#4CAF50"
-                  class=""
-                  @click="disconnectWallet"
-                  v-bind="attrs"
-                  v-on="on"
-                  >mdi-lan-connect</v-icon
+              <v-row class="d-flex align-center mx-0">
+                <p
+                  class="font-weight-black"
+                  style="font-size: 15px;"
+                >{{ account.meta.name }}</p>
+
+                <v-btn
+                  icon
+                  class="mr-2"
+                  @click="redirectToHomePage"
                 >
-              </template>
-              <span>Disconnect Wallet</span>
-            </v-tooltip>
-          </v-btn>
-        </v-card>
-        <v-btn
-          icon
-          class="mr-2"
-          @click="redirectToHomePage"
-          v-if="isAccountSelected()"
-        >
-          <v-icon>mdi-logout theme-light-dark</v-icon>
-        </v-btn>
+                  <v-icon>mdi-logout theme-light-dark</v-icon>
+                </v-btn>
+              </v-row>
+            </v-card-text>
+          </v-card>
+          </v-theme-provider>
+          </div>
+        </div>
+
+
       </v-app-bar>
     </div>
 
@@ -90,14 +120,14 @@
           </v-btn>
         </v-list-item>
         <v-divider></v-divider>
-        <v-list-group
-          v-model="route.active"
-          v-for="route in routes"
-          :key="route.label"
-          class="white--text"
-          :style="mini ? '' : 'margin: 10px !important;'"
-        >
-          <template v-slot:activator>
+        <template v-for="route in routes">
+          <v-list-item
+            :class="{ 'mr-2 ml-2': !mini }"
+            :key="route.label"
+            v-if="!route.children.length"
+            :to="route.hyperlink ? undefined : route.prefix"
+            @click="route.hyperlink ? openLink(route.prefix) : undefined"
+          >
             <v-list-item-icon>
               <v-icon class="white--text" v-text="'mdi-' + route.icon" />
             </v-list-item-icon>
@@ -108,36 +138,41 @@
                 </strong>
               </v-list-item-title>
             </v-list-item-content>
-          </template>
+          </v-list-item>
+          <v-list-group
+            v-else
+            :active="route.active"
+            :key="route.label"
+            v-model="route.active"
+            class="white--text"
+            :style="mini ? '' : 'margin: 10px !important;'"
+          >
+            <template v-slot:activator>
+              <v-list-item-icon>
+                <v-icon
+                  class="white--text"
+                  v-text="'mdi-' + route.icon"
+                />
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title class="white--text">
+                  <strong>
+                    {{ route.label }}
+                  </strong>
+                </v-list-item-title>
+              </v-list-item-content>
+            </template>
 
-          <div v-if="route.prefix === '/'">
-            <v-list-group
-              :value="account.active"
-              no-action
-              sub-group
-              v-for="account in filteredAccounts()"
-              :key="account.address"
-            >
-              <template v-slot:activator>
-                <v-list-item-content dark>
-                  <v-list-item-title
-                    class="white--text"
-                    v-text="account.meta.name"
-                  >
-                  </v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-icon>
-                  <v-icon
-                    class="white--text"
-                    v-text="'mdi-' + route.children[0].icon"
-                  />
-                </v-list-item-icon>
-              </template>
-
-              <v-list-item
-                v-for="subchild in getRouteSubChildren(route)"
-                :key="subchild.label"
-                @click="
+            <div v-if="route.prefix === '/'">
+              <div 
+                v-for="account in filteredAccounts()"
+                :key="account.address"
+              >
+                <v-list-item
+                  :active="account.active"
+                  v-for="subchild in route.children"
+                  :key="subchild.label"
+                  @click="
                   redirectToSubchild(
                     subchild.label,
                     subchild.path || '',
@@ -145,39 +180,52 @@
                     account.meta.name
                   )
                 "
-                class="white--text pl-16"
+                  class="white--text pl-16"
+                >
+                  <v-list-item-icon>
+                    <v-icon
+                      class="white--text"
+                      v-text="'mdi-' + subchild.icon"
+                    />
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      class="white--text text-capitalize"
+                      v-text="subchild.label"
+                    >
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </div>
+            </div>
+            <div v-else>
+              <v-list-item
+                active
+                v-for="child in route.children"
+                :key="child.label"
+                :to="route.prefix + child.path"
+                class="pl-16"
               >
-                <v-list-item-icon>
-                  <v-icon class="white--text" v-text="'mdi-' + subchild.icon" />
+                <v-list-item-icon
+                  class="mr-4"
+                  v-if="child.icon"
+                >
+                  <v-icon
+                    class="white--text"
+                    v-text="'mdi-' + child.icon"
+                  />
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title
-                    class="white--text text-capitalize"
-                    v-text="subchild.label"
+                    class="white--text"
+                    v-text="child.label"
                   >
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-            </v-list-group>
-          </div>
-          <div v-else>
-            <v-list-item
-              active
-              v-for="child in route.children"
-              :key="child.label"
-              :to="route.prefix + child.path"
-              class="pl-16"
-            >
-              <v-list-item-icon class="mr-4" v-if="child.icon">
-                <v-icon class="white--text" v-text="'mdi-' + child.icon" />
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title class="white--text" v-text="child.label">
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </div>
-        </v-list-group>
+            </div>
+          </v-list-group>
+        </template>
       </v-list>
     </v-navigation-drawer>
     <v-dialog v-model="loadingAPI" persistent class="loadingDialog">
@@ -190,7 +238,7 @@
       </div>
     </v-dialog>
 
-    <div :style="'padding-left:' + (mini ? 0 : '300px')">
+    <div :style="'padding-left:' + (mini ? '56px' : '300px')">
       <router-view />
     </div>
 
@@ -205,17 +253,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { balanceInterface, getBalance } from "./portal/lib/balance";
 import { connect } from "./portal/lib/connect";
 import { getTwin, getTwinID } from "./portal/lib/twin";
 import { accountInterface } from "./portal/store/state";
 import WelcomeWindow from "./portal/components/WelcomeWindow.vue";
+import FundsCard from "./portal/components/FundsCard.vue"
+
 interface SidenavItem {
   label: string;
   icon: string;
   prefix: string;
   active?: boolean;
+  hyperlink?: boolean;
   children: Array<{
     label?: string;
     path?: string;
@@ -233,7 +284,7 @@ interface SidenavItem {
 }
 @Component({
   name: "Dashboard",
-  components: { WelcomeWindow },
+  components: { WelcomeWindow, FundsCard },
 })
 export default class Dashboard extends Vue {
   collapseOnScroll = true;
@@ -245,7 +296,24 @@ export default class Dashboard extends Vue {
   balance: balanceInterface = { free: 0, reserved: 0 };
   accounts: accountInterface[] = [];
   loadingAPI = true;
+
+
+  balanceFree: string | (string | null)[] = "";
+  balanceReserved: string | (string | null)[] = "";
+
+  @Watch("this.$route.query.balance") async onBalanceUpdate(
+    value: number,
+    oldValue: number
+  ) {
+    this.balanceFree = this.$route.query.balanceFree;
+    this.balanceReserved = this.$route.query.balanceReserved;
+    console.log(`balance went from ${oldValue}, to ${value}`);
+  }
   async mounted() {
+    this.$store.dispatch("portal/subscribeAccounts");
+    this.balanceFree = this.$route.query.balanceFree;
+    this.balanceReserved = this.$route.query.balanceReserved;
+
     this.accounts = this.$store.state.portal.accounts;
     if (this.$route.path === "/" && !this.$api) {
       Vue.prototype.$api = await connect(); //declare global variable api
@@ -266,25 +334,41 @@ export default class Dashboard extends Vue {
       this.$vuetify.theme.dark = true;
       localStorage.setItem("dark_theme", this.$vuetify.theme.dark.toString());
     }
-    this.$root.$on('selectAccount', () => { 
+    this.$root.$on("selectAccount", () => {
       this.routes[0].active = true;
       this.mini = false;
-    })
+    });
+
+    this.$root.$on("closeSidebar", () => {
+      this.mini = !this.mini;
+      if (this.mini){
+        this.routes[0].active = false;
+        this.routes[1].active = false;
+      }
+    });
   }
+
+  openLink(url: string): void {
+    window.open(url, "_blank");
+  }
+
   updated() {
     this.accounts = this.$store.state.portal.accounts;
-    if (this.$api) {
+    if (this.$api && this.$route.path == "/") {
+      this.loadingAPI = false;
+    } else if (this.$route.path !== "/") {
       this.loadingAPI = false;
     }
+    this.balanceFree = this.$route.query.balanceFree;
+    this.balanceReserved = this.$route.query.balanceReserved;
   }
   async unmounted() {
     console.log(`disconnecting from api`);
     await this.$api.disconnect();
+    this.$store.dispatch("portal/unsubscribeAccounts");
   }
   public filteredAccounts() {
-    return this.accounts.filter(
-      (account) => account.active
-    );
+    return this.accounts.filter((account) => account.active);
   }
   public isAccountSelected() {
     if (this.$route.query.accountName) {
@@ -302,6 +386,8 @@ export default class Dashboard extends Vue {
     }
   }
   public redirectToHomePage() {
+    this.accounts.map((account) => account.active = false);
+    this.routes[0].active = false;
     if (this.$route.path !== "/") {
       this.$router.push({
         name: "accounts",
@@ -357,41 +443,41 @@ export default class Dashboard extends Vue {
       label: "Portal",
       icon: "account-convert-outline",
       prefix: "/",
+      active: this.mini ? false: true,
       children: [
         {
-          icon: "account",
-          showBeforeLogIn: true,
-          children: [
-            {
-              label: "twin",
-              path: "account-twin",
-              icon: "account-supervisor-outline",
-            },
-            {
-              label: "swap",
-              path: "account-swap",
-              icon: "swap-horizontal",
-            },
-            {
-              label: "transfer",
-              path: "account-transfer",
-              icon: "account-arrow-right-outline",
-            },
-            { label: "farms", path: "account-farms", icon: "silo" },
-            {
-              label: "dedicated nodes",
-              path: "account-nodes",
-              icon: "resistor-nodes",
-            },
-            { label: "dao", path: "account-dao", icon: "note-check-outline" },
-          ],
+          label: "twin",
+          path: "account-twin",
+          icon: "account-supervisor-outline",
+          showBeforeLogIn: false,
         },
+        {
+          label: "swap",
+          path: "account-swap",
+          icon: "swap-horizontal",
+          showBeforeLogIn: false,
+        },
+        {
+          label: "transfer",
+          path: "account-transfer",
+          icon: "account-arrow-right-outline",
+          showBeforeLogIn: false,
+        },
+        { label: "farms", path: "account-farms", icon: "silo", showBeforeLogIn: false, },
+        {
+          label: "dedicated nodes",
+          path: "account-nodes",
+          icon: "resistor-nodes",
+          showBeforeLogIn: false,
+        },
+        { label: "dao", path: "account-dao", icon: "note-check-outline", showBeforeLogIn: false, },
       ],
     },
     {
       label: "Explorer",
       icon: "database-search-outline",
       prefix: "/explorer/",
+      active: this.mini ? false: true,
       children: [
         {
           label: "Statistics",
@@ -425,13 +511,29 @@ export default class Dashboard extends Vue {
         },
       ],
     },
+    {
+      label: "Bootstrap",
+      icon: "chart-scatter-plot",
+      prefix: "/other/bootstrap",
+      children: [],
+    },
+    {
+      label: "Hub",
+      icon: "chart-scatter-plot",
+      prefix: "https://hub.grid.tf/",
+      hyperlink: true,
+      children: [],
+    },
+    {
+      label: "Playground",
+      icon: "chart-scatter-plot",
+      prefix: window.configs.PLAYGROUND_URL,
+      hyperlink: true,
+      children: [],
+    },
   ];
-  getRouteSubChildren(route: SidenavItem) {
-    return route.children[0].children || [];
-  }
   toggle() {
-    this.mini = !this.mini;
-    if (this.mini) this.routes[1].active = false;
+    this.$root.$emit('closeSidebar');
   }
 }
 </script>
@@ -462,5 +564,14 @@ export default class Dashboard extends Vue {
 
 .v-list .v-list-item--active {
   border-radius: 20px;
+}
+.theme--dark.v-card > .v-card__text, .theme--dark.v-card > .v-card__subtitle {
+    color: rgb(255, 255, 255);
+}
+.theme--light.v-card > .v-card__text, .theme--light.v-card > .v-card__subtitle {
+    color: rgb(0, 0, 0);
+}
+.theme--light.v-btn.v-btn--icon {
+    color: rgba(0, 0, 0);
 }
 </style>

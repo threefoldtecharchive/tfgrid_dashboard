@@ -23,17 +23,20 @@
         ]"
         ></v-combobox>
         <v-text-field
+         @paste.prevent
           v-model="amount"
           label="Amount (TFT)"
           type="number"
           onkeydown="javascript: return event.keyCode == 69 || /^\+$/.test(event.key) ? false : true" 
           :rules="[
           () => !!amount || 'This field is required',
+          () => (amount.toString().split('.').length > 1 ? amount.toString().split('.')[1].length <= 3 : true) || 'Amount must have 3 decimals only',
           () => amount > 0 || 'Amount cannot be negative or 0',
           () => amount < parseFloat(balance) || 'Amount cannot exceed balance',
         ]"
         >
         </v-text-field>
+        <span class="fee">0.01 transaction fee will be deducted</span>
       </v-form>
       <v-card-actions>
         <v-spacer> </v-spacer>
@@ -180,5 +183,9 @@ export default class TransferView extends Vue {
 <style scoped>
 .theme--dark.v-application a {
   color: white;
+}
+.fee{
+  font-size: .7rem;
+  color: grey;
 }
 </style>

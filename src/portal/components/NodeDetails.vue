@@ -39,7 +39,7 @@
                     Disk Resource Unit (HDD)
                   </v-list-item-title>
                 </v-list-item-content>
-                {{ byteToGB(node.resources.hru) }} GB
+                {{ node.resources.hru | toTeraOrGigaOrPeta }}
               </v-list-item>
               <v-divider />
 
@@ -49,7 +49,7 @@
                     Disk Resource Unit (SSD)
                   </v-list-item-title>
                 </v-list-item-content>
-                {{ byteToGB(node.resources.sru) }} GB
+                {{ node.resources.sru | toTeraOrGigaOrPeta }}
               </v-list-item>
               <v-divider />
 
@@ -57,7 +57,7 @@
                 <v-list-item-content>
                   <v-list-item-title> Memory Resource Unit </v-list-item-title>
                 </v-list-item-content>
-                {{ byteToGB(node.resources.mru) }} GB
+                {{ node.resources.mru | toTeraOrGigaOrPeta }}
               </v-list-item>
             </v-list>
           </v-col>

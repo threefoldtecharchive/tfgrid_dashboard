@@ -6,6 +6,8 @@ import PortalView from "@/portal/Portal.vue";
 import CalculatorView from "@/calculator/Calculator.vue";
 import { portalRouter } from "@/portal/router";
 import { calculatorRouter } from "@/calculator/router";
+import OtherView from "@/other/OtherView.vue";
+import { otherRoutes } from "@/other/router";
 
 Vue.use(VueRouter);
 
@@ -24,7 +26,12 @@ const routes: Array<RouteConfig> = [
     component: CalculatorView,
     path: "/calculator",
     children: calculatorRouter,
-  }
+  }, 
+  {
+    component: OtherView,
+    path: "/other",
+    children: otherRoutes,
+  },
 ];
 
 const router = new VueRouter({
