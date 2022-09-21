@@ -295,7 +295,7 @@ export default class TransferView extends Vue {
                 section === "tftBridgeModule" &&
                 method === "BurnTransactionCreated"
               ) {
-                this.$toasted.show("Withdraw sumbitted!");
+                this.$toasted.show("Withdraw submitted!");
                 this.openWithdrawDialog = false;
                 getBalance(this.$api, this.address).then(
                   (balance: balanceInterface) => {
