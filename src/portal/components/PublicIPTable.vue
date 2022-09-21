@@ -47,6 +47,7 @@
                     v-if="loadingDelete && loading === i"
                     indeterminate
                     color="primary"
+                    class="d-flex mx-auto"
                   ></v-progress-circular>
                   <DeleteIP
                     v-else
