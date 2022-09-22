@@ -432,7 +432,7 @@ export default class FarmsView extends Vue {
   }
   deletePublicIP(publicIP: any) {
     this.loadingDeleteIP = true;
-    deleteIP(
+    return deleteIP(
       this.$route.params.accountID,
       this.$api,
       this.expanded[0].id,
