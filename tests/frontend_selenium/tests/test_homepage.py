@@ -2,13 +2,10 @@ import pytest
 from random import randint
 from pages.polka import PolkaPage
 from pages.dashboard import DashboardPage
-from utils.utils import generate_string
+from utils.utils import generate_string, get_seed
 from utils.base import Base
 
 #  Time required for the run (12 cases) is approximately 2 minutes.
-
-def get_seed():
-  return 'expect flame equal life foster riot march own drum gas portion spy'
 
 """
   Test Case: TC974 - Download polkadot{.js} extension
@@ -104,15 +101,12 @@ def test_create_account(browser):
   #Create instance
   dashboard_page = DashboardPage(browser)
   polka_page = PolkaPage(browser)
-  #Generate user
   user = generate_string()
   password = generate_string()
-  #Test steps
   dashboard_page.load()
   polka_page.authenticate()
   polka_page.add_account(user, password)
-  #assertion
-  assert  user in dashboard_page.accounts_list()
+  assert user in dashboard_page.accounts_list()
 
  
 """
@@ -133,7 +127,7 @@ def test_import_account(browser):
   dashboard_page.load()
   polka_page.authenticate()
   polka_page.import_account(get_seed(), user, password)
-  assert  user in dashboard_page.accounts_list()
+  assert user in dashboard_page.accounts_list()
 
 
 """

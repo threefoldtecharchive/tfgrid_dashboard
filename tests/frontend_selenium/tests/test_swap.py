@@ -4,8 +4,8 @@ from pages.polka import PolkaPage
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-#  Time required for the run (11 cases) is approximately 4 minutes.
+import time
+#  Time required for the run (11 cases) is approximately 3 minutes.
 
 """
   Test Case: TC1112 Navigate swap
@@ -270,7 +270,9 @@ def test_check_withdraw(browser):
   swap_page.navigate_to_swap(user)
   swap_page.transfer_chain()
   balance = browser.find_element(By.XPATH,'//*[@id="app"]/div[1]/div[1]/header/div/div[3]/div[1]/div[1]/div[1]/button/span/p[1]').text
+  min_balance = float(balance)-1
+  max_balance = float(balance)-1.1
   swap_page.check_withdraw()
   polka_page.authenticate_with_pass(password)
-  WebDriverWait(browser, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Withdraw accepted!')]" )))
-  assert (float(balance)-1.001) == float(browser.find_element(By.XPATH,'//*[@id="app"]/div[1]/div[1]/header/div/div[3]/div[1]/div[1]/div[1]/button/span/p[1]').text)
+  WebDriverWait(browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Withdraw submitted!')]" )))
+  assert format(float(min_balance),'.3f') <= format(float(browser.find_element(By.XPATH,'//*[@id="app"]/div[2]/div[1]/header/div/div[3]/div[1]/div[1]/div[1]/button/span/p[1]').text),'.3f') >= format(float(max_balance),'.3f')  

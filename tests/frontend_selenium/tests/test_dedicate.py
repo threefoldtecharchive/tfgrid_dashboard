@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pytest
 
-#  Time required for the run (12 cases) is approximately 4 minutes.
+#  Time required for the run (12 cases) is approximately 3 minutes.
 
 """
   Test Case: TC1138 - Navigate to dedicate node
@@ -49,14 +49,14 @@ def test_search_by_valid_name_address(browser):
   locations = dedicate_page.get_node_location()
   for i in range (len(ids)):
     dedicate_page.search_nodes(ids[i])
-    assert  len(browser.find_elements(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr')) == 1
+    assert  len(browser.find_elements(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr')) == 1
   for i in range (len(locations)):
     dedicate_page.search_nodes(locations[i])
-    assert  len(browser.find_elements(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr')) >= 1
+    assert  len(browser.find_elements(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr')) >= 1
     dedicate_page.search_nodes(locations[i].lower())
-    assert  len(browser.find_elements(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr')) >= 1
+    assert  len(browser.find_elements(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr')) >= 1
     dedicate_page.search_nodes(locations[i].upper())
-    assert  len(browser.find_elements(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr')) >= 1
+    assert  len(browser.find_elements(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr')) >= 1
 
 
 """
@@ -215,8 +215,9 @@ def test_sort_node_price(browser):
   polka_page.authenticate()
   polka_page.import_account(get_seed(),user,password)
   dedicate_page.navigate(user)
-  assert dedicate_page.sort_node_price() == sorted(dedicate_page.get_node_price(), reverse=False) 
-  assert dedicate_page.sort_node_price() == sorted(dedicate_page.get_node_price(), reverse=True)
+  price = dedicate_page.get_node_price()
+  assert dedicate_page.sort_node_price() == sorted(price, reverse=False) 
+  assert dedicate_page.sort_node_price() == sorted(price, reverse=True)
 
 
 """
@@ -237,13 +238,13 @@ def test_node_details(browser):
   dedicate_page.navigate(user)
   nodes = dedicate_page.node_details()
   for i in range(len(nodes)):
-    assert str(dedicate_page.get_node_cru()[i]) in nodes[i][0]
-    assert str(dedicate_page.get_node_hru()[i]/1024)[0] in nodes[i][1]
-    assert str(dedicate_page.get_node_sru()[i]) in nodes[i][2]
-    assert str(dedicate_page.get_node_mru()[i]) in nodes[i][3]
-    assert dedicate_page.get_node_location()[i] in nodes[i][4]
-    assert dedicate_page.get_node_city()[i] in nodes[i][5]
-    assert str(dedicate_page.get_farm_ips(i)) in nodes[i][6]
+    assert str(dedicate_page.get_node_cru()[i]) in nodes[i][1]
+    assert str(dedicate_page.get_node_hru()[i]/1024)[0] in nodes[i][2]
+    assert str(dedicate_page.get_node_sru()[i]) in nodes[i][3]
+    assert str(dedicate_page.get_node_mru()[i]) in nodes[i][4]
+    assert dedicate_page.get_node_location()[i] in nodes[i][5]
+    assert dedicate_page.get_node_city()[i] in nodes[i][6]
+    assert str(dedicate_page.get_farm_ips(nodes[i][0])) in nodes[i][7]
 
 
 """
@@ -268,11 +269,16 @@ def test_reserve_node(browser):
     id = dedicate_page.reserve_node()
     assert dedicate_page.get_dedicate_status(id) == False
     polka_page.authenticate_with_pass(password)
-    WebDriverWait(browser, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'node "+ id +" reserved')]")))
-    assert dedicate_page.get_dedicate_status(id) == True
+    WebDriverWait(browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Transaction succeeded: Node "+ str(id) +" reserved')]")))
+    status = 0
+    while(status==0):
+      status = dedicate_page.get_dedicate_status(id)
+    assert dedicate_page.get_dedicate_status(id) == dedicate_page.twin_id
     dedicate_page.unreserve_node()
     polka_page.authenticate_with_pass(password)
-    WebDriverWait(browser, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'node "+ id +" unreserved')]")))
+    WebDriverWait(browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Transaction succeeded: Node "+ str(id) +" Unreserved')]")))
+    while(status!=0):
+      status = dedicate_page.get_dedicate_status(id)
     assert dedicate_page.get_dedicate_status(id) == False
   else:
     pytest.skip("Can't test as there isn't a free dedicated node.")

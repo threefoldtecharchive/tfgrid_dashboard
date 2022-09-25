@@ -20,8 +20,8 @@ class DedicatePage:
     mru = (By.XPATH , "//*[contains(text(), 'MRU (GB)')]")
     sru = (By.XPATH , "//*[contains(text(), 'SRU (GB)')]")
     price = (By.XPATH , "//*[contains(text(), 'Price (USD)')]")
-    search_bar = (By.XPATH ,'/html/body/div[1]/div[1]/div[3]/div/div[2]/div[1]/div/div[1]/div/input')
-    node_table = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr')
+    search_bar = (By.XPATH ,'/html/body/div[1]/div[1]/div[3]/div/div/div[1]/div/div[1]/div/input')
+    node_table = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr')
 
     def __init__(self, browser):
         self.browser = browser
@@ -34,9 +34,11 @@ class DedicatePage:
         self.browser.get(Base.base_url)
       
     def navigate(self, user):
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Connected Accounts')]")))
         self.browser.find_element(By.XPATH, "//*[contains(text(), '"+ user +"')]").click()
+        self.twin_id = int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[1]/div[2]/div[1]/div[1]').text[4:])
         self.browser.find_element(*self.dedicate_node).click()
-        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH,'//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr[1]/td[1]/button')))
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH,'//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr[1]/td[1]/button')))
     
     def search_nodes(self, node):
         self.browser.find_element(*self.search_bar).send_keys(Keys.CONTROL + "a")
@@ -84,69 +86,73 @@ class DedicatePage:
         for i in range(len(self.node_list)):
             sru.append(math.ceil(self.node_list[i]['total_resources']['sru']/1073741824))
         return sru
-    
+
     def get_node_price(self):
-        #to be modified
-        return ['103.27 *','103.27 *','103.27 *']
+        price = []
+        for i in range(1, len(self.browser.find_elements(*self.node_table))+1):
+            price.append(str(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[8]').text))
+        return price
 
     def get_farm_ips(self, node_id):
-        farm_id = str(self.node_list[node_id]['farmId'])
+        for i in range(len(self.node_list)):
+            if self.node_list[i]['nodeId'] == node_id:
+                farm_id = str(self.node_list[i]['farmId'])
         r = requests.post('https://gridproxy.dev.grid.tf/farms?farm_id='+ farm_id)
         farm_list = r.json()
         return len(farm_list[0]['publicIps'])
     
     def get_dedicate_status(self, node_id):
-        r = requests.post('https://gridproxy.dev.grid.tf/nodes/'+ node_id)
+        r = requests.post('https://gridproxy.dev.grid.tf/nodes/'+ str(node_id))
         dedicate_status = r.json()
-        return (dedicate_status['dedicated'])
+        return (dedicate_status['rentedByTwinId'])
     
     def sort_node_id(self):
         self.browser.find_element(*self.node_id).click()
         node_id = []
         for i in range(1, len(self.browser.find_elements(*self.node_table))+1):
-            node_id.append(int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[2]').text))
+            node_id.append(int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[2]').text))
         return node_id
 
     def sort_node_location(self):
         self.browser.find_element(*self.location).click()
         locations = []
         for i in range(1, len(self.browser.find_elements(*self.node_table))+1):
-            locations.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[3]').text)
+            locations.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[3]').text)
         return locations
 
     def sort_node_cru(self):
         self.browser.find_element(*self.cru).click()
         cru = []
         for i in range(1, len(self.browser.find_elements(*self.node_table))+1):
-            cru.append(int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[4]').text))
+            cru.append(int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[4]').text))
         return cru
 
     def sort_node_hru(self):
         self.browser.find_element(*self.hru).click()
         hru = []
         for i in range(1, len(self.browser.find_elements(*self.node_table))+1):
-            hru.append(int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[5]').text))
+            hru.append(int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[5]').text))
         return hru
 
     def sort_node_mru(self):
         self.browser.find_element(*self.mru).click()
         mru = []
         for i in range(1, len(self.browser.find_elements(*self.node_table))+1):
-            mru.append(int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[6]').text))
+            mru.append(int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[6]').text))
         return mru
 
     def sort_node_sru(self):
         self.browser.find_element(*self.sru).click()
         sru = []
         for i in range(1, len(self.browser.find_elements(*self.node_table))+1):
-            sru.append(int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[7]').text))
+            sru.append(int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[7]').text))
         return sru
 
     def sort_node_price(self):
         self.browser.find_element(*self.price).click()
         price = []
         for i in range(1, len(self.browser.find_elements(*self.node_table))+1):
-            price.append(str(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[8]').text))
+            price.append(str(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[8]').text))
         return price
     
     def node_details(self):
@@ -154,30 +160,31 @@ class DedicatePage:
         nodes = []
         for i in range(1, len(self.browser.find_elements(*self.node_table))+1):
             details = []
-            self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[1]/button').click()
-            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[1]/div/div[2]/div/div/div[1]').text)
-            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[1]/div/div[2]/div/div/div[2]').text)
-            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[1]/div/div[2]/div/div/div[3]').text)
-            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[1]/div/div[2]/div/div/div[4]').text)
-            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[2]/div/div[2]/div/div/div[1]').text)
-            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[2]/div/div[2]/div/div/div[2]').text)
-            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[3]/div/div[2]/div/div/div').text)
-            self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[1]/button').click()
+            self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[1]/button').click()
+            details.append(int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[2]').text))
+            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[1]/div/div[2]/div/div/div[1]').text)
+            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[1]/div/div[2]/div/div/div[2]').text)
+            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[1]/div/div[2]/div/div/div[3]').text)
+            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[1]/div/div[2]/div/div/div[4]').text)
+            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[2]/div/div[2]/div/div/div[1]').text)
+            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[2]/div/div[2]/div/div/div[2]').text)
+            details.append(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i+1) +']/td/div/div[3]/div/div[2]/div/div/div').text)
+            self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[1]/button').click()
             nodes.append(details)
         return nodes
 
     def check_avail_dedicate(self):
-        if (len(self.browser.find_elements(By.XPATH, "//*[contains(text(), 'Taken')]"))!=len(self.node_list)):
+        if ( len(self.browser.find_elements(By.XPATH, "//*[contains(text(), 'Taken')]")) != len(self.node_list) ):
             return True
         return False
 
     def reserve_node(self):
         for i in range(1, len(self.browser.find_elements(*self.node_table))+1):
-            if ((self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[9]/div/button').text) == ' Reserve'):
-                self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[9]/div/button').click()
-                WebDriverWait(self.browser, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'reserved')]")))
-                return (int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div[2]/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[2]').text))
+            if ((self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[9]/div/button').text) == 'Reserve'):
+                self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[9]/div/button').click()
+                return (int(self.browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr['+ str(i) +']/td[2]').text))
 
     def unreserve_node(self):
-        self.browser.find_elements(By.XPATH, "//*[contains(text(), 'Unreserve')]").click()
-        self.browser.find_elements(By.XPATH, "//*[contains(text(), 'Yes')]").click()
+        self.browser.find_element(By.XPATH, "//*[contains(text(), 'Unreserve')]").click()
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_all_elements_located((By.XPATH, "//*[contains(text(), 'Are you sure you want to unreserve this dedicated node?')]")))
+        self.browser.find_element(By.XPATH, "//*[@id='app']/div[4]/div/div/div[3]/button[1]").click()

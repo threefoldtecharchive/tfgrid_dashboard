@@ -64,6 +64,7 @@ class SwapPage:
         self.browser.find_element(*self.withdraw).click()
         self.browser.find_element(*self.stellar_address).send_keys(get_stellar_address())
         self.browser.find_element(*self.amount_tft).send_keys(0.001)
+        WebDriverWait(self.browser, 30).until(EC.element_to_be_clickable(self.submit_button))
         return self.browser.find_element(*self.submit_button).is_enabled()
 
     def check_withdraw_invalid_stellar(self):
@@ -79,13 +80,14 @@ class SwapPage:
         data = [1, 0.001, 1.111]
         boolen = []
         balance = self.browser.find_element(By.XPATH,'//*[@id="app"]/div[1]/div[1]/header/div/div[3]/div[1]/div[1]/div[1]/button/span/p[1]').text
-        data.append(format(float(balance), '.3f'))
+        data.append(format(float(balance)-1, '.3f'))
         self.browser.find_element(*self.withdraw).click()
         self.browser.find_element(*self.stellar_address).send_keys(get_stellar_address())
         for i in range (len(data)):
             self.browser.find_element(*self.amount_tft).send_keys(Keys.CONTROL + "a")
             self.browser.find_element(*self.amount_tft).send_keys(Keys.DELETE)
             self.browser.find_element(*self.amount_tft).send_keys(data[i])
+            WebDriverWait(self.browser, 30).until(EC.element_to_be_clickable(self.submit_button))
             boolen.append(self.browser.find_element(*self.submit_button).is_enabled())
         return boolen
     
@@ -111,5 +113,5 @@ class SwapPage:
     def check_withdraw(self):
         self.browser.find_element(*self.withdraw).click()
         self.browser.find_element(*self.stellar_address).send_keys(get_stellar_address())
-        self.browser.find_element(*self.amount_tft).send_keys('0.001')
+        self.browser.find_element(*self.amount_tft).send_keys('1.01')
         self.browser.find_element(*self.submit_button).click()
