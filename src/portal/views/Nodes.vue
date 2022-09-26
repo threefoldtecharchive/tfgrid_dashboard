@@ -16,7 +16,7 @@
       class="elevation-1"
       sort-by="item.nodeId"
       :loading="loading"
-      loading-text="loading nodes.."
+      loading-text="loading nodes ..."
     >
       <template v-slot:[`item.resources.mru`]="{ item }">
         {{ byteToGB(item.resources.mru) }}
