@@ -558,8 +558,9 @@ export default class FarmNodesTable extends Vue {
     this.receiptsPanel = [];
   }
   filteredNodes() {
+    let nodes = this.nodes;
     if (this.nodes.length > 0) {
-      return this.nodes.filter(
+      nodes = this.nodes.filter(
         (node: nodeInterface) =>
           `${node.nodeID}`.includes(this.searchTerm) ||
           node.serialNumber
@@ -571,7 +572,9 @@ export default class FarmNodesTable extends Vue {
           `${node.farmingPolicyId}`.includes(this.searchTerm)
       );
     }
-    return this.nodes;
+    return nodes.map((node) => {
+      return {...node, status: node.updatedAt}
+    })
   }
   downloadAllReceipts() {
     let docSum = new jsPDF();
@@ -820,9 +823,7 @@ export default class FarmNodesTable extends Vue {
       return { color: "orange", status: "likely down" };
     } else return { color: "red", status: "down" };
   }
-  get getFarmNodes() {
-    return this.nodes;
-  }
+
   deleteItem() {
     this.loadingDelete = true;
     this.openDeleteDialog = false;
