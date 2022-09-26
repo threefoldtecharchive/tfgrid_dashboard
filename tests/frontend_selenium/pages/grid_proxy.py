@@ -1,0 +1,38 @@
+import requests
+from utils.base import Base
+
+"""
+This module contains Grid Proxy getters.
+"""
+
+class GridProxy:
+
+    def __init__(self, browser):
+        self.browser = browser
+
+    def get_rentable_node():
+        r = requests.post(Base.gridproxy_url + 'nodes?rentable=true&status=up')
+        node_list = r.json()
+        r = requests.post(Base.gridproxy_url + 'nodes?rented=true&status=up')
+        node_list.extend(r.json())
+        return node_list
+
+    def get_farm_details(self, farm_name):
+        r = requests.post(Base.gridproxy_url + 'farms?name=' + farm_name)
+        details = r.json()
+        return details
+    
+    def get_dedicate_status(self, node_id):
+        r = requests.post(Base.gridproxy_url + 'nodes/'+ str(node_id))
+        dedicate_status = r.json()
+        return (dedicate_status['rentedByTwinId'])
+
+    def get_twin_id(self, user_address):
+        r = requests.post(Base.gridproxy_url + 'twins?account_id='+ user_address)
+        details = r.json()
+        return details[0]['twinId']
+
+    def get_farm_ips(self, farm_id):
+        r = requests.post(Base.gridproxy_url + 'farms?farm_id='+ farm_id)
+        farm_list = r.json()
+        return len(farm_list[0]['publicIps'])
