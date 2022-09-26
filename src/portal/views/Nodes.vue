@@ -16,6 +16,7 @@
       class="elevation-1"
       sort-by="item.nodeId"
       :loading="loading"
+      loading-text="loading nodes.."
     >
       <template v-slot:[`item.resources.mru`]="{ item }">
         {{ byteToGB(item.resources.mru) }}
@@ -101,7 +102,7 @@ export default class NodesView extends Vue {
   $api: any;
   singleExpand = true;
   expanded: any = [];
-  loading = false;
+  loading = true;
   address = "";
   searchTerm = "";
   accountName: any = "";
@@ -142,6 +143,7 @@ export default class NodesView extends Vue {
     return this.nodes;
   }
   byteToGB(capacity: number) {
+    this.loading = false;
     return byteToGB(capacity);
   }
 }
