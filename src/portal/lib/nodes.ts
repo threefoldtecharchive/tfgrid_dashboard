@@ -355,11 +355,9 @@ export async function getDedicatedNodes() {
   return dedicatedNodes;
 }
 export async function getDNodes(api: any, address: string, currentTwinID: string) {
-  let nodes: any[] = [];
-  nodes = await getDedicatedNodes();
-
+  let nodes = await getDedicatedNodes();
   const pricing = await getPrices(api); let dNodes: { nodeId: string; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; rentContractId: any, rentedByTwinId: any; usedResources: { cru: any; mru: any; hru: any; sru: any; }; rentStatus: any }[] = [];
-  nodes.forEach(async (node) => {
+  for (const node of nodes) {
     const price = countPrice(pricing, node);
     const [discount, discountLevel] = await calDiscount(api, address, pricing, price);
     const ips = await getIpsForFarm(node.farmId);
@@ -391,7 +389,7 @@ export async function getDNodes(api: any, address: string, currentTwinID: string
       rentedByTwinId: node.rentedByTwinId,
       rentStatus: node.rentContractId === 0 ? "free" : node.rentedByTwinId == currentTwinID ? "yours" : "taken"
     });
-  });
+  }
   return dNodes;
 }
 

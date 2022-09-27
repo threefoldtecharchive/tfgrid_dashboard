@@ -112,7 +112,8 @@ export default class NodesView extends Vue {
     this.accountName = this.$route.query.accountName;
     this.$currentTwinID = this.$route.query.twinID;
     if (this.$api) {
-      this.nodes = await getDNodes(this.$api, this.address, this.$currentTwinID)      
+      this.nodes = await getDNodes(this.$api, this.address, this.$currentTwinID)  
+      this.loading = false;
     } else {
       this.$router.push({
         name: "accounts",
@@ -143,7 +144,6 @@ export default class NodesView extends Vue {
     return this.nodes;
   }
   byteToGB(capacity: number) {
-    this.loading = false;
     return byteToGB(capacity);
   }
 }
