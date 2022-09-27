@@ -10,7 +10,7 @@
           v-bind="attrs"
           v-on="on"
           :loading="loadingCreate"
-          x-small
+          small
         >
           Add IP
         </v-btn>
