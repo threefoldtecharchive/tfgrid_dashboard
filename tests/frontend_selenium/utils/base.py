@@ -1,6 +1,10 @@
+import configparser
+
 class Base:
-    port = 3060
-    net = 'dev'
+    config = configparser.ConfigParser()
+    config.read('Config.ini')
+    port = config['Base']['port']
+    net = config['Base']['net']
     base_url = 'http://localhost:' + str(port) + '/'
-    gridproxy_url = 'https://gridproxy.' + net + '.grid.tf/'
+    gridproxy_url = 'https://gridproxy.' + str(net) + '.grid.tf/'
     extension_url = 'chrome-extension://mopnmbcafieddcagagdcbnhejhlodfdd/index.html#/'

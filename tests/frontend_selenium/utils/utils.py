@@ -1,13 +1,18 @@
+import configparser
 import random
 import string
 
 def get_seed():
-    seed = 'violin chair festival kiss double belt hen differ stamp boy else bag'
-    return seed
+    config = configparser.ConfigParser()
+    config.read('Config.ini')
+    seed = config['Utils']['seed']
+    return str(seed)
 
 def get_stellar_address():
-    address = 'GA3LBCBENNYZ72BY27SRS7RNZ64G2H2JBLX3V452EUZMRXZ27Q3QTFGN'
-    return address
+    config = configparser.ConfigParser()
+    config.read('Config.ini')
+    address = config['Utils']['address']
+    return str(address)
       
 def generate_string():
     chars = string.ascii_uppercase + string.digits
