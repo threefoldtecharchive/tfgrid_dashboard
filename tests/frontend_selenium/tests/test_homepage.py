@@ -7,6 +7,12 @@ from utils.base import Base
 
 #  Time required for the run (12 cases) is approximately 2 minutes.
 
+def before_test_setup(browser):
+    dashboard_page = DashboardPage(browser)
+    polka_page = PolkaPage(browser)
+    polka_page.load_and_authenticate()
+    return dashboard_page, polka_page
+
 def test_polka_page(browser):
     """
       Test Case: TC974 - Download polkadot{.js} extension
@@ -17,9 +23,7 @@ def test_polka_page(browser):
           - Click "Download polkadot{.js} extension" button.
       Result: User should be navigated to the download polkadot extesion page.
     """
-    dashboard_page = DashboardPage(browser)
-    polka_page = PolkaPage(browser)
-    polka_page.load_and_authenticate()
+    dashboard_page,_ = before_test_setup(browser)
     dashboard_page.polka_disconnection()
     assert dashboard_page.navigate_to_polka() == 'https://polkadot.js.org/extension/'
 
@@ -35,9 +39,7 @@ def test_discover_page(browser):
           - Click "Discover the ThreeFold Grid" button
       Result: User should be navigated to the explorer stats page.
     """
-    dashboard_page = DashboardPage(browser)
-    polka_page = PolkaPage(browser)
-    polka_page.load_and_authenticate()
+    dashboard_page,_ = before_test_setup(browser)
     dashboard_page.polka_disconnection()
     assert dashboard_page.navigate_to_explorer() == (Base.base_url+'explorer/statistics')
 
@@ -53,9 +55,7 @@ def test_manual_page(browser):
         - Click "Learn More" button.
       Result: User should be navigated to the manual page.
     """
-    dashboard_page = DashboardPage(browser)
-    polka_page = PolkaPage(browser)
-    polka_page.load_and_authenticate()
+    dashboard_page,_ = before_test_setup(browser)
     dashboard_page.polka_disconnection()
     assert dashboard_page.navigate_to_manual() == 'https://library.threefold.me/info/manual/#/'
 
@@ -70,11 +70,9 @@ def test_polka_connection(browser):
         - Reconnect to it.
       Result: Polka should be load and authenticated, Assert button works and polka connect and disconnect.
     """
-    dashboard_page = DashboardPage(browser)
-    polka_page = PolkaPage(browser)
+    dashboard_page, polka_page = before_test_setup(browser)
     user = generate_string()
     password = generate_string()
-    polka_page.load_and_authenticate()
     polka_page.add_account(user, password)
     dashboard_page.polka_disconnection()
     disconnected = dashboard_page.polka_connection_status()
@@ -94,11 +92,9 @@ def test_create_account(browser):
         - Enter username, password (twice) and submit.
       Result: Account should be listed on the connected account.
     """
-    dashboard_page = DashboardPage(browser)
-    polka_page = PolkaPage(browser)
+    dashboard_page, polka_page = before_test_setup(browser)
     user = generate_string()
     password = generate_string()
-    polka_page.load_and_authenticate()
     polka_page.add_account(user, password)
     assert user in dashboard_page.accounts_list()
 
@@ -114,11 +110,9 @@ def test_import_account(browser):
         - Enter username, password (twice) and submit.
       Result: Account should be listed on the connected account.
     """
-    dashboard_page = DashboardPage(browser)
-    polka_page = PolkaPage(browser)
+    dashboard_page, polka_page = before_test_setup(browser)
     user = generate_string()
     password = generate_string()
-    polka_page.load_and_authenticate()
     polka_page.import_account(get_seed(), user, password)
     assert user in dashboard_page.accounts_list()
 
@@ -135,11 +129,9 @@ def test_import_account(browser):
   Result: List of all the accounts that matches search input.
 """
 def test_search_by_name_address(browser):
-    dashboard_page = DashboardPage(browser)
-    polka_page = PolkaPage(browser)
+    dashboard_page, polka_page = before_test_setup(browser)
     user = generate_string()
     password = generate_string()
-    polka_page.load_and_authenticate()
     polka_page.add_account(user, password)
     address = dashboard_page.get_address((dashboard_page.accounts_list()))
     dashboard_page.search_accounts(user)
@@ -153,11 +145,9 @@ def test_search_by_name_address(browser):
 
 @pytest.mark.parametrize('cases', [0, 9, randint(1, 8)])
 def test_search_by_valid_name_address(browser, cases):
-    dashboard_page = DashboardPage(browser)
-    polka_page = PolkaPage(browser)
+    dashboard_page, polka_page = before_test_setup(browser)
     user = generate_string()
     password = generate_string()
-    polka_page.load_and_authenticate()
     polka_page.add_account(user, password)
     address = dashboard_page.get_address((dashboard_page.accounts_list()))
     dashboard_page.search_accounts(user[cases])
@@ -171,11 +161,9 @@ def test_search_by_valid_name_address(browser, cases):
 
 @pytest.mark.parametrize('begin, end', [(0, 1), (8, 9), (randint(1, 4), randint(5, 8))])
 def test_search_by_valid_name_address(browser, begin, end):
-    dashboard_page = DashboardPage(browser)
-    polka_page = PolkaPage(browser)
+    dashboard_page, polka_page = before_test_setup(browser)
     user = generate_string()
     password = generate_string()
-    polka_page.load_and_authenticate()
     polka_page.add_account(user, password)
     address = dashboard_page.get_address((dashboard_page.accounts_list()))
     dashboard_page.search_accounts(user[begin: end])
@@ -200,11 +188,9 @@ def test_search_by_invalid_name_address(browser, cases):
       Test Data: [Empty - Random char or sequence not in both]
       Result: Empty list.
     """
-    dashboard_page = DashboardPage(browser)
-    polka_page = PolkaPage(browser)
+    dashboard_page, polka_page = before_test_setup(browser)
     user = generate_string()
     password = generate_string()
-    polka_page.load_and_authenticate()
     polka_page.add_account(user, password)
     address = dashboard_page.get_address((dashboard_page.accounts_list()))
     dashboard_page.search_accounts(cases)

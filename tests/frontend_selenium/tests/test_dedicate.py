@@ -2,12 +2,19 @@ from utils.utils import generate_string, get_seed
 from pages.polka import PolkaPage
 from pages.grid_proxy import GridProxy
 from pages.dedicate import DedicatePage
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import pytest
 
 #  Time required for the run (12 cases) is approximately 3 minutes.
+
+def before_test_setup(browser):
+    dedicate_page = DedicatePage(browser)
+    polka_page = PolkaPage(browser)
+    user = generate_string()
+    password = generate_string()
+    polka_page.load_and_authenticate()
+    polka_page.import_account(get_seed(),user,password)
+    dedicate_page.navigate(user)
+    return dedicate_page, polka_page, password
 
 def test_dedicate_page(browser):
     """
@@ -18,13 +25,7 @@ def test_dedicate_page(browser):
           - Click on Dedicate Node from side menu.
       Result: User should be navigated to Dedicate Node page.
     """
-    dedicate_page = DedicatePage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
-    dedicate_page.navigate(user)
+    before_test_setup(browser)
     assert 'Dedicated Nodes' in browser.page_source
 
 
@@ -37,24 +38,18 @@ def test_search_by_valid_name_address(browser):
       Test Data: [ ID - Location - case sensitive Location ]
       Result: The search results should be displayed correctly according to the keywords used.
     """
-    dedicate_page = DedicatePage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
-    dedicate_page.navigate(user)
+    dedicate_page,_,_ = before_test_setup(browser)
     ids = dedicate_page.get_node_id()
     locations = dedicate_page.get_node_location()
-    for i in range (len(ids)):
-      dedicate_page.search_nodes(ids[i])
+    for id in ids:
+      dedicate_page.search_nodes(id)
       assert dedicate_page.get_node_count() == 1
-    for i in range (len(locations)):
-      dedicate_page.search_nodes(locations[i])
+    for location in locations:
+      dedicate_page.search_nodes(location)
       assert  dedicate_page.get_node_count() >= 1
-      dedicate_page.search_nodes(locations[i].lower())
+      dedicate_page.search_nodes(location.lower())
       assert  dedicate_page.get_node_count() >= 1
-      dedicate_page.search_nodes(locations[i].upper())
+      dedicate_page.search_nodes(location.upper())
       assert  dedicate_page.get_node_count() >= 1
 
 
@@ -66,13 +61,7 @@ def test_search_by_invalid_name_address(browser):
           - In the Farms search bar enter invalid location or the id of the node
       Result: The search results should be displayed nothing as search keywords are incorrect.
     """
-    dedicate_page = DedicatePage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
-    dedicate_page.navigate(user)
+    dedicate_page,_,_ = before_test_setup(browser)
     dedicate_page.search_nodes(generate_string())
     assert 'No data available' in browser.page_source
 
@@ -85,13 +74,7 @@ def test_sort_node_id(browser):
           - Click on the arrow behind node Id 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the id.
     """
-    dedicate_page = DedicatePage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
-    dedicate_page.navigate(user)
+    dedicate_page,_,_ = before_test_setup(browser)
     assert dedicate_page.sort_node_id() == sorted(dedicate_page.get_node_id(), reverse=False) 
     assert dedicate_page.sort_node_id() == sorted(dedicate_page.get_node_id(), reverse=True)
 
@@ -104,13 +87,7 @@ def test_sort_node_location(browser):
           - Click on the arrow behind node location 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the location.
     """
-    dedicate_page = DedicatePage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
-    dedicate_page.navigate(user)
+    dedicate_page,_,_ = before_test_setup(browser)
     assert dedicate_page.sort_node_location() == sorted(dedicate_page.get_node_location(), reverse=False) 
     assert dedicate_page.sort_node_location() == sorted(dedicate_page.get_node_location(), reverse=True)
 
@@ -123,13 +100,7 @@ def test_sort_node_cru(browser):
           - Click on the arrow behind node CRU 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the CRU.
     """
-    dedicate_page = DedicatePage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
-    dedicate_page.navigate(user)
+    dedicate_page,_,_ = before_test_setup(browser)
     assert dedicate_page.sort_node_cru() == sorted(dedicate_page.get_node_cru(), reverse=False) 
     assert dedicate_page.sort_node_cru() == sorted(dedicate_page.get_node_cru(), reverse=True)
 
@@ -142,13 +113,7 @@ def test_sort_node_hru(browser):
           - Click on the arrow behind node HRU 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the HRU.
     """
-    dedicate_page = DedicatePage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
-    dedicate_page.navigate(user)
+    dedicate_page,_,_ = before_test_setup(browser)
     assert dedicate_page.sort_node_hru() == sorted(dedicate_page.get_node_hru(False), reverse=False) 
     assert dedicate_page.sort_node_hru() == sorted(dedicate_page.get_node_hru(False), reverse=True)
 
@@ -161,13 +126,7 @@ def test_sort_node_mru(browser):
           - Click on the arrow behind node MRU 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the MRU.
     """
-    dedicate_page = DedicatePage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
-    dedicate_page.navigate(user)
+    dedicate_page,_,_ = before_test_setup(browser)
     assert dedicate_page.sort_node_mru() == sorted(dedicate_page.get_node_mru(False), reverse=False) 
     assert dedicate_page.sort_node_mru() == sorted(dedicate_page.get_node_mru(False), reverse=True)
 
@@ -180,13 +139,7 @@ def test_sort_node_sru(browser):
           - Click on the arrow behind node SRU 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the SRU.
     """
-    dedicate_page = DedicatePage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
-    dedicate_page.navigate(user)
+    dedicate_page,_,_ = before_test_setup(browser)
     assert dedicate_page.sort_node_sru() == sorted(dedicate_page.get_node_sru(False), reverse=False) 
     assert dedicate_page.sort_node_sru() == sorted(dedicate_page.get_node_sru(False), reverse=True)
 
@@ -199,13 +152,7 @@ def test_sort_node_price(browser):
           - Click on the arrow behind node Price 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the Price.
     """
-    dedicate_page = DedicatePage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
-    dedicate_page.navigate(user)
+    dedicate_page,_,_ = before_test_setup(browser)
     price = dedicate_page.get_node_price()
     assert dedicate_page.sort_node_price() == sorted(price, reverse=True) 
     assert dedicate_page.sort_node_price() == sorted(price, reverse=False)
@@ -219,14 +166,8 @@ def test_node_details(browser):
           - Click on expand button on a node
       Result: You should see the node details.
     """
-    dedicate_page = DedicatePage(browser)
-    polka_page = PolkaPage(browser)
+    dedicate_page,_,_ = before_test_setup(browser)
     grid_proxy = GridProxy(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
-    dedicate_page.navigate(user)
     nodes = dedicate_page.node_details()
     for i in range(len(nodes)):
       assert str(dedicate_page.get_node_cru()[i]) in nodes[i][1]
@@ -248,19 +189,13 @@ def test_reserve_node(browser):
           - Click unreserve button on same node
       Result: You should see the node details.
     """
-    dedicate_page = DedicatePage(browser)
-    polka_page = PolkaPage(browser)
+    dedicate_page, polka_page, password = before_test_setup(browser)
     grid_proxy = GridProxy(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
-    dedicate_page.navigate(user)
     node_id = dedicate_page.check_free_node()
     if(node_id):
       dedicate_page.reserve_node(node_id)
       polka_page.authenticate_with_pass(password)
-      WebDriverWait(browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Transaction succeeded: Node "+ str(node_id) +" reserved')]")))
+      assert dedicate_page.wait_for('Transaction succeeded: Node '+ str(node_id) +' reserved')
       status, counter = 0
       while(status==0):
         status = grid_proxy.get_dedicate_status(node_id)
@@ -270,7 +205,7 @@ def test_reserve_node(browser):
       assert grid_proxy.get_dedicate_status(node_id) == dedicate_page.twin_id
       dedicate_page.unreserve_node()
       polka_page.authenticate_with_pass(password)
-      WebDriverWait(browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Transaction succeeded: Node "+ str(node_id) +" Unreserved')]")))
+      assert dedicate_page.wait_for('Transaction succeeded: Node '+ str(node_id) +' Unreserved')
       while(status!=0):
         status = grid_proxy.get_dedicate_status(node_id)
       assert grid_proxy.get_dedicate_status(node_id) == False

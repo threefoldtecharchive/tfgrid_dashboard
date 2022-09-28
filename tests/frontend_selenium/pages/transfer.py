@@ -18,6 +18,8 @@ class TransferPage:
     twin_details = (By.XPATH, "//*[contains(text(), 'Twin Details')]")
     transfer_tft_title = (By.XPATH, "//*[contains(text(), 'Transfer TFTs on the TFChain')]")
     balance_text = (By.XPATH,'//*[@id="app"]/div[1]/div[1]/header/div/div[3]/div[1]/div[1]/div[1]/button/span/p[1]')
+    twin_address_text = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div/div[2]/div/div/div/div[2]')
+    second_twin_address_text = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div/div[2]/div[2]/div/div/div[2]') 
     
     def __init__(self, browser):
         self.browser = browser
@@ -45,8 +47,17 @@ class TransferPage:
         self.browser.find_element(*self.transfer_tft_title).click()
 
     def get_balance(self):
-        balance = self.browser.find_element(*self.balance_text).text
-        return balance
+        return self.browser.find_element(*self.balance_text).text
         
     def get_submit(self):
         return self.browser.find_element(*self.submit_button)
+    
+    def get_twin_address(self):
+        return self.browser.find_element(*self.twin_address_text).text
+    
+    def get_secind_twin_address(self):
+        return self.browser.find_element(*self.second_twin_address_text).text
+
+    def wait_for(self, keyword):
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), '"+ keyword +"')]")))
+        return True

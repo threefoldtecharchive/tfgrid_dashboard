@@ -24,7 +24,8 @@ class SwapPage:
     deposite_bridge_address = (By.XPATH, "//*[@id='app']/div[5]/div/div/div[1]/div/div[1]/div[1]/ul/li[1]/b")
     twin_id_text = (By.XPATH,"//*[@id='app']/div[5]/div/div/div[1]/div/div[1]/div[1]/ul/li[2]/b")
     balance_text = (By.XPATH,'//*[@id="app"]/div[1]/div[1]/header/div/div[3]/div[1]/div[1]/div[1]/button/span/p[1]')
-
+    balance_withdraw = (By.XPATH,'//*[@id="app"]/div[2]/div[1]/header/div/div[3]/div[1]/div[1]/div[1]/button/span/p[1]')
+    
     def __init__(self, browser):
         self.browser = browser
 
@@ -34,6 +35,7 @@ class SwapPage:
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.transfer_tft_title))
     
     def twin_address(self):
+        self.browser.refresh()
         return self.browser.find_element(*self.twin_address_text).text 
 
     def transfer_chain(self):
@@ -92,3 +94,13 @@ class SwapPage:
         self.browser.find_element(*self.amount_tft).send_keys(amount)
         WebDriverWait(self.browser, 30).until(EC.element_to_be_clickable(self.submit_button))
         return self.browser.find_element(*self.submit_button)
+    
+    def get_balance(self):
+        return self.browser.find_element(*self.balance_text).text
+    
+    def get_balance_withdraw(self):
+        return self.browser.find_element(*self.balance_withdraw).text
+
+    def wait_for(self, keyword):
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), '"+ keyword +"')]")))
+        return True

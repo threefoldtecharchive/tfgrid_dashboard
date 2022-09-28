@@ -190,3 +190,7 @@ class DedicatePage:
             self.browser.find_element(*self.reservation_button).click()
             WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Are you sure you want to unreserve this dedicated node?')]")))
             self.browser.find_element(By.XPATH, "//*[@id='app']/div[4]/div/div/div[3]/button[1]").click()
+
+    def wait_for(self, keyword):
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), '"+ keyword +"')]")))
+        return True

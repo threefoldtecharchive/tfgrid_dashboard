@@ -1,11 +1,21 @@
 from utils.utils import generate_leters, generate_string, get_seed
 from pages.twin import TwinPage
 from pages.polka import PolkaPage
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 #  Time required for the run (6 cases) is approximately 3 minutes.
+
+def before_test_setup(browser, create_account):
+    twin_page = TwinPage(browser)
+    polka_page = PolkaPage(browser)
+    user = generate_string()
+    password = generate_string()
+    polka_page.load_and_authenticate()
+    if(create_account):
+      polka_page.add_account(user, password)
+    else:
+      polka_page.import_account(get_seed(), user, password)
+    twin_page.navigate(user)
+    return twin_page, polka_page, password
 
 def test_accept_terms_conditions(browser): 
     """
@@ -20,16 +30,10 @@ def test_accept_terms_conditions(browser):
       Result: Open same account on dashboard homepage and assert that no terms to accept when you come back to this account twin page.
               Assert that it will go to righ link.
     """
-    twin_page = TwinPage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.add_account(user, password)
-    twin_page.navigate(user)
+    twin_page, polka_page, password = before_test_setup(browser, True)
     twin_page.accept_terms_conditions()
     polka_page.authenticate_with_pass(password)
-    WebDriverWait(browser, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Planetary using Yggdrasil IPV6')]")))
+    assert twin_page.wait_for('Planetary using Yggdrasil IPV6')
     assert 'Planetary using Yggdrasil IPV6' in browser.page_source
     assert twin_page.Button_why_doIeven_need_twin() == 'https://library.threefold.me/info/manual/#/manual__yggdrasil_client'
 
@@ -49,27 +53,21 @@ def test_create_twin_IP(browser):
       Result: Assert that Error message will appear and create button will not be clear then Assert a twin should be created.
               Assert Balance must be in the first of creating your account [Free: 0.0979738 TFT -Reserved (Locked): 0 TFT]
   """
-    twin_page = TwinPage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.add_account(user, password)
-    twin_page.navigate(user)
+    twin_page, polka_page, password = before_test_setup(browser, True)
     twin_page.accept_terms_conditions()
     polka_page.authenticate_with_pass(password)
-    WebDriverWait(browser, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Accepted!')]")))
+    assert twin_page.wait_for('Accepted!')
     cases = [' ', '::g', '1:2:3', ':a', '1:2:3:4:5:6:7:8:9', generate_string(), generate_leters()]
     for case in cases:
       assert twin_page.Create_twin_Planetarywith_InvalidIP(case).is_enabled() == False
-      assert browser.find_element(By.XPATH, "//*[contains(text(), 'IP address is not formatted correctly')]")    
+      assert twin_page.wait_for('IP address is not formatted correctly')  
     twin_page.Create_twin_Planetarywith_ValidIP()
     polka_page.authenticate_with_pass(password)
-    WebDriverWait(browser, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Twin created!')]")))
-    assert browser.find_element(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[1]/div[2]/div[1]/div[2]').text == 'IP: ::1'
+    assert twin_page.wait_for('Twin created!')
+    assert twin_page.get_twin_ip() == 'IP: ::1'
     twin_page.Check_Balance()
-    assert browser.find_element(By.XPATH,"//*[contains(text(), 'Free: 0.0979738 TFT')]")
-    assert browser.find_element(By.XPATH,"//*[contains(text(), 'Reserved (Locked): 0 TFT')]")
+    assert twin_page.wait_for('Free: 0.0979738 TFT')
+    assert twin_page.wait_for('Reserved (Locked): 0 TFT')
 
 
 def test_edit_twin_ValidInput(browser):
@@ -84,21 +82,15 @@ def test_edit_twin_ValidInput(browser):
         - Use polka password authentication.
       Result: Assert that twin IP edited.
     """
-    twin_page = TwinPage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(), user, password)
-    twin_page.navigate(user)
-    browser.find_element(*twin_page.EditButton).click()
+    twin_page, polka_page, password = before_test_setup(browser, False)
+    twin_page.press_edit_btn()
     cases = ['2001:db8:3333:4444:5555:6666:7777:8888','2001:db8:3333:4444:CCCC:DDDD:EEEE:FFFF','2001:db8::','::1234:5678','2001:0db8:0001:0000:0000:0ab9:C0A8:0102','2001:db8::1234:5678', '::1']
     for case in cases:
       assert twin_page.Edit_twin_Input(case) == True
-    browser.find_element(*twin_page.SubmitButton).click()
+    twin_page.press_submit_btn()
     polka_page.authenticate_with_pass(password)
-    WebDriverWait(browser, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Twin updated!')]")))
-    assert browser.find_element(By.XPATH,"//*[contains(text(), 'IP: ::1')]")
+    assert twin_page.wait_for('Twin updated!')
+    assert twin_page.wait_for('IP: ::1')
 
 
 def test_edit_twin_InValidInput(browser):
@@ -111,18 +103,12 @@ def test_edit_twin_InValidInput(browser):
         - Edit your IP with wrong format.
       Result: An error message will appear and can't click on submit button.
     """
-    twin_page = TwinPage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(), user, password)
-    twin_page.navigate(user)
-    browser.find_element(*twin_page.EditButton).click()
+    twin_page, _, _ = before_test_setup(browser, False)
+    twin_page.press_edit_btn()
     cases = [' ', '::g', '1:2:3', ':a', '1:2:3:4:5:6:7:8:9', generate_string(), generate_leters()]
     for case in cases:
       assert twin_page.Edit_twin_Input(case) == False
-      assert browser.find_element(By.XPATH, "//*[contains(text(), 'invalid IP format')]")
+      assert twin_page.wait_for('invalid IP format')
 
 
 def test_Delete_twin(browser):
@@ -136,17 +122,11 @@ def test_Delete_twin(browser):
       Result: Assert that If it's the only account it will show new page to make a new account,
               If there's another accounts Search on account you deleted and check if it deleted or not.
     """
-    twin_page = TwinPage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(), user, password)
-    twin_page.navigate(user)
+    twin_page, polka_page, password = before_test_setup(browser, False)
     twin_page.Delete_twin()
     polka_page.authenticate_with_pass(password)
-    assert WebDriverWait(browser, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Twin deleted!')]")))
-    browser.find_element(*twin_page.CreateButton).click()
+    assert twin_page.wait_for('Twin deleted!')
+    twin_page.press_create_btn()
     polka_page.authenticate_with_pass(password)
 
 
@@ -160,12 +140,7 @@ def test_sum_sign(browser):
         - Click on the sum sign button
       Result: Assert that it should go to the link. 
     """
-    twin_page = TwinPage(browser)
-    polka_page = PolkaPage(browser)
-    user = generate_string()
-    password = generate_string()
-    polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(), user, password)
-    twin_page.navigate(user)
+    twin_page, _, _ = before_test_setup(browser, False)
     twin_page.Sum_sign()
-    assert browser.find_element(By.XPATH,"/html") # NO checking as devnet don't direct to TF Connect page https://gettft.com/auth/login?next_url=/gettft/shop/#/buy 
+    assert '/html' in browser.page_source
+    # NO checking as devnet don't direct to TF Connect page https://gettft.com/auth/login?next_url=/gettft/shop/#/buy 

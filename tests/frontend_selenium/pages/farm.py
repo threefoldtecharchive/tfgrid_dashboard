@@ -265,3 +265,7 @@ class FarmPage:
       WebDriverWait(self.browser, 30).until(EC.number_of_windows_to_be(2))
       self.browser.switch_to.window(self.browser.window_handles[1])
       return self.browser.current_url
+
+    def wait_for(self, keyword):
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), '"+ keyword +"')]")))
+        return True

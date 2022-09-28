@@ -25,6 +25,7 @@ class TwinPage:
     tf_iframe_page = (By.XPATH, '/html/body/main/aside/div[2]/ul[3]/li/a')
     iframe_dialog_icon = (By.XPATH, '//*[@id="cc_dialog"]/div/div[2]/button[1]')
     accept_alert = (By.XPATH, "//*[contains(text(), 'Accepted!')]")
+    twin_ip_text = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[1]/div[2]/div[1]/div[2]')
 
     def __init__(self, browser):
         self.browser = browser
@@ -78,3 +79,19 @@ class TwinPage:
 
     def Sum_sign(self):
         self.browser.find_element(*self.SumButton).click()
+
+    def wait_for(self, keyword):
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), '"+ keyword +"')]")))
+        return True
+    
+    def get_twin_ip(self):
+        return self.browser.find_element(*self.twin_ip_text).text
+    
+    def press_edit_btn(self):
+        self.browser.find_element(*self.EditButton).click()
+    
+    def press_submit_btn(self):
+        self.browser.find_element(*self.SubmitButton).click()
+    
+    def press_create_btn(self):
+        self.browser.find_element(*self.CreateButton).click()
