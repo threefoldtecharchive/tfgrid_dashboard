@@ -50,13 +50,13 @@
       >
         <div>
           <v-switch
-            label="Gateways"
+            label="Gateways (Only)"
             style="margin-bottom: -30px"
             v-model="gatewayFilter"
             @change="loadNodesData"
           />
           <v-switch
-            label="Online"
+            label="Online (Only)"
             v-model="onlineFilter"
             @change="loadNodesData"
           />
@@ -78,6 +78,7 @@
         class="elevation-1"
         align
         @click:row="openSheet"
+        @update:options="onUpdateOptions($event.page, $event.itemsPerPage)"
       >
         <template v-slot:[`item.created`]="{ item }">
           {{ item.created | date }}
@@ -280,8 +281,12 @@ export default class Nodes extends Vue {
     this.$store.commit("explorer/setUpFilter", value);
   }
 
-  nodesCount() {
-    return this.$store.getters["explorer/getNodesCount"];
+  // update the page/size of the request
+  onUpdateOptions(pageNumber: number, pageSize: number) {
+    console.log({ page: pageNumber, size: pageSize });
+    this.$store.commit("explorer/setNodesTablePageNumber", pageNumber);
+    this.$store.commit("explorer/setNodesTablePageSize", pageSize);
+    this.loadNodesData();
   }
 
   // reload the nodes table

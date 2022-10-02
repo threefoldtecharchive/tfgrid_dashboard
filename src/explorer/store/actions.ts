@@ -34,7 +34,7 @@ export default {
     if (state.nodesUpFilter) url += "&status=up";
     if (state.nodesGatewayFilter) url += "&ipv4=true&domain=true";
     url += `&size=${state.nodesTablePageSize}`
-    // url += `&page=${state.nodesTablePageNumber}`
+    url += `&page=${state.nodesTablePageNumber}`
 
     console.log({status: state.nodesUpFilter, gw: state.nodesGatewayFilter})
     console.log({url});

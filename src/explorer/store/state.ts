@@ -153,7 +153,7 @@ export default {
   nodes: [],
 
   nodesCount: 0,
-  nodesTablePageNumber: 0,
+  nodesTablePageNumber: 1,
   nodesTablePageSize: 10,
   nodesUpFilter: true,
   nodesGatewayFilter: false,
