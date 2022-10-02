@@ -50,11 +50,16 @@
       >
         <div>
           <v-switch
-            v-model="withGateway"
-            style="margin-bottom: -30px"
             label="Gateways"
+            style="margin-bottom: -30px"
+            v-model="gatewayFilter"
+            @change="loadNodesData"
           />
-          <v-switch v-model="onlyOnline" label="Online" />
+          <v-switch
+            label="Online"
+            v-model="onlineFilter"
+            @change="loadNodesData"
+          />
         </div>
       </div>
       <div class="d-flex justify-center">
@@ -67,7 +72,8 @@
         :loading="$store.getters['explorer/tableLoading']"
         loading-text="Loading..."
         :headers="headers"
-        :items="listNodes()"
+        :items="$store.getters['explorer/nodes']"
+        :server-items-length="$store.getters['explorer/getNodesCount']"
         :items-per-page="10"
         class="elevation-1"
         align
@@ -100,7 +106,6 @@
             }}</v-chip>
           </p>
         </template>
-
       </v-data-table>
     </template>
 
@@ -114,7 +119,10 @@
                 nodeId: node.nodeId,
                 farmId: node.farmId,
                 twinId: node.twinId,
-                country: node.country === 'United States'? 'United States of America' : node.country,
+                country:
+                  node.country === 'United States'
+                    ? 'United States of America'
+                    : node.country,
               }
             : {}
         "
@@ -167,7 +175,6 @@ export default class Nodes extends Vue {
     { text: "CRU", value: "cru", align: "center" },
     { text: "Up Time", value: "uptime", align: "center" },
     { text: "Status", value: "status", align: "center" },
-    
   ];
 
   activeFiltersKeys: string[] = ["MRU", "HRU", "CRU"];
@@ -256,6 +263,32 @@ export default class Nodes extends Vue {
     },
   ];
 
+  // Filter computed props, two-way binding on store.
+  get gatewayFilter() {
+    return this.$store.getters["explorer/getNodesGatewayFilter"];
+  }
+
+  set gatewayFilter(value) {
+    this.$store.commit("explorer/setGatewayFilter", value);
+  }
+
+  get onlineFilter() {
+    return this.$store.getters["explorer/getNodesUpFilter"];
+  }
+
+  set onlineFilter(value) {
+    this.$store.commit("explorer/setUpFilter", value);
+  }
+
+  nodesCount() {
+    return this.$store.getters["explorer/getNodesCount"];
+  }
+
+  // reload the nodes table
+  loadNodesData() {
+    this.$store.dispatch("explorer/loadNodesData");
+  }
+
   listNodes() {
     let nodes: INode[] = this.$store.getters["explorer/listFilteredNodes"];
     if (this.withGateway) {
@@ -270,10 +303,8 @@ export default class Nodes extends Vue {
   }
 
   getStatus(node: { status: string }) {
-    if (node.status === "up")
-      return { color: "green", status: "up" };
-    else 
-      return { color: "red", status: "down" };
+    if (node.status === "up") return { color: "green", status: "up" };
+    else return { color: "red", status: "down" };
   }
 
   toggleActive(label: string): void {
@@ -336,7 +367,9 @@ export default class Nodes extends Vue {
         ip
       }
 
-      country: countries(where: { name_eq: $country, OR: {code_eq: $country}}) {
+      country: countries(
+        where: { name_eq: $country, OR: { code_eq: $country } }
+      ) {
         code
       }
     }

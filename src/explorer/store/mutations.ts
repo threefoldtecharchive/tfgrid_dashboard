@@ -12,6 +12,11 @@ export enum MutationTypes {
   SET_POLICIES = "setPolicies",
   SET_NODES_STATUS = "setNodesStatus",
   SET_PRICING_POLICIES = "setPricingPolicies",
+  SET_NODES_COUNT = "setNodesCount",
+  SET_NODES_TABLE_PAGE_NUMBER = "setNodesTablePageNumber",
+  SET_NODES_TABLE_PAGE_SIZE = "setNodesTablePageSize",
+  SET_GATEWAY_FILTER = "setGatewayFilter",
+  SET_UP_FILTER = "setUpFilter",
   LOAD_NODES_DATA = "loadNodesData",
 }
 
@@ -49,6 +54,7 @@ export default {
   async loadNodesData(state: IState, payload: any): Promise<void> {
     const farms = await payload.farms;
     const nodes = await payload.nodes;
+
     for (let i = 0; i < nodes.length; i++) {
       const node: INode = {
         id: nodes[i].id,
@@ -102,4 +108,20 @@ export default {
       state.nodes.push(node);
     }
   },
+
+  setNodesCount(state: IState, payload:number) {
+    state.nodesCount = payload
+  },
+  setNodesTablePageNumber(state: IState, payload:number) {
+    state.nodesTablePageNumber = payload
+  },
+  setNodesTablePageSize(state: IState, payload:number) {
+    state.nodesTablePageSize = payload
+  },
+  setGatewayFilter(state: IState, payload:boolean) {
+    state.nodesGatewayFilter = payload
+  },
+  setUpFilter(state: IState, payload:boolean) {
+    state.nodesUpFilter = payload
+  }
 };

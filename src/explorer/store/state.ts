@@ -92,6 +92,12 @@ export interface IState {
   };
   nodes: INode[];
 
+  nodesCount: number;
+  nodesTablePageNumber: number;
+  nodesTablePageSize: number;
+  nodesGatewayFilter: boolean;
+  nodesUpFilter: boolean;
+
   /* Refactored Data */
   farms: IPaginationData<IFarm>;
 }
@@ -145,6 +151,12 @@ export default {
     },
   },
   nodes: [],
+
+  nodesCount: 0,
+  nodesTablePageNumber: 0,
+  nodesTablePageSize: 10,
+  nodesUpFilter: true,
+  nodesGatewayFilter: false,
 
   /* Refactored data */
   farms: createPaginationData(),

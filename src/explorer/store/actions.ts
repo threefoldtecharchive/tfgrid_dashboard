@@ -27,18 +27,30 @@ export default {
 
   async loadNodesData({ state, commit }: ActionContext<IState, IState>) {
     commit(MutationTypes.SET_TABLE_LOAD, true);
-    const nodes = await paginated_fetcher(
-      `${window.configs.APP_GRIDPROXY_URL}/nodes`,
-      1,
-      50
-    );
-    const farms = await paginated_fetcher(
-      `${window.configs.APP_GRIDPROXY_URL}/farms`,
-      1,
-      50
-    );
+    // commit(MutationTypes.SET_NODES_COUNT, 0);
 
-    commit(MutationTypes.LOAD_NODES_DATA, { nodes, farms });
+
+    let url = `${window.configs.APP_GRIDPROXY_URL}/nodes?ret_count=true`;
+    if (state.nodesUpFilter) url += "&status=up";
+    if (state.nodesGatewayFilter) url += "&ipv4=true&domain=true";
+    url += `&size=${state.nodesTablePageSize}`
+    // url += `&page=${state.nodesTablePageNumber}`
+
+    console.log({status: state.nodesUpFilter, gw: state.nodesGatewayFilter})
+    console.log({url});
+
+    const res = await fetch(url);
+
+    const nodesCount: any = res.headers.get("count");
+    const nodes = res.json();
+
+    state.nodes = []
+
+    console.log({ nodesCount });
+    console.log({ nodes });
+
+    commit(MutationTypes.SET_NODES_COUNT, +nodesCount);
+    commit(MutationTypes.LOAD_NODES_DATA, { nodes, farms: [] });
     commit(MutationTypes.SET_TABLE_LOAD, false);
   },
 
