@@ -9,33 +9,7 @@
 
     <template v-slot:active-filters>
       <div v-for="filter in activeFilters" :key="filter.key">
-        <InFilter
-          key1="nodes"
-          :key2="filter.key"
-          :label="filter.placeholder"
-          v-if="filter.type === 'in'"
-        />
-        <RangeFilter
-          v-if="filter.type === 'range'"
-          key1="nodes"
-          :key2="filter.key"
-          :label="filter.placeholder"
-          :max="filter.max"
-          :unit="filter.unit"
-        />
-        <ConditionFilter
-          v-if="filter.type === 'condition'"
-          key1="nodes"
-          :key2="filter.key"
-          :labels="filter.placeholder"
-        />
-        <ComparisonFilter
-          key1="nodes"
-          :key2="filter.key"
-          :label="filter.placeholder"
-          :prefix="filter.prefix"
-          v-if="filter.type === 'comparison'"
-        />
+        <NodeFilter :filterKey="filter.key" :label="filter.label" />
       </div>
     </template>
 
@@ -67,6 +41,7 @@
           Node statuses are updated every 2 hours.
         </v-alert>
       </div>
+
       <v-data-table
         ref="table"
         :loading="$store.getters['explorer/tableLoading']"
@@ -131,10 +106,6 @@
         v-on:close-sheet="closeSheet"
       />
     </template>
-
-    <!-- <template v-slot:default>
-      <NodesDistribution :nodes="listNodes()" />
-    </template> -->
   </Layout>
 </template>
 
@@ -143,27 +114,20 @@ import { Component, Vue } from "vue-property-decorator";
 import DetailsV2 from "../components/DetailsV2.vue";
 import { INode } from "../graphql/api";
 import Layout from "../components/Layout.vue";
-import InFilter from "../components/InFilter.vue";
-import RangeFilter from "../components/RangeFilter.vue";
-import ConditionFilter from "../components/ConditionFilter.vue";
-import ComparisonFilter from "../components/ComparisonFilter.vue";
 import LayoutFilters from "../components/LayoutFilters.vue";
 import gql from "graphql-tag";
+import NodeFilter from "../components/NodeFilter.vue";
 
 @Component({
   components: {
     Layout,
     DetailsV2,
-    InFilter,
-    RangeFilter,
-    ConditionFilter,
-    ComparisonFilter,
     LayoutFilters,
+    NodeFilter,
   },
 })
+
 export default class Nodes extends Vue {
-  withGateway = false;
-  onlyOnline = true;
 
   headers = [
     { text: "ID", value: "nodeId" },
@@ -178,91 +142,60 @@ export default class Nodes extends Vue {
     { text: "Status", value: "status", align: "center" },
   ];
 
-  activeFiltersKeys: string[] = ["MRU", "HRU", "CRU"];
+  filters = [
+    {
+      label: "Node ID",
+      key: "node_id",
+      placeholder: "Filter by node id.",
+    },
+    {
+      label: "Twin ID",
+      key: "twin_id",
+      placeholder: "Filter by twin id.",
+    },
+    {
+      label: "Farm IDs",
+      key: "farm_ids",
+      placeholder: "Filter by farm ids.",
+    },
+    {
+      label: "Country Full Name",
+      key: "country",
+      placeholder: "Filter by country.",
+    },
+    {
+      label: "Storage (GB)",
+      key: "free_sru",
+      placeholder: "sru",
+    },
+    {
+      label: "Hard Storage (GB)",
+      key: "free_hru",
+      placeholder: "hru",
+    },
+    {
+      label: "Memory (GB)",
+      key: "free_mru",
+      placeholder: "mru",
+    },
+    {
+      label: "CPU (Cores)",
+      key: "free_cru",
+      placeholder: "cru",
+    },
+    {
+      label: "Free Public IP",
+      key: "free_ips",
+      placeholder: "Filter by greater than or equal to publicIp Number.",
+    },
+  ];
+
+  activeFiltersKeys: string[] = ["Node ID"];
 
   get activeFilters() {
     const keySet = new Set(this.activeFiltersKeys);
     return this.filters.filter((filter) => keySet.has(filter.label));
   }
-
-  filters = [
-    {
-      label: "Node ID",
-      type: "in",
-      key: "nodeId",
-      placeholder: "Filter by node id.",
-    },
-    {
-      label: "Farm ID",
-      type: "in",
-      key: "farmId",
-      placeholder: "Filter by farm id.",
-    },
-    {
-      label: "Twin ID",
-      type: "in",
-      key: "twinId",
-      placeholder: "Filter by twin id.",
-    },
-    {
-      label: "Country Full Name",
-      type: "in",
-      key: "countryFullName",
-      placeholder: "Filter by country.",
-    },
-    {
-      label: "Farming Policy",
-      type: "in",
-      key: "farmingPolicyName",
-      placeholder: "Filter by farming policy name.",
-    },
-    {
-      label: "SRU",
-      type: "range",
-      key: "sru",
-      placeholder: "sru",
-      max: 1e12 * 10, // 1e12 is Terra and we want here 10 Terrabytes
-      unit: "TB",
-    },
-    {
-      label: "HRU",
-      type: "range",
-      key: "hru",
-      placeholder: "hru",
-      max: 1e12 * 1000, // 1e12 is Terra and we want here 1000 Terrabytes
-      unit: "TB",
-    },
-    {
-      label: "MRU",
-      type: "range",
-      key: "mru",
-      placeholder: "mru",
-      max: 1e12 * 10, // 1e12 is Terra and we want here 10 Terrabytes
-      unit: "TB",
-    },
-    {
-      label: "CRU",
-      type: "range",
-      key: "cru",
-      placeholder: "cru",
-      max: 64 * 3,
-      unit: "core",
-    },
-    {
-      label: "Free Public IP",
-      type: "comparison",
-      key: "freePublicIPs",
-      placeholder: "Filter by greater than or equal to publicIp Number.",
-      prefix: ">=",
-    },
-    {
-      label: "Certification Type",
-      type: "in",
-      key: "certificationType",
-      placeholder: "Filter by certification type",
-      value: ["Diy", "Certified"],
-    },
-  ];
 
   // Filter computed props, two-way binding on store.
   get gatewayFilter() {
@@ -283,7 +216,6 @@ export default class Nodes extends Vue {
 
   // update the page/size of the request
   onUpdateOptions(pageNumber: number, pageSize: number) {
-    console.log({ page: pageNumber, size: pageSize });
     this.$store.commit("explorer/setNodesTablePageNumber", pageNumber);
     this.$store.commit("explorer/setNodesTablePageSize", pageSize);
     this.loadNodesData();
@@ -292,19 +224,6 @@ export default class Nodes extends Vue {
   // reload the nodes table
   loadNodesData() {
     this.$store.dispatch("explorer/loadNodesData");
-  }
-
-  listNodes() {
-    let nodes: INode[] = this.$store.getters["explorer/listFilteredNodes"];
-    if (this.withGateway) {
-      nodes = nodes.filter(({ publicConfig }) => publicConfig?.domain !== "");
-    }
-
-    if (this.onlyOnline) {
-      nodes = nodes.filter(({ status }) => status === "up");
-    }
-
-    return nodes;
   }
 
   getStatus(node: { status: string }) {

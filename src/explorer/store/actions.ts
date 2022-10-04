@@ -2,7 +2,6 @@ import type { ActionContext } from "vuex";
 import type { IState } from "./state";
 import { MutationTypes } from "./mutations";
 import getChainData from "../utils/getChainData";
-import paginated_fetcher from "../utils/paginatedFetch";
 export enum ActionTypes {
   INIT_POLICIES = "explorer/initPolicies",
   INIT_PRICING_POLICIES = "explorer/initPricingPolicies",
@@ -27,30 +26,40 @@ export default {
 
   async loadNodesData({ state, commit }: ActionContext<IState, IState>) {
     commit(MutationTypes.SET_TABLE_LOAD, true);
-    // commit(MutationTypes.SET_NODES_COUNT, 0);
-
 
     let url = `${window.configs.APP_GRIDPROXY_URL}/nodes?ret_count=true`;
+    url += `&size=${state.nodesTablePageSize}`;
+    url += `&page=${state.nodesTablePageNumber}`;
+
+    // move these to nodesFilter
     if (state.nodesUpFilter) url += "&status=up";
     if (state.nodesGatewayFilter) url += "&ipv4=true&domain=true";
-    url += `&size=${state.nodesTablePageSize}`
-    url += `&page=${state.nodesTablePageNumber}`
 
-    console.log({status: state.nodesUpFilter, gw: state.nodesGatewayFilter})
-    console.log({url});
+    for (const key in state.nodesFilter) {
+      let value = state.nodesFilter[key];
+
+      if (key == "free_hru" || key == "free_mru" || key == "free_sru") {
+        value *= 1024 * 1024 * 1024; // convert from gb to b
+      }
+
+      url += `&${key}=${value}`;
+    }
+
+    console.log({
+      status: state.nodesUpFilter,
+      gw: state.nodesGatewayFilter,
+      filters: state.nodesFilter,
+      url,
+    });
 
     const res = await fetch(url);
 
     const nodesCount: any = res.headers.get("count");
-    const nodes = res.json();
-
-    state.nodes = []
-
-    console.log({ nodesCount });
-    console.log({ nodes });
-
     commit(MutationTypes.SET_NODES_COUNT, +nodesCount);
+
+    const nodes = res.json();
     commit(MutationTypes.LOAD_NODES_DATA, { nodes, farms: [] });
+
     commit(MutationTypes.SET_TABLE_LOAD, false);
   },
 

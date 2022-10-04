@@ -18,6 +18,7 @@ export enum MutationTypes {
   SET_GATEWAY_FILTER = "setGatewayFilter",
   SET_UP_FILTER = "setUpFilter",
   LOAD_NODES_DATA = "loadNodesData",
+  SET_NODES_FILTER = "setNodesFilter",
 }
 
 interface ISetNodeFilter {
@@ -54,6 +55,9 @@ export default {
   async loadNodesData(state: IState, payload: any): Promise<void> {
     const farms = await payload.farms;
     const nodes = await payload.nodes;
+
+    // clear the state each time you reload. to avoid duplicated nodes
+    state.nodes = [];
 
     for (let i = 0; i < nodes.length; i++) {
       const node: INode = {
@@ -123,5 +127,8 @@ export default {
   },
   setUpFilter(state: IState, payload:boolean) {
     state.nodesUpFilter = payload
+  },
+  setNodesFilter(state: IState, payload: {key: string, value: any}) {
+    state.nodesFilter[payload.key] = payload.value
   }
 };
