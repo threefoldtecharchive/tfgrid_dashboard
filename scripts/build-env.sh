@@ -39,7 +39,6 @@ CHAIN_ID="threefold-hub-testnet"
 case $GQL_URL in
   *"dev"*)
     NETWORK="dev"
-    VERSION=$VERSION
     GQL_URL="https://graphql.dev.grid.tf/graphql"
 	  PROXY_URL="https://gridproxy.dev.grid.tf"
     POLKADOT_URL="wss://tfchain.dev.grid.tf/ws"
@@ -52,7 +51,6 @@ case $GQL_URL in
     ;;
   *"test"*)
     NETWORK="test"
-    VERSION=$VERSION
     GQL_URL="https://graphql.test.grid.tf/graphql"
     PROXY_URL="https://gridproxy.test.grid.tf"
     POLKADOT_URL="wss://tfchain.test.grid.tf/ws"
@@ -65,7 +63,6 @@ case $GQL_URL in
     ;;
   *"qa"*)
     NETWORK="qa"
-    VERSION=$VERSION
     GQL_URL="https://graphql.qa.grid.tf/graphql"
     PROXY_URL="https://gridproxy.qa.grid.tf"
     POLKADOT_URL="wss://tfchain.qa.grid.tf/ws"
