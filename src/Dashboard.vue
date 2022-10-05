@@ -236,6 +236,9 @@
           </v-list-group>
         </template>
       </v-list>
+      <div :style="mini ? 'display: none' : 'position: fixed; bottom: 2%; right: 7%; font-weight: bold; background-color: rgb(25, 130, 177); padding: 5px 15px; border-radius: 15px;'">
+        <span>{{version}}</span>
+      </div>
     </v-navigation-drawer>
     <v-dialog
       v-model="loadingAPI"
@@ -285,7 +288,8 @@ import { connect } from "./portal/lib/connect";
 import { getTwin, getTwinID } from "./portal/lib/twin";
 import { accountInterface } from "./portal/store/state";
 import WelcomeWindow from "./portal/components/WelcomeWindow.vue";
-import FundsCard from "./portal/components/FundsCard.vue"
+import FundsCard from "./portal/components/FundsCard.vue";
+import config from "@/portal/config"
 
 interface SidenavItem {
   label: string;
@@ -322,7 +326,7 @@ export default class Dashboard extends Vue {
   balance: balanceInterface = { free: 0, reserved: 0 };
   accounts: accountInterface[] = [];
   loadingAPI = true;
-
+  version = config.version;
 
   balanceFree: string | (string | null)[] = "";
   balanceReserved: string | (string | null)[] = "";
@@ -339,7 +343,6 @@ export default class Dashboard extends Vue {
     this.$store.dispatch("portal/subscribeAccounts");
     this.balanceFree = this.$route.query.balanceFree;
     this.balanceReserved = this.$route.query.balanceReserved;
-
     this.accounts = this.$store.state.portal.accounts;
     if (this.$route.path === "/" && !this.$api) {
       Vue.prototype.$api = await connect(); //declare global variable api
