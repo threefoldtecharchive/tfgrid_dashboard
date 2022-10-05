@@ -185,7 +185,7 @@ export default class CreateIP extends Vue {
     let check_ip = true;
     let check_pub_ip = true;
     this.toIpErrorMessage = "";
-    if (this.publicIP === "") {
+    if (this.toPublicIP === "") {
       this.ipErrorMessage = "";
       return true;
     }
