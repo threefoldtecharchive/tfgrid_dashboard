@@ -15,7 +15,6 @@ fi
 
 
 NETWORK="main"
-VERSION=$VERSION
 POLKADOT_URL="wss://tfchain.grid.tf/ws"
 PROXY_URL="https://gridproxy.grid.tf"
 ACTIVATION_SERVICE_URL="https://activation.grid.tf"
