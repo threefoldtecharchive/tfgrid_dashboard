@@ -343,7 +343,6 @@ export default class Dashboard extends Vue {
     this.$store.dispatch("portal/subscribeAccounts");
     this.balanceFree = this.$route.query.balanceFree;
     this.balanceReserved = this.$route.query.balanceReserved;
-    console.log("version", this.version);
     
     this.accounts = this.$store.state.portal.accounts;
     if (this.$route.path === "/" && !this.$api) {
