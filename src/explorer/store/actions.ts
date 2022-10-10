@@ -8,7 +8,7 @@ export enum ActionTypes {
   INIT_PRICING_POLICIES = "explorer/initPricingPolicies",
   LOAD_DATA = "explorer/loadData",
   LOAD_CHAIN_DATA = "explorer/loadChainData",
-  LOAD_NODES_DATA = "explorer/loadNodesData",
+  REQUEST_NODES = "explorer/requestNodes",
 }
 
 export default {
@@ -25,44 +25,36 @@ export default {
       });
   },
 
-  async loadNodesData({ state, commit }: ActionContext<IState, IState>) {
+  async requestNodes({ state, commit }: ActionContext<IState, IState>) {
     commit(MutationTypes.SET_TABLE_LOAD, true);
 
     let url = `${window.configs.APP_GRIDPROXY_URL}/nodes?ret_count=true`;
     url += `&size=${state.nodesTablePageSize}`;
     url += `&page=${state.nodesTablePageNumber}`;
 
-    // move these to nodesFilter
     if (state.nodesUpFilter) url += "&status=up";
     if (state.nodesGatewayFilter) url += "&ipv4=true&domain=true";
 
     for (const key in state.nodesFilter) {
-        let value = state.nodesFilter[key];
+      let value = state.nodesFilter[key];
 
-        if (key == "free_hru" || key == "free_mru" || key == "free_sru") {
-          value *= 1024 * 1024 * 1024; // convert from gb to b
-        }
-
-        // don't break the call for the null values
-        if (value == null || value == undefined) value = ""
-
-        url += `&${key}=${value}`;
+      if (key == "free_hru" || key == "free_mru" || key == "free_sru") {
+        value *= 1024 * 1024 * 1024; // convert from gb to b
       }
 
-    console.log({
-      status: state.nodesUpFilter,
-      gw: state.nodesGatewayFilter,
-      filters: state.nodesFilter,
-      url,
-    });
+      // don't break the call for the null values
+      if (value == null || value == undefined) value = "";
+
+      url += `&${key}=${value}`;
+    }
 
     const res = await fetch(url);
-    
+
     const nodesCount: any = res.headers.get("count");
     commit(MutationTypes.SET_NODES_COUNT, +nodesCount);
-    
+
     const nodes = await res.json();
-    
+
     // get all farms for the listed nodes
     const farms: IGridProxyFarm[] = [];
 
@@ -78,7 +70,7 @@ export default {
       }
     }
 
-    commit(MutationTypes.LOAD_NODES_DATA, { nodes, farms });
+    commit(MutationTypes.SET_NODES, { nodes, farms });
     commit(MutationTypes.SET_TABLE_LOAD, false);
   },
 

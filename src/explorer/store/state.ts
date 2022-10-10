@@ -157,7 +157,7 @@ export default {
   nodes: [],
 
   nodesFilter: {},
-  
+
   nodesCount: 0,
   nodesTablePageNumber: 1,
   nodesTablePageSize: 10,

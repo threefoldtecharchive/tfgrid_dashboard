@@ -2,7 +2,7 @@
   <v-card flat color="transparent">
     <v-subheader>{{ label.toLocaleUpperCase() }}</v-subheader>
     <v-combobox
-      v-model="items"
+      v-model="filters"
       :items="_values"
       chips
       clearable
@@ -16,7 +16,7 @@
         <v-chip
           v-bind="attrs"
           :input-value="selected"
-          close
+          :close="multiple"
           @click="select"
           @click:close="remove(item)"
         >
@@ -35,6 +35,7 @@
 import { MutationTypes } from "../store/mutations";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { inputValidation } from "../utils/validations";
+import { ActionTypes } from "../store/actions";
 
 @Component({})
 export default class InFilter extends Vue {
@@ -47,7 +48,7 @@ export default class InFilter extends Vue {
   }
 
   get _values(): (string | number)[] {
-    // values are the suggested options
+    // values are the suggested options; not needed for now.
     return [];
   }
 
@@ -55,35 +56,24 @@ export default class InFilter extends Vue {
     return this.$store.getters["explorer/getNodesFilter"][this.filterKey];
   }
 
-  set filters(payload: any) {
-    this.$store.commit("explorer/" + MutationTypes.SET_NODES_FILTER, {
-      key: this.filterKey,
-      value: this.value,
-    });
-  }
-
-  get items(): string[] {
-    return this.$store.getters["explorer/getNodesFilter"][this.filterKey];
-  }
-
-  set items(value: string[]) {
+  set filters(value: string[]) {
+    // any changes in the filters list will execute this method. so no need to created(), destroyed().
     this.$store.commit("explorer/" + MutationTypes.SET_NODES_FILTER, {
       key: this.filterKey,
       value,
     });
-    this.$store.dispatch("explorer/loadNodesData");
+    this.$store.dispatch(ActionTypes.REQUEST_NODES);
   }
 
-  // UI creation/deletion
-
   remove(item: string): void {
-    // remove from UI, clearing a single filter value
-    const filters = this.filters;
-    const idx = filters.findIndex((i) => i == item);
-    if (idx > -1) {
-      filters.splice(idx, 1);
-      this.filters = filters;
-    }
+    console.log("REMOVING", item);
+
+    // const filters = this.filters;
+    // const idx = filters.indexOf(item);
+    // if (idx > -1) {
+    //   filters.splice(idx, 1);
+    //   this.filters = filters;
+    // }
 
     // remove from store
     this.$store.commit(
@@ -92,38 +82,13 @@ export default class InFilter extends Vue {
     );
 
     // reload nodes
-    this.$store.dispatch("explorer/loadNodesData");
+    this.$store.dispatch(ActionTypes.REQUEST_NODES);
   }
 
   errorMsg: any = "";
   validated(value: string, key: string): string {
     this.errorMsg = inputValidation(value, key);
     return this.errorMsg;
-  }
-
-  created() {
-    this.$store.commit("explorer/" + MutationTypes.SET_FILTER_ENABLE, {
-      key1: "nodes",
-      key2: this.filterKey,
-      value: true,
-    });
-  }
-
-  destroyed() {
-    // Destroying is clearing the filed.
-    this.$store.commit("explorer/" + MutationTypes.SET_FILTER_ENABLE, {
-      key1: "nodes",
-      key2: this.filterKey,
-      value: false,
-    });
-
-    this.$store.commit(
-      "explorer/" + MutationTypes.CLEAR_NODES_FILTER_KEY,
-      this.filterKey
-    );
-
-    // reload nodes
-    this.$store.dispatch("explorer/loadNodesData");
   }
 }
 </script>

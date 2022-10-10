@@ -3,7 +3,7 @@
     <template v-slot:filters>
       <LayoutFilters
         :items="filters.map((f) => f.label)"
-        v-model="activeFiltersKeys"
+        v-model="activeFiltersList"
       />
     </template>
 
@@ -27,12 +27,12 @@
             label="Gateways (Only)"
             style="margin-bottom: -30px"
             v-model="gatewayFilter"
-            @change="loadNodesData"
+            @change="requestNodes"
           />
           <v-switch
             label="Online (Only)"
             v-model="onlineFilter"
-            @change="loadNodesData"
+            @change="requestNodes"
           />
         </div>
       </div>
@@ -117,6 +117,8 @@ import Layout from "../components/Layout.vue";
 import LayoutFilters from "../components/LayoutFilters.vue";
 import gql from "graphql-tag";
 import NodeFilter from "../components/NodeFilter.vue";
+import { ActionTypes } from "../store/actions";
+import { MutationTypes } from "../store/mutations";
 
 @Component({
   components: {
@@ -126,9 +128,7 @@ import NodeFilter from "../components/NodeFilter.vue";
     NodeFilter,
   },
 })
-
 export default class Nodes extends Vue {
-
   headers = [
     { text: "ID", value: "nodeId" },
     { text: "Farm ID", value: "farmId", align: "center" },
@@ -190,10 +190,10 @@ export default class Nodes extends Vue {
     },
   ];
 
-  activeFiltersKeys: string[] = ["Node ID"];
+  activeFiltersList: string[] = ["Node ID"];
 
   get activeFilters() {
-    const keySet = new Set(this.activeFiltersKeys);
+    const keySet = new Set(this.activeFiltersList);
     return this.filters.filter((filter) => keySet.has(filter.label));
   }
 
@@ -203,7 +203,7 @@ export default class Nodes extends Vue {
   }
 
   set gatewayFilter(value) {
-    this.$store.commit("explorer/setGatewayFilter", value);
+    this.$store.commit("explorer/" + MutationTypes.SET_GATEWAY_FILTER, value);
   }
 
   get onlineFilter() {
@@ -211,21 +211,27 @@ export default class Nodes extends Vue {
   }
 
   set onlineFilter(value) {
-    this.$store.commit("explorer/setUpFilter", value);
+    this.$store.commit("explorer/" + MutationTypes.SET_UP_FILTER, value);
   }
 
   // update the page/size of the request
   onUpdateOptions(pageNumber: number, pageSize: number) {
-    this.$store.commit("explorer/setNodesTablePageNumber", pageNumber);
-    this.$store.commit("explorer/setNodesTablePageSize", pageSize);
+    this.$store.commit(
+      "explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER,
+      pageNumber
+    );
+    this.$store.commit(
+      "explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_SIZE,
+      pageSize
+    );
 
     // reload if the page/size changed; leads to double requests at init
-    this.loadNodesData();
+    this.requestNodes();
   }
 
   // reload the nodes table
-  loadNodesData() {
-    this.$store.dispatch("explorer/loadNodesData");
+  requestNodes() {
+    this.$store.dispatch(ActionTypes.REQUEST_NODES);
   }
 
   getStatus(node: { status: string }) {
@@ -234,7 +240,7 @@ export default class Nodes extends Vue {
   }
 
   toggleActive(label: string): void {
-    this.activeFiltersKeys = this.activeFiltersKeys.filter((x) => x !== label);
+    this.activeFiltersList = this.activeFiltersList.filter((x) => x !== label);
   }
 
   node: INode | null = null;
