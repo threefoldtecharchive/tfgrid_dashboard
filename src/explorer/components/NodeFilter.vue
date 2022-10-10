@@ -7,7 +7,7 @@
       chips
       clearable
       :label="label"
-      multiple
+      :multiple="multiple"
       solo
       type="text"
       @input.native="validated($event.srcElement.value, filterKey)"
@@ -42,6 +42,10 @@ export default class InFilter extends Vue {
   @Prop({ required: true }) filterKey!: string;
   @Prop() value?: string[];
 
+  get multiple() {
+    return this.filterKey == "farm_ids";
+  }
+
   get _values(): (string | number)[] {
     // values are the suggested options
     return [];
@@ -59,7 +63,7 @@ export default class InFilter extends Vue {
   }
 
   get items(): string[] {
-    return [];
+    return this.$store.getters["explorer/getNodesFilter"][this.filterKey];
   }
 
   set items(value: string[]) {
@@ -82,7 +86,10 @@ export default class InFilter extends Vue {
     }
 
     // remove from store
-    this.$store.commit("explorer/" + MutationTypes.CLEAR_NODES_FILTER_KEY, this.filterKey)
+    this.$store.commit(
+      "explorer/" + MutationTypes.CLEAR_NODES_FILTER_KEY,
+      this.filterKey
+    );
 
     // reload nodes
     this.$store.dispatch("explorer/loadNodesData");
@@ -110,7 +117,10 @@ export default class InFilter extends Vue {
       value: false,
     });
 
-    this.$store.commit("explorer/" + MutationTypes.CLEAR_NODES_FILTER)
+    this.$store.commit(
+      "explorer/" + MutationTypes.CLEAR_NODES_FILTER_KEY,
+      this.filterKey
+    );
 
     // reload nodes
     this.$store.dispatch("explorer/loadNodesData");

@@ -218,6 +218,8 @@ export default class Nodes extends Vue {
   onUpdateOptions(pageNumber: number, pageSize: number) {
     this.$store.commit("explorer/setNodesTablePageNumber", pageNumber);
     this.$store.commit("explorer/setNodesTablePageSize", pageSize);
+
+    // reload if the page/size changed; leads to double requests at init
     this.loadNodesData();
   }
 

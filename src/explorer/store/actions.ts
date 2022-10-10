@@ -43,6 +43,9 @@ export default {
           value *= 1024 * 1024 * 1024; // convert from gb to b
         }
 
+        // don't break the call for the null values
+        if (value == null || value == undefined) value = ""
+
         url += `&${key}=${value}`;
       }
 
