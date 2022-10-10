@@ -23,12 +23,15 @@ jobs:
       - name: Yarn install
         run: yarn install
       - name: Yarn serve 
-        run: yarn serve --port 3060 &
+        run: yarn serve &
       - name: Wait on localhost
         uses: iFaxity/wait-on-action@v1
         with:
-          resource: http://localhost:3060
+          resource: http://localhost:8080
       - name: Run tests
         working-directory: ./tests/frontend_selenium
-        run: python -m pytest -v --html=report.html
+        env:
+          SELENIUM_SEED: ${{ secrets.SELENIUM_SEED }}
+          SELENIUM_ADDRESS: ${{ secrets.SELENIUM_ADDRESS }}
+        run: python -m pytest -v
        

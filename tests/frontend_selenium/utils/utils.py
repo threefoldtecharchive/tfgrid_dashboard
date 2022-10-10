@@ -1,17 +1,28 @@
 import configparser
 import random
 import string
+import os
 
 def get_seed():
     config = configparser.ConfigParser()
     config.read('Config.ini')
     seed = config['Utils']['seed']
+    if (seed == ''):
+        try:
+            seed = os.environ["SELENIUM_SEED"]
+        except:
+            print("You must add account seed either in Config.ini or by exporting SELENIUM_SEED.")
     return str(seed)
 
 def get_stellar_address():
     config = configparser.ConfigParser()
     config.read('Config.ini')
     address = config['Utils']['address']
+    if (address == ''):
+        try:
+            address = os.environ["SELENIUM_ADDRESS"]
+        except:
+            print("You must add account stellar address either in Config.ini or by exporting SELENIUM_ADDRESS.")
     return str(address)
       
 def generate_string():

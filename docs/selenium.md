@@ -8,13 +8,15 @@ Prerequisites | version |
 [pytest](https://pypi.org/project/pytest/) | `7.1.2` |
 [requests](https://pypi.org/project/requests/) | `2.28.1` |
 [selenium](https://pypi.org/project/selenium/) | `4.4.3` |
+[PyVirtualDisplay](https://pypi.org/project/PyVirtualDisplay/) | `3.0` |
 [webdriver-manager](https://pypi.org/project/webdriver-manager/) | `3.8.3` |
 
 
 # Running selenium
 ## First
-- in the root directory run `yarn install & yarn serve --port 3060`
-- If the port in serve changes from `3060` for any reason, you should change the variable `port` in `tests/frontend selenium/Config.ini` to the new value.
+- In the root directory run `yarn install & yarn serve`
+- If the port in serve changes from `8080` for any reason, you should change the variable `port` in `tests/frontend selenium/Config.ini` to the new value.
+- Add account `seed` and `address` either in `tests/frontend selenium/Config.ini` or by exporting `SELENIUM_SEED` and `SELENIUM_ADDRESS`.
 ## Second
 - You need to leave the server running and open new terminal.
 - Change direcotry to frontend selenium through the command line using `cd tests/frontend_selenium`

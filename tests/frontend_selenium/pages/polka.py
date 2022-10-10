@@ -77,16 +77,6 @@ class PolkaPage:
       self.browser.find_element(*self.polka_add_import_account).click()
       self.browser.close()
       self.browser.switch_to.window(self.browser.window_handles[0])
-    
-    def forget_account(self):
-      self.browser.execute_script("window.open('');")
-      self.browser.switch_to.window(self.browser.window_handles[1])
-      self.browser.get(Base.extension_url)
-      self.browser.find_element(*self.polka_account_settings).click()
-      self.browser.find_element(*self.polka_forget_account).click()
-      self.browser.find_element(*self.polka_submit_forget).click()
-      self.browser.close()
-      self.browser.switch_to.window(self.browser.window_handles[0])
 
     def authenticate_with_pass(self, Pass):
       WebDriverWait(self.browser, 20).until(EC.number_of_windows_to_be(2))

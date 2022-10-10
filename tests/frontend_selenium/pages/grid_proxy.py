@@ -10,7 +10,7 @@ class GridProxy:
     def __init__(self, browser):
         self.browser = browser
 
-    def get_rentable_node():
+    def get_rentable_node(self):
         r = requests.post(Base.gridproxy_url + 'nodes?rentable=true&status=up')
         node_list = r.json()
         r = requests.post(Base.gridproxy_url + 'nodes?rented=true&status=up')

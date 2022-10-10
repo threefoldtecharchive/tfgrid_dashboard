@@ -9,12 +9,13 @@ import pytest
 def before_test_setup(browser):
     dedicate_page = DedicatePage(browser)
     polka_page = PolkaPage(browser)
+    grid_proxy = GridProxy(browser)
     user = generate_string()
     password = generate_string()
     polka_page.load_and_authenticate()
     polka_page.import_account(get_seed(),user,password)
     dedicate_page.navigate(user)
-    return dedicate_page, polka_page, password
+    return dedicate_page, polka_page, grid_proxy, password
 
 def test_dedicate_page(browser):
     """
@@ -38,9 +39,10 @@ def test_search_by_valid_name_address(browser):
       Test Data: [ ID - Location - case sensitive Location ]
       Result: The search results should be displayed correctly according to the keywords used.
     """
-    dedicate_page,_,_ = before_test_setup(browser)
-    ids = dedicate_page.get_node_id()
-    locations = dedicate_page.get_node_location()
+    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+    node_list = grid_proxy.get_rentable_node()
+    ids = dedicate_page.get_node_id(node_list)
+    locations = dedicate_page.get_node_location(node_list)
     for id in ids:
       dedicate_page.search_nodes(id)
       assert dedicate_page.get_node_count() == 1
@@ -61,7 +63,7 @@ def test_search_by_invalid_name_address(browser):
           - In the Farms search bar enter invalid location or the id of the node
       Result: The search results should be displayed nothing as search keywords are incorrect.
     """
-    dedicate_page,_,_ = before_test_setup(browser)
+    dedicate_page,_,_,_ = before_test_setup(browser)
     dedicate_page.search_nodes(generate_string())
     assert 'No data available' in browser.page_source
 
@@ -74,9 +76,10 @@ def test_sort_node_id(browser):
           - Click on the arrow behind node Id 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the id.
     """
-    dedicate_page,_,_ = before_test_setup(browser)
-    assert dedicate_page.sort_node_id() == sorted(dedicate_page.get_node_id(), reverse=False) 
-    assert dedicate_page.sort_node_id() == sorted(dedicate_page.get_node_id(), reverse=True)
+    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+    node_list = grid_proxy.get_rentable_node()
+    assert dedicate_page.sort_node_id() == sorted(dedicate_page.get_node_id(node_list), reverse=False) 
+    assert dedicate_page.sort_node_id() == sorted(dedicate_page.get_node_id(node_list), reverse=True)
 
 
 def test_sort_node_location(browser):
@@ -87,9 +90,10 @@ def test_sort_node_location(browser):
           - Click on the arrow behind node location 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the location.
     """
-    dedicate_page,_,_ = before_test_setup(browser)
-    assert dedicate_page.sort_node_location() == sorted(dedicate_page.get_node_location(), reverse=False) 
-    assert dedicate_page.sort_node_location() == sorted(dedicate_page.get_node_location(), reverse=True)
+    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+    node_list = grid_proxy.get_rentable_node()
+    assert dedicate_page.sort_node_location() == sorted(dedicate_page.get_node_location(node_list), reverse=False) 
+    assert dedicate_page.sort_node_location() == sorted(dedicate_page.get_node_location(node_list), reverse=True)
 
 
 def test_sort_node_cru(browser):
@@ -100,9 +104,10 @@ def test_sort_node_cru(browser):
           - Click on the arrow behind node CRU 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the CRU.
     """
-    dedicate_page,_,_ = before_test_setup(browser)
-    assert dedicate_page.sort_node_cru() == sorted(dedicate_page.get_node_cru(), reverse=False) 
-    assert dedicate_page.sort_node_cru() == sorted(dedicate_page.get_node_cru(), reverse=True)
+    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+    node_list = grid_proxy.get_rentable_node()
+    assert dedicate_page.sort_node_cru() == sorted(dedicate_page.get_node_cru(node_list), reverse=False) 
+    assert dedicate_page.sort_node_cru() == sorted(dedicate_page.get_node_cru(node_list), reverse=True)
 
 
 def test_sort_node_hru(browser):
@@ -113,9 +118,10 @@ def test_sort_node_hru(browser):
           - Click on the arrow behind node HRU 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the HRU.
     """
-    dedicate_page,_,_ = before_test_setup(browser)
-    assert dedicate_page.sort_node_hru() == sorted(dedicate_page.get_node_hru(False), reverse=False) 
-    assert dedicate_page.sort_node_hru() == sorted(dedicate_page.get_node_hru(False), reverse=True)
+    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+    node_list = grid_proxy.get_rentable_node()
+    assert dedicate_page.sort_node_hru() == sorted(dedicate_page.get_node_hru(False, node_list), reverse=False) 
+    assert dedicate_page.sort_node_hru() == sorted(dedicate_page.get_node_hru(False, node_list), reverse=True)
 
 
 def test_sort_node_mru(browser):
@@ -126,9 +132,10 @@ def test_sort_node_mru(browser):
           - Click on the arrow behind node MRU 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the MRU.
     """
-    dedicate_page,_,_ = before_test_setup(browser)
-    assert dedicate_page.sort_node_mru() == sorted(dedicate_page.get_node_mru(False), reverse=False) 
-    assert dedicate_page.sort_node_mru() == sorted(dedicate_page.get_node_mru(False), reverse=True)
+    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+    node_list = grid_proxy.get_rentable_node()
+    assert dedicate_page.sort_node_mru() == sorted(dedicate_page.get_node_mru(False, node_list), reverse=False) 
+    assert dedicate_page.sort_node_mru() == sorted(dedicate_page.get_node_mru(False, node_list), reverse=True)
 
 
 def test_sort_node_sru(browser):
@@ -139,9 +146,10 @@ def test_sort_node_sru(browser):
           - Click on the arrow behind node SRU 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the SRU.
     """
-    dedicate_page,_,_ = before_test_setup(browser)
-    assert dedicate_page.sort_node_sru() == sorted(dedicate_page.get_node_sru(False), reverse=False) 
-    assert dedicate_page.sort_node_sru() == sorted(dedicate_page.get_node_sru(False), reverse=True)
+    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+    node_list = grid_proxy.get_rentable_node()
+    assert dedicate_page.sort_node_sru() == sorted(dedicate_page.get_node_sru(False, node_list), reverse=False) 
+    assert dedicate_page.sort_node_sru() == sorted(dedicate_page.get_node_sru(False, node_list), reverse=True)
 
 
 def test_sort_node_price(browser):
@@ -152,7 +160,7 @@ def test_sort_node_price(browser):
           - Click on the arrow behind node Price 'once up and once down and once to remove the sorting'
       Result: You should see the sorting of the table change according to the Price.
     """
-    dedicate_page,_,_ = before_test_setup(browser)
+    dedicate_page,_,_,_ = before_test_setup(browser)
     price = dedicate_page.get_node_price()
     assert dedicate_page.sort_node_price() == sorted(price, reverse=True) 
     assert dedicate_page.sort_node_price() == sorted(price, reverse=False)
@@ -166,17 +174,17 @@ def test_node_details(browser):
           - Click on expand button on a node
       Result: You should see the node details.
     """
-    dedicate_page,_,_ = before_test_setup(browser)
-    grid_proxy = GridProxy(browser)
+    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+    node_list = grid_proxy.get_rentable_node()
     nodes = dedicate_page.node_details()
     for i in range(len(nodes)):
-      assert str(dedicate_page.get_node_cru()[i]) in nodes[i][1]
-      assert str(dedicate_page.get_node_hru(True)[i]) in nodes[i][2]
-      assert str(dedicate_page.get_node_sru(True)[i]) in nodes[i][3]
-      assert str(dedicate_page.get_node_mru(True)[i]) in nodes[i][4]
-      assert dedicate_page.get_node_location()[i] in nodes[i][5]
-      assert dedicate_page.get_node_city()[i] in nodes[i][6]
-      assert str(grid_proxy.get_farm_ips((dedicate_page.get_farm_id(nodes[i][0])))) in nodes[i][7]
+      assert str(dedicate_page.get_node_cru(node_list)[i]) in nodes[i][1]
+      assert str(dedicate_page.get_node_hru(True, node_list)[i]) in nodes[i][2]
+      assert str(dedicate_page.get_node_sru(True, node_list)[i]) in nodes[i][3]
+      assert str(dedicate_page.get_node_mru(True, node_list)[i]) in nodes[i][4]
+      assert dedicate_page.get_node_location(node_list)[i] in nodes[i][5]
+      assert dedicate_page.get_node_city(node_list)[i] in nodes[i][6]
+      assert str(grid_proxy.get_farm_ips((dedicate_page.get_farm_id(nodes[i][0], node_list)))) in nodes[i][7]
 
 
 def test_reserve_node(browser):
@@ -189,9 +197,9 @@ def test_reserve_node(browser):
           - Click unreserve button on same node
       Result: You should see the node details.
     """
-    dedicate_page, polka_page, password = before_test_setup(browser)
-    grid_proxy = GridProxy(browser)
-    node_id = dedicate_page.check_free_node()
+    dedicate_page, polka_page, grid_proxy, password = before_test_setup(browser)
+    node_list = grid_proxy.get_rentable_node()
+    node_id = dedicate_page.check_free_node(node_list)
     if(node_id):
       dedicate_page.reserve_node(node_id)
       polka_page.authenticate_with_pass(password)
@@ -203,7 +211,7 @@ def test_reserve_node(browser):
         if(counter==10):
           break
       assert grid_proxy.get_dedicate_status(node_id) == dedicate_page.twin_id
-      dedicate_page.unreserve_node()
+      dedicate_page.unreserve_node(node_id)
       polka_page.authenticate_with_pass(password)
       assert dedicate_page.wait_for('Transaction succeeded: Node '+ str(node_id) +' Unreserved')
       while(status!=0):

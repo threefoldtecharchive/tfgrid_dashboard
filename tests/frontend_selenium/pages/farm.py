@@ -85,14 +85,14 @@ class FarmPage:
       id=[]
       table = self.browser.find_elements(*self.table)
       for i in range(1,len(table)+1):
-        element=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[2]').text)
+        element=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[2]").text)
         id.append(int(element))
       id.sort()
       self.browser.find_element(*self.farm_Id_arrow).click()
       sorted=[]
       table = self.browser.find_elements(*self.table)
       for i in range (1,len(table)+1):
-        index=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[2]').text)
+        index=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[2]").text)
         sorted.append(int(index))
       return id,sorted,table
     
@@ -101,7 +101,7 @@ class FarmPage:
       sorted=[]
       self.browser.find_element(*self.farm_Id_arrow).click()
       for i in range (1,len(rows)+1):
-        index1=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[2]').text)
+        index1=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[2]").text)
         sorted.append(int(index1))
       return id,sorted
 
@@ -110,14 +110,14 @@ class FarmPage:
       name=[]
       table = self.browser.find_elements(*self.table)
       for i in range(1,len(table)+1):                                                                                       
-        element=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[3]').text)
+        element=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[3]").text)
         element=element.upper()
         name.append((element))
       name.sort()
       self.browser.find_element(*self.farm_name_arrow).click()
       sorted=[]
       for i in range (1,len(table)+1):
-        index=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[3]').text)
+        index=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[3]").text)
         index=index.upper()
         sorted.append((index))
       return name,sorted,table
@@ -127,7 +127,7 @@ class FarmPage:
       sorted=[]
       self.browser.find_element(*self.farm_name_arrow).click()
       for i in range (1,len(table)+1):
-        index1=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[3]').text)
+        index1=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[3]").text)
         index1=index1.upper()
         sorted.append((index1))
       return name,sorted
@@ -137,13 +137,13 @@ class FarmPage:
       id=[]
       table = self.browser.find_elements(*self.table)
       for i in range(1,len(table)+1):                                                                                       
-        element=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[4]').text)
+        element=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[4]").text)
         id.append(int(element))
       id.sort()
       self.browser.find_element(*self.farm_twin_linked_arrow).click()
       sorted=[]
       for i in range (1,len(table)+1):
-        index=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[4]').text)
+        index=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[4]").text)
         sorted.append(int(index))
       return id,sorted,table   
     
@@ -152,7 +152,7 @@ class FarmPage:
       sorted=[]
       self.browser.find_element(*self.farm_twin_linked_arrow).click()
       for i in range (1,len(table)+1):
-        index1=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[4]').text)
+        index1=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[4]").text)
         sorted.append(int(index1))
       return id , sorted
       
@@ -161,13 +161,13 @@ class FarmPage:
       name=[]
       table = self.browser.find_elements(*self.table)
       for i in range(1,len(table)+1):                                                                                       
-        element=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[5]').text)
+        element=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[5]").text)
         name.append((element))
       name.sort()
       self.browser.find_element(*self.certification_type_arrow).click()
       sorted=[]
       for i in range (1,len(table)+1):
-        index=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[5]').text)
+        index=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[5]").text)
         sorted.append((index))
       return name ,sorted,table   
 
@@ -175,7 +175,7 @@ class FarmPage:
       name.reverse()
       sorted=[]
       for i in range (1,len(table)+1):
-        index1=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[5]').text)
+        index1=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[5]").text)
         sorted.append((index1))
       return name,sorted
 
@@ -184,13 +184,13 @@ class FarmPage:
       id=[]
       table = self.browser.find_elements(*self.table)
       for i in range(1,len(table)+1):                                                                                       
-        element=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[6]').text)
+        element=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[6]").text)
         id.append(int(element))
       id.sort()
       self.browser.find_element(*self.pricing_policy_arrow).click()
       sorted=[]
       for i in range (1,len(table)+1):
-        index=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[6]').text)
+        index=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[6]").text)
         sorted.append(int(index))
       return id,sorted,table
 
@@ -199,7 +199,7 @@ class FarmPage:
       sorted=[]
       self.browser.find_element(*self.pricing_policy_arrow).click()
       for i in range (1,len(table)+1):
-        index1=(self.browser.find_element(By.XPATH, self.table_row + str(i) + ']/td[6]').text)
+        index1=(self.browser.find_element(By.XPATH, f"{self.table_row}{str(i)}]/td[6]").text)
         sorted.append(int(index1))
       return id, sorted
 
@@ -251,12 +251,12 @@ class FarmPage:
     def farm_detials(self):
       details = []
       for i in range(5): 
-        details.append(self.browser.find_element(By.XPATH, self.node_expan_details+ str(i+1) +']/div[2]/div/span').text)
+        details.append(self.browser.find_element(By.XPATH,  f"{self.node_expan_details}{str(i+1)}]/div[2]/div/span").text)
       details.append(self.browser.find_element(*self.stellar_payout_address).text)
       for i in range(len(self.browser.find_elements(By.XPATH, self.farm_public_ips))):
-        details.append(self.browser.find_element(By.XPATH, self.farm_public_ips+ '['+ str(i+1) +']/td[1]').text)
-        details.append(self.browser.find_element(By.XPATH, self.farm_public_ips+ '['+ str(i+1) +']/td[3]').text)
-        details.append(self.browser.find_element(By.XPATH, self.farm_public_ips+ '['+ str(i+1) +']/td[2]').text)
+        details.append(self.browser.find_element(By.XPATH,  f"{self.farm_public_ips}[{str(i+1)}]/td[1]").text)
+        details.append(self.browser.find_element(By.XPATH,  f"{self.farm_public_ips}[{str(i+1)}]/td[3]").text)
+        details.append(self.browser.find_element(By.XPATH,  f"{self.farm_public_ips}[{str(i+1)}]/td[2]").text)
       return details
 
     def verify_the_availability_of_zero_os_bootstrap(self):
