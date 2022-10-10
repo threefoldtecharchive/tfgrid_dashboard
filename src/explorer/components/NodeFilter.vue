@@ -12,13 +12,13 @@
       type="text"
       @input.native="validated($event.srcElement.value, filterKey)"
     >
-      <template v-slot:selection="{ attrs, item, select, selected }">
+      <template v-slot:selection="{ attrs, item, select, selected, index }">
         <v-chip
           v-bind="attrs"
           :input-value="selected"
           :close="multiple"
           @click="select"
-          @click:close="remove(item)"
+          @click:close="remove(index)"
         >
           <strong>{{ item }}</strong>
         </v-chip>
@@ -64,23 +64,12 @@ export default class InFilter extends Vue {
     this.$store.dispatch(ActionTypes.REQUEST_NODES);
   }
 
-  remove(item: string): void {
-    console.log("REMOVING", item, "from", this.items);
-
-    // const filters = this.filters;
-    // const idx = filters.indexOf(item);
-    // if (idx > -1) {
-    //   filters.splice(idx, 1);
-    //   this.filters = filters;
-    // }
-
-    // remove from store
-    this.$store.commit(
-      "explorer/" + MutationTypes.CLEAR_NODES_FILTER_KEY,
-      this.filterKey
+  remove(index: number): void {
+    this.$store.getters["explorer/getNodesFilter"][this.filterKey].splice(
+      index,
+      1
     );
 
-    // reload nodes
     this.$store.dispatch(ActionTypes.REQUEST_NODES);
   }
 
