@@ -2,7 +2,7 @@
   <v-card flat color="transparent">
     <v-subheader>{{ label.toLocaleUpperCase() }}</v-subheader>
     <v-combobox
-      v-model="filters"
+      v-model="items"
       :items="_values"
       chips
       clearable
@@ -52,12 +52,11 @@ export default class InFilter extends Vue {
     return [];
   }
 
-  get filters(): string[] {
+  get items(): string[] {
     return this.$store.getters["explorer/getNodesFilter"][this.filterKey];
   }
 
-  set filters(value: string[]) {
-    // any changes in the filters list will execute this method. so no need to created(), destroyed().
+  set items(value: string[]) {
     this.$store.commit("explorer/" + MutationTypes.SET_NODES_FILTER, {
       key: this.filterKey,
       value,
@@ -66,7 +65,7 @@ export default class InFilter extends Vue {
   }
 
   remove(item: string): void {
-    console.log("REMOVING", item);
+    console.log("REMOVING", item, "from", this.items);
 
     // const filters = this.filters;
     // const idx = filters.indexOf(item);
@@ -89,6 +88,26 @@ export default class InFilter extends Vue {
   validated(value: string, key: string): string {
     this.errorMsg = inputValidation(value, key);
     return this.errorMsg;
+  }
+
+  created() {
+    this.$store.commit("explorer/" + MutationTypes.SET_FILTER_ENABLE, {
+      key1: "nodes",
+      key2: this.filterKey,
+      value: true,
+    });
+  }
+  destroyed() {
+    this.$store.commit("explorer/" + MutationTypes.SET_FILTER_ENABLE, {
+      key1: "nodes",
+      key2: this.filterKey,
+      value: false,
+    });
+    this.$store.commit(
+      "explorer/" + MutationTypes.CLEAR_NODES_FILTER_KEY,
+      this.filterKey
+    );
+    this.$store.dispatch(ActionTypes.REQUEST_NODES);
   }
 }
 </script>
