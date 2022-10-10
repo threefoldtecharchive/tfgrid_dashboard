@@ -73,7 +73,7 @@ export default class InFilter extends Vue {
   // UI creation/deletion
 
   remove(item: string): void {
-    // remove from UI
+    // remove from UI, clearing a single filter value
     const filters = this.filters;
     const idx = filters.findIndex((i) => i == item);
     if (idx > -1) {
@@ -82,10 +82,7 @@ export default class InFilter extends Vue {
     }
 
     // remove from store
-    this.$store.commit("explorer/" + MutationTypes.SET_NODES_FILTER, {
-      key: this.filterKey,
-      value: "",
-    });
+    this.$store.commit("explorer/" + MutationTypes.CLEAR_NODES_FILTER_KEY, this.filterKey)
 
     // reload nodes
     this.$store.dispatch("explorer/loadNodesData");
@@ -106,16 +103,14 @@ export default class InFilter extends Vue {
   }
 
   destroyed() {
+    // Destroying is clearing the filed.
     this.$store.commit("explorer/" + MutationTypes.SET_FILTER_ENABLE, {
       key1: "nodes",
       key2: this.filterKey,
       value: false,
     });
 
-    this.$store.commit("explorer/" + MutationTypes.SET_NODES_FILTER, {
-      key: this.filterKey,
-      value: "",
-    });
+    this.$store.commit("explorer/" + MutationTypes.CLEAR_NODES_FILTER)
 
     // reload nodes
     this.$store.dispatch("explorer/loadNodesData");

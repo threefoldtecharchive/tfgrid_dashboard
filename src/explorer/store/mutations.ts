@@ -19,6 +19,8 @@ export enum MutationTypes {
   SET_UP_FILTER = "setUpFilter",
   LOAD_NODES_DATA = "loadNodesData",
   SET_NODES_FILTER = "setNodesFilter",
+  CLEAR_NODES_FILTER = "clearNodesFilter",
+  CLEAR_NODES_FILTER_KEY = "clearNodesFilterKey",
 }
 
 interface ISetNodeFilter {
@@ -113,22 +115,28 @@ export default {
     }
   },
 
-  setNodesCount(state: IState, payload:number) {
-    state.nodesCount = payload
+  setNodesCount(state: IState, payload: number) {
+    state.nodesCount = payload;
   },
-  setNodesTablePageNumber(state: IState, payload:number) {
-    state.nodesTablePageNumber = payload
+  setNodesTablePageNumber(state: IState, payload: number) {
+    state.nodesTablePageNumber = payload;
   },
-  setNodesTablePageSize(state: IState, payload:number) {
-    state.nodesTablePageSize = payload
+  setNodesTablePageSize(state: IState, payload: number) {
+    state.nodesTablePageSize = payload;
   },
-  setGatewayFilter(state: IState, payload:boolean) {
-    state.nodesGatewayFilter = payload
+  setGatewayFilter(state: IState, payload: boolean) {
+    state.nodesGatewayFilter = payload;
   },
-  setUpFilter(state: IState, payload:boolean) {
-    state.nodesUpFilter = payload
+  setUpFilter(state: IState, payload: boolean) {
+    state.nodesUpFilter = payload;
   },
-  setNodesFilter(state: IState, payload: {key: string, value: any}) {
-    state.nodesFilter[payload.key] = payload.value
-  }
+  setNodesFilter(state: IState, payload: { key: string; value: any }) {
+    state.nodesFilter[payload.key] = payload.value;
+  },
+  clearNodesFilter(state: IState) {
+    state.nodesFilter = {};
+  },
+  clearNodesFilterKey(state: IState, key: string) {
+    state.nodesFilter[key] = "";
+  },
 };

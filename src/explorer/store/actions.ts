@@ -1,3 +1,4 @@
+import { IGridProxyFarm } from "./../graphql/api";
 import type { ActionContext } from "vuex";
 import type { IState } from "./state";
 import { MutationTypes } from "./mutations";
@@ -36,14 +37,14 @@ export default {
     if (state.nodesGatewayFilter) url += "&ipv4=true&domain=true";
 
     for (const key in state.nodesFilter) {
-      let value = state.nodesFilter[key];
+        let value = state.nodesFilter[key];
 
-      if (key == "free_hru" || key == "free_mru" || key == "free_sru") {
-        value *= 1024 * 1024 * 1024; // convert from gb to b
+        if (key == "free_hru" || key == "free_mru" || key == "free_sru") {
+          value *= 1024 * 1024 * 1024; // convert from gb to b
+        }
+
+        url += `&${key}=${value}`;
       }
-
-      url += `&${key}=${value}`;
-    }
 
     console.log({
       status: state.nodesUpFilter,
@@ -53,13 +54,28 @@ export default {
     });
 
     const res = await fetch(url);
-
+    
     const nodesCount: any = res.headers.get("count");
     commit(MutationTypes.SET_NODES_COUNT, +nodesCount);
+    
+    const nodes = await res.json();
+    
+    // get all farms for the listed nodes
+    const farms: IGridProxyFarm[] = [];
 
-    const nodes = res.json();
-    commit(MutationTypes.LOAD_NODES_DATA, { nodes, farms: [] });
+    for (let i = 0; i < nodes.length; i++) {
+      if (!farms.some((farm) => farm.farmId == nodes[i].farmId)) {
+        farms.push(
+          await fetch(
+            `${window.configs.APP_GRIDPROXY_URL}/farms?farm_id=${nodes[i].farmId}`
+          )
+            .then((res) => res.json())
+            .then((res) => res[0])
+        );
+      }
+    }
 
+    commit(MutationTypes.LOAD_NODES_DATA, { nodes, farms });
     commit(MutationTypes.SET_TABLE_LOAD, false);
   },
 
