@@ -203,7 +203,8 @@ class FarmPage:
         sorted.append(int(index1))
       return id, sorted
 
-    def setup_farmpayout_address(self):
+    def setup_farmpayout_address(self, farm_name):
+      self.search_functionality(farm_name)
       self.browser.find_element(*self.details_arrow).click()
       self.browser.find_element(*self.add_v2_button).click()
 
@@ -213,7 +214,8 @@ class FarmPage:
       self.browser.find_element(*self.path).send_keys(data)
       return self.browser.find_element(*self.submit_button)
     
-    def setup_gateway(self, data):
+    def setup_gateway(self, data, farm_name):
+      self.search_functionality(farm_name)
       self.browser.find_element(*self.details_arrow).click()
       self.browser.find_element(*self.public_ip_list).click()
       self.browser.find_element(*self.add_ip_button).click()
@@ -225,7 +227,8 @@ class FarmPage:
       self.browser.find_element(*self.ip_text_field).send_keys(data) 
       return self.browser.find_element(*self.save_button)
 
-    def setup_ip(self, data):
+    def setup_ip(self, data, farm_name):
+      self.search_functionality(farm_name)
       self.browser.find_element(*self.details_arrow).click()
       self.browser.find_element(*self.public_ip_list).click()
       self.browser.find_element(*self.add_ip_button).click()
@@ -237,8 +240,8 @@ class FarmPage:
       self.browser.find_element(*self.gateway_text_field).send_keys(data) 
       return self.browser.find_element(*self.save_button)
 
-    def delete_ip(self):
-      self.browser.find_element(*self.details_arrow).click()
+    def delete_ip(self, farm_name):
+      self.search_functionality(farm_name)
       self.browser.find_element(*self.details_arrow).click()
       self.browser.find_element(*self.public_ip_list).click()
       self.browser.execute_script("arguments[0].scrollIntoView(true);",
@@ -248,7 +251,10 @@ class FarmPage:
       WebDriverWait(self.browser, 30).until(EC.element_to_be_clickable(self.delete_button))
       self.browser.find_element(*self.delete_button).click()
       
-    def farm_detials(self):
+    def farm_detials(self, farm_name):
+      self.search_functionality(farm_name)
+      self.browser.find_element(*self.details_arrow).click()
+      self.browser.find_element(*self.public_ip_list).click()
       details = []
       for i in range(5): 
         details.append(self.browser.find_element(By.XPATH,  f"{self.node_expan_details}{str(i+1)}]/div[2]/div/span").text)

@@ -188,7 +188,7 @@ def test_add_farmpayout_address(browser):
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
     case = "GDHJP6TF3UXYXTNEZ2P36J5FH7W4BJJQ4AYYAXC66I2Q2AH5B6O6BCFG"
-    farm_page.setup_farmpayout_address()
+    farm_page.setup_farmpayout_address(farm_name)
     farm_page.add_farmpayout_address(case).click()
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Address added!')
@@ -212,7 +212,7 @@ def test_add_invalid_farmpayout_address(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
-    farm_page.setup_farmpayout_address()
+    farm_page.setup_farmpayout_address(farm_name)
     cases = [' ', 'dgdd',generate_string(), 'gdhjP6TF3UXYXTNEZ2P36J5FH7W4BJJQ4AYYAXC66I2Q2AH5B6O6Bcfg']
     for case in cases:
         assert farm_page.add_farmpayout_address(case).is_enabled()==False
@@ -237,7 +237,7 @@ def test_edit_farmpayout_address(browser):
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
     case = "GDHJP6TF3UXYXTNEZ2P36J5FH7W4BJJQ4AYYAXC66I2Q2AH5B6O6BCFG"
-    farm_page.setup_farmpayout_address()
+    farm_page.setup_farmpayout_address(farm_name)
     farm_page.add_farmpayout_address(case).click()
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Address added!')
@@ -261,7 +261,7 @@ def test_valid_ip(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
-    farm_page.setup_gateway(generate_gateway())
+    farm_page.setup_gateway(generate_gateway(), farm_name)
     cases = ['2.0.0.1/32',  '3.0.0.0/16', '139.255.255.255/17', '59.15.35.78/25']
     for case in cases:
         assert farm_page.add_ip(case).is_enabled()==True
@@ -287,7 +287,7 @@ def test_invalid_ip(browser):
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
     cases = [generate_inavalid_ip(), '1.0.0.0/66', '239.255.255/17', '239.15.35.78.5/25', '239.15.35.78.5', ' ', '*.#.@.!|+-']
-    farm_page.setup_gateway(generate_gateway())
+    farm_page.setup_gateway(generate_gateway(), farm_name)
     for case in cases:
         assert farm_page.add_ip(case).is_enabled()==False
         assert farm_page.wait_for('Incorrect format')
@@ -313,7 +313,7 @@ def test_valid_gateway(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
-    farm_page.setup_ip(generate_ip())
+    farm_page.setup_ip(generate_ip(), farm_name)
     cases = [generate_gateway(), '1.0.0.1',  '1.0.0.0', '255.255.255.255', '239.15.35.78', '1.1.1.1']
     for case in cases:
         assert farm_page.add_gateway(case).is_enabled()==True
@@ -338,7 +338,7 @@ def test_invalid_gateway(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
-    farm_page.setup_ip(generate_ip())
+    farm_page.setup_ip(generate_ip(), farm_name)
     cases = [generate_inavalid_gateway(), '1.0.0.',  '1:1:1:1', '522.255.255.255', '.239.35.78', '1.1.1.1/16', '239.15.35.78.5', ' ', '*.#.@.!|+-']
     for case in cases:
         assert farm_page.add_gateway(case).is_enabled()==False
@@ -364,7 +364,7 @@ def test_add_ip(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
-    farm_page.setup_ip(generate_ip())
+    farm_page.setup_ip(generate_ip(), farm_name)
     farm_page.add_gateway(generate_gateway()).click()
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('IP created!')
@@ -387,11 +387,12 @@ def test_delete_ip(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
-    farm_page.setup_ip(generate_ip())
+    farm_page.setup_ip(generate_ip(), farm_name)
     farm_page.add_gateway(generate_gateway()).click()
     polka_page.authenticate_with_pass(password)
-    assert farm_page.wait_for('IP created!')     
-    farm_page.delete_ip()
+    assert farm_page.wait_for('IP created!')
+    browser.find_element(*farm_page.details_arrow).click()     
+    farm_page.delete_ip(farm_name)
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('IP deleted!')
 
@@ -413,18 +414,20 @@ def test_farm_details(browser):
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
     case = "GDHJP6TF3UXYXTNEZ2P36J5FH7W4BJJQ4AYYAXC66I2Q2AH5B6O6BCFG"
-    farm_page.setup_farmpayout_address()
+    farm_page.setup_farmpayout_address(farm_name)
     farm_page.add_farmpayout_address(case).click()
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Address added!')
     browser.find_element(*farm_page.details_arrow).click()
-    farm_page.setup_ip(generate_ip())
+    farm_page.setup_ip(generate_ip(), farm_name)
     farm_page.add_gateway(generate_gateway()).click()
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('IP created!')
     assert farm_page.wait_for('Edit')  
-    farm_details = farm_page.farm_detials()
+    browser.find_element(*farm_page.details_arrow).click()
+    farm_details = farm_page.farm_detials(farm_name)
     grid_farm_details = grid_proxy.get_farm_details(farm_details[1])
+    print(farm_details)
     assert grid_farm_details[0]['farmId'] == int(farm_details[0])
     assert grid_farm_details[0]['name'] == farm_details[1]
     assert grid_farm_details[0]['twinId'] == int(farm_details[2])
