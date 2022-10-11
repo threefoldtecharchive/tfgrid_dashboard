@@ -204,12 +204,11 @@ export default class CreateIP extends Vue {
     }
 
     if (parseInt(this.toPublicIP.split('/')[0].split('.')[3]) <= parseInt(this.publicIP.split('/')[0].split('.')[3])) {
-      if (parseInt(this.toPublicIP.split('/')[0].split('.')[2]) <= parseInt(this.publicIP.split('/')[0].split('.')[2])) {
 
       this.toIpErrorMessage = "To IP must be bigger than From IP";
       check_from_bigger_than_to = false;
 
-    }
+  
 
     }
     if (parseInt(this.toPublicIP.split('/')[0].split('.')[3]) - parseInt(this.publicIP.split('/')[0].split('.')[3]) > 16) {
