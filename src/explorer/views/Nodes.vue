@@ -159,6 +159,11 @@ export default class Nodes extends Vue {
       placeholder: "Filter by farm ids.",
     },
     {
+      label: "Farm Name",
+      key: "farm_name",
+      placeholder: "Filter by farm name.",
+    },
+    {
       label: "Country Full Name",
       key: "country",
       placeholder: "Filter by country.",
