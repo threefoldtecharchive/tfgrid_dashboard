@@ -432,7 +432,7 @@ export default class FarmsView extends Vue {
   }
   deletePublicIP(publicIP: any) {
     this.loadingDeleteIP = true;
-    deleteIP(
+    return deleteIP(
       this.$route.params.accountID,
       this.$api,
       this.expanded[0].id,
@@ -490,7 +490,6 @@ export default class FarmsView extends Vue {
         status: { type: string; asFinalized: string; isFinalized: string };
       }) => {
         if (res instanceof Error) {
-          console.error(res);
           reject(res);
           this.loadingCreateIP = false;
         }
@@ -500,7 +499,6 @@ export default class FarmsView extends Vue {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
-
         if (status.isFinalized) {
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(
@@ -529,7 +527,11 @@ export default class FarmsView extends Vue {
           publicIPs,
           gateway,
           callback
-        );
+        ).catch((e) => {
+          console.log("error from catch batch", e);
+          this.$toasted.show(`Transaction cancelled`);
+          this.loadingCreateIP = false;
+        });
       } catch (e) {
         reject(e);
         this.loadingCreateIP = false;

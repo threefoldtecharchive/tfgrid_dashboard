@@ -8,6 +8,7 @@ const config = {
   explorerUrl: process.env.APP_EXPLORER_URL || window.configs.APP_EXPLORER_URL,
   graphqlUrl: process.env.APP_GRAPHQL_URL || window.configs.APP_GRAPHQL_URL,
   gridproxyUrl: process.env.APP_GRIDPROXY_URL || window.configs.APP_GRIDPROXY_URL,
-  network: process.env.APP_NETWORK || window.configs.APP_NETWORK
+  network: process.env.APP_NETWORK || window.configs.APP_NETWORK,
+  version: process.env.APP_VERSION || window.configs.APP_VERSION
 }
 export default config
