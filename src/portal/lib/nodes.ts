@@ -392,6 +392,7 @@ export async function getDNodes(api: any, address: string, currentTwinID: string
       rentStatus: node.rentContractId === 0 ? "free" : node.rentedByTwinId == currentTwinID ? "yours" : "taken"
     });
   });
+  console.log("dNodes", dNodes);
   return dNodes;
 }
 

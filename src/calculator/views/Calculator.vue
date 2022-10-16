@@ -96,7 +96,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Layout from "../components/Layout.vue";
-import { getPrices } from "../../portal/lib/nodes";
+import { calCU, calSU, getPrices } from "../../portal/lib/nodes";
 
 type priceType = {
   label?: string;
@@ -119,61 +119,31 @@ export default class Calculator extends Vue {
   balance = "0";
   prices: priceType[] | [] = [];
   $api: any;
-  discountPackages: any = {
-    none: {
-      backgroundColor: "#CCCCCC",
-      color: "#868686",
-      discount: 0,
-    },
-    default: {
-      backgroundColor: "#3b3b3b",
-      color: "black",
-      discount: 20,
-    },
-    bronze: {
-      backgroundColor: "#F7B370",
-      color: "#C17427",
-      discount: 30,
-    },
-    silver: {
-      backgroundColor: "#eeeeee",
-      color: "#a9a9a9",
-      discount: 40,
-    },
-    gold: {
-      backgroundColor: "#ffed8b",
-      color: "#FFD700",
-      discount: 60,
-    },
-  };
-
+  discountPackages: any = {};
   formHasErrors = false;
 
   inputValidators = [
     (val: string) =>
-      !isNaN(Number(val)) || "This field must be a number and required",
+      !isNaN(+(val)) || "This field must be a number and required",
 
-    (val: string) => Number(val) >= 0 || "This field must be a positive number",
+    (val: string) => +(val) >= 0 || "This field must be a positive number",
   ];
   get formHasErrrs() {
     return this.$refs.form;
   }
-  /* updated() {
-    this.calculate();
-  } */
   async calculate() {
     if (this.$api) {
       if (
-        isNaN(Number(this.balance)) ||
-        isNaN(Number(this.CRU)) ||
-        isNaN(Number(this.HRU)) ||
-        isNaN(Number(this.SRU)) ||
-        isNaN(Number(this.MRU)) ||
-        Number(this.balance) < 0 ||
-        Number(this.CRU) < 0 ||
-        Number(this.HRU) < 0 ||
-        Number(this.SRU) < 0 ||
-        Number(this.MRU) < 0
+        isNaN(+(this.balance)) ||
+        isNaN(+(this.CRU)) ||
+        isNaN(+(this.HRU)) ||
+        isNaN(+(this.SRU)) ||
+        isNaN(+(this.MRU)) ||
+        +(this.balance) < 0 ||
+        +(this.CRU) < 0 ||
+        +(this.HRU) < 0 ||
+        +(this.SRU) < 0 ||
+        +(this.MRU) < 0
       ) {
         this.prices = [
           {
@@ -183,16 +153,19 @@ export default class Calculator extends Vue {
             backgroundColor: "#DaDaDa",
           },
         ];
+        console.log("this.prices before return", this.prices);
+        
         return;
       }
-      const cu1 = Math.max(Number(this.CRU) / 2, Number(this.MRU) / 4);
-      const cu2 = Math.max(Number(this.CRU), Number(this.MRU) / 8);
-      const cu3 = Math.max(Number(this.CRU) / 2, Number(this.MRU) / 4);
-      const CU = Math.min(cu1, cu2, cu3);
-      const SU = Number(this.HRU) / 1200 + Number(this.SRU) / 200;
-      const usd_month = ((CU * 30.56 + SU * 19.44) * 24 * 30) / 1000;
-
-      const [priceNumber, selectedPackage] = await this.calDiscount(usd_month);
+      const CU = calCU(+this.CRU, +this.MRU);
+      const SU = calSU(+this.HRU, +this.SRU);
+      console.log("CRU, SRU", +this.CRU, +this.SRU);
+      console.log("CU, SU", CU, SU);
+      
+      const usd_month = (CU * 30.56) + (SU * 19.44) * 24 * 30 / 1000;
+      console.log("usd_month", usd_month);
+      
+      const [priceNumber, totalPriceSharedNode, selectedPackage] = await this.calDiscount(usd_month);
       console.log({ usd_month, priceNumber, selectedPackage });
       this.prices = [
         {
@@ -205,53 +178,83 @@ export default class Calculator extends Vue {
         },
         {
           label: "Shared Node Price",
-          price: `${usd_month}`,
-          color: this.discountPackages["none"].color,
-          packageName: "none",
-          backgroundColor: this.discountPackages["none"].backgroundColor,
+          price: `${totalPriceSharedNode}`,
+          color: this.discountPackages[selectedPackage].color,
+          packageName: selectedPackage,
+          backgroundColor: this.discountPackages[selectedPackage].backgroundColor,
         },
       ];
+      console.log("this.prices", this.prices);
     } else {
       this.$router.push({
         name: "accounts",
         path: "/",
       });
-
       return;
     }
   }
-  async calDiscount(price: number): Promise<[string, string]> {
-    // discount for Dedicated Nodes
 
-    const pricing = await getPrices(this.$api);
-    const discount = pricing.discountForDedicationNodes;
-    let totalPrice = price - price * (discount / 100);
+  async calDiscount(price: number) {
+  // discount for Dedicated Nodes
+  const pricing = await getPrices(this.$api);
+  console.log("pricing",pricing);
+  
+  const discount = pricing.discountForDedicationNodes;
+  let totalPrice = price - price * (discount / 100);
 
-    // discount for Twin Balance
+  console.log( "discount",discount)
 
-    let selectedPackage = "none";
+  // discount for Twin Balance
+  const balance = +(this.balance) / 1e7;
+  console.log("balance", balance);
+  
+   this.discountPackages = {
+    "none": {
+      duration: 0,
+      discount: 0,
+      backgroundColor: "#CCCCCC",
+      color: "#868686",
+    },
+    "default": {
+      duration: 3,
+      discount: 20,
+      backgroundColor: "#3b3b3b",
+      color: "black",
+    },
+    "bronze": {
+      duration: 6,
+      discount: 30,
+      backgroundColor: "#F7B370",
+      color: "#C17427",
+    },
+    "silver": {
+      duration: 12,
+      discount: 40,
+      backgroundColor: "#eeeeee",
+      color: "#a9a9a9",
+    },
+    "gold": {
+      duration: 36,
+      discount: 60,
+      backgroundColor: "#ffed8b",
+      color:"rgba(0,0,0,.4)"
 
-    for (const pkg in this.discountPackages) {
-      console.log({
-        pkg,
-        package: this.discountPackages[pkg],
-        balance: this.balance,
-        totalPrice,
-      });
-      if (
-        Number(this.balance) >
-        totalPrice * this.discountPackages[pkg].discount
-      ) {
-        selectedPackage = pkg;
-      }
+    },
+  };
+
+  let selectedPackage = "none";
+  console.log("selectedPackage", selectedPackage);
+  
+  for (let pkg in this.discountPackages) {
+    if (balance > totalPrice * this.discountPackages[pkg].duration) {
+      selectedPackage = pkg;
     }
+  }  
+  totalPrice = totalPrice - totalPrice * (this.discountPackages[selectedPackage].discount / 100);
+  let totalPriceSharedNode = totalPrice + totalPrice * 50 / 100
+  return [totalPrice.toFixed(2), totalPriceSharedNode.toFixed(2), selectedPackage];
+}
 
-    totalPrice =
-      totalPrice -
-      totalPrice * (this.discountPackages[selectedPackage].discount / 100);
-
-    return [totalPrice.toFixed(2), selectedPackage];
-  }
 }
 </script>
 <style>
@@ -277,7 +280,6 @@ export default class Calculator extends Vue {
   font-size: 1.3rem;
   font-weight: bold;
   text-align: center;
-
   margin: 0.2rem auto;
   border-radius: 5px;
 }
