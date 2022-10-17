@@ -754,7 +754,7 @@ export default class FarmNodesTable extends Vue {
       `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
       `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
       `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
-      ')([0-9a-fA-F]{1})?(/1[6-9]|([2-5][0-9])|6[0-4])?$');
+      ')([0-9a-fA-F]{1})?(/(1[6-9]|([2-5][0-9])|6[0-4]))?$');
     if (ipRegex.test(this.ip6)) {
       this.ip6ErrorMessage = "";
       return true;
