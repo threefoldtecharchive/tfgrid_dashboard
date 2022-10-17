@@ -1,6 +1,7 @@
 name: Selenium Tests
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "0 6 * * *"
 
@@ -31,7 +32,7 @@ jobs:
       - name: Run tests
         working-directory: ./tests/frontend_selenium
         env:
-          SELENIUM_SEED: ${{ secrets.SELENIUM_SEED }}
-          SELENIUM_ADDRESS: ${{ secrets.SELENIUM_ADDRESS }}
+          SELENIUM_SEED: ${{ secrets.TFCHAIN_MNEMONICS }}
+          SELENIUM_ADDRESS: ${{ secrets.STELLAR_ADDRESS }}
         run: python -m pytest -v
        

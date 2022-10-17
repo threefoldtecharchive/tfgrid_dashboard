@@ -1,7 +1,7 @@
 from utils.utils import generate_gateway, generate_inavalid_gateway, generate_inavalid_ip, generate_ip, generate_string, get_seed
 from pages.farm import FarmPage
 from pages.polka import PolkaPage
-from pages.grid_proxy import GridProxy
+from utils.grid_proxy import GridProxy
 
 #  Time required for the run (17 cases) is approximately 13 minutes.
 
@@ -387,12 +387,14 @@ def test_delete_ip(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
-    farm_page.setup_ip(generate_ip(), farm_name)
-    farm_page.add_gateway(generate_gateway()).click()
+    IP = generate_ip()
+    gateway = generate_gateway()
+    farm_page.setup_ip(IP, farm_name)
+    farm_page.add_gateway(gateway).click()
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('IP created!')
     browser.find_element(*farm_page.details_arrow).click()     
-    farm_page.delete_ip(farm_name)
+    farm_page.delete_ip(farm_name, IP, gateway)
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('IP deleted!')
 
@@ -427,7 +429,6 @@ def test_farm_details(browser):
     browser.find_element(*farm_page.details_arrow).click()
     farm_details = farm_page.farm_detials(farm_name)
     grid_farm_details = grid_proxy.get_farm_details(farm_details[1])
-    print(farm_details)
     assert grid_farm_details[0]['farmId'] == int(farm_details[0])
     assert grid_farm_details[0]['name'] == farm_details[1]
     assert grid_farm_details[0]['twinId'] == int(farm_details[2])

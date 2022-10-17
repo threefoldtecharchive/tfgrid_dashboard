@@ -16,7 +16,7 @@ Prerequisites | version |
 ## First
 - In the root directory run `yarn install & yarn serve`
 - If the port in serve changes from `8080` for any reason, you should change the variable `port` in `tests/frontend selenium/Config.ini` to the new value.
-- Add account `seed` and `address` either in `tests/frontend selenium/Config.ini` or by exporting `SELENIUM_SEED` and `SELENIUM_ADDRESS`.
+- Add account `Mnemonic Seed` and `Stellar Address` either in `tests/frontend selenium/Config.ini` or by exporting `TFCHAIN_MNEMONICS` and `STELLAR_ADDRESS`.
 ## Second
 - You need to leave the server running and open new terminal.
 - Change direcotry to frontend selenium through the command line using `cd tests/frontend_selenium`

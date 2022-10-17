@@ -9,9 +9,9 @@ def get_seed():
     seed = config['Utils']['seed']
     if (seed == ''):
         try:
-            seed = os.environ["SELENIUM_SEED"]
+            seed = os.environ["TFCHAIN_MNEMONICS"]
         except:
-            print("You must add account seed either in Config.ini or by exporting SELENIUM_SEED.")
+            print("You must add account seed either in Config.ini or by exporting TFCHAIN_MNEMONICS.")
     return str(seed)
 
 def get_stellar_address():
@@ -20,9 +20,9 @@ def get_stellar_address():
     address = config['Utils']['address']
     if (address == ''):
         try:
-            address = os.environ["SELENIUM_ADDRESS"]
+            address = os.environ["STELLAR_ADDRESS"]
         except:
-            print("You must add account stellar address either in Config.ini or by exporting SELENIUM_ADDRESS.")
+            print("You must add account stellar address either in Config.ini or by exporting STELLAR_ADDRESS.")
     return str(address)
       
 def generate_string():

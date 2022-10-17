@@ -1,6 +1,6 @@
 from utils.utils import generate_string, get_seed
 from pages.polka import PolkaPage
-from pages.grid_proxy import GridProxy
+from utils.grid_proxy import GridProxy
 from pages.dedicate import DedicatePage
 import pytest
 

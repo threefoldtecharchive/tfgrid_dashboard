@@ -1,7 +1,7 @@
 from utils.utils import generate_leters, generate_string, get_seed, get_stellar_address
 from pages.swap import SwapPage
 from pages.polka import PolkaPage
-from pages.grid_proxy import GridProxy
+from utils.grid_proxy import GridProxy
 
 #  Time required for the run (11 cases) is approximately 3 minutes.
 
