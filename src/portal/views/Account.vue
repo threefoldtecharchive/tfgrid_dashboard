@@ -196,7 +196,6 @@ export default class AccountView extends Vue {
       `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
       `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
       ')([0-9a-fA-F]{1})?(/1[6-9]|([2-5][0-9])|6[0-4])?$');
-      console.log("this.ip", this.ip)
     if (ip6Regex.test(this.ip)) {
       this.ipErrorMessage = "";
       return true;
