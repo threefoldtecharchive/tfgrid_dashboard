@@ -220,4 +220,12 @@ export default {
 
   statistics: getStatistics,
   nodesDistribution: (state) => state.nodesDistribution,
+
+  getNodesCount: (state) => state.nodesCount,
+  getNodesTablePageNumber: (state) => state.nodesTablePageNumber,
+  getNodesTablePageSize: (state) => state.nodesTablePageSize,
+  getNodesUpFilter: (state) => state.nodesUpFilter,
+  getNodesGatewayFilter: (state) => state.nodesGatewayFilter,
+
+  getNodesFilter: (state) => state.nodesFilter,
 } as GetterTree<IState, IState>;

@@ -65,20 +65,21 @@ export interface IState {
   versions: Array<{ name: string; value: any }>;
   filters: {
     nodes: {
-      nodeId: IInFilter;
+      node_id: IInFilter;
+      twin_id: IInFilter;
       createdById: IInFilter;
-      farmId: IInFilter;
+      farm_ids: IInFilter;
       twinId: IInFilter;
       country: IInFilter;
       farmingPolicyName: IInFilter;
-      hru: IRangeFilter;
-      cru: IRangeFilter;
-      mru: IRangeFilter;
-      sru: IRangeFilter;
+      free_hru: IRangeFilter;
+      free_cru: IRangeFilter;
+      free_mru: IRangeFilter;
+      free_sru: IRangeFilter;
       status: IConditionFilter;
       countryFullName: IInFilter;
       certificationType: IInFilter;
-      freePublicIPs: IComparisonFilter;
+      free_ips: IComparisonFilter;
     };
     farms: {
       createdById: IInFilter;
@@ -91,6 +92,14 @@ export interface IState {
     };
   };
   nodes: INode[];
+
+  nodesFilter: any;
+
+  nodesCount: number;
+  nodesTablePageNumber: number;
+  nodesTablePageSize: number;
+  nodesGatewayFilter: boolean;
+  nodesUpFilter: boolean;
 
   /* Refactored Data */
   farms: IPaginationData<IFarm>;
@@ -119,20 +128,21 @@ export default {
   twinsNo: 0,
   filters: {
     nodes: {
-      nodeId: createInFilter(),
+      node_id: createInFilter(),
+      twin_id: createInFilter(),
       createdById: createInFilter(),
-      farmId: createInFilter(),
+      farm_ids: createInFilter(),
       twinId: createInFilter(),
       country: createInFilter(),
       farmingPolicyName: createInFilter(),
       certificationType: createInFilter(),
-      hru: createRangeFilter(),
-      cru: createRangeFilter(),
-      sru: createRangeFilter(),
-      mru: createRangeFilter(),
+      free_hru: createRangeFilter(),
+      free_cru: createRangeFilter(),
+      free_sru: createRangeFilter(),
+      free_mru: createRangeFilter(),
       status: createConditionFilter(),
       countryFullName: createInFilter(),
-      freePublicIPs: createComparisonFilter(),
+      free_ips: createComparisonFilter(),
     },
     farms: {
       createdById: createInFilter(),
@@ -145,6 +155,14 @@ export default {
     },
   },
   nodes: [],
+
+  nodesFilter: {},
+
+  nodesCount: 0,
+  nodesTablePageNumber: 1,
+  nodesTablePageSize: 10,
+  nodesUpFilter: true,
+  nodesGatewayFilter: false,
 
   /* Refactored data */
   farms: createPaginationData(),

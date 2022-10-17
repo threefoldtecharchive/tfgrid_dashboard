@@ -85,12 +85,12 @@ export default class RangeFilter extends Vue {
     });
   }
   get_value(val: number) {
-    const res = toTera(val.toString());
+    const res = toTera(val.toString());    
     return Number(res.split(" ")[0]).toFixed(0);
   }
   onChange({ min, max }: { min?: number; max?: number }) {
     const { unit, range: [__min, __max]} = this; // prettier-ignore
-    const multiplier = unit === "TB" ? 1e12 : 1;
+    const multiplier = unit === "TB" ? 1e12 * 1.024 : 1;
     this.range = [
       min ? min * multiplier : __min,
       max ? max * multiplier : __max,
