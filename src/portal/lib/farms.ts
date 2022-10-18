@@ -8,41 +8,50 @@ import { getDedicatedNodes } from './nodes';
 import { getNodeMintingFixupReceipts, getNodeUsedResources, receiptInterface } from './nodes';
 import { hex2a } from './util'
 export interface nodeInterface {
-  resourcesTotal: {
-    cru: string;
-    hru: string;
-    mru: string;
-    sru: string;
+  id: string,
+  nodeId: number,
+  farmId : number,
+  twinId : number,
+  country : string,
+  gridVersion : number,
+  city : string,
+  uptime : number,
+  created : number,
+  farmingPolicyId : number,
+  updatedAt : number,
+  total_resources : {
+  cru : number,
+  sru : number,
+  hru : number,
+  mru : number,
   },
-  publicConfig: {
-    domain: string;
-    gw4: string;
-    gw6: string;
-    ipv4: string;
-    ipv6: string;
+  used_resources : {
+  cru : number,
+  sru : number,
+  hru : number,
+  mru : number,
   },
+  location : {
+  country : string,
+  city : string,
+  },
+  publicConfig : {
+  domain : string,
+  gw4 : string,
+  gw6 : string,
+  ipv4 : string,
+  ipv6 : string,
+  },
+  status : string,
+  certificationType : string,
+  dedicated : boolean,
+  rentContractId : number,
+  rentedByTwinId : number,
+
   receipts: receiptInterface[];
-  certification: string;
-  city: string;
-  connectionPrice: null;
-  country: string;
-  created: number;
-  createdAt: string;
-  farmID: number;
-  farmingPolicyId: number;
-  gridVersion: number;
-  id: string;
-  location: {
-    latitude: string;
-    longitude: string;
-  },
-  nodeID: number;
-  secure: boolean;
+  
   serialNumber: string;
-  twinID: number;
-  updatedAt: string;
-  uptime: number;
-  virtualized: boolean;
+
 }
 export async function getFarm(api: { query: any; }, twinID: number) {
   const farms = await api.query.tfgridModule.farms.entries()
@@ -140,13 +149,13 @@ export async function getNodesByFarmID(farms: any[]) {
   const nodesWithResources = _nodes.map(async (node) => {
 
     try {
-      node.resourcesUsed = await getNodeUsedResources(node.nodeID);
+      node.resourcesUsed = await getNodeUsedResources(node.nodeId);
       
       node.resources = node.resourcesTotal;
       const network = config.network;
       node.receipts = [];
       if (network == 'main')
-        node.receipts = await getNodeMintingFixupReceipts(node.nodeID);
+        node.receipts = await getNodeMintingFixupReceipts(node.nodeId);
 
     } catch (error) {
       node.receipts = [];
@@ -216,7 +225,7 @@ export async function addNodePublicConfig(
   address: string,
   api: { tx: { tfgridModule: { addNodePublicConfig: (arg0: any, arg1: any, arg2: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; },
   farmID: number,
-  nodeID: number,
+  nodeId: number,
   config: {
     ip4: {ip: string, gw: string},
     ip6?: {ip: string | undefined, gw: string | undefined},
@@ -227,6 +236,6 @@ export async function addNodePublicConfig(
   const injector = await web3FromAddress(address);
 
   return api.tx.tfgridModule
-    .addNodePublicConfig(farmID, nodeID, config)
+    .addNodePublicConfig(farmID, nodeId, config)
     .signAndSend(address, { signer: injector.signer }, callback);
 }

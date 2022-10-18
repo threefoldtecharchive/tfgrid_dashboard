@@ -67,7 +67,7 @@ export function generateReceipt(doc: jsPDF, node: nodeInterface) {
   const cellX = 15;
   const cellY = topY + lineOffset * 8;
 
-  doc.text(`Node ${node.nodeID} Summary`, 80, topY);
+  doc.text(`Node ${node.nodeId} Summary`, 80, topY);
   doc.setFontSize(10);
   doc.text(
     `Receipts total: ${node.receipts.length}`,
@@ -162,9 +162,9 @@ export async function cancelRentContract(api: { tx: { smartContractModule: { can
     .signAndSend(address, { signer: injector.signer }, callback);
 }
 
-export async function getActiveContracts(api: { query: { smartContractModule: { activeNodeContracts: (arg0: any) => any; }; }; }, nodeID: string) {
-  console.log("getActiveContracts", api.query.smartContractModule.activeNodeContracts(nodeID));
-  return await api.query.smartContractModule.activeNodeContracts(nodeID);
+export async function getActiveContracts(api: { query: { smartContractModule: { activeNodeContracts: (arg0: any) => any; }; }; }, nodeId: string) {
+  console.log("getActiveContracts", api.query.smartContractModule.activeNodeContracts(nodeId));
+  return await api.query.smartContractModule.activeNodeContracts(nodeId);
 }
 
 export async function getNodeMintingFixupReceipts(nodeId: string) {
@@ -327,9 +327,9 @@ export async function calDiscount(api: { query: { system: { account: (arg0: stri
   return [totalPrice.toFixed(2), discountPackages[selectedPackage].discount];
 }
 
-export async function getNodeByID(nodeID: any) {
+export async function getNodeByID(nodeId: any) {
   const node = await fetch(
-    `${config.gridproxyUrl}/nodes/${nodeID}`
+    `${config.gridproxyUrl}/nodes/${nodeId}`
   ).then((res) => res.json())
   return node;
 }

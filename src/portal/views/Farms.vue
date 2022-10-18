@@ -279,6 +279,7 @@ import {
   setFarmPayoutV2Address,
 } from "../lib/farms";
 import { StrKey } from "stellar-sdk";
+import config from "../config";
 @Component({
   name: "FarmsView",
   components: { PublicIPTable, FarmNodesTable },
@@ -373,7 +374,12 @@ export default class FarmsView extends Vue {
     return this.farms;
   }
   async getNodes() {
-    this.nodes = await getNodesByFarmID(this.farms);
+
+    const farmIDs = this.farms.map((farm: { id: any; }) => farm.id);
+    this.nodes =  await fetch(
+    `${config.gridproxyUrl}/nodes?farm_ids=`+farmIDs
+  ).then((res) => res.json())
+    
     this.loadingNodes = false;
   }
   openDeleteFarm(farm: any) {
