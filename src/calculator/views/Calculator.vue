@@ -80,9 +80,9 @@
           <span class="price">
             <span class="name">
               {{ price.label !== undefined ? price.label + " " : " " }}
-              {{ price.packageName + " Package" }}</span
+              {{ price.packageName != "none" ? price.packageName + " Package" : "" }}</span
             >
-            : $ {{ price.price }}
+            : ${{ price.price }}
           </span>
         </div>
         <span class="right"
@@ -160,7 +160,7 @@ export default class Calculator extends Vue {
       const CU = calCU(+this.CRU, +this.MRU);
       const SU = calSU(+this.HRU, +this.SRU);      
       const musd_month = (CU * price.cu.value + SU * price.su.value) * 24 * 30;
-      const usd_month = musd_month / 10000000;
+      const usd_month = (musd_month / 10000000).toFixed(2);
       const [priceNumber, selectedPackage] = await this.calDiscount(musd_month);
       this.prices = [
         {
@@ -174,7 +174,7 @@ export default class Calculator extends Vue {
         {
           label: "Shared Node Price",
           price: `${usd_month}`,
-          color: this.discountPackages[selectedPackage].color,
+          color: "#868686",
           packageName: "none",
           backgroundColor: this.discountPackages.none.backgroundColor,
         },
