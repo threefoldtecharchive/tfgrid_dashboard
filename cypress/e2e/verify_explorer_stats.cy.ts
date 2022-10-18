@@ -47,6 +47,5 @@ describe('TF Grid Dashboard', function(){
                 totalHru, totalMru, accessNodes, gateways, twins, publicIps, contracts)
         })
         
-    })
-
+    }) 
 })
