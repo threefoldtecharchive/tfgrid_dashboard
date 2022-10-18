@@ -102,7 +102,7 @@ type priceType = {
   label?: string;
   color: string;
   price: string;
-  packageName: string;
+  packageName: any;
   backgroundColor: string;
 };
 
@@ -121,7 +121,7 @@ export default class Calculator extends Vue {
   $api: any;
   discountPackages: any = {};
   formHasErrors = false;
-
+  pricing: any;
   inputValidators = [
     (val: string) =>
       !isNaN(+(val)) || "This field must be a number and required",
@@ -152,21 +152,16 @@ export default class Calculator extends Vue {
             packageName: "none",
             backgroundColor: "#DaDaDa",
           },
-        ];
-        console.log("this.prices before return", this.prices);
-        
+        ];        
         return;
       }
+
+      const price = await this.calcPrice();
       const CU = calCU(+this.CRU, +this.MRU);
-      const SU = calSU(+this.HRU, +this.SRU);
-      console.log("CRU, SRU", +this.CRU, +this.SRU);
-      console.log("CU, SU", CU, SU);
-      
-      const usd_month = (CU * 30.56) + (SU * 19.44) * 24 * 30 / 1000;
-      console.log("usd_month", usd_month);
-      
-      const [priceNumber, totalPriceSharedNode, selectedPackage] = await this.calDiscount(usd_month);
-      console.log({ usd_month, priceNumber, selectedPackage });
+      const SU = calSU(+this.HRU, +this.SRU);      
+      const musd_month = (CU * price.cu.value + SU * price.su.value) * 24 * 30;
+      const usd_month = musd_month / 10000000;
+      const [priceNumber, selectedPackage] = await this.calDiscount(musd_month);
       this.prices = [
         {
           label: "Dedicated Node Price",
@@ -178,13 +173,12 @@ export default class Calculator extends Vue {
         },
         {
           label: "Shared Node Price",
-          price: `${totalPriceSharedNode}`,
+          price: `${usd_month}`,
           color: this.discountPackages[selectedPackage].color,
-          packageName: selectedPackage,
-          backgroundColor: this.discountPackages[selectedPackage].backgroundColor,
+          packageName: "none",
+          backgroundColor: this.discountPackages.none.backgroundColor,
         },
       ];
-      console.log("this.prices", this.prices);
     } else {
       this.$router.push({
         name: "accounts",
@@ -194,20 +188,19 @@ export default class Calculator extends Vue {
     }
   }
 
+  async calcPrice(){
+    const price = await getPrices(this.$api);
+    return price;
+  }
+
   async calDiscount(price: number) {
+  this.pricing = await this.calcPrice();
   // discount for Dedicated Nodes
-  const pricing = await getPrices(this.$api);
-  console.log("pricing",pricing);
-  
-  const discount = pricing.discountForDedicationNodes;
+  const discount = this.pricing.discountForDedicationNodes;
   let totalPrice = price - price * (discount / 100);
 
-  console.log( "discount",discount)
-
   // discount for Twin Balance
-  const balance = +(this.balance) / 1e7;
-  console.log("balance", balance);
-  
+  const balance = +(this.balance);  
    this.discountPackages = {
     "none": {
       duration: 0,
@@ -242,17 +235,14 @@ export default class Calculator extends Vue {
     },
   };
 
-  let selectedPackage = "none";
-  console.log("selectedPackage", selectedPackage);
-  
+  let selectedPackage = "none";  
   for (let pkg in this.discountPackages) {
     if (balance > totalPrice * this.discountPackages[pkg].duration) {
       selectedPackage = pkg;
     }
   }  
-  totalPrice = totalPrice - totalPrice * (this.discountPackages[selectedPackage].discount / 100);
-  let totalPriceSharedNode = totalPrice + totalPrice * 50 / 100
-  return [totalPrice.toFixed(2), totalPriceSharedNode.toFixed(2), selectedPackage];
+  totalPrice = (totalPrice - totalPrice * (this.discountPackages[selectedPackage].discount / 100) ) / 10000000;  
+  return [totalPrice.toFixed(2), selectedPackage];
 }
 
 }
