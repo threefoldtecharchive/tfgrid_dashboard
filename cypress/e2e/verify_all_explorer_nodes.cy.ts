@@ -12,6 +12,13 @@ describe('TF Grid Dashboard', function(){
     })
 
     it("verify all nodes",function(){
+        /**************************************************
+        Test Suite: TF Grid Dashboard
+        Test Cases: TC1197 - Verify all nodes
+        Scenario:
+        - Verify the values appearing in the node
+        page from the grid proxy
+        **************************************************/
         NodesPage.Visit()
         
         cy.wait(2000)
@@ -19,10 +26,9 @@ describe('TF Grid Dashboard', function(){
         let x=1
         let y=1
     
+        //collect all nodes in array
         cy.get('tbody > :nth-child(1) > .text-start',{timeout:4500})
-        cy
-            .get('.text-start')
-            .then( items =>
+        NodesPage.getArrayOfNodes.then( items =>
                 {
             
                 for (let i = 1; i < (items.length); i++) 
@@ -38,27 +44,11 @@ describe('TF Grid Dashboard', function(){
                         let SRU   = utils.formatBytes(res.body.capacity.total_resources.sru)
                         let MRU   = utils.formatBytes(res.body.capacity.total_resources.mru)
                         let CRU   = utils.formatBytes(res.body.capacity.total_resources.cru)
-                        if(i==1)
-                        {
-                            cy
-                                .get('tbody > :nth-child(1) > .text-start')
-                                .should('have.text',nodeId)
-                            cy
-                                .get('tbody > :nth-child(1) > :nth-child(2)')
-                                .should('have.text',farmid)
-                        }
-                        else
-                        {
-                            cy
-                                .get(':nth-child('+i+') > .text-start')
-                                .should('have.text',nodeId)
-                            cy
-                                .get('tbody > :nth-child('+i+') > :nth-child(2)')
-                                .should('have.text',farmid)
-                        }
-                        cy
-                        .xpath('//*[@id="app"]/div[1]/div[3]/div/div[1]/div[2]/div[3]/div[1]/table/tbody/tr['+i+']/td[5]')
-                        .then(hruItem =>
+
+                        //verify nodes data
+                        NodesPage.VerifyNodes(i,nodeId, farmid, SRU, MRU, CRU)
+                        // verify nodes HRU
+                        NodesPage.getHRU(i).then(hruItem =>
                             {
                                 console.log(hruItem)
                                 if(Number(hruItem[0].innerText)==0)
@@ -66,21 +56,9 @@ describe('TF Grid Dashboard', function(){
                                 }
                                 else
                                 {
-                                cy
-                                .xpath('//*[@id="app"]/div[1]/div[3]/div/div[1]/div[2]/div[3]/div[1]/table/tbody/tr['+i+']/td[5]')
-                                .should('contain.text',HRU)
+                                NodesPage.getHRU(i).should('contain.text',HRU)
                                 }
                             })
-
-                            cy
-                            .xpath('//*[@id="app"]/div[1]/div[3]/div/div[1]/div[2]/div[3]/div[1]/table/tbody/tr['+i+']/td[6]')
-                            .should('contain.text',SRU)
-                            cy
-                            .xpath('//*[@id="app"]/div[1]/div[3]/div/div[1]/div[2]/div[3]/div[1]/table/tbody/tr['+i+']/td[7]')
-                            .should('contain.text',MRU)
-                            cy
-                            .xpath('//*[@id="app"]/div[1]/div[3]/div/div[1]/div[2]/div[3]/div[1]/table/tbody/tr['+i+']/td[8]')
-                            .should('contain.text',CRU)
                     })
                 }
             })

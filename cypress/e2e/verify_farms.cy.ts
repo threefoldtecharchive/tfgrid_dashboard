@@ -12,26 +12,24 @@ describe('TF Grid Dashboard', function(){
     })
 
     it("verify all nodes",function(){
-        FarmsPage.Visit()
         
-        cy.wait(2000)
+        cy.wait(4500)
         let x=1
         let y=1
     
         cy.get('tbody > :nth-child(1) > :nth-child(1)',{timeout:4500})
-        cy
-            .get('.text-start')
-            .then( items =>
+        
+                for (let i = 1; i < 15; i++) 
                 {
-            
-                for (let i = 1; i < items.length; i++) 
-                {
+
+                    cy.xpath('//*[@id="app"]/div[1]/div[3]/div/div[1]/div[2]/div/div[1]/table/tbody/tr['+i+']/td[1]')
+                    .then (item =>
                     cy.request({
                         method: 'GET',
-                        url:'https://gridproxy.dev.grid.tf/farms?farm_id='+items[i].innerText,
+                        url:'https://gridproxy.dev.grid.tf/farms?farm_id=3',
 
                     }).should((res)=>{
-                        let farmid= JSON.stringify(res.body.farmId)
+                        let farmid= JSON.stringify(res.body.body.farmId)
                         let farmname   = JSON.stringify(res.body.name)
                         let certyp   = JSON.stringify(res.body.certificationType)
 
@@ -40,8 +38,16 @@ describe('TF Grid Dashboard', function(){
                         .get('tbody > :nth-child(1) > :nth-child('+i+')')
                         .should('contain.text',farmid)
 
-                    })
-                }
-            })
-        })
-})
+                        cy
+                        .get('tbody > :nth-child(2) > :nth-child('+i+')')
+                        .should('contain.text',farmname)
+
+                        cy
+                        .get('tbody > :nth-child(6) > :nth-child('+i+')')
+                        .should('contain.text',certyp)
+                })
+                    )
+
+
+                    }})
+                })

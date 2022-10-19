@@ -15,18 +15,13 @@ describe('TF Grid Dashboard', function(){
     })
 
     it("verify all nodes",function(){
-
-        cy
-        .get('.text-start')
-        .then( IDD =>{
-            console.log(IDD)
-        })
-        cy
-        .get('.text-center',)
-        .then( item =>{
-            console.log(item)
-        })
-
+               /**************************************************
+        Test Suite: TF Grid Dashboard
+        Test Cases: TC1203 - Verify one node
+        Scenario:
+        - Verify the values appearing for one node 
+        in the node  page from the grid proxy
+        **************************************************/
 
         
         cy.request({
@@ -44,11 +39,6 @@ describe('TF Grid Dashboard', function(){
             //Verify the values appearing in the Nodespage from the grid proxy
             NodesPage.VerifyNodes(nodeId, farmid, HRU, SRU, MRU, CRU)
     })
-    it("check sorting",function(){
-        NodesPage.Visit()
-        cy.get('.v-data-footer__select > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-input__append-inner > .v-input__icon > .v-icon').type("a{enter}")
 
-
-    })
 })
 })
