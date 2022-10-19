@@ -236,8 +236,8 @@
           </v-list-group>
         </template>
       </v-list>
-      <div :style="mini ? 'display: none' : 'position: fixed; bottom: 2%; right: 7%; font-weight: bold; background-color: rgb(25, 130, 177); padding: 5px 15px; border-radius: 15px;'">
-        <span>{{version}}</span>
+      <div :style="mini ? 'display: none' : 'position: fixed; bottom: 2%; right: 7%; background-color: rgb(25, 130, 177); padding: 5px 10px; border-radius: 15px;'">
+        <span>{{version ? version : "no version provided"}}</span>
       </div>
     </v-navigation-drawer>
     <v-dialog
@@ -328,6 +328,7 @@ export default class Dashboard extends Vue {
   loadingAPI = true;
   version = config.version;
 
+  
   balanceFree: string | (string | null)[] = "";
   balanceReserved: string | (string | null)[] = "";
 
@@ -340,6 +341,7 @@ export default class Dashboard extends Vue {
     console.log(`balance went from ${oldValue}, to ${value}`);
   }
   async mounted() {
+    console.log("process", process.env.APP_VERSION);
     this.$store.dispatch("portal/subscribeAccounts");
     this.balanceFree = this.$route.query.balanceFree;
     this.balanceReserved = this.$route.query.balanceReserved;
