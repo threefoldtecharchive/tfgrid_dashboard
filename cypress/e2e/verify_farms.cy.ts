@@ -26,25 +26,25 @@ describe('TF Grid Dashboard', function(){
                     .then (item =>
                     cy.request({
                         method: 'GET',
-                        url:'https://gridproxy.dev.grid.tf/farms?farm_id=3',
+                        url:'https://gridproxy.dev.grid.tf/farms?farm_id='+item[0].innerText,
 
                     }).should((res)=>{
-                        let farmid= JSON.stringify(res.body.body.farmId)
-                        let farmname   = JSON.stringify(res.body.name)
-                        let certyp   = JSON.stringify(res.body.certificationType)
+                        let farmid= JSON.stringify(res.body[i].farmId)
+                        let farmname   = (res.body[i].name)
+                        let certyp   = (res.body[i].certificationType)
 
 
                         cy
-                        .get('tbody > :nth-child(1) > :nth-child('+i+')')
-                        .should('contain.text',farmid)
+                        .get('tbody > :nth-child('+i+') > :nth-child(1)')
+                        .contains(farmid)
 
                         cy
-                        .get('tbody > :nth-child(2) > :nth-child('+i+')')
-                        .should('contain.text',farmname)
+                        .get('tbody > :nth-child('+i+') > :nth-child(2)')
+                        .contains(farmname)
 
                         cy
-                        .get('tbody > :nth-child(6) > :nth-child('+i+')')
-                        .should('contain.text',certyp)
+                        .get('tbody > :nth-child('+i+') > :nth-child(6)')
+                        .contains(certyp)
                 })
                     )
 
