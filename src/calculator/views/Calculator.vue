@@ -158,7 +158,7 @@ export default class Calculator extends Vue {
 
       const price = await this.calcPrice();
       const CU = calCU(+this.CRU, +this.MRU);
-      const SU = calSU(+this.HRU, +this.SRU);      
+      const SU = calSU(+this.HRU, +this.SRU);
       const musd_month = (CU * price.cu.value + SU * price.su.value) * 24 * 30;
       const usd_month = (musd_month / 10000000).toFixed(2);
       const [priceNumber, selectedPackage] = await this.calDiscount(musd_month);
@@ -197,10 +197,9 @@ export default class Calculator extends Vue {
   this.pricing = await this.calcPrice();
   // discount for Dedicated Nodes
   const discount = this.pricing.discountForDedicationNodes;
-  let totalPrice = price - price * (discount / 100);
-
+  let totalPrice = price - price * (discount / 100);    
   // discount for Twin Balance
-  const balance = +(this.balance);  
+  const balance = +(this.balance) * 10000000;
    this.discountPackages = {
     "none": {
       duration: 0,
