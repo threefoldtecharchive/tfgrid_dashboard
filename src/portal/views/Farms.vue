@@ -374,12 +374,7 @@ export default class FarmsView extends Vue {
     return this.farms;
   }
   async getNodes() {
-
-    const farmIDs = this.farms.map((farm: { id: any; }) => farm.id);
-    this.nodes =  await fetch(
-    `${config.gridproxyUrl}/nodes?farm_ids=`+farmIDs
-  ).then((res) => res.json())
-    
+    this.nodes = await getNodesByFarmID(this.farms);
     this.loadingNodes = false;
   }
   openDeleteFarm(farm: any) {

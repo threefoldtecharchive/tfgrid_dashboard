@@ -5,7 +5,7 @@ import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios from 'axios';
 import config from '../config';
 import { getDedicatedNodes } from './nodes';
-import { getNodeMintingFixupReceipts, getNodeUsedResources, receiptInterface } from './nodes';
+import { getNodeMintingFixupReceipts , receiptInterface } from './nodes';
 import { hex2a } from './util'
 export interface nodeInterface {
   id: string,
@@ -138,39 +138,27 @@ export async function deleteFarm(address: string, api: { tx: { tfgridModule: { d
 export async function getNodesByFarmID(farms: any[]) {
   const farmIDs = farms.map((farm: { id: any; }) => farm.id);
 
-  const nodes = farmIDs.map((farmID: string) => {
-    return getNodesByFarm(farmID);
-  });
-  const data = await Promise.all(nodes);
+  
+  const res = await fetch(
+    `${config.gridproxyUrl}/nodes?farm_ids=`+farmIDs
+  ).then((res) => res.json())
+  const _nodes = res.flat();
 
-  if (data.length === 0) return [];
-  const _nodes = data.flat();
-
-  const nodesWithResources = _nodes.map(async (node) => {
-
+  const nodesWithResources = _nodes.map(async (node: { receipts: receiptInterface[]; nodeId: string; used_resources: { sru: number; hru: number; mru: number; cru: number; }; resources: { sru: number; hru: number; mru: number; cru: number; }; }) => {
     try {
-      node.resourcesUsed = await getNodeUsedResources(node.nodeId);
-      
-      node.resources = node.resourcesTotal;
       const network = config.network;
       node.receipts = [];
       if (network == 'main')
         node.receipts = await getNodeMintingFixupReceipts(node.nodeId);
-
     } catch (error) {
       node.receipts = [];
-      node.resourcesUsed = {
+      node.used_resources = {
         sru: 0,
         hru: 0,
         mru: 0,
         cru: 0,
       };
-      node.resources = {
-        sru: 0,
-        hru: 0,
-        mru: 0,
-        cru: 0,
-      };
+
     }
 
     return node;
