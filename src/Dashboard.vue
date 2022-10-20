@@ -38,11 +38,10 @@
             outlined
             v-if="$store.state.portal.accounts.length === 0"
           >
-            <v-btn icon>
+            <v-btn icon @click="$store.dispatch('portal/subscribeAccounts')">
               <v-icon
                 class=""
                 color="#F44336"
-                @click="$store.dispatch('portal/subscribeAccounts')"
               >mdi-lan-disconnect</v-icon>
             </v-btn>
           </v-card>
@@ -51,20 +50,20 @@
             v-else
             color="transparent"
           >
-            <v-btn icon>
-              <v-tooltip>
-                <template v-slot:activator="{ on, attrs }">
+            <v-tooltip>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon                     
+                  @click="disconnectWallet"
+                  v-bind="attrs"
+                  v-on="on">
                   <v-icon
                     color="#4CAF50"
-                    class=""
-                    @click="disconnectWallet"
-                    v-bind="attrs"
-                    v-on="on"
-                  >mdi-lan-connect</v-icon>
-                </template>
-                <span>Disconnect Wallet</span>
-              </v-tooltip>
-            </v-btn>
+                  >mdi-lan-connect
+                  </v-icon>
+                </v-btn>
+              </template>
+              <span>Disconnect Wallet</span>
+            </v-tooltip>
           </v-card>
           <v-theme-provider root>
           <v-card v-if="isAccountSelected()" style="width: max-content;">
