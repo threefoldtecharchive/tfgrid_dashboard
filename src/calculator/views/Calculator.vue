@@ -85,9 +85,6 @@
             : ${{ price.price }}
           </span>
         </div>
-        <span class="right"
-          >learn more about pricing through this <a>Link</a></span
-        >
       </div>
     </v-card>
   </Layout>
