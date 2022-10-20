@@ -1,13 +1,7 @@
 <template>
   <v-app>
     <div>
-      <v-app-bar
-        color="#064663"
-        dense
-        dark
-        fixed
-        height="65"
-      >
+      <v-app-bar color="#064663" dense dark fixed height="65">
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
         <v-toolbar-title
@@ -134,10 +128,7 @@
             @click="route.hyperlink ? openLink(route.prefix) : undefined"
           >
             <v-list-item-icon>
-              <v-icon
-                class="white--text"
-                v-text="'mdi-' + route.icon"
-              />
+              <v-icon class="white--text" v-text="'mdi-' + route.icon" />
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="white--text">
@@ -239,22 +230,12 @@
         <span>{{version}}</span>
       </div>
     </v-navigation-drawer>
-    <v-dialog
-      v-model="loadingAPI"
-      persistent
-      class="loadingDialog"
-    >
-      <div
-        class="d-flex justify-center"
-        style="display: block; padding: 10%"
-      >
-        <v-progress-circular
-          indeterminate
-          color="green"
-          :size="335"
-          :width="7"
-        >
-          <span style="font-size: large; color: black">Connecting to Polkadot</span>
+    <v-dialog v-model="loadingAPI" persistent class="loadingDialog">
+      <div class="d-flex justify-center" style="display: block; padding: 10%">
+        <v-progress-circular indeterminate color="green" :size="335" :width="7">
+          <span style="font-size: large; color: black"
+            >Connecting to Polkadot</span
+          >
         </v-progress-circular>
       </div>
     </v-dialog>
@@ -263,15 +244,8 @@
       <router-view />
     </div>
 
-    <v-footer
-      padless
-      fixed
-    >
-      <v-card
-        class="flex"
-        flat
-        tile
-      >
+    <v-footer padless fixed>
+      <v-card class="flex" flat tile>
         <v-card-text class="py-2 text-center">
           {{ new Date().getFullYear() }} — <strong>ThreeFoldTech</strong>
         </v-card-text>
@@ -524,6 +498,31 @@ export default class Dashboard extends Vue {
           path: "farms",
           icon: "lan-connect",
           showBeforeLogIn: true,
+        }
+      ],
+    },  {
+      label: "Calculators",
+      icon: "calculator",
+      prefix: "/calculator/",
+      children: [
+        {
+          label: "Resource Pricing",
+          path: "calculator",
+          icon: "currency-usd",
+          showBeforeLogIn: false,
+        },      
+        {
+          label: "Simulator",
+          path: "simulator/",
+          icon: "chart-scatter-plot",
+          showBeforeLogIn: false,
+          children: [
+            {
+              label: "Farming",
+              path: "farm",
+              icon: "lan-connect",
+            }
+          ],
         },
       ],
     },
