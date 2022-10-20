@@ -48,6 +48,12 @@ class TransferPage:
 
     def get_balance(self):
         return self.browser.find_element(*self.balance_text).text
+
+    def get_balance_transfer(self, balance):
+        new_balance = self.browser.find_element(*self.balance_text).text
+        while(new_balance==balance):
+            new_balance = self.browser.find_element(*self.balance_text).text
+        return new_balance
         
     def get_submit(self):
         return self.browser.find_element(*self.submit_button)
@@ -55,7 +61,7 @@ class TransferPage:
     def get_twin_address(self):
         return self.browser.find_element(*self.twin_address_text).text
     
-    def get_secind_twin_address(self):
+    def get_second_twin_address(self):
         return self.browser.find_element(*self.second_twin_address_text).text
 
     def wait_for(self, keyword):

@@ -224,18 +224,21 @@ class FarmPage:
         self.browser.find_element(*self.gateway_text_field).send_keys(data) 
         return self.browser.find_element(*self.save_button)
 
-    def delete_ip(self, farm_name, IP, gateway):
+    def delete_ip(self, farm_name, ip, gateway):
         self.search_functionality(farm_name)
         self.browser.find_element(*self.details_arrow).click()
         self.browser.find_element(*self.public_ip_list).click()
-        self.browser.find_element(*self.view_bootstrap_button).send_keys(Keys.PAGE_DOWN);
+        self.browser.find_element(*self.view_bootstrap_button).send_keys(Keys.PAGE_DOWN)
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, self.farm_public_ips)))
         for i in range(len(self.browser.find_elements(By.XPATH, self.farm_public_ips))):
-            if(self.browser.find_element(By.XPATH,  f"{self.farm_public_ips}[{str(i+1)}]/td[1]").text == IP):
-              if(self.browser.find_element(By.XPATH,  f"{self.farm_public_ips}[{str(i+1)}]/td[2]").text == gateway):
-                  WebDriverWait(self.browser, 30).until(EC.element_to_be_clickable((By.XPATH,  f"{self.farm_public_ips}[{str(i+1)}]/td[4]/div/button")))
-                  self.browser.find_element(By.XPATH,  f"{self.farm_public_ips}[{str(i+1)}]/td[4]/div/button").click()
-                  WebDriverWait(self.browser, 30).until(EC.element_to_be_clickable(self.delete_button))
-                  self.browser.find_element(*self.delete_button).click()
+            if(self.browser.find_element(By.XPATH,  f"{self.farm_public_ips}[{str(i+1)}]/td[1]").text == ip):
+                WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), '"+ ip +"')]")))
+                if(self.browser.find_element(By.XPATH,  f"{self.farm_public_ips}[{str(i+1)}]/td[2]").text == gateway):
+                    WebDriverWait(self.browser, 30).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '"+ gateway +"')]")))
+                    WebDriverWait(self.browser, 30).until(EC.element_to_be_clickable((By.XPATH,  f"{self.farm_public_ips}[{str(i+1)}]/td[4]/div/button")))
+                    self.browser.find_element(By.XPATH,  f"{self.farm_public_ips}[{str(i+1)}]/td[4]/div/button").click()
+                    WebDriverWait(self.browser, 30).until(EC.element_to_be_clickable(self.delete_button))
+                    self.browser.find_element(*self.delete_button).click()
           
     def farm_detials(self, farm_name):
         self.search_functionality(farm_name)

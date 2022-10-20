@@ -14,7 +14,7 @@ def before_test_setup(browser, add_account):
     if(add_account):
         user1 = generate_string()
         polka_page.add_account(user1, password)
-        twin_address = transfer_page.get_secind_twin_address()
+        twin_address = transfer_page.get_second_twin_address()
     else:
         twin_address = transfer_page.get_twin_address()
     transfer_page.navigate(user)
@@ -145,4 +145,4 @@ def test_transfer_TFTs_on_TFChain (browser):
     transfer_page.get_submit().click()
     polka_page.authenticate_with_pass(password)
     assert transfer_page.wait_for('Transfer succeeded!')
-    assert format(float(min_balance),'.3f') <= format(float(transfer_page.get_balance()),'.3f') >= format(float(max_balance),'.3f')
+    assert format(float(max_balance),'.3f') <= format(float(transfer_page.get_balance_transfer(balance)),'.3f') <= format(float(min_balance),'.3f')

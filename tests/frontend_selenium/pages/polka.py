@@ -78,9 +78,9 @@ class PolkaPage:
         self.browser.close()
         self.browser.switch_to.window(self.browser.window_handles[0])
 
-    def authenticate_with_pass(self, Pass):
+    def authenticate_with_pass(self, password):
         WebDriverWait(self.browser, 20).until(EC.number_of_windows_to_be(2))
         self.browser.switch_to.window(self.browser.window_handles[1])
-        self.browser.find_element(*self.polka_auth_pass).send_keys(Pass)
+        self.browser.find_element(*self.polka_auth_pass).send_keys(password)
         self.browser.find_element(*self.polka_auth_submit).click()
         self.browser.switch_to.window(self.browser.window_handles[0])

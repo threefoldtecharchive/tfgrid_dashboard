@@ -98,8 +98,11 @@ class SwapPage:
     def get_balance(self):
         return self.browser.find_element(*self.balance_text).text
     
-    def get_balance_withdraw(self):
-        return self.browser.find_element(*self.balance_withdraw).text
+    def get_balance_withdraw(self, balance):
+        new_balance = self.browser.find_element(*self.balance_withdraw).text
+        while(new_balance==balance):
+            new_balance = self.browser.find_element(*self.balance_withdraw).text
+        return new_balance
 
     def wait_for(self, keyword):
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), '"+ keyword +"')]")))
