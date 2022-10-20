@@ -126,6 +126,7 @@
           </v-btn>
         </v-list-item>
         <v-divider></v-divider>
+
         <template v-for="route in routes">
           <v-list-item
             :class="{ 'mr-2 ml-2': !mini }"
@@ -134,6 +135,7 @@
             :to="route.hyperlink ? undefined : route.prefix"
             @click="route.hyperlink ? openLink(route.prefix) : undefined"
           >
+
             <v-list-item-icon>
               <v-icon
                 class="white--text"
@@ -529,10 +531,24 @@ export default class Dashboard extends Vue {
       ],
     },
     {
+      label: "Validation",
+      icon: "account-check",
+      prefix: "/l2validators/",
+      children: [
+        {
+          label: "Validators",
+          path: "validators",
+          icon: "account-multiple-check",
+          showBeforeLogIn: true,
+        },
+      ],
+},
+{
       label: "Bootstrap",
       icon: "chart-scatter-plot",
       prefix: "/other/bootstrap",
       children: [],
+
     },
     {
       label: "Hub",
