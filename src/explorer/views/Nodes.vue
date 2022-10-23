@@ -56,6 +56,7 @@
         class="elevation-1"
         align
         @click:row="openSheet"
+        :disable-sort="true"
         @update:options="onUpdateOptions($event.page, $event.itemsPerPage)"
       >
         <template v-slot:[`item.created`]="{ item }">
