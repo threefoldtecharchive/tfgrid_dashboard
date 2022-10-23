@@ -35,4 +35,3 @@ jobs:
           TFCHAIN_MNEMONICS: ${{ secrets.TFCHAIN_MNEMONICS }}
           STELLAR_ADDRESS: ${{ secrets.STELLAR_ADDRESS }}
         run: python -m pytest -v
-       
