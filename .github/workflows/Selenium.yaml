@@ -32,7 +32,7 @@ jobs:
       - name: Run tests
         working-directory: ./tests/frontend_selenium
         env:
-          SELENIUM_SEED: ${{ secrets.TFCHAIN_MNEMONICS }}
-          SELENIUM_ADDRESS: ${{ secrets.STELLAR_ADDRESS }}
+          TFCHAIN_MNEMONICS: ${{ secrets.TFCHAIN_MNEMONICS }}
+          STELLAR_ADDRESS: ${{ secrets.STELLAR_ADDRESS }}
         run: python -m pytest -v
        
