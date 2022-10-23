@@ -50,6 +50,9 @@
         :items="$store.getters['explorer/nodes']"
         :server-items-length="$store.getters['explorer/getNodesCount']"
         :items-per-page="10"
+        :footer-props="{
+          'items-per-page-options': [5, 10, 15, 50],
+        }"
         class="elevation-1"
         align
         @click:row="openSheet"
