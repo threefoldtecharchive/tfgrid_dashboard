@@ -173,22 +173,22 @@ export default class Nodes extends Vue {
       placeholder: "Filter by country.",
     },
     {
-      label: "Storage (GB)",
+      label: "Free Storage (GB)",
       key: "free_sru",
       placeholder: "sru",
     },
     {
-      label: "Hard Storage (GB)",
+      label: "Free Hard Storage (GB)",
       key: "free_hru",
       placeholder: "hru",
     },
     {
-      label: "Memory (GB)",
+      label: "Free Memory (GB)",
       key: "free_mru",
       placeholder: "mru",
     },
     {
-      label: "CPU (Cores)",
+      label: "Free CPU (Cores)",
       key: "free_cru",
       placeholder: "cru",
     },
