@@ -226,8 +226,8 @@
           </v-list-group>
         </template>
       </v-list>
-      <div :style="mini ? 'display: none' : 'position: fixed; bottom: 2%; right: 7%; font-weight: bold; background-color: rgb(25, 130, 177); padding: 5px 15px; border-radius: 15px;'">
-        <span>{{version}}</span>
+      <div :style="mini ? 'display: none' : 'position: fixed; bottom: 2%; right: 7%; background-color: rgb(25, 130, 177); padding: 5px 10px; border-radius: 15px;'">
+        <span>{{version ? version : "no version provided"}}</span>
       </div>
     </v-navigation-drawer>
     <v-dialog v-model="loadingAPI" persistent class="loadingDialog">
