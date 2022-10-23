@@ -302,8 +302,11 @@ export default class Farms extends Vue {
       value: [],
       init: true,
       multiple: true,
-      symbol: "certification_in",
+      symbol: "certificationType_in",
       key: "certificationType",
+      getValue: (f) => {
+        return (f.value as string[]).map((x) => x );
+      },
     },
     {
       component: InFilterV2,
