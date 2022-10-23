@@ -9,7 +9,7 @@ This module contains Dashboard homepage elements.
 
 class DashboardPage:
 
-    polka_connection_btn = (By.XPATH, '//*[@id="app"]/div[1]/div[1]/header/div/div[3]/div/div/button/span/button')
+    polka_connection_btn = (By.XPATH, '//*[@id="app"]/div[1]/div[1]/header/div/div[3]/div/div/button/span/i')
     swipe_right = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div/div[2]/button[2]')
     swipe_left = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div/div[2]/button[1]')
     download_polka = (By.XPATH, "//*[contains(text(), 'Download polkadot{.js} extension to access the Portal')]")
