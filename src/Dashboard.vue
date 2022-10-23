@@ -1,13 +1,7 @@
 <template>
   <v-app>
     <div>
-      <v-app-bar
-        color="#064663"
-        dense
-        dark
-        fixed
-        height="65"
-      >
+      <v-app-bar color="#064663" dense dark fixed height="65">
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
         <v-toolbar-title
@@ -38,11 +32,10 @@
             outlined
             v-if="$store.state.portal.accounts.length === 0"
           >
-            <v-btn icon>
+            <v-btn icon @click="$store.dispatch('portal/subscribeAccounts')">
               <v-icon
                 class=""
                 color="#F44336"
-                @click="$store.dispatch('portal/subscribeAccounts')"
               >mdi-lan-disconnect</v-icon>
             </v-btn>
           </v-card>
@@ -51,20 +44,20 @@
             v-else
             color="transparent"
           >
-            <v-btn icon>
-              <v-tooltip>
-                <template v-slot:activator="{ on, attrs }">
+            <v-tooltip>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon                     
+                  @click="disconnectWallet"
+                  v-bind="attrs"
+                  v-on="on">
                   <v-icon
                     color="#4CAF50"
-                    class=""
-                    @click="disconnectWallet"
-                    v-bind="attrs"
-                    v-on="on"
-                  >mdi-lan-connect</v-icon>
-                </template>
-                <span>Disconnect Wallet</span>
-              </v-tooltip>
-            </v-btn>
+                  >mdi-lan-connect
+                  </v-icon>
+                </v-btn>
+              </template>
+              <span>Disconnect Wallet</span>
+            </v-tooltip>
           </v-card>
           <v-theme-provider root>
           <v-card v-if="isAccountSelected()" style="width: max-content;">
@@ -135,10 +128,7 @@
             @click="route.hyperlink ? openLink(route.prefix) : undefined"
           >
             <v-list-item-icon>
-              <v-icon
-                class="white--text"
-                v-text="'mdi-' + route.icon"
-              />
+              <v-icon class="white--text" v-text="'mdi-' + route.icon" />
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="white--text">
@@ -236,23 +226,16 @@
           </v-list-group>
         </template>
       </v-list>
+      <div :style="mini ? 'display: none' : 'position: fixed; bottom: 2%; right: 7%; font-weight: bold; background-color: rgb(25, 130, 177); padding: 5px 15px; border-radius: 15px;'">
+        <span>{{version}}</span>
+      </div>
     </v-navigation-drawer>
-    <v-dialog
-      v-model="loadingAPI"
-      persistent
-      class="loadingDialog"
-    >
-      <div
-        class="d-flex justify-center"
-        style="display: block; padding: 10%"
-      >
-        <v-progress-circular
-          indeterminate
-          color="green"
-          :size="335"
-          :width="7"
-        >
-          <span style="font-size: large; color: black">Connecting to Polkadot</span>
+    <v-dialog v-model="loadingAPI" persistent class="loadingDialog">
+      <div class="d-flex justify-center" style="display: block; padding: 10%">
+        <v-progress-circular indeterminate color="green" :size="335" :width="7">
+          <span style="font-size: large; color: black"
+            >Connecting to Polkadot</span
+          >
         </v-progress-circular>
       </div>
     </v-dialog>
@@ -261,15 +244,8 @@
       <router-view />
     </div>
 
-    <v-footer
-      padless
-      fixed
-    >
-      <v-card
-        class="flex"
-        flat
-        tile
-      >
+    <v-footer padless fixed>
+      <v-card class="flex" flat tile>
         <v-card-text class="py-2 text-center">
           {{ new Date().getFullYear() }} — <strong>ThreeFoldTech</strong>
         </v-card-text>
@@ -285,7 +261,8 @@ import { connect } from "./portal/lib/connect";
 import { getTwin, getTwinID } from "./portal/lib/twin";
 import { accountInterface } from "./portal/store/state";
 import WelcomeWindow from "./portal/components/WelcomeWindow.vue";
-import FundsCard from "./portal/components/FundsCard.vue"
+import FundsCard from "./portal/components/FundsCard.vue";
+import config from "@/portal/config"
 
 interface SidenavItem {
   label: string;
@@ -322,7 +299,7 @@ export default class Dashboard extends Vue {
   balance: balanceInterface = { free: 0, reserved: 0 };
   accounts: accountInterface[] = [];
   loadingAPI = true;
-
+  version = config.version;
 
   balanceFree: string | (string | null)[] = "";
   balanceReserved: string | (string | null)[] = "";
@@ -339,7 +316,6 @@ export default class Dashboard extends Vue {
     this.$store.dispatch("portal/subscribeAccounts");
     this.balanceFree = this.$route.query.balanceFree;
     this.balanceReserved = this.$route.query.balanceReserved;
-
     this.accounts = this.$store.state.portal.accounts;
     if (this.$route.path === "/" && !this.$api) {
       Vue.prototype.$api = await connect(); //declare global variable api
@@ -522,6 +498,31 @@ export default class Dashboard extends Vue {
           path: "farms",
           icon: "lan-connect",
           showBeforeLogIn: true,
+        }
+      ],
+    },  {
+      label: "Calculators",
+      icon: "calculator",
+      prefix: "/calculator/",
+      children: [
+        {
+          label: "Resource Pricing",
+          path: "calculator",
+          icon: "currency-usd",
+          showBeforeLogIn: false,
+        },      
+        {
+          label: "Simulator",
+          path: "simulator/",
+          icon: "chart-scatter-plot",
+          showBeforeLogIn: false,
+          children: [
+            {
+              label: "Farming",
+              path: "farm",
+              icon: "lan-connect",
+            }
+          ],
         },
       ],
     },

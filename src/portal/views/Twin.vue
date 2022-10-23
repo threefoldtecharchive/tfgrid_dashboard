@@ -156,6 +156,7 @@ export default class TwinView extends Vue {
     const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
     const IPv6SegmentFormat = '(?:[0-9a-fA-F]{1,4})';
+
     const ip6Regex = new RegExp('^(' +
       `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
       `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +

@@ -10,7 +10,7 @@
           v-bind="attrs"
           v-on="on"
           :loading="loadingCreate"
-          x-small
+          small
         >
           Add IP
         </v-btn>
@@ -185,22 +185,30 @@ export default class CreateIP extends Vue {
     let check_ip = true;
     let check_pub_ip = true;
     this.toIpErrorMessage = "";
-    
+    if (this.toPublicIP === "") {
+      this.toIpErrorMessage = "";
+      return true;
+    }
     if (!ipRegex.test(this.publicIP)) {
       this.toIpErrorMessage = "Incorrect format";
       check_ip = false;
     }
-    if (this.toPublicIP.substring(0, this.toPublicIP.lastIndexOf('.')) != this.publicIP.substring(0, this.publicIP.lastIndexOf('.'))) {
-      this.toIpErrorMessage = "IPs are not the same";
-      check_same_IPs = false;
-    }
+
     if (this.toPublicIP.split('/')[1] !== this.publicIP.split('/')[1]) {
       this.toIpErrorMessage = "Subnet is different";
       check_same_subnet = false;
     }
+
     if (parseInt(this.toPublicIP.split('/')[0].split('.')[3]) <= parseInt(this.publicIP.split('/')[0].split('.')[3])) {
+
       this.toIpErrorMessage = "To IP must be bigger than From IP";
       check_from_bigger_than_to = false;
+
+    }
+    if (this.toPublicIP.substring(0, this.toPublicIP.lastIndexOf('.')) != this.publicIP.substring(0, this.publicIP.lastIndexOf('.'))) {
+
+      this.toIpErrorMessage = "IPs are not the same";
+      check_same_IPs = false;
     }
     if (parseInt(this.toPublicIP.split('/')[0].split('.')[3]) - parseInt(this.publicIP.split('/')[0].split('.')[3]) > 16) {
       this.toIpErrorMessage = "Range must not exceed 16";
