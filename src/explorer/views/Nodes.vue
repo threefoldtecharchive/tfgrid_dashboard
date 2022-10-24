@@ -53,6 +53,7 @@
         :footer-props="{
           'items-per-page-options': [5, 10, 15, 50],
         }"
+        :page.sync="page"
         class="elevation-1"
         align
         @click:row="openSheet"
@@ -201,6 +202,15 @@ export default class Nodes extends Vue {
 
   activeFiltersList: string[] = ["Node ID"];
 
+  get page() {
+    return this.$store.getters["explorer/getNodesTablePageNumber"];
+  }
+  set page(value) {
+    this.$store.commit(
+      "explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER,
+      value
+    );
+  }
   get activeFilters() {
     const keySet = new Set(this.activeFiltersList);
     return this.filters.filter((filter) => keySet.has(filter.label));
