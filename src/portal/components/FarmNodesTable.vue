@@ -324,7 +324,7 @@
                 type="string"
                 outlined
                 dense
-                hint="IPV6 address in CIDR format x:x:x:x"
+                hint="IPV6 address in CIDR format x:x:x:x/x"
                 persistent-hint
                 :error-messages="ip6ErrorMessage"
                 :rules="[ip6check]"
