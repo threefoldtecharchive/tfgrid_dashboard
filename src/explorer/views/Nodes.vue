@@ -50,9 +50,14 @@
         :items="$store.getters['explorer/nodes']"
         :server-items-length="$store.getters['explorer/getNodesCount']"
         :items-per-page="10"
+        :footer-props="{
+          'items-per-page-options': [5, 10, 15, 50],
+        }"
+        :page.sync="page"
         class="elevation-1"
         align
         @click:row="openSheet"
+        :disable-sort="true"
         @update:options="onUpdateOptions($event.page, $event.itemsPerPage)"
       >
         <template v-slot:[`item.created`]="{ item }">
@@ -169,22 +174,22 @@ export default class Nodes extends Vue {
       placeholder: "Filter by country.",
     },
     {
-      label: "Storage (GB)",
+      label: "Free SRU (GB)",
       key: "free_sru",
       placeholder: "sru",
     },
     {
-      label: "Hard Storage (GB)",
+      label: "Free HRU (GB)",
       key: "free_hru",
       placeholder: "hru",
     },
     {
-      label: "Memory (GB)",
+      label: "Free MRU (GB)",
       key: "free_mru",
       placeholder: "mru",
     },
     {
-      label: "CPU (Cores)",
+      label: "Free CRU (Cores)",
       key: "free_cru",
       placeholder: "cru",
     },
@@ -197,6 +202,15 @@ export default class Nodes extends Vue {
 
   activeFiltersList: string[] = ["Node ID"];
 
+  get page() {
+    return this.$store.getters["explorer/getNodesTablePageNumber"];
+  }
+  set page(value) {
+    this.$store.commit(
+      "explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER,
+      value
+    );
+  }
   get activeFilters() {
     const keySet = new Set(this.activeFiltersList);
     return this.filters.filter((filter) => keySet.has(filter.label));
