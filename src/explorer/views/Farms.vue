@@ -10,7 +10,7 @@
     <template v-slot:apply-filters>
       <v-btn
         color="primary"
-        :disabled="loading || !changed"
+        :disabled="loading || !changed || invalid"
         :loading="loading"
         @click="onApplyFilter"
         class="mt-2"
@@ -26,6 +26,7 @@
           :options="filter"
           v-model="filter.value"
           @input="changed = true"
+          @invalid="invalid = $event"
         />
       </div>
     </template>
@@ -134,6 +135,7 @@ export default class Farms extends Vue {
   page = 0;
   loading = false;
   changed = false;
+  invalid = false;
   // prettier-ignore
   headers = [
     { text: "ID", value: "id" },
