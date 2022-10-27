@@ -23,9 +23,9 @@
       <v-card-actions class="px-0">
         <v-btn
           @click="addTFT()"
-          style="max-width: 60px"
+          style="max-width: 90px"
           :loading="loadingAddTFT"
-        >+</v-btn>
+        >GET TFT</v-btn>
       </v-card-actions>
     </v-card>
     <v-dialog
@@ -71,7 +71,7 @@ export default class FundsCard extends Vue {
   async addTFT() {
     if (config.network !== "dev" && config.network !== "qa") {
       window.open(
-        "https://gettft.com/auth/login?next_url=/gettft/shop/#/buy",
+        "https://gettft.com/gettft/",
         "_blank"
       );
     } else {

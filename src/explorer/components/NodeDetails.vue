@@ -94,7 +94,7 @@
             <v-list-item-content>
               <v-list-item-title> Certification Type </v-list-item-title>
             </v-list-item-content>
-            {{ node.certificationType }}
+            {{ node.certificationType || "Not Certified" }}
           </v-list-item>
           <v-divider />
 

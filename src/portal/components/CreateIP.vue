@@ -210,7 +210,7 @@ export default class CreateIP extends Vue {
       this.toIpErrorMessage = "IPs are not the same";
       check_same_IPs = false;
     }
-    if (parseInt(this.toPublicIP.split('/')[0].split('.')[3]) - parseInt(this.publicIP.split('/')[0].split('.')[3]) > 16) {
+    if (parseInt(this.toPublicIP.split('/')[0].split('.')[3]) - parseInt(this.publicIP.split('/')[0].split('.')[3]) >= 16) {
       this.toIpErrorMessage = "Range must not exceed 16";
       check_limit_ips = false;
     }
