@@ -25,10 +25,6 @@ export function getNodeUptimePercentage(node: nodeInterface) {
 		today.getMonth(),
 		1,
 	).getDate();
-	// console.log(periodStart); // returns 1
-
-	// const test = getTime(node.receipts[0]?.mintingStart).getDate(); // returns date in the month (i.e 1-31)
-	// console.log(typeof test);
 
 	const currentUptime = node.receipts.reduce(
 		(total: number, receipt) =>
@@ -39,8 +35,10 @@ export function getNodeUptimePercentage(node: nodeInterface) {
 				: (total += 0),
 		0,
 	);
-	console.log(currentUptime);
-	return 1;
+
+	return (currentUptime / (getTime(undefined).getDate() - periodStart)).toFixed(
+		2,
+	);
 }
 export function getTime(num: number | undefined) {
 	if (num) {
