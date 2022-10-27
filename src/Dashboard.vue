@@ -27,7 +27,6 @@
             <v-icon>mdi-theme-light-dark</v-icon>
           </v-btn>
             <v-card
-            class="mx-2 px-1"
             color="transparent"
             outlined
             v-if="$store.state.portal.accounts.length === 0"
