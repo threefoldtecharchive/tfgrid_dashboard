@@ -47,11 +47,8 @@ export interface nodeInterface {
   dedicated : boolean,
   rentContractId : number,
   rentedByTwinId : number,
-
   receipts: receiptInterface[];
-  
   serialNumber: string;
-
 }
 export async function getFarm(api: { query: any; }, twinID: number) {
   const farms = await api.query.tfgridModule.farms.entries()
@@ -213,7 +210,7 @@ export async function addNodePublicConfig(
   address: string,
   api: { tx: { tfgridModule: { addNodePublicConfig: (arg0: any, arg1: any, arg2: any) => { (): any; new(): any; signAndSend: { (arg0: any, arg1: { signer: Signer; }, arg2: any): any; new(): any; }; }; }; }; },
   farmID: number,
-  nodeId: number,
+  nodeID: number,
   config: {
     ip4: {ip: string, gw: string},
     ip6?: {ip: string | undefined, gw: string | undefined},
@@ -224,6 +221,6 @@ export async function addNodePublicConfig(
   const injector = await web3FromAddress(address);
 
   return api.tx.tfgridModule
-    .addNodePublicConfig(farmID, nodeId, config)
+    .addNodePublicConfig(farmID, nodeID, config)
     .signAndSend(address, { signer: injector.signer }, callback);
 }

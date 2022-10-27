@@ -279,7 +279,6 @@ import {
   setFarmPayoutV2Address,
 } from "../lib/farms";
 import { StrKey } from "stellar-sdk";
-import config from "../config";
 @Component({
   name: "FarmsView",
   components: { PublicIPTable, FarmNodesTable },
