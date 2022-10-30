@@ -189,7 +189,7 @@ export default class CreateIP extends Vue {
       this.toIpErrorMessage = "";
       return true;
     }
-    if (!ipRegex.test(this.publicIP)) {
+    if (!ipRegex.test(this.toPublicIP)) {
       this.toIpErrorMessage = "Incorrect format";
       check_ip = false;
     }
