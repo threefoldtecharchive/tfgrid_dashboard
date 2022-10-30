@@ -235,7 +235,6 @@
                                 :value="isNaN(getPercentage(key))? 0: getPercentage(key)"
                                 color="light-green darken-2"
                               />
-                              
                               <template v-if="item.resourcesUsed">
                                 <span v-if="item.resourcesTotal[key] > 1000">
                                   {{ byteToGB(item.resourcesUsed[key]) }} /
@@ -248,7 +247,6 @@
                                   {{ item.resourcesUsed[key] }} /
                                   {{ item.resourcesTotal[key] }}
                                 </span>
-
                               </template>
                             </template>
                           </v-tooltip>
@@ -882,8 +880,5 @@ export default class FarmNodesTable extends Vue {
     if (reservedResources === 0 && totalResources === 0) return 0;
     return (reservedResources / totalResources) * 100;
   }
-  created() {
-  console.log({fn: this.getPercentage.bind(this)})
-}
 }
 </script>
