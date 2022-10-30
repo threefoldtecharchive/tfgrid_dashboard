@@ -22,13 +22,24 @@
           >
             <div>{{ item.name }}</div>
             <div class="text-center">
+              <!-- in case of total_resources is NaN "zero" -->
               <v-progress-circular
-                :value="item.value"
+                :value="isNaN(item.value) ? 0 : item.value"
                 :size="150"
                 :width="15"
                 color="primary"
-                >{{ item.value }}%</v-progress-circular
-              >
+                v-if="isNaN(item.value)"
+                >NA
+              </v-progress-circular>
+              <!-- in other case-->
+              <v-progress-circular
+                :value="isNaN(item.value) ? 0 : item.value"
+                :size="150"
+                :width="15"
+                color="primary"
+                v-else
+                >{{ item.value }}%
+              </v-progress-circular>
             </div>
           </div>
         </div>
@@ -78,7 +89,7 @@ export default class NodeUsedResources extends Vue {
               ? (res.capacity.used_resources[i] /
                   res.capacity.total_resources[i]) *
                 100
-              : 100; // prettier-ignore, validate if the total is zero so the usage is 100 else do the division
+              : NaN; // prettier-ignore, validate if the total is zero so the usage is set to NaN else do the division
           return {
             id: idx + 1,
             value: value.toFixed(2),
