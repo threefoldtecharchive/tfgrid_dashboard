@@ -194,6 +194,26 @@ export default class Nodes extends Vue {
       placeholder: "cru",
     },
     {
+      label: "Total SRU (GB)",
+      key: "total_sru",
+      placeholder: "sru",
+    },
+    {
+      label: "Total HRU (GB)",
+      key: "total_hru",
+      placeholder: "hru",
+    },
+    {
+      label: "Total MRU (GB)",
+      key: "total_mru",
+      placeholder: "mru",
+    },
+    {
+      label: "Total CRU (Cores)",
+      key: "total_cru",
+      placeholder: "cru",
+    },
+    {
       label: "Free Public IP",
       key: "free_ips",
       placeholder: "Filter by greater than or equal to publicIp Number.",
