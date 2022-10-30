@@ -38,7 +38,7 @@
       </div>
       <div class="d-flex justify-center">
         <v-alert dense text type="success">
-          Node statuses are updated every 2 hours.
+          For a realtime status, please click on the row.
         </v-alert>
       </div>
 
