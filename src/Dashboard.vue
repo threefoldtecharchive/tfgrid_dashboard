@@ -35,24 +35,14 @@
               </v-btn>
             </v-card>
             
-          <v-card
-            outlined
-            v-else
-            color="transparent"
-          >
-          <v-tooltip>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  @click="disconnectWallet"
-                  v-bind="attrs"
-                  v-on="on"
-                  class="py-3"
-                >
-                  Disconnect
-                </v-btn>
-              </template>
-            </v-tooltip>
-          </v-card>
+
+            <v-btn
+              v-else
+              @click="disconnectWallet"
+            >
+              Disconnect
+            </v-btn>
+            
           <v-theme-provider root>
           <v-card v-if="isAccountSelected()" style="width: max-content;">
             <v-card-text
