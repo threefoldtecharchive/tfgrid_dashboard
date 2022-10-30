@@ -22,43 +22,27 @@
           <div class="d-flex" style="align-items: center;">
             <v-btn
             icon
-            @click="toggle_dark_mode"
-          >
-            <v-icon>mdi-theme-light-dark</v-icon>
-          </v-btn>
-            <v-card
-            class="mx-2 px-1"
-            color="transparent"
-            outlined
-            v-if="$store.state.portal.accounts.length === 0"
-          >
-            <v-btn icon @click="$store.dispatch('portal/subscribeAccounts')">
-              <v-icon
-                class=""
-                color="#F44336"
-              >mdi-lan-disconnect</v-icon>
+            @click="toggle_dark_mode">
+              <v-icon>mdi-theme-light-dark</v-icon>
             </v-btn>
-          </v-card>
-          <v-card
-            outlined
-            v-else
-            color="transparent"
-          >
-            <v-tooltip>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn icon                     
-                  @click="disconnectWallet"
-                  v-bind="attrs"
-                  v-on="on">
-                  <v-icon
-                    color="#4CAF50"
-                  >mdi-lan-connect
-                  </v-icon>
-                </v-btn>
-              </template>
-              <span>Disconnect Wallet</span>
-            </v-tooltip>
-          </v-card>
+
+            <v-card color="transparent" outlined v-if="$store.state.portal.accounts.length === 0">
+              <v-btn
+              @click="$store.dispatch('portal/subscribeAccounts')"
+                
+              >
+                Connect
+              </v-btn>
+            </v-card>
+            
+
+            <v-btn
+              v-else
+              @click="disconnectWallet"
+            >
+              Disconnect
+            </v-btn>
+            
           <v-theme-provider root>
           <v-card v-if="isAccountSelected()" style="width: max-content;">
             <v-card-text
