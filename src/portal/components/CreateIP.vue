@@ -178,6 +178,7 @@ export default class CreateIP extends Vue {
     this.$emit("create", this.IPs, this.gateway);
   }
   toIpCheck() {
+    console.log("heress")
     let check_same_IPs = true;
     let check_same_subnet = true;
     let check_from_bigger_than_to = true;
@@ -205,6 +206,9 @@ export default class CreateIP extends Vue {
       check_from_bigger_than_to = false;
 
     }
+    console.log("parseInt(this.toPublicIP.split('/')[0].split('.')[3])",parseInt(this.toPublicIP.split('/')[0].split('.')[3]));
+    console.log("parseInt(this.publicIP.split('/')[0].split('.')[3])",parseInt(this.publicIP.split('/')[0].split('.')[3]));
+    
     if (this.toPublicIP.substring(0, this.toPublicIP.lastIndexOf('.')) != this.publicIP.substring(0, this.publicIP.lastIndexOf('.'))) {
 
       this.toIpErrorMessage = "IPs are not the same";
@@ -223,14 +227,14 @@ export default class CreateIP extends Vue {
   ipcheck() {
     if (PrivateIp(this.publicIP.split("/")[0])) {
       this.ipErrorMessage = "IP is not public";
-      return false;
+      return false  && this.toIpCheck();
     }
     if (ipRegex.test(this.publicIP)) {
       this.ipErrorMessage = "";
-      return true;
+      return true  && this.toIpCheck();
     }
     this.ipErrorMessage = "Incorrect format";
-    return false;
+    return false && this.toIpCheck();
   }
   gatewayCheck() {
     const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
