@@ -81,7 +81,7 @@
                       class="text-left pr-2"
                     >Node ID</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
-                      <span>{{ item.nodeID}}</span>
+                      <span>{{ item.nodeId}}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
@@ -90,7 +90,7 @@
                       class="text-left pr-2"
                     >Farm ID</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
-                      <span>{{ item.farmID }}</span>
+                      <span>{{ item.farmId }}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
@@ -99,7 +99,7 @@
                       class="text-left pr-2"
                     >Twin ID</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
-                      <span>{{ item.twinID }}</span>
+                      <span>{{ item.twinId }}</span>
                     </v-flex>
                   </v-row>
 
@@ -110,7 +110,7 @@
                     >Certification </v-flex>
 
                     <v-flex class="text-truncate font-weight-bold">
-                      <span>{{ item.certification }}</span>
+                      <span>{{ item.certificationType }}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
@@ -119,7 +119,7 @@
                       class="text-left pr-2"
                     >First boot at</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
-                      <span>{{ new Date(parseInt(item.createdAt)) }}</span>
+                      <span>{{ new Date(parseInt(item.created)) }}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
@@ -217,7 +217,7 @@
                   <v-expansion-panel-content>
                     <v-row>
                       <v-col
-                        v-for="(value, key) in item.resourcesTotal"
+                        v-for="(value, key) in item.total_resources"
                         :key="key"
                         align="center"
                       >
@@ -235,17 +235,17 @@
                                 :value="isNaN(getPercentage(key))? 0: getPercentage(key)"
                                 color="light-green darken-2"
                               />
-                              <template v-if="item.resourcesUsed">
-                                <span v-if="item.resourcesTotal[key] > 1000">
-                                  {{ byteToGB(item.resourcesUsed[key]) }} /
-                                  {{ byteToGB(item.resourcesTotal[key]) }} GB
+                              <template v-if="item.used_resources">
+                                <span v-if="item.total_resources[key] > 1000">
+                                  {{ byteToGB(item.used_resources[key]) }} /
+                                  {{ byteToGB(item.total_resources[key]) }} GB
                                 </span>
                                 <span v-else-if='item.resourcesTotal[key]== 0' >
                                   NA
                                 </span>
                                 <span v-else>
-                                  {{ item.resourcesUsed[key] }} /
-                                  {{ item.resourcesTotal[key] }}
+                                  {{ item.used_resources[key] }} /
+                                  {{ item.total_resources[key] }}
                                 </span>
                               </template>
                             </template>
@@ -485,8 +485,8 @@ export default class FarmNodesTable extends Vue {
   network = config.network;
 
   headers = [
-    { text: "Node ID", value: "nodeID", align: "center" },
-    { text: "Farm ID", value: "farmID", align: "center" },
+    { text: "Node ID", value: "nodeId", align: "center" },
+    { text: "Farm ID", value: "farmId", align: "center" },
     { text: "Country", value: "country", align: "center" },
     { text: "Serial Number", value: "serialNumber", align: "center" },
     { text: "Status", value: "status", align: "center" },
@@ -498,41 +498,49 @@ export default class FarmNodesTable extends Vue {
   editedIndex = -1;
   editedItem: any;
   nodeToEdit: nodeInterface = {
-    resourcesTotal: {
-      cru: "",
-      hru: "",
-      mru: "",
-      sru: "",
-    },
-    publicConfig: {
-      domain: "",
-      gw4: "",
-      gw6: "",
-      ipv4: "",
-      ipv6: "",
-    },
-    receipts: [],
-    certification: "",
-    city: "",
-    connectionPrice: null,
-    country: "",
-    created: 0,
-    createdAt: "",
-    farmID: 0,
-    farmingPolicyId: 0,
-    gridVersion: 0,
     id: "",
-    location: {
-      latitude: "",
-      longitude: "",
-    },
-    nodeID: 0,
-    secure: false,
-    serialNumber: "",
-    twinID: 0,
-    updatedAt: "",
+    nodeId: 0,
+    farmId: 0,
+    twinId: 0,
+    country: "",
+    gridVersion: 0,
+    city: "",
     uptime: 0,
-    virtualized: false,
+    created: 0,
+    farmingPolicyId: 0,
+    updatedAt: 0,
+    total_resources: {
+    cru: 0,
+    sru: 0,
+    hru: 0,
+    mru: 0,
+    },
+    used_resources : {
+    cru : 0,
+    sru : 0,
+    hru : 0,
+    mru : 0,
+    },
+    location : {
+    country : "",
+    city : "",
+    },
+    
+
+    publicConfig: {
+    domain: "",
+    gw4: "",
+    gw6: "",
+    ipv4: "",
+    ipv6: "",
+    },
+    status: "",
+    certificationType: "",
+    dedicated: true,
+    rentContractId: 0,
+    rentedByTwinId: 0,
+    receipts: [],
+    serialNumber: "",
   };
   nodeToDelete: { id: string } = {
     id: "",
@@ -565,18 +573,18 @@ export default class FarmNodesTable extends Vue {
     if (this.nodes.length > 0) {
       nodes = this.nodes.filter(
         (node: nodeInterface) =>
-          `${node.nodeID}`.includes(this.searchTerm) ||
+          `${node.nodeId}`.includes(this.searchTerm) ||
           node.serialNumber
             ?.toLowerCase()
             .includes(this.searchTerm.toLowerCase()) ||
-          node.certification
+          node.certificationType
             ?.toLowerCase()
             .includes(this.searchTerm.toLowerCase()) ||
           `${node.farmingPolicyId}`.includes(this.searchTerm)
       );
     }
     return nodes.map((node) => {
-      return {...node, status: node.updatedAt}
+      return {...node}
     })
   }
   downloadAllReceipts() {
@@ -628,8 +636,8 @@ export default class FarmNodesTable extends Vue {
     addNodePublicConfig(
       this.$route.params.accountID,
       this.$api,
-      this.nodeToEdit.farmID,
-      this.nodeToEdit.nodeID,
+      this.nodeToEdit.farmId,
+      this.nodeToEdit.nodeId,
       config,
       (res: {
         events?: never[] | undefined;
@@ -747,6 +755,7 @@ export default class FarmNodesTable extends Vue {
     if (!this.ip6) return true;
     const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
+
     const IPv6SegmentFormat = '(?:[0-9a-fA-F]{1,4})';
     const ipRegex = new RegExp('^(' +
       `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
@@ -757,7 +766,7 @@ export default class FarmNodesTable extends Vue {
       `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
       `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
       `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
-      ')([0-9a-fA-F]{1})?(/(1[6-9]|([2-5][0-9])|6[0-4]))?$');
+      ')([0-9a-fA-F]{1})?/(1[6-9]|([2-5][0-9])|6[0-4])$');
     if (ipRegex.test(this.ip6)) {
       this.ip6ErrorMessage = "";
       return true;
@@ -816,15 +825,9 @@ export default class FarmNodesTable extends Vue {
   getNodeUptimePercentage(node: nodeInterface) {
     return getNodeUptimePercentage(node);
   }
-  getStatus(node: { updatedAt: string }) {
-    const { updatedAt } = node;
-    const startTime = moment();
-    const end = moment(new Date(parseInt(updatedAt)));
-    const hours = startTime.diff(end, "hours");
-    if (hours < 2) return { color: "green", status: "up" };
-    else if (hours > 2 && hours < 3) {
-      return { color: "orange", status: "likely down" };
-    } else return { color: "red", status: "down" };
+  getStatus(node: { status: string }) {
+    if (node.status === "up") return { color: "green", status: "up" };
+    else return { color: "red", status: "down" };
   }
 
   deleteItem() {
@@ -875,9 +878,9 @@ export default class FarmNodesTable extends Vue {
     });
   }
   getPercentage(type: any) {
-    if (!this.expanded[0].resourcesUsed) return 0;
-    const reservedResources = this.expanded[0].resourcesUsed[type];
-    const totalResources = this.expanded[0].resourcesTotal[type];
+    if (!this.expanded[0].used_resources) return 0;
+    const reservedResources = this.expanded[0].used_resources[type];
+    const totalResources = this.expanded[0].total_resources[type];
     if (reservedResources === 0 && totalResources === 0) return 0;
     return (reservedResources / totalResources) * 100;
   }
