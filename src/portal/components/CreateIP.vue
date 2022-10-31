@@ -224,14 +224,17 @@ export default class CreateIP extends Vue {
   ipcheck() {
     if (PrivateIp(this.publicIP.split("/")[0])) {
       this.ipErrorMessage = "IP is not public";
-      return false  && this.toIpCheck();
+      this.toIpCheck();
+      return false;
     }
     if (ipRegex.test(this.publicIP)) {
       this.ipErrorMessage = "";
-      return true  && this.toIpCheck();
+      this.toIpCheck();
+      return true;
     }
     this.ipErrorMessage = "Incorrect format";
-    return false && this.toIpCheck();
+    this.toIpCheck();
+    return false;
   }
   gatewayCheck() {
     const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
