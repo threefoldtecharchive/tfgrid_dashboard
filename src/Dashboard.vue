@@ -29,6 +29,7 @@
             <v-card color="transparent" outlined v-if="$store.state.portal.accounts.length === 0">
               <v-btn
               @click="$store.dispatch('portal/subscribeAccounts')"
+              color="green"
                 
               >
                 Connect
@@ -39,6 +40,7 @@
             <v-btn
               v-else
               @click="disconnectWallet"
+              color="red"
             >
               Disconnect
             </v-btn>
