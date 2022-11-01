@@ -21,6 +21,7 @@
           <v-toolbar flat>
             <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
             <v-btn
+              v-if="network == 'main'"
               class="ml-auto"
               @click="downloadAllReceipts()"
             >Download Receipts</v-btn>
@@ -172,6 +173,7 @@
                   </v-row>
                 </v-col>
                 <v-col
+                  v-if="network == 'main' "
                   cols="4"
                   class="text-center"
                   :align-self="'center'"
@@ -255,7 +257,7 @@
               </v-expansion-panels>
 
             </v-col>
-            <v-col>
+            <v-col v-if="network == 'main'">
               <v-expansion-panels
                 v-model="receiptsPanel"
                 :disabled="false"

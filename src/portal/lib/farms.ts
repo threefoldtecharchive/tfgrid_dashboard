@@ -2,7 +2,7 @@ import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios from 'axios';
 import config from '../config';
-import { getNodeDowntime, getNodeUptimePercentage } from './nodes';
+import { getNodeDowntime } from './nodes';
 import {
 	getNodeMintingFixupReceipts,
 	getNodeUsedResources,
@@ -286,7 +286,10 @@ export async function getNodesByFarmID(farms: any[]) {
 			node.resourcesUsed = await getNodeUsedResources(node.nodeID);
 
 			node.resources = node.resourcesTotal;
-
+			const network = config.network;
+			if (network == 'main') {
+				node.receipts = await getNodeMintingFixupReceipts(node.nodeId);
+			}
 			node.receipts = await getNodeMintingFixupReceipts(node.nodeID);
 			node.downtime = await getNodeDowntime(node.nodeID);
 			node.uptime = parseInt(node.uptime);
