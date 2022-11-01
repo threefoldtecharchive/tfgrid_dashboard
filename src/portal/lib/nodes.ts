@@ -45,6 +45,7 @@ export async function getNodeDowntime(nodeId: string) {
 		return 10e100;
 	}
 	for (let i = 0; i < uptimeEvents.length - 1; i++) {
+		// if uptime decreases with time, then node was down in that time period, so add time period to node downtime
 		if (uptimeEvents[i].uptime > uptimeEvents[i + 1].uptime) {
 			downtime += uptimeEvents[i + 1].timestamp - uptimeEvents[i].timestamp;
 		}
