@@ -813,7 +813,10 @@ export default class FarmNodesTable extends Vue {
     }
   }
   domainCheck() {
-    return true;
+    // eslint-disable-next-line
+    const URL_REGEX = /^((?:(?:http?|ftp)[s]*:\/\/)?[a-z0-9-%\/\&=?\.]+\.[a-z]{2,4}\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?)/;
+    if (this.domain == "") return null;
+    if (!URL_REGEX.test(this.domain)) return "Invalid url format";
   }
   getTime(num: number | undefined) {
     if (num) {
