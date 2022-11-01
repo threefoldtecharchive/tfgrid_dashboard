@@ -25,17 +25,19 @@ export async function getNodeUptimePercentage(node: nodeInterface) {
 		today.getMonth(),
 		1,
 	).getTime();
-	console.log(periodStart);
+	const timeSincePeriodStart = today.getTime() - periodStart;
 
 	const res = await axios.post(config.graphqlUrl, {
 		query: `{nodes(where: {nodeID_eq: ${node.nodeID}, updatedAt_gte: "${periodStart}"}) {
+				nodeID
 				uptime
+
 			}
 		}`,
 	});
-	console.log(res.data.data.nodes);
 
-	return 1;
+	const uptime = res.data.data.nodes[0].uptime;
+	return ((uptime / timeSincePeriodStart) * 100).toFixed(2);
 }
 export function getTime(num: number | undefined) {
 	if (num) {
