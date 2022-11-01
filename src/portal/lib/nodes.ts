@@ -20,19 +20,23 @@ export interface receiptInterface {
 
 export async function getNodeUptimePercentage(node: nodeInterface) {
 	const today = new Date();
+
+	const oneMonthDuration = 2629800000;
 	const periodStart = new Date(
 		today.getFullYear(),
 		today.getMonth(),
 		1,
 	).getTime();
-	const oneMonthDuration = 2629800000;
-	const timeSincePeriodStart =
-		today.getTime() - periodStart == 0
-			? oneMonthDuration
-			: today.getTime() - periodStart;
+
+	const start =
+		periodStart == today.getTime()
+			? today.getTime() - oneMonthDuration
+			: periodStart;
+
+	const timeSincePeriodStart = today.getTime() - start;
 
 	const res = await axios.post(config.graphqlUrl, {
-		query: `{nodes(where: {nodeID_eq: ${node.nodeID}, updatedAt_gte: "${periodStart}"}) {
+		query: `{nodes(where: {nodeID_eq: ${node.nodeID}, updatedAt_gte: "${start}"}) {
 				uptime
 			}
 		}`,
