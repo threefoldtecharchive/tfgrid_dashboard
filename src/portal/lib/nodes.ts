@@ -40,6 +40,7 @@ export async function getNodeDowntime(nodeId: string) {
 	const uptimeEvents = res.data.data.uptimeEvents;
 
 	let downtime = 0;
+	// if there are no uptimeEvents (i.e node was never up in the current period), return a very large downtime number to achieve 0% uptime percentage
 	if (uptimeEvents.length == 0) {
 		return 10e100;
 	}
