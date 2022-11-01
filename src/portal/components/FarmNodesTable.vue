@@ -288,7 +288,7 @@
       >
         <v-card>
           <v-card-title class="text-h5">
-            Add a public config to your node with ID: {{ nodeToEdit.id }}
+            Add a public config to your node with ID: {{ nodeToEdit.nodeId }}
           </v-card-title>
 
           <v-card-text class="text">
