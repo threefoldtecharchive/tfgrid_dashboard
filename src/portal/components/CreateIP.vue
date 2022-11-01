@@ -224,7 +224,6 @@ export default class CreateIP extends Vue {
   ipcheck() {
     if (PrivateIp(this.publicIP.split("/")[0])) {
       this.ipErrorMessage = "IP is not public";
-      this.toIpCheck();
       return false;
     }
     if (ipRegex.test(this.publicIP)) {
@@ -233,7 +232,6 @@ export default class CreateIP extends Vue {
       return true;
     }
     this.ipErrorMessage = "Incorrect format";
-    this.toIpCheck();
     return false;
   }
   gatewayCheck() {
