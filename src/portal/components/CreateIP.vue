@@ -222,13 +222,13 @@ export default class CreateIP extends Vue {
     return check_pub_ip && check_ip && check_same_IPs && check_same_subnet && check_from_bigger_than_to && check_limit_ips;      
   }
   ipcheck() {
+    this.toIpCheck();
     if (PrivateIp(this.publicIP.split("/")[0])) {
       this.ipErrorMessage = "IP is not public";
       return false;
     }
     if (ipRegex.test(this.publicIP)) {
       this.ipErrorMessage = "";
-      this.toIpCheck();
       return true;
     }
     this.ipErrorMessage = "Incorrect format";
