@@ -194,6 +194,8 @@
 
                         </span>
                       </template>
+                      <span>Current Node Uptime Percentage
+                        (since start of the month)</span>
 
                     </v-tooltip>
                   </v-flex>
