@@ -18,27 +18,24 @@ export interface receiptInterface {
 	tft?: number;
 }
 
-export function getNodeUptimePercentage(node: nodeInterface) {
+export async function getNodeUptimePercentage(node: nodeInterface) {
 	const today = new Date();
 	const periodStart = new Date(
 		today.getFullYear(),
 		today.getMonth(),
 		1,
-	).getDate();
+	).getTime();
+	console.log(periodStart);
 
-	const currentUptime = node.receipts.reduce(
-		(total: number, receipt) =>
-			getTime(receipt.mintingStart).getDate() > periodStart
-				? (total +=
-						getTime(receipt.mintingEnd).getDate() -
-						getTime(receipt.mintingStart).getDate())
-				: (total += 0),
-		0,
-	);
+	const res = await axios.post(config.graphqlUrl, {
+		query: `{nodes(where: {nodeID_eq: ${node.nodeID}, updatedAt_gte: "${periodStart}"}) {
+				uptime
+			}
+		}`,
+	});
+	console.log(res.data.data.nodes);
 
-	return (currentUptime / (getTime(undefined).getDate() - periodStart)).toFixed(
-		2,
-	);
+	return 1;
 }
 export function getTime(num: number | undefined) {
 	if (num) {
@@ -320,6 +317,7 @@ export async function getNodeMintingFixupReceipts(nodeId: string) {
 
 	return nodeReceipts;
 }
+
 export async function getNodeUsedResources(nodeId: string) {
 	const res = await axios.get(`${config.gridproxyUrl}/nodes/${nodeId}`, {
 		timeout: 1000,
