@@ -185,12 +185,12 @@
                           :rotate="-90"
                           :size="100"
                           :width="15"
-                          :value="item.uptimePercentage"
+                          :value="getNodeUptimePercentage(item)"
                           color="light-green darken-2"
                         />
 
                         <span>
-                          Uptime: {{item.uptimePercentage }} %
+                          Uptime: {{getNodeUptimePercentage(item) }} %
 
                         </span>
                       </template>
@@ -529,6 +529,7 @@ export default class FarmNodesTable extends Vue {
     twinID: 0,
     updatedAt: "",
     uptime: 0,
+    downtime: 0,
     virtualized: false,
   };
   nodeToDelete: { id: string } = {

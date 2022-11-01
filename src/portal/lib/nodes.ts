@@ -17,34 +17,47 @@ export interface receiptInterface {
 	fixupEnd?: number;
 	tft?: number;
 }
-
-export async function getNodeUptimePercentage(node: nodeInterface) {
+export async function getNodeDowntime(nodeId: string) {
 	const today = new Date();
 
-	const oneMonthDuration = 2629800000;
 	const periodStart = new Date(
 		today.getFullYear(),
 		today.getMonth(),
 		1,
 	).getTime();
 
-	const start =
-		periodStart == today.getTime()
-			? today.getTime() - oneMonthDuration
-			: periodStart;
-
-	const timeSincePeriodStart = today.getTime() - start;
-
 	const res = await axios.post(config.graphqlUrl, {
-		query: `{nodes(where: {nodeID_eq: ${node.nodeID}, updatedAt_gte: "${start}"}) {
-				uptime
+		query: `{
+			uptimeEvents(where: {nodeID_eq: ${nodeId}, timestamp_gt: ${
+			periodStart / 1000
+		}}, orderBy: timestamp_ASC) {
+			  timestamp
+			  nodeID
+			  uptime
 			}
-		}`,
+		  }`,
 	});
+	const uptimeEvents = res.data.data.uptimeEvents;
 
-	const uptime = res.data.data.nodes[0].uptime;
+	let downtime = 0;
+	if (uptimeEvents.length == 0) {
+		return 10e100;
+	}
+	for (let i = 0; i < uptimeEvents.length - 1; i++) {
+		if (uptimeEvents[i].uptime > uptimeEvents[i + 1].uptime) {
+			downtime += uptimeEvents[i + 1].timestamp - uptimeEvents[i].timestamp;
+		}
+	}
 
-	return ((uptime / timeSincePeriodStart) * 100).toFixed(2);
+	return downtime;
+}
+export function getNodeUptimePercentage(node: nodeInterface) {
+	return ((node.uptime / (node.uptime + node.downtime)) * 100).toFixed(2);
+}
+interface uptimeEventInterface {
+	timestamp: number;
+	nodeID: string;
+	uptime: number;
 }
 export function getTime(num: number | undefined) {
 	if (num) {
