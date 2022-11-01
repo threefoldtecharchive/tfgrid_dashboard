@@ -205,6 +205,7 @@ export default class CreateIP extends Vue {
       check_from_bigger_than_to = false;
 
     }
+   
     if (this.toPublicIP.substring(0, this.toPublicIP.lastIndexOf('.')) != this.publicIP.substring(0, this.publicIP.lastIndexOf('.'))) {
 
       this.toIpErrorMessage = "IPs are not the same";
@@ -221,6 +222,7 @@ export default class CreateIP extends Vue {
     return check_pub_ip && check_ip && check_same_IPs && check_same_subnet && check_from_bigger_than_to && check_limit_ips;      
   }
   ipcheck() {
+    this.toIpCheck();
     if (PrivateIp(this.publicIP.split("/")[0])) {
       this.ipErrorMessage = "IP is not public";
       return false;
