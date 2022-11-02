@@ -76,18 +76,18 @@ class DedicatePage:
     def get_node_mru(self, bool, node_list):
         mru = []
         for i in range(len(node_list)):
-            node_mru = math.ceil(node_list[i]['total_resources']['mru']/(1024 ** 3))
+            node_mru = float("{:.1f}".format((node_list[i]['total_resources']['mru']/(1024 ** 3))))
             if(bool and node_mru >= 1024):
-                node_mru = math.floor(node_mru/1024)
+                node_mru = float("{:.1f}".format((node_mru/1024)))
             mru.append(node_mru)
         return mru
 
     def get_node_sru(self, bool, node_list):
         sru = []
         for i in range(len(node_list)):
-            node_sru = math.ceil(node_list[i]['total_resources']['sru']/(1024 ** 3))
+            node_sru = float("{:.1f}".format((node_list[i]['total_resources']['sru']/(1024 ** 3))))
             if(bool and node_sru >= 1024):
-                node_sru = math.floor(node_sru/1024)
+                node_sru = float("{:.1f}".format((node_sru/1024)))
             sru.append(node_sru)
         return sru
 

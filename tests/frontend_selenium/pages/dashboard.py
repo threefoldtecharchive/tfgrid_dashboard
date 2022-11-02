@@ -9,7 +9,8 @@ This module contains Dashboard homepage elements.
 
 class DashboardPage:
 
-    polka_connection_btn = (By.XPATH, '//*[@id="app"]/div[1]/div[1]/header/div/div[3]/div/div/button/span/i')
+    polka_connected_btn = (By.XPATH, '//*[@id="app"]/div[1]/div[1]/header/div/div[3]/div/div/button')
+    polka_disconnected_btn = (By.XPATH, '//*[@id="app"]/div[1]/div[1]/header/div/div[3]/div/button[2]')
     swipe_right = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div/div[2]/button[2]')
     swipe_left = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div/div[2]/button[1]')
     download_polka = (By.XPATH, "//*[contains(text(), 'Download polkadot{.js} extension to access the Portal')]")
@@ -26,15 +27,18 @@ class DashboardPage:
         self.browser = browser
     
     def polka_connection(self):
-        self.browser.find_element(*self.polka_connection_btn).click()
+        self.browser.find_element(*self.polka_connected_btn).click()
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.connected_account_title))
 
     def polka_disconnection(self):
-        self.browser.find_element(*self.polka_connection_btn).click()
+        self.browser.find_element(*self.polka_disconnected_btn).click()
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.decentralized_cloud_img))
 
-    def polka_connection_status(self):
-        return self.browser.find_element(*self.polka_connection_btn).get_attribute("class")
+    def polka_connected_status(self):
+        return self.browser.find_element(*self.polka_connected_btn).get_attribute("class")
+
+    def polka_disconnected_status(self):
+        return self.browser.find_element(*self.polka_disconnected_btn).get_attribute("class")
 
     def navigate_to_polka(self):
         self.browser.find_element(*self.download_polka).click()
