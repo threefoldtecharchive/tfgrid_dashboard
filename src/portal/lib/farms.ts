@@ -3,19 +3,35 @@ import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios from 'axios';
 import config from '../config';
 import { getNodeDowntime } from './nodes';
-import {
-	getNodeMintingFixupReceipts,
-	getNodeUsedResources,
-	receiptInterface,
-} from './nodes';
+import { getNodeMintingFixupReceipts, receiptInterface } from './nodes';
 import { hex2a } from './util';
 export interface nodeInterface {
-	downtime: number;
-	resourcesTotal: {
-		cru: string;
-		hru: string;
-		mru: string;
-		sru: string;
+	id: string;
+	nodeId: number;
+	farmId: number;
+	twinId: number;
+	country: string;
+	gridVersion: number;
+	city: string;
+	uptime: number;
+	created: number;
+	farmingPolicyId: number;
+	updatedAt: number;
+	total_resources: {
+		cru: number;
+		sru: number;
+		hru: number;
+		mru: number;
+	};
+	used_resources: {
+		cru: number;
+		sru: number;
+		hru: number;
+		mru: number;
+	};
+	location: {
+		country: string;
+		city: string;
 	};
 	publicConfig: {
 		domain: string;
@@ -24,29 +40,14 @@ export interface nodeInterface {
 		ipv4: string;
 		ipv6: string;
 	};
+	status: string;
+	certificationType: string;
+	dedicated: boolean;
+	rentContractId: number;
+	rentedByTwinId: number;
 	receipts: receiptInterface[];
-	certification: string;
-	city: string;
-	connectionPrice: null;
-	country: string;
-	created: number;
-	createdAt: string;
-	farmID: number;
-	farmingPolicyId: number;
-	gridVersion: number;
-	id: string;
-	location: {
-		latitude: string;
-		longitude: string;
-	};
-	nodeID: number;
-	secure: boolean;
 	serialNumber: string;
-	twinID: number;
-	updatedAt: string;
-	uptime: number;
-	virtualized: boolean;
-
+	downtime: number;
 }
 export async function getFarm(api: { query: any }, twinID: number) {
 	const farms = await api.query.tfgridModule.farms.entries();
@@ -272,41 +273,35 @@ export async function deleteFarm(
 		.signAndSend(address, { signer: injector.signer }, callback);
 }
 export async function getNodesByFarmID(farms: any[]) {
+	const farmIDs = farms.map((farm: { id: any }) => farm.id);
 
-  const farmIDs = farms.map((farm: { id: any; }) => farm.id);
+	const res = await fetch(
+		`${config.gridproxyUrl}/nodes?farm_ids=` + farmIDs,
+	).then((res) => res.json());
+	const _nodes = res.flat();
 
-  
-  const res = await fetch(
-    `${config.gridproxyUrl}/nodes?farm_ids=`+farmIDs
-  ).then((res) => res.json())
-  const _nodes = res.flat();
+	const nodesWithResources = _nodes.map(async (node: nodeInterface) => {
+		try {
+			const network = config.network;
+			node.receipts = [];
+			if (network == 'main')
+				node.receipts = await getNodeMintingFixupReceipts(node.nodeId);
+			node.downtime = await getNodeDowntime(node.nodeId);
+		} catch (error) {
+			node.receipts = [];
+			node.used_resources = {
+				sru: 0,
+				hru: 0,
+				mru: 0,
+				cru: 0,
+			};
+			node.downtime = 0;
+		}
 
-  const nodesWithResources = _nodes.map(async (node: { receipts: receiptInterface[]; nodeId: string; used_resources: { sru: number; hru: number; mru: number; cru: number; }; resources: { sru: number; hru: number; mru: number; cru: number; }; }) => {
-    try {
-      const network = config.network;
-      node.receipts = [];
-      if (network == 'main')
-        node.receipts = await getNodeMintingFixupReceipts(node.nodeId);
-        node.downtime = await getNodeDowntime(node.nodeID);
-      node.uptime = parseInt(node.uptime);
-    } catch (error) {
-      node.receipts = [];
-      node.used_resources = {
-        sru: 0,
-        hru: 0,
-        mru: 0,
-        cru: 0,
-      };
-      node.downtime = 0
-			
+		return node;
+	});
 
-    }
-
-    return node;
-  });
-
-  return await Promise.all(nodesWithResources);
-
+	return await Promise.all(nodesWithResources);
 }
 export async function getNodesByFarm(farmID: string) {
 	const res = await axios.post(config.graphqlUrl, {
