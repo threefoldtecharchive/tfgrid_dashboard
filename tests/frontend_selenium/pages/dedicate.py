@@ -67,9 +67,9 @@ class DedicatePage:
     def get_node_hru(self, bool, node_list):
         hru = []
         for i in range(len(node_list)):
-            node_hru = math.ceil(node_list[i]['total_resources']['hru']/(1024 ** 3))
+            node_hru = float("{:.1f}".format((node_list[i]['total_resources']['hru']/(1024 ** 3))))
             if(bool and node_hru >= 1024):
-                node_hru = math.floor(node_hru/1024)
+                node_hru = float("{:.1f}".format((node_hru/1024)))
             hru.append(node_hru)
         return hru
 
