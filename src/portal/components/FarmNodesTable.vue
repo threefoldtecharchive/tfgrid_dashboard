@@ -458,6 +458,8 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import moment from "moment";
+import { default as PrivateIp } from "private-ip";
+
 import {
   byteToGB,
   generateNodeSummary,
@@ -739,7 +741,12 @@ export default class FarmNodesTable extends Vue {
     this.openDeleteDialog = true;
   }
   ip4check() {
+
     if (this.ip4 === "") return true;
+    if (PrivateIp(this.ip4.split("/")[0])) {
+      this.ip4ErrorMessage = "IP is not public";
+      return false;
+    }
     const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
     const ipRegex = new RegExp(`^${IPv4AddressFormat}/(1[6-9]|2[0-9]|3[0-2])$`);
@@ -767,6 +774,10 @@ export default class FarmNodesTable extends Vue {
       `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
       `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
       ')([0-9a-fA-F]{1})?/(1[6-9]|([2-5][0-9])|6[0-4])$');
+    if (PrivateIp(this.ip6.split("/")[0])) {
+      this.ip6ErrorMessage = "IP is not public";
+      return false;
+    }
     if (ipRegex.test(this.ip6)) {
       this.ip6ErrorMessage = "";
       return true;
@@ -777,6 +788,10 @@ export default class FarmNodesTable extends Vue {
   }
   gw4Check() {
     if (!this.gw4) return true;
+    if (PrivateIp(this.gw4.split("/")[0])) {
+      this.gw4ErrorMessage = "Gateway is not public";
+      return false;
+    }
     const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
     const gatewayRegex = new RegExp(`^${IPv4AddressFormat}$`);
@@ -790,6 +805,10 @@ export default class FarmNodesTable extends Vue {
   }
   gw6Check() {
     if (!this.gw6) return true;
+    if (PrivateIp(this.gw6.split("/")[0])) {
+      this.gw6ErrorMessage = "Gateway is not public";
+      return false;
+    }
     const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
 
