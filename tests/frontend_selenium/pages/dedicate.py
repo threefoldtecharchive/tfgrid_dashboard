@@ -70,8 +70,10 @@ class DedicatePage:
             node_hru = (node_list[i]['total_resources']['hru']/(1024 ** 3))
             if(bool and node_hru >= 1024):
                 node_hru = math.floor(node_hru/1024)
-            else:
+            elif (bool):
                 node_hru = float("{:.1f}".format(node_hru))
+            else:
+                node_hru = math.ceil(node_hru)
             hru.append(node_hru)
         return hru
 
@@ -81,8 +83,10 @@ class DedicatePage:
             node_mru = (node_list[i]['total_resources']['mru']/(1024 ** 3))
             if(bool and node_mru >= 1024):
                 node_mru = math.floor(node_mru/1024)
-            else:
+            elif (bool):
                 node_mru = float("{:.1f}".format(node_mru))
+            else:
+                node_mru = math.ceil(node_mru)
             mru.append(node_mru)
         return mru
 
@@ -92,8 +96,10 @@ class DedicatePage:
             node_sru = (node_list[i]['total_resources']['sru']/(1024 ** 3))
             if(bool and node_sru >= 1024):
                 node_sru = math.floor(node_sru/1024)
-            else:
+            elif (bool):
                 node_sru = float("{:.1f}".format(node_sru))
+            else:
+                node_sru = math.ceil(node_sru)
             sru.append(node_sru)
         return sru
 
