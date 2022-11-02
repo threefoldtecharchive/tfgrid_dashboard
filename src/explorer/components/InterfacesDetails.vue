@@ -13,13 +13,6 @@
 
     <div style="max-height: 300px; overflow-y: auto">
       <v-list v-for="intf in interfaces" :key="intf.id" class="mb-6">
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title> ID </v-list-item-title>
-          </v-list-item-content>
-          {{ intf.id }}
-        </v-list-item>
-        <v-divider />
 
         <v-list-item>
           <v-list-item-content>
