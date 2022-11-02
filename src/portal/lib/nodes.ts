@@ -148,91 +148,94 @@ export function generateNodeSummary(doc: jsPDF, nodes: nodeInterface[]) {
 	);
 }
 export function generateReceipt(doc: jsPDF, node: nodeInterface) {
-	doc.setFontSize(15);
 
-	const topY = 20;
-	const lineOffset = 5;
-	const cellOffset = 30;
-	const cellX = 15;
-	const cellY = topY + lineOffset * 8;
+  doc.setFontSize(15);
 
-	doc.text(`Node ${node.nodeID} Summary`, 80, topY);
-	doc.setFontSize(10);
-	doc.text(`Receipts total: ${node.receipts.length}`, cellX, topY + lineOffset);
-	doc.text(
-		`Minting total: ${
-			node.receipts.filter((receipt) => receipt.measuredUptime).length
-		}`,
-		cellX,
-		topY + lineOffset * 2,
-	);
-	doc.text(
-		`Fixup total: ${
-			node.receipts.filter((receipt) => receipt.fixupStart).length
-		}`,
-		cellX,
-		topY + lineOffset * 3,
-	);
+  const topY = 20;
+  const lineOffset = 5;
+  const cellOffset = 30;
+  const cellX = 15;
+  const cellY = topY + lineOffset * 8;
 
-	doc.text(
-		`TFT total: ${node.receipts
-			.reduce((total, receipt) => (total += receipt.tft || 0), 0)
-			.toFixed(2)}`,
-		cellX,
-		topY + lineOffset * 4,
-	);
-	doc.text(
-		`Uptime: ${getNodeUptimePercentage(node)}% - ${Math.floor(
-			moment.duration(node.uptime, 'seconds').asDays(),
-		)} days`,
-		cellX,
-		topY + lineOffset * 5,
-	);
+  doc.text(`Node ${node.nodeId} Summary`, 80, topY);
+  doc.setFontSize(10);
+  doc.text(
+    `Receipts total: ${node.receipts.length}`,
+    cellX,
+    topY + lineOffset
+  );
+  doc.text(
+    `Minting total: ${node.receipts.filter((receipt) => receipt.measuredUptime).length
+    }`,
+    cellX,
+    topY + lineOffset * 2
+  );
+  doc.text(
+    `Fixup total: ${node.receipts.filter((receipt) => receipt.fixupStart).length
+    }`,
+    cellX,
+    topY + lineOffset * 3
+  );
 
-	doc.line(cellX, topY + lineOffset * 6, cellX + 175, topY + lineOffset * 6);
+  doc.text(
+    `TFT total: ${node.receipts
+      .reduce((total, receipt) => (total += receipt.tft || 0), 0)
+      .toFixed(2)}`,
+    cellX,
+    topY + lineOffset * 4
+  );
+  doc.text(`Uptime: ${getNodeUptimePercentage(node)}% - ${Math.floor(moment.duration(node.uptime, 'seconds').asDays())} days`, cellX, topY + lineOffset * 5);
 
-	node.receipts.map((receipt, i) => {
-		if (receipt.measuredUptime) {
-			doc.text(`Minting: ${receipt.hash}`, cellX, cellY + cellOffset * i);
-			doc.text(
-				`start: ${getTime(receipt.mintingStart)}`,
-				cellX,
-				cellY + cellOffset * i + lineOffset,
-			);
-			doc.text(
-				`end: ${getTime(receipt.mintingEnd)}`,
-				cellX,
-				cellY + cellOffset * i + lineOffset * 2,
-			);
-			doc.text(
-				`TFT: ${receipt.tft?.toFixed(2)}`,
-				cellX,
-				cellY + cellOffset * i + lineOffset * 3,
-			);
-		} else {
-			doc.text(`Fixup: ${receipt.hash}`, cellX, cellY + cellOffset * i);
-			doc.text(
-				`start: ${getTime(receipt.fixupStart)}`,
-				cellX,
-				cellY + cellOffset * i + lineOffset,
-			);
-			doc.text(
-				`end: ${getTime(receipt.fixupEnd)}`,
-				cellX,
-				cellY + cellOffset * i + lineOffset * 2,
-			);
-		}
-		if (i !== node.receipts.length - 1) {
-			doc.line(
-				cellX,
-				cellY + cellOffset * i + lineOffset * 4,
-				cellX + 175,
-				cellY + cellOffset * i + lineOffset * 4,
-			);
-		}
-	});
+  doc.line(cellX, topY + lineOffset * 6, cellX + 175, topY + lineOffset * 6);
 
-	return doc;
+  node.receipts.map((receipt, i) => {
+    if (receipt.measuredUptime) {
+      doc.text(`Minting: ${receipt.hash}`, cellX, cellY + cellOffset * i);
+      doc.text(
+        `start: ${getTime(receipt.mintingStart)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset
+      );
+      doc.text(
+        `end: ${getTime(receipt.mintingEnd)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset * 2
+      );
+      doc.text(
+        `TFT: ${receipt.tft?.toFixed(2)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset * 3
+      );
+
+    } else {
+      doc.text(`Fixup: ${receipt.hash}`, cellX, cellY + cellOffset * i);
+      doc.text(
+        `start: ${getTime(receipt.fixupStart)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset
+      );
+      doc.text(
+        `end: ${getTime(receipt.fixupEnd)}`,
+        cellX,
+        cellY + cellOffset * i + lineOffset * 2
+      );
+
+
+    }
+    if (i !== node.receipts.length - 1) {
+      doc.line(
+        cellX,
+        cellY + cellOffset * i + lineOffset * 4,
+        cellX + 175,
+        cellY + cellOffset * i + lineOffset * 4
+      );
+    }
+
+  });
+
+
+  return doc
+
 }
 export function byteToGB(capacity: number) {
 	return (capacity / 1024 / 1024 / 1024).toFixed(0);
@@ -290,17 +293,11 @@ export async function cancelRentContract(
 		.signAndSend(address, { signer: injector.signer }, callback);
 }
 
-export async function getActiveContracts(
-	api: {
-		query: { smartContractModule: { activeNodeContracts: (arg0: any) => any } };
-	},
-	nodeID: string,
-) {
-	console.log(
-		'getActiveContracts',
-		api.query.smartContractModule.activeNodeContracts(nodeID),
-	);
-	return await api.query.smartContractModule.activeNodeContracts(nodeID);
+
+export async function getActiveContracts(api: { query: { smartContractModule: { activeNodeContracts: (arg0: any) => any; }; }; }, nodeId: string) {
+  console.log("getActiveContracts", api.query.smartContractModule.activeNodeContracts(nodeId));
+  return await api.query.smartContractModule.activeNodeContracts(nodeId);
+
 }
 
 export async function getNodeMintingFixupReceipts(nodeId: string) {
@@ -473,11 +470,13 @@ export async function calDiscount(
 	return [totalPrice.toFixed(2), discountPackages[selectedPackage].discount];
 }
 
-export async function getNodeByID(nodeID: any) {
-	const node = await fetch(`${config.gridproxyUrl}/nodes/${nodeID}`).then(
-		(res) => res.json(),
-	);
-	return node;
+
+export async function getNodeByID(nodeId: any) {
+  const node = await fetch(
+    `${config.gridproxyUrl}/nodes/${nodeId}`
+  ).then((res) => res.json())
+  return node;
+
 }
 export async function getRentableNodes() {
 	const res = await fetch(
@@ -500,71 +499,43 @@ export async function getDedicatedNodes() {
 	dedicatedNodes = dedicatedNodes.concat(rentedNodes, rentableNodes);
 	return dedicatedNodes;
 }
-export async function getDNodes(
-	api: any,
-	address: string,
-	currentTwinID: string,
-) {
-	let nodes = await getDedicatedNodes();
-	const pricing = await getPrices(api);
-	let dNodes: {
-		nodeId: string;
-		price: string;
-		discount: any;
-		applyedDiscount: { first: any; second: any };
-		location: { country: any; city: any; long: any; lat: any };
-		resources: { cru: any; mru: any; hru: any; sru: any };
-		pubIps: any;
-		rentContractId: any;
-		rentedByTwinId: any;
-		usedResources: { cru: any; mru: any; hru: any; sru: any };
-		rentStatus: any;
-	}[] = [];
-	for (const node of nodes) {
-		const price = countPrice(pricing, node);
-		const [discount, discountLevel] = await calDiscount(
-			api,
-			address,
-			pricing,
-			price,
-		);
-		const ips = await getIpsForFarm(node.farmId);
-		dNodes.push({
-			nodeId: node.nodeId,
-			price: price,
-			discount: discount,
-			applyedDiscount: {
-				first: pricing.discount_for_dedicated_nodes,
-				second: discountLevel,
-			},
-			location: {
-				country: node.country,
-				city: node.city,
-				long: node.location.longitude,
-				lat: node.location.latitude,
-			},
-			resources: {
-				cru: node.total_resources.cru,
-				mru: node.total_resources.mru,
-				hru: node.total_resources.hru,
-				sru: node.total_resources.sru,
-			},
-			usedResources: {
-				cru: node.used_resources.cru,
-				mru: node.used_resources.mru,
-				hru: node.used_resources.hru,
-				sru: node.used_resources.sru,
-			},
-			pubIps: ips,
-			rentContractId: node.rentContractId,
-			rentedByTwinId: node.rentedByTwinId,
-			rentStatus:
-				node.rentContractId === 0
-					? 'free'
-					: node.rentedByTwinId == currentTwinID
-					? 'yours'
-					: 'taken',
-		});
-	}
-	return dNodes;
+
+export async function getDNodes(api: any, address: string, currentTwinID: string) {
+  let nodes = await getDedicatedNodes();
+  const pricing = await getPrices(api); let dNodes: { nodeId: string; price: string; discount: any; applyedDiscount: { first: any; second: any; }; location: { country: any; city: any; long: any; lat: any; }; resources: { cru: any; mru: any; hru: any; sru: any; }; pubIps: any; rentContractId: any, rentedByTwinId: any; usedResources: { cru: any; mru: any; hru: any; sru: any; }; rentStatus: any }[] = [];
+  for (const node of nodes) {
+    const price = countPrice(pricing, node);
+    const [discount, discountLevel] = await calDiscount(api, address, pricing, price);
+    const ips = await getIpsForFarm(node.farmId);
+    dNodes.push({
+      nodeId: node.nodeId,
+      price: price,
+      discount: discount,
+      applyedDiscount: { first: pricing.discountForDedicationNodes, second: discountLevel },
+      location: {
+        country: node.country,
+        city: node.city,
+        long: node.location.longitude,
+        lat: node.location.latitude,
+      },
+      resources: {
+        cru: node.total_resources.cru,
+        mru: node.total_resources.mru,
+        hru: node.total_resources.hru,
+        sru: node.total_resources.sru,
+      },
+      usedResources: {
+        cru: node.used_resources.cru,
+        mru: node.used_resources.mru,
+        hru: node.used_resources.hru,
+        sru: node.used_resources.sru,
+      },
+      pubIps: ips,
+      rentContractId: node.rentContractId,
+      rentedByTwinId: node.rentedByTwinId,
+      rentStatus: node.rentContractId === 0 ? "free" : node.rentedByTwinId == currentTwinID ? "yours" : "taken"
+    });
+  }
+  return dNodes;
+
 }
