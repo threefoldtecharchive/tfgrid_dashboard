@@ -242,7 +242,8 @@
                                   {{ byteToGB(item.used_resources[key]) }} /
                                   {{ byteToGB(item.total_resources[key]) }} GB
                                 </span>
-                                <span v-else-if='item.resourcesTotal[key]== 0'>
+
+                                <span v-else-if='item.total_resources[key]== 0' >
                                   NA
                                 </span>
                                 <span v-else>
