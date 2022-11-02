@@ -741,11 +741,12 @@ export default class FarmNodesTable extends Vue {
     this.openDeleteDialog = true;
   }
   ip4check() {
+
+    if (this.ip4 === "") return true;
     if (PrivateIp(this.ip4.split("/")[0])) {
       this.ip4ErrorMessage = "IP is not public";
       return false;
     }
-    if (this.ip4 === "") return true;
     const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
     const ipRegex = new RegExp(`^${IPv4AddressFormat}/(1[6-9]|2[0-9]|3[0-2])$`);
@@ -786,11 +787,11 @@ export default class FarmNodesTable extends Vue {
     }
   }
   gw4Check() {
+    if (!this.gw4) return true;
     if (PrivateIp(this.gw4.split("/")[0])) {
-      this.gw4ErrorMessage = "IP is not public";
+      this.gw4ErrorMessage = "Gateway is not public";
       return false;
     }
-    if (!this.gw4) return true;
     const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
     const gatewayRegex = new RegExp(`^${IPv4AddressFormat}$`);
@@ -803,11 +804,11 @@ export default class FarmNodesTable extends Vue {
     }
   }
   gw6Check() {
+    if (!this.gw6) return true;
     if (PrivateIp(this.gw6.split("/")[0])) {
-      this.gw6ErrorMessage = "IP is not public";
+      this.gw6ErrorMessage = "Gateway is not public";
       return false;
     }
-    if (!this.gw6) return true;
     const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
 
