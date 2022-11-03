@@ -318,7 +318,6 @@ export default class Calculator extends Vue {
   margin: 0 auto;
   text-align: center;
 }
-
 .name {
   font-weight: 900;
   text-transform: capitalize;
