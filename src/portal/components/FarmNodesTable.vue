@@ -1,6 +1,6 @@
 <template>
   <div>
-    
+
     <div v-if="nodes.length">
       <v-text-field
         v-model="searchTerm"
@@ -196,6 +196,8 @@
 
                         </span>
                       </template>
+                      <span>Current Node Uptime Percentage
+                        (since start of the month)</span>
 
                     </v-tooltip>
                   </v-flex>
@@ -240,7 +242,8 @@
                                   {{ byteToGB(item.used_resources[key]) }} /
                                   {{ byteToGB(item.total_resources[key]) }} GB
                                 </span>
-                                <span v-else-if='item.total_resources[key]== 0' >
+
+                                <span v-else-if='item.total_resources[key]== 0'>
                                   NA
                                 </span>
                                 <span v-else>
@@ -457,7 +460,9 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
+
 import moment from "moment";
+import { default as PrivateIp } from "private-ip";
 import {
   byteToGB,
   generateNodeSummary,
@@ -510,29 +515,28 @@ export default class FarmNodesTable extends Vue {
     farmingPolicyId: 0,
     updatedAt: 0,
     total_resources: {
-    cru: 0,
-    sru: 0,
-    hru: 0,
-    mru: 0,
+      cru: 0,
+      sru: 0,
+      hru: 0,
+      mru: 0,
     },
-    used_resources : {
-    cru : 0,
-    sru : 0,
-    hru : 0,
-    mru : 0,
+    used_resources: {
+      cru: 0,
+      sru: 0,
+      hru: 0,
+      mru: 0,
     },
-    location : {
-    country : "",
-    city : "",
+    location: {
+      country: "",
+      city: "",
     },
-    
 
     publicConfig: {
-    domain: "",
-    gw4: "",
-    gw6: "",
-    ipv4: "",
-    ipv6: "",
+      domain: "",
+      gw4: "",
+      gw6: "",
+      ipv4: "",
+      ipv6: "",
     },
     status: "",
     certificationType: "",
@@ -541,6 +545,7 @@ export default class FarmNodesTable extends Vue {
     rentedByTwinId: 0,
     receipts: [],
     serialNumber: "",
+    downtime: 0,
   };
   nodeToDelete: { id: string } = {
     id: "",
@@ -584,8 +589,8 @@ export default class FarmNodesTable extends Vue {
       );
     }
     return nodes.map((node) => {
-      return {...node}
-    })
+      return { ...node };
+    });
   }
   downloadAllReceipts() {
     let docSum = new jsPDF();
@@ -627,11 +632,13 @@ export default class FarmNodesTable extends Vue {
 
     this.save(config);
   }
-  save(config: {
-    ip4: { ip: string; gw: string };
-    ip6?: { ip: string | undefined; gw: string | undefined };
-    domain?: string;
-  } | null) {
+  save(
+    config: {
+      ip4: { ip: string; gw: string };
+      ip6?: { ip: string | undefined; gw: string | undefined };
+      domain?: string;
+    } | null
+  ) {
     this.loadingPublicConfig = true;
     addNodePublicConfig(
       this.$route.params.accountID,
@@ -740,7 +747,12 @@ export default class FarmNodesTable extends Vue {
   }
   ip4check() {
     if (this.ip4 === "") return true;
-    const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    if (PrivateIp(this.ip4.split("/")[0])) {
+      this.ip4ErrorMessage = "IP is not public";
+      return false;
+    }
+    const IPv4SegmentFormat =
+      "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
     const ipRegex = new RegExp(`^${IPv4AddressFormat}/(1[6-9]|2[0-9]|3[0-2])$`);
     if (ipRegex.test(this.ip4)) {
@@ -753,20 +765,27 @@ export default class FarmNodesTable extends Vue {
   }
   ip6check() {
     if (!this.ip6) return true;
-    const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    const IPv4SegmentFormat =
+      "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
 
-    const IPv6SegmentFormat = '(?:[0-9a-fA-F]{1,4})';
-    const ipRegex = new RegExp('^(' +
-      `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
-      `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
-      `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
-      `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
-      `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
-      `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
-      `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
-      `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
-      ')([0-9a-fA-F]{1})?/(1[6-9]|([2-5][0-9])|6[0-4])$');
+    const IPv6SegmentFormat = "(?:[0-9a-fA-F]{1,4})";
+    const ipRegex = new RegExp(
+      "^(" +
+        `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
+        `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
+        `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
+        `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
+        `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
+        `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
+        `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
+        `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
+        ")([0-9a-fA-F]{1})?/(1[6-9]|([2-5][0-9])|6[0-4])$"
+    );
+    if (PrivateIp(this.ip6.split("/")[0])) {
+      this.ip6ErrorMessage = "IP is not public";
+      return false;
+    }
     if (ipRegex.test(this.ip6)) {
       this.ip6ErrorMessage = "";
       return true;
@@ -777,7 +796,12 @@ export default class FarmNodesTable extends Vue {
   }
   gw4Check() {
     if (!this.gw4) return true;
-    const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    if (PrivateIp(this.gw4.split("/")[0])) {
+      this.gw4ErrorMessage = "Gateway is not public";
+      return false;
+    }
+    const IPv4SegmentFormat =
+      "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
     const gatewayRegex = new RegExp(`^${IPv4AddressFormat}$`);
     if (gatewayRegex.test(this.gw4)) {
@@ -790,20 +814,27 @@ export default class FarmNodesTable extends Vue {
   }
   gw6Check() {
     if (!this.gw6) return true;
-    const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    if (PrivateIp(this.gw6.split("/")[0])) {
+      this.gw6ErrorMessage = "Gateway is not public";
+      return false;
+    }
+    const IPv4SegmentFormat =
+      "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
 
-    const IPv6SegmentFormat = '(?:[0-9a-fA-F]{1,4})';
-    const gatewayRegex = new RegExp('^(' +
-      `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
-      `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
-      `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
-      `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
-      `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
-      `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
-      `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
-      `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
-      ')([0-9a-fA-F]{1})?$');
+    const IPv6SegmentFormat = "(?:[0-9a-fA-F]{1,4})";
+    const gatewayRegex = new RegExp(
+      "^(" +
+        `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
+        `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
+        `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
+        `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
+        `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
+        `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
+        `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
+        `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
+        ")([0-9a-fA-F]{1})?$"
+    );
     if (gatewayRegex.test(this.gw6)) {
       this.gw6ErrorMessage = "";
       return true;
