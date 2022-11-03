@@ -10,50 +10,79 @@
       <div class="card">
         <v-row>
           <v-col cols="5" class="mx-auto">
-            <v-text-field
-              placeholder="Enter number of CPUs"
-              :rules="[...inputValidators]"
-              label="CRU"
-              suffix="cores"
-              v-model="CRU"
-              outlined
-              @input="calculate"
-            ></v-text-field>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  placeholder="Enter number of CPUs"
+                  :rules="[...inputValidators]"
+                  label="CRU"
+                  suffix="Cores"
+                  v-model="CRU"
+                  outlined
+                  @input="calculate"
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <span>CPU</span>
+            </v-tooltip>
+
           </v-col>
           <v-col cols="5" class="mx-auto">
-            <v-text-field
-              placeholder="Memory"
-              :rules="[...inputValidators]"
-              label="MRU"
-              suffix="GB"
-              v-model="MRU"
-              outlined
-              @input="calculate"
-            ></v-text-field>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  placeholder="Memory"
+                  :rules="[...inputValidators]"
+                  label="MRU"
+                  suffix="GB"
+                  v-model="MRU"
+                  outlined
+                  @input="calculate"
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <span>RAM</span>
+            </v-tooltip>
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="5" class="mx-auto">
-            <v-text-field
-              placeholder="SSD Storage"
-              :rules="[...inputValidators]"
-              label="SRU"
-              suffix="GB"
-              v-model="SRU"
-              outlined
-              @input="calculate"
-            ></v-text-field>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  placeholder="SSD Storage"
+                  :rules="[...inputValidators]"
+                  label="SRU"
+                  suffix="GB"
+                  v-model="SRU"
+                  outlined
+                  @input="calculate"
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <span>SSD</span>
+            </v-tooltip>
           </v-col>
           <v-col cols="5" class="mx-auto">
-            <v-text-field
-              placeholder="HDD Storage"
-              :rules="[...inputValidators]"
-              label="HRU"
-              suffix="GB"
-              v-model="HRU"
-              outlined
-              @input="calculate"
-            ></v-text-field>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  placeholder="HDD Storage"
+                  :rules="[...inputValidators]"
+                  label="HRU"
+                  suffix="GB"
+                  v-model="HRU"
+                  outlined
+                  @input="calculate"
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <span>HDD</span>
+            </v-tooltip>
           </v-col>
         </v-row>
         <v-row>
@@ -80,11 +109,17 @@
           <span class="price">
             <span class="name">
               {{ price.label !== undefined ? price.label + " " : " " }}
-              {{ price.packageName != "none" ? price.packageName + " Package" : "" }}</span
-            >
+              {{ price.packageName != "none" ? price.packageName + " Package" : "" }}</span>
             : ${{ price.price }}
           </span>
+          <p class="price">
+            <span class="name">TFT Price</span>
+            dddff
+            </p>
         </div>
+        <span class="right"
+          >learn more about pricing through this <a href="https://library.threefold.me/info/threefold/#/tfgrid/pricing/threefold__pricing" target="_blank">link</a></span
+        >
       </div>
     </v-card>
   </Layout>
@@ -94,6 +129,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import Layout from "../components/Layout.vue";
 import { calCU, calSU, getPrices } from "../../portal/lib/nodes";
+import axios from 'axios';
 
 type priceType = {
   label?: string;
@@ -109,10 +145,10 @@ type priceType = {
   },
 })
 export default class Calculator extends Vue {
-  CRU = "0";
-  SRU = "0";
-  MRU = "0";
-  HRU = "0";
+  CRU = "1";
+  SRU = "25";
+  MRU = "1";
+  HRU = "100";
   balance = "0";
   prices: priceType[] | [] = [];
   $api: any;
@@ -230,7 +266,9 @@ export default class Calculator extends Vue {
 
     },
   };
-
+  const TFTPrice = this.getTFTPrice()
+  console.log({TFTPrice});
+  
   let selectedPackage = "none";  
   for (let pkg in this.discountPackages) {
     if (balance > totalPrice * this.discountPackages[pkg].duration) {
@@ -241,6 +279,10 @@ export default class Calculator extends Vue {
   return [totalPrice.toFixed(2), selectedPackage];
 }
 
+  async getTFTPrice(){    
+    const price = await axios.get("https://tftprice.grid.tf/");
+    return price;
+  }
 }
 </script>
 <style>
