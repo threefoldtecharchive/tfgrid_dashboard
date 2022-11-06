@@ -10,7 +10,7 @@ export default function toTeraOrGiga(value?: string) {
 
   let gb = val / giga;
 
-  if (gb < 1024) return `${gb.toFixed(0)} GB`;
+  if (gb < 1024) return `${gb.toFixed(1)} GB`;
 
   gb = gb / 1024;
 

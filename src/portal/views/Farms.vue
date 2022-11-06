@@ -373,8 +373,12 @@ export default class FarmsView extends Vue {
     return this.farms;
   }
   async getNodes() {
-    this.nodes = await getNodesByFarmID(this.farms);
+    if(this.farms != 0){ 
+      console.log("this.farms", this.farms.length)
+      this.nodes = await getNodesByFarmID(this.farms);
+    }
     this.loadingNodes = false;
+
   }
   openDeleteFarm(farm: any) {
     this.farmToDelete = farm;

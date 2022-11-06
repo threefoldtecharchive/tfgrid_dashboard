@@ -24,7 +24,6 @@ def test_polka_page(browser):
       Result: User should be navigated to the download polkadot extesion page.
     """
     dashboard_page,_ = before_test_setup(browser)
-    dashboard_page.polka_disconnection()
     assert dashboard_page.navigate_to_polka() == 'https://polkadot.js.org/extension/'
 
 
@@ -40,7 +39,6 @@ def test_discover_page(browser):
       Result: User should be navigated to the explorer stats page.
     """
     dashboard_page,_ = before_test_setup(browser)
-    dashboard_page.polka_disconnection()
     assert dashboard_page.navigate_to_explorer() == (Base.base_url+'explorer/statistics')
 
 
@@ -56,7 +54,6 @@ def test_manual_page(browser):
       Result: User should be navigated to the manual page.
     """
     dashboard_page,_ = before_test_setup(browser)
-    dashboard_page.polka_disconnection()
     assert dashboard_page.navigate_to_manual() == 'https://library.threefold.me/info/manual/#/'
 
 
@@ -75,10 +72,10 @@ def test_polka_connection(browser):
     password = generate_string()
     polka_page.add_account(user, password)
     dashboard_page.polka_disconnection()
-    disconnected = dashboard_page.polka_connection_status()
+    connected = dashboard_page.polka_connected_status()
     dashboard_page.polka_connection()
-    connected = dashboard_page.polka_connection_status()
-    assert ('mdi-lan-connect' in connected) and ('mdi-lan-disconnect' in disconnected)
+    disconnected = dashboard_page.polka_disconnected_status()
+    assert ('green' in connected) and ('red' in disconnected)
 
 
 def test_create_account(browser):
