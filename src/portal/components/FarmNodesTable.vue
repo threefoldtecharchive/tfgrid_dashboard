@@ -488,6 +488,7 @@ export default class FarmNodesTable extends Vue {
   receiptsPanel = [];
   resourcesPanel = [];
   network = config.network;
+  validator = require('validator');
 
   headers = [
     { text: "Node ID", value: "nodeId", align: "center" },
@@ -844,8 +845,10 @@ export default class FarmNodesTable extends Vue {
     }
   }
   domainCheck() {
-    return true;
+    if (this.domain == "") return null;
+    if (!this.validator.isURL(this.domain)) return "Invalid url format";
   }
+  
   getTime(num: number | undefined) {
     if (num) {
       return new Date(num);
