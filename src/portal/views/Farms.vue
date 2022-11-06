@@ -24,7 +24,7 @@
           class="white--text"
         >Create Farm</v-toolbar>
         <v-card-text>
-          <v-form v-model="isValidFarmName">
+          <v-form v-model="isValidFarmName" v-on:submit.prevent>
             <v-text-field
               label="Farm Name"
               v-model="farmName"
@@ -555,6 +555,7 @@ export default class FarmsView extends Vue {
   }
   public createFarmFromName() {
     this.loadingCreateFarm = true;
+
     createFarm(
       this.address,
       this.$api,
