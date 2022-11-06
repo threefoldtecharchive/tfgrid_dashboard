@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import { MutationTypes } from "../store/mutations";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { inputValidation } from "../utils/validations";
 import { ActionTypes } from "../store/actions";
 
@@ -42,6 +42,8 @@ export default class InFilter extends Vue {
   @Prop({ required: true }) label!: string;
   @Prop({ required: true }) filterKey!: string;
   @Prop() value?: string[];
+  
+  invalid = false;
 
   get multiple() {
     return this.filterKey == "farm_ids";
@@ -61,7 +63,9 @@ export default class InFilter extends Vue {
       key: this.filterKey,
       value,
     });
-    this.$store.dispatch(ActionTypes.REQUEST_NODES);
+    if(!this.invalid){
+      this.$store.dispatch(ActionTypes.REQUEST_NODES);
+    }
   }
 
   remove(index: number): void {
@@ -71,6 +75,14 @@ export default class InFilter extends Vue {
     );
 
     this.$store.dispatch(ActionTypes.REQUEST_NODES);
+  }
+
+  @Watch("errorMsg", {immediate: true}) onErrorMsg(value: string) {
+    if(value != ""){
+      this.invalid = true;
+    }else{
+      this.invalid = false;
+    }
   }
 
   errorMsg: any = "";
@@ -96,7 +108,7 @@ export default class InFilter extends Vue {
       "explorer/" + MutationTypes.CLEAR_NODES_FILTER_KEY,
       this.filterKey
     );
-    this.$store.dispatch(ActionTypes.REQUEST_NODES);
+      this.$store.dispatch(ActionTypes.REQUEST_NODES);
   }
 }
 </script>
