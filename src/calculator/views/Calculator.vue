@@ -113,8 +113,8 @@
             : ${{ price.price }}
           </span>
           <p class="price">
-            <span class="name">TFT Price:</span>
-            ${{TFTPrice}}
+            <span class="name">TFT Count:</span>
+            {{price.TFTs}}
             </p>
         </div>
         <span class="right"
@@ -129,7 +129,6 @@
 import { Component, Vue } from "vue-property-decorator";
 import Layout from "../components/Layout.vue";
 import { calCU, calSU, getPrices } from "../../portal/lib/nodes";
-import axios from 'axios';
 
 type priceType = {
   label?: string;
@@ -137,6 +136,7 @@ type priceType = {
   price: string;
   packageName: any;
   backgroundColor: string;
+  TFTs: any;
 };
 
 @Component({
@@ -185,6 +185,7 @@ export default class Calculator extends Vue {
             color: "black",
             packageName: "none",
             backgroundColor: "#DaDaDa",
+            TFTs: 0
           },
         ];        
         return;
@@ -196,6 +197,8 @@ export default class Calculator extends Vue {
       const musd_month = (CU * price.cu.value + SU * price.su.value) * 24 * 30;
       const usd_month = (musd_month / 10000000).toFixed(2);
       const [priceNumber, selectedPackage] = await this.calDiscount(musd_month);
+      const sharedTFTPrice = `${this.TFTPrice} * ${priceNumber}`;
+
       this.prices = [
         {
           label: "Dedicated Node Price",
@@ -204,6 +207,7 @@ export default class Calculator extends Vue {
           packageName: selectedPackage,
           backgroundColor:
             this.discountPackages[selectedPackage].backgroundColor,
+          TFTs: +priceNumber / this.TFTPrice 
             
         },
         {
@@ -212,6 +216,7 @@ export default class Calculator extends Vue {
           color: "#868686",
           packageName: "none",
           backgroundColor: this.discountPackages.none.backgroundColor,
+          TFTs: +usd_month / this.TFTPrice
         },
       ];
     } else {
