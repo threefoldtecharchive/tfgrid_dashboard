@@ -10,7 +10,7 @@
     <template v-slot:apply-filters>
       <v-btn
         color="primary"
-        :disabled="loading || !changed || invalid"
+        :disabled="loading || !changed || isInvalid()"
         :loading="loading"
         @click="onApplyFilter"
         class="mt-2"
@@ -26,7 +26,7 @@
           :options="filter"
           v-model="filter.value"
           @input="changed = true"
-          @invalid="invalid = $event"
+          @invalid="invalidFilter"
         />
       </div>
     </template>
@@ -121,6 +121,7 @@ import getFarmPublicIPs from "../utils/getFarmPublicIps";
 import gql from "graphql-tag";
 import equalArrays from "../utils/equalArrays";
 import LayoutFilters from "../components/LayoutFilters.vue";
+import { execute } from 'graphql';
 @Component({
   components: {
     Layout,
@@ -130,12 +131,14 @@ import LayoutFilters from "../components/LayoutFilters.vue";
   },
 })
 export default class Farms extends Vue {
+  log = console.log.bind(console);
   sort: { by: string[]; desc: boolean[] } = { by: [], desc: [] };
   value = "";
   page = 0;
   loading = false;
   changed = false;
   invalid = false;
+  NotChecked = false;
   // prettier-ignore
   headers = [
     { text: "ID", value: "id" },
@@ -350,6 +353,18 @@ export default class Farms extends Vue {
   }
   closeSheet(): void {
     this.farm = null;
+  }
+
+  invalidFilter(event: {symbol: string, invalid: boolean}) {
+    const checkFilter = this.activeFilters.find((f) => (f.symbol === event.symbol));
+    if(checkFilter){
+      checkFilter.invalid = event.invalid;
+    }
+  }
+
+  isInvalid():boolean {
+    console.log("activefilters.some", this.activeFilters.map((f) => f.invalid));    
+    return this.activeFilters.some((f) => f.invalid === true)
   }
 }
 </script>

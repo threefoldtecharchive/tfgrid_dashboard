@@ -61,7 +61,7 @@ export default class InFilterV2 extends Vue {
     }
   }
   @Watch("errorMsg", {immediate: true}) onErrorMsg(value: string) {
-    this.$emit("invalid", value != "")
+    this.$emit("invalid", {invalid: value != "", symbol: this.options.symbol})
   }
   errorMsg:any = ''
   validated(value: string, key: string): string{
