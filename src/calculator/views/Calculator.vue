@@ -91,7 +91,7 @@
               placeholder="Your Balance"
               :rules="[...inputValidators]"
               label="Your Balance"
-              suffix="TFT"
+              suffix="USD"
               v-model="balance"
               outlined
               @input="calculate"
@@ -113,8 +113,8 @@
             : ${{ price.price }}
           </span>
           <p class="price">
-            <span class="name">TFT Price</span>
-            dddff
+            <span class="name">TFT Price:</span>
+            ${{TFTPrice}}
             </p>
         </div>
         <span class="right"
@@ -155,6 +155,7 @@ export default class Calculator extends Vue {
   discountPackages: any = {};
   formHasErrors = false;
   pricing: any;
+  TFTPrice: number | undefined;
   inputValidators = [
     (val: string) =>
       !isNaN(+(val)) || "This field must be a number and required",
@@ -188,7 +189,7 @@ export default class Calculator extends Vue {
         ];        
         return;
       }
-
+      this.TFTPrice = await this.getTFTPrice(this.$api)
       const price = await this.calcPrice();
       const CU = calCU(+this.CRU, +this.MRU);
       const SU = calSU(+this.HRU, +this.SRU);
@@ -203,6 +204,7 @@ export default class Calculator extends Vue {
           packageName: selectedPackage,
           backgroundColor:
             this.discountPackages[selectedPackage].backgroundColor,
+            
         },
         {
           label: "Shared Node Price",
@@ -266,8 +268,6 @@ export default class Calculator extends Vue {
 
     },
   };
-  const TFTPrice = this.getTFTPrice()
-  console.log({TFTPrice});
   
   let selectedPackage = "none";  
   for (let pkg in this.discountPackages) {
@@ -279,9 +279,10 @@ export default class Calculator extends Vue {
   return [totalPrice.toFixed(2), selectedPackage];
 }
 
-  async getTFTPrice(){    
-    const price = await axios.get("https://tftprice.grid.tf/");
-    return price;
+  async getTFTPrice(api: {query: { tftPriceModule: { tftPrice: any }}}){    
+    const pricing = await api.query.tftPriceModule.tftPrice();
+    console.log("pricing", pricing.words[0]/1000);
+    return pricing.words[0]/1000;
   }
 }
 </script>
