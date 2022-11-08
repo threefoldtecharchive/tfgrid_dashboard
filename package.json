@@ -7,7 +7,7 @@
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "eslint": "eslint .",
+    "check-lint": "eslint .  .eslintrc.json .",
     "prepare": "husky install"
   },
   "lint-staged": {
