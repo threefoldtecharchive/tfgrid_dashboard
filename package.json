@@ -7,11 +7,11 @@
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "check-lint": "eslint .  .eslintrc.json .",
+    "check-lint": "eslint . .eslintrc.js .",
     "prepare": "husky install"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": "eslint --fix",
+    "*.{s,ts,css,md,vue,yaml}": "eslint --fix",
     "*.{js,ts,css,md,vue,yaml}": "prettier --write"
   },
   "dependencies": {
