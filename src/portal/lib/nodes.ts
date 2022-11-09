@@ -154,10 +154,8 @@ export function generateNodeSummary(doc: jsPDF, nodes: nodeInterface[]) {
 export interface ITab {
 	label: string,
 	query: "rentable" | "rented" | "rented_by",
+	value: "rentable" | "rented" | "mine",
 	index: number,
-	page: number,
-	size: number,
-	nodes: any[],
 }
 
 export function generateReceipt(doc: jsPDF, node: nodeInterface) {
@@ -493,7 +491,7 @@ export async function getNodeByID(nodeId: any) {
 	return node;
 }
 
-export async function getDedicatedNodes(twinId: number, query: string, page: number, size: number) {
+export async function getDedicatedNodes(twinId: string, query: string, page: number, size: number) {
 	let baseUrl = `${config.gridproxyUrl}/nodes?status=up&ret_count=true&page=${page}&size=${size}`
 	if (query != "rented_by") {
 		baseUrl += `&${query}=true`
@@ -516,10 +514,7 @@ export async function getDNodes(
 	page: number, 
 	size: number,
 ) {
-	let twinID = await getTwinID(api, address);
-	let {nodes, count} = await getDedicatedNodes(twinID, query, page, size);
-
-	store.commit("portal/setTableCount", +count!)
+	let { nodes, count } = await getDedicatedNodes(currentTwinID, query, page, size);
 
 	const pricing = await getPrices(api);
 	let dNodes: {
@@ -581,5 +576,5 @@ export async function getDNodes(
 					: 'taken',
 		});
 	}
-	return dNodes;
+	return {dNodes, count};
 }
