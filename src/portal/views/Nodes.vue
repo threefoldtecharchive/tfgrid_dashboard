@@ -19,7 +19,7 @@
 
       <v-tabs-items v-model="activeTab">
         <v-tab-item v-for="tab in tabs" :key="tab.index" :value="tab.query">
-          <NodesTable :nodes="[]" :tab="tab" :twinId="$route.query.twinID" />
+          <NodesTable :tab="tab" :twinId="$route.query.twinID" />
         </v-tab-item>
       </v-tabs-items>
     </v-card>
@@ -38,8 +38,6 @@ import { ITab } from "../lib/nodes";
 export default class NodesView extends Vue {
   $api = "";
   address = "";
-  accountName: unknown;
-  $currentTwinID: any;
   activeTab = "";
 
   tabs: ITab[] = [
@@ -65,8 +63,6 @@ export default class NodesView extends Vue {
 
   async mounted() {
     this.address = this.$route.params.accountID;
-    this.accountName = this.$route.query.accountName;
-    this.$currentTwinID = this.$route.query.twinID;
 
     if (!this.$api) {
       this.$router.push({ name: "accounts", path: "/" });

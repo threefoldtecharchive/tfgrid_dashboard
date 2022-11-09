@@ -1,4 +1,3 @@
-import { PortalState } from './../store/state';
 /* eslint-disable */
 import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
@@ -9,8 +8,6 @@ import { jsPDF } from 'jspdf';
 import { nodeInterface } from './farms';
 import moment from 'moment';
 import 'jspdf-autotable';
-import { getTwinID } from './twin';
-import { Store } from 'vuex';
 export interface receiptInterface {
 	hash: string;
 	mintingStart?: number;
@@ -509,7 +506,6 @@ export async function getDNodes(
 	api: any,
 	address: string,
 	currentTwinID: string,
-	store: Store<PortalState>,
 	query: string,
 	page: number, 
 	size: number,

@@ -104,8 +104,8 @@ export default class NodesTable extends Vue {
     await this.getNodes();
   }
 
-  async mounted() { 
-    console.log('mounted')
+  async mounted() {
+    console.log("mounted");
     await this.getNodes();
   }
 
@@ -119,22 +119,17 @@ export default class NodesTable extends Vue {
     this.nodes = [];
     this.loading = true;
 
-    console.log(
-      `Requesting new nodes for tab: ${this.tab.query}, page: ${this.pageNumber}, size: ${this.pageSize}`
-    );
-
-    let {dNodes, count} = await getDNodes(
+    let { dNodes, count } = await getDNodes(
       this.$api,
       this.address,
       this.twinId,
-      this.$store,
       this.tab.query,
       this.pageNumber,
       this.pageSize
     );
 
-    this.nodes = dNodes,
-    this.count = parseInt(count as string),
+    this.nodes = dNodes;
+    this.count = parseInt(count as string);
     this.loading = false;
   }
 
