@@ -110,7 +110,7 @@
             <span class="name">
               {{ price.label !== undefined ? price.label + " " : " " }}
               {{ price.packageName != "none" ? price.packageName + " Package" : "" }}</span>
-            : {{ price.price }} $/month, {{price.TFTs}} TFT/month
+            : ${{ price.price }}/month, {{price.TFTs}} TFT/month
           </span>
         </div>
         <span class="right"
@@ -236,8 +236,9 @@ export default class Calculator extends Vue {
   // discount for Dedicated Nodes
   const discount = this.pricing.discountForDedicationNodes;
   let totalPrice = price - price * (discount / 100);     
-  // discount for Twin Balance
-  const balance = this.balance * 10000000;
+  // discount for Twin Balance in TFT
+  const balance = (this.TFTPrice? this.TFTPrice : 1 )* this.balance * 10000000;
+  
    this.discountPackages = {
     "none": {
       duration: 0,
@@ -274,7 +275,7 @@ export default class Calculator extends Vue {
   
   let selectedPackage = "none";  
   for (let pkg in this.discountPackages) {
-    if (this.TFTPrice? balance * this.TFTPrice > totalPrice * this.discountPackages[pkg].duration : null) {
+    if (balance > totalPrice * this.discountPackages[pkg].duration) {      
       selectedPackage = pkg;
     }
   }  

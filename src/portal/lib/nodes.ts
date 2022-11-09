@@ -28,9 +28,8 @@ export async function getNodeDowntime(nodeId: number) {
 
 	const res = await axios.post(config.graphqlUrl, {
 		query: `{
-			uptimeEvents(where: {nodeID_eq: ${nodeId}, timestamp_gt: ${
-			periodStart / 1000
-		}}, orderBy: timestamp_ASC) {
+			uptimeEvents(where: {nodeID_eq: ${nodeId}, timestamp_gt: ${periodStart / 1000
+			}}, orderBy: timestamp_ASC) {
 			  timestamp
 			  nodeID
 			  uptime
@@ -110,10 +109,10 @@ export function generateNodeSummary(doc: jsPDF, nodes: nodeInterface[]) {
 		`TFT: ${nodes
 			.reduce(
 				(total, node) =>
-					(total += node.receipts.reduce(
-						(totalTFT, receipt) => (totalTFT += receipt.tft || 0),
-						0,
-					)),
+				(total += node.receipts.reduce(
+					(totalTFT, receipt) => (totalTFT += receipt.tft || 0),
+					0,
+				)),
 				0,
 			)
 			.toFixed(2)}`,
@@ -124,17 +123,17 @@ export function generateNodeSummary(doc: jsPDF, nodes: nodeInterface[]) {
 		`Uptime: ${(
 			(nodes.reduce(
 				(totalM, node) =>
-					(totalM += node.receipts.reduce(
-						(total, receipt) => (total += receipt.measuredUptime || 0),
-						0,
-					)),
+				(totalM += node.receipts.reduce(
+					(total, receipt) => (total += receipt.measuredUptime || 0),
+					0,
+				)),
 				0,
 			) /
 				nodes.reduce(
 					(totalU, node) =>
-						(totalU += Math.floor(
-							moment.duration(node.uptime, 'seconds').asSeconds(),
-						)),
+					(totalU += Math.floor(
+						moment.duration(node.uptime, 'seconds').asSeconds(),
+					)),
 					0,
 				)) *
 			100
@@ -160,15 +159,13 @@ export function generateReceipt(doc: jsPDF, node: nodeInterface) {
 	doc.setFontSize(10);
 	doc.text(`Receipts total: ${node.receipts.length}`, cellX, topY + lineOffset);
 	doc.text(
-		`Minting total: ${
-			node.receipts.filter((receipt) => receipt.measuredUptime).length
+		`Minting total: ${node.receipts.filter((receipt) => receipt.measuredUptime).length
 		}`,
 		cellX,
 		topY + lineOffset * 2,
 	);
 	doc.text(
-		`Fixup total: ${
-			node.receipts.filter((receipt) => receipt.fixupStart).length
+		`Fixup total: ${node.receipts.filter((receipt) => receipt.fixupStart).length
 		}`,
 		cellX,
 		topY + lineOffset * 3,
@@ -246,10 +243,10 @@ export async function createRentContract(
 					arg1: any,
 				) => {
 					(): any;
-					new (): any;
+					new(): any;
 					signAndSend: {
 						(arg0: any, arg1: { signer: Signer }, arg2: any): any;
-						new (): any;
+						new(): any;
 					};
 				};
 			};
@@ -271,10 +268,10 @@ export async function cancelRentContract(
 			smartContractModule: {
 				cancelContract: (arg0: any) => {
 					(): any;
-					new (): any;
+					new(): any;
 					signAndSend: {
 						(arg0: any, arg1: { signer: Signer }, arg2: any): any;
-						new (): any;
+						new(): any;
 					};
 				};
 			};
@@ -435,6 +432,7 @@ export async function calDiscount(
 
 	// discount for Twin Balance
 	const balance = await getBalance(api, address);
+	const TFTbalance = balance.free * 10000000;
 
 	const discountPackages: any = {
 		none: {
@@ -462,13 +460,13 @@ export async function calDiscount(
 	let selectedPackage = 'none';
 
 	for (const pkg in discountPackages) {
-		if (balance.free > totalPrice * discountPackages[pkg].duration) {
+		if (TFTbalance > totalPrice * discountPackages[pkg].duration) {
 			selectedPackage = pkg;
 		}
 	}
 
 	totalPrice =
-		totalPrice - totalPrice * (discountPackages[selectedPackage].discount / 100);
+		(totalPrice - totalPrice * (discountPackages[selectedPackage].discount / 100));
 
 	return [totalPrice.toFixed(2), discountPackages[selectedPackage].discount];
 }
@@ -563,8 +561,8 @@ export async function getDNodes(
 				node.rentContractId === 0
 					? 'free'
 					: node.rentedByTwinId == currentTwinID
-					? 'yours'
-					: 'taken',
+						? 'yours'
+						: 'taken',
 		});
 	}
 	return dNodes;
