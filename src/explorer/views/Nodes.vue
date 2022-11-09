@@ -9,7 +9,7 @@
 
     <template v-slot:active-filters>
       <div v-for="filter in activeFilters" :key="filter.key">
-        <NodeFilter :filterKey="filter.key" :label="filter.label" />
+        <NodeFilter :filterKey="filter.key" :label="filter.label" :placeholder="filter.placeholder" />
       </div>
     </template>
 
@@ -59,7 +59,27 @@
         @click:row="openSheet"
         :disable-sort="true"
         @update:options="onUpdateOptions($event.page, $event.itemsPerPage)"
+        hide-default-header
       >
+        <!-- 
+          Custom table header, hide the original.
+         -->
+        <template v-slot:header="{ props: { headers } }">
+          <thead class="v-data-table-header">
+            <tr>
+              <th v-for="h in headers" :key="h.value" :class="h.customAlign">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <span v-on="on">{{ h.text }}</span>
+                  </template>
+                  <span>{{ h.description || h.text }}</span>
+                </v-tooltip>
+              </th>
+            </tr>
+          </thead>
+        </template>
+
+        <!--  -->
         <template v-slot:[`item.created`]="{ item }">
           {{ item.created | date }}
         </template>
@@ -135,16 +155,16 @@ import { MutationTypes } from "../store/mutations";
 })
 export default class Nodes extends Vue {
   headers = [
-    { text: "ID", value: "nodeId" },
-    { text: "Farm ID", value: "farmId", align: "center" },
-    { text: "Total Public IPs", value: "totalPublicIPs", align: "center" },
-    { text: "Free Public IPs", value: "freePublicIPs", align: "center" },
-    { text: "HRU", value: "hru", align: "center" },
-    { text: "SRU", value: "sru", align: "center" },
-    { text: "MRU", value: "mru", align: "center" },
-    { text: "CRU", value: "cru", align: "center" },
-    { text: "Up Time", value: "uptime", align: "center" },
-    { text: "Status", value: "status", align: "center" },
+    { text: "ID", value: "nodeId", customAlign: "text-start" },
+    { text: "Farm ID", value: "farmId", align: "center", customAlign: "text-center" },
+    { text: "Total Public IPs", value: "totalPublicIPs", align: "center", customAlign: "text-center" },
+    { text: "Free Public IPs", value: "freePublicIPs", align: "center", customAlign: "text-center" },
+    { text: "HRU", value: "hru", align: "center", customAlign: "text-center", description: "Total HDD" },
+    { text: "SRU", value: "sru", align: "center", customAlign: "text-center", description: "Total SSD"  },
+    { text: "MRU", value: "mru", align: "center", customAlign: "text-center", description: "Total Memory"  },
+    { text: "CRU", value: "cru", align: "center", customAlign: "text-center", description: "Total Cores"  },
+    { text: "Up Time", value: "uptime", align: "center", customAlign: "text-center" },
+    { text: "Status", value: "status", align: "center", customAlign: "text-center" },
   ];
 
   filters = [
@@ -161,7 +181,7 @@ export default class Nodes extends Vue {
     {
       label: "Farm IDs",
       key: "farm_ids",
-      placeholder: "Filter by farm ids.",
+      placeholder: "Find nodes in Farms with ids.",
     },
     {
       label: "Farm Name",
@@ -176,27 +196,47 @@ export default class Nodes extends Vue {
     {
       label: "Free SRU (GB)",
       key: "free_sru",
-      placeholder: "sru",
+      placeholder: "Filter by Free SSD greater than or equal to.",
     },
     {
       label: "Free HRU (GB)",
       key: "free_hru",
-      placeholder: "hru",
+      placeholder: "Filter by Free HDD greater than or equal to.",
     },
     {
       label: "Free MRU (GB)",
       key: "free_mru",
-      placeholder: "mru",
+      placeholder: "Filter by Free Memory greater than or equal to.",
     },
     {
       label: "Free CRU (Cores)",
       key: "free_cru",
-      placeholder: "cru",
+      placeholder: "Filter by Free Cores greater than or equal to.",
+    },
+    {
+      label: "Total SRU (GB)",
+      key: "total_sru",
+      placeholder: "Filter by Total SSD greater than or equal to.",
+    },
+    {
+      label: "Total HRU (GB)",
+      key: "total_hru",
+      placeholder: "Filter by Total HDD greater than or equal to.",
+    },
+    {
+      label: "Total MRU (GB)",
+      key: "total_mru",
+      placeholder: "Filter by Total Memory greater than or equal to.",
+    },
+    {
+      label: "Total CRU (Cores)",
+      key: "total_cru",
+      placeholder: "Filter by Total Cores greater than or equal to.",
     },
     {
       label: "Free Public IP",
       key: "free_ips",
-      placeholder: "Filter by greater than or equal to publicIp Number.",
+      placeholder: "Filter by Free PublicIp Number greater than or equal to.",
     },
   ];
 

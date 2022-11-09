@@ -38,7 +38,14 @@ export default {
     for (const key in state.nodesFilter) {
       let value = state.nodesFilter[key];
 
-      if (key == "free_hru" || key == "free_mru" || key == "free_sru") {
+      if (
+        key == "free_hru" ||
+        key == "free_mru" ||
+        key == "free_sru" ||
+        key == "total_hru" ||
+        key == "total_mru" ||
+        key == "total_sru"
+      ) {
         value *= 1024 * 1024 * 1024; // convert from gb to b
       }
 

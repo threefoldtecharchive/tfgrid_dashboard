@@ -6,7 +6,7 @@
       :items="_values"
       chips
       clearable
-      :label="label"
+      :label="placeholder"
       :multiple="multiple"
       solo
       type="text"
@@ -40,6 +40,7 @@ import { ActionTypes } from "../store/actions";
 @Component({})
 export default class InFilter extends Vue {
   @Prop({ required: true }) label!: string;
+  @Prop({ required: true}) placeholder!: string;
   @Prop({ required: true }) filterKey!: string;
   @Prop() value?: string[];
 
