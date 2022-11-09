@@ -1,10 +1,10 @@
 <template>
   <v-container>
-    <v-text-field
+    <!-- <v-text-field
       v-model="searchTerm"
       color="primary darken-2"
       label="Search by node location or ID"
-    ></v-text-field>
+    ></v-text-field> -->
 
     <v-card>
       <v-tabs
@@ -32,6 +32,7 @@
             :single-expand="singleExpand"
             :expanded.sync="expanded"
             show-expand
+            :disable-sort="true"
             item-key="nodeId"
             class="elevation-1"
             sort-by="item.nodeId"
@@ -178,19 +179,6 @@ export default class NodesView extends Vue {
     console.log(`removing nodes of ${oldValue}, putting in nodes of ${value}`);
     await this.getNodes();
   }
-
-  // public filteredDNodes() {
-  //   if (this.searchTerm.length !== 0 && this.nodes.length !== 0) {
-  //     return this.nodes.filter(
-  //       (node: { location: { country: string }; nodeId: any }) =>
-  //         node.location.country
-  //           .toLowerCase()
-  //           .includes(this.searchTerm.toLowerCase()) ||
-  //         `${node.nodeId}`.includes(this.searchTerm)
-  //     );
-  //   }
-  //   return this.nodes;
-  // }
 
   async onUpdateOptions(pageNumber: number, pageSize: number) {
     let idx = this.tabs.findIndex((tab) => tab.query == this.activeTab);
