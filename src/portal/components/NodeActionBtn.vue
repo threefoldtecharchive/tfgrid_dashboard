@@ -48,7 +48,6 @@ import {
   cancelRentContract,
   createRentContract,
   getActiveContracts,
-  getRentedNodes,
   getNodeByID,
 } from "@/portal/lib/nodes";
 import { Component, Prop, Vue } from "vue-property-decorator";

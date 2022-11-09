@@ -1,3 +1,4 @@
+import { PortalState } from './../store/state';
 /* eslint-disable */
 import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
@@ -8,6 +9,8 @@ import { jsPDF } from 'jspdf';
 import { nodeInterface } from './farms';
 import moment from 'moment';
 import 'jspdf-autotable';
+import { getTwinID } from './twin';
+import { Store } from 'vuex';
 export interface receiptInterface {
 	hash: string;
 	mintingStart?: number;
@@ -147,6 +150,16 @@ export function generateNodeSummary(doc: jsPDF, nodes: nodeInterface[]) {
 		cellY + lineOffset * 5,
 	);
 }
+
+export interface ITab {
+	label: string,
+	query: "rentable" | "rented" | "rented_by",
+	index: number,
+	page: number,
+	size: number,
+	nodes: any[],
+}
+
 export function generateReceipt(doc: jsPDF, node: nodeInterface) {
 	doc.setFontSize(15);
 
@@ -479,34 +492,35 @@ export async function getNodeByID(nodeId: any) {
 	);
 	return node;
 }
-export async function getRentableNodes() {
-	const res = await fetch(
-		`${config.gridproxyUrl}/nodes?rentable=true&status=up`,
-	).then((res) => res.json());
-	return res;
-}
 
-export async function getRentedNodes() {
-	const res = await fetch(
-		`${config.gridproxyUrl}/nodes?rented=true&status=up`,
-	).then((res) => res.json());
-	return res;
-}
+export async function getDedicatedNodes(twinId: number, query: string, page: number, size: number) {
+	let baseUrl = `${config.gridproxyUrl}/nodes?status=up&ret_count=true&page=${page}&size=${size}`
+	if (query != "rented_by") {
+		baseUrl += `&${query}=true`
+	} else {
+		baseUrl += `&${query}=${twinId}`
+	}
 
-export async function getDedicatedNodes() {
-	const rentedNodes = await getRentableNodes();
-	const rentableNodes = await getRentedNodes();
-	let dedicatedNodes: any[] = [];
-	dedicatedNodes = dedicatedNodes.concat(rentedNodes, rentableNodes);
-	return dedicatedNodes;
+	const res = await fetch(baseUrl)
+	const count = res.headers.get("count")
+	const nodes = await res.json();
+	return {nodes, count};
 }
 
 export async function getDNodes(
 	api: any,
 	address: string,
 	currentTwinID: string,
+	store: Store<PortalState>,
+	query: string,
+	page: number, 
+	size: number,
 ) {
-	let nodes = await getDedicatedNodes();
+	let twinID = await getTwinID(api, address);
+	let {nodes, count} = await getDedicatedNodes(twinID, query, page, size);
+
+	store.commit("portal/setTableCount", +count!)
+
 	const pricing = await getPrices(api);
 	let dNodes: {
 		nodeId: string;

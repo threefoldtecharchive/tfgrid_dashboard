@@ -1,15 +1,16 @@
-
-import { PortalState } from "./state"
+import { PortalState } from "./state";
 
 export enum PortalMutationTypes {
-  SET_ACCOUNTS = 'setAccounts'
+  SET_ACCOUNTS = "setAccounts",
 }
 export default {
   setAccounts(state: PortalState, payload: { accounts: [] }) {
-    state.accounts = payload.accounts
+    state.accounts = payload.accounts;
   },
   removeAccounts(state: PortalState) {
-    state.accounts = []
+    state.accounts = [];
   },
-
-}
+  setTableCount(state: PortalState, payload: number) {
+    state.tableCount = payload;
+  },
+};
