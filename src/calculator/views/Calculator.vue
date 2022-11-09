@@ -91,7 +91,7 @@
               placeholder="Your Balance"
               :rules="[...inputValidators]"
               label="Your Balance"
-              suffix="USD"
+              suffix="TFT"
               v-model="balance"
               outlined
               @input="calculate"
@@ -110,12 +110,8 @@
             <span class="name">
               {{ price.label !== undefined ? price.label + " " : " " }}
               {{ price.packageName != "none" ? price.packageName + " Package" : "" }}</span>
-            : ${{ price.price }}
+            : {{ price.price }} $/month, {{price.TFTs}} TFT/month
           </span>
-          <p class="price">
-            <span class="name">TFT Count:</span>
-            {{price.TFTs}}
-            </p>
         </div>
         <span class="right"
           >learn more about pricing through this <a href="https://library.threefold.me/info/threefold/#/tfgrid/pricing/threefold__pricing" target="_blank">link</a></span
@@ -145,11 +141,11 @@ type priceType = {
   },
 })
 export default class Calculator extends Vue {
-  CRU = "1";
-  SRU = "25";
-  MRU = "1";
-  HRU = "100";
-  balance = "0";
+  CRU = 1;
+  SRU = 25;
+  MRU = 1;
+  HRU = 100;
+  balance = 0;
   prices: priceType[] | [] = [];
   $api: any;
   discountPackages: any = {};
@@ -165,19 +161,23 @@ export default class Calculator extends Vue {
   get formHasErrrs() {
     return this.$refs.form;
   }
+  async created(){
+    await this.calculate();
+  }
+  
   async calculate() {
     if (this.$api) {
       if (
-        isNaN(+(this.balance)) ||
-        isNaN(+(this.CRU)) ||
-        isNaN(+(this.HRU)) ||
-        isNaN(+(this.SRU)) ||
-        isNaN(+(this.MRU)) ||
-        +(this.balance) < 0 ||
-        +(this.CRU) < 0 ||
-        +(this.HRU) < 0 ||
-        +(this.SRU) < 0 ||
-        +(this.MRU) < 0
+        isNaN(this.balance) ||
+        isNaN(this.CRU) ||
+        isNaN(this.HRU) ||
+        isNaN(this.SRU) ||
+        isNaN(this.MRU) ||
+        this.balance < 0 ||
+        this.CRU < 0 ||
+        this.HRU < 0 ||
+        this.SRU < 0 ||
+        this.MRU < 0
       ) {
         this.prices = [
           {
@@ -192,13 +192,11 @@ export default class Calculator extends Vue {
       }
       this.TFTPrice = await this.getTFTPrice(this.$api)
       const price = await this.calcPrice();
-      const CU = calCU(+this.CRU, +this.MRU);
-      const SU = calSU(+this.HRU, +this.SRU);
+      const CU = calCU(this.CRU, this.MRU);
+      const SU = calSU(this.HRU, this.SRU);
       const musd_month = (CU * price.cu.value + SU * price.su.value) * 24 * 30;
       const usd_month = (musd_month / 10000000).toFixed(2);
       const [priceNumber, selectedPackage] = await this.calDiscount(musd_month);
-      const sharedTFTPrice = `${this.TFTPrice} * ${priceNumber}`;
-
       this.prices = [
         {
           label: "Dedicated Node Price",
@@ -207,7 +205,7 @@ export default class Calculator extends Vue {
           packageName: selectedPackage,
           backgroundColor:
             this.discountPackages[selectedPackage].backgroundColor,
-          TFTs: +priceNumber / this.TFTPrice 
+          TFTs: (+priceNumber / this.TFTPrice).toFixed(2) 
             
         },
         {
@@ -216,7 +214,7 @@ export default class Calculator extends Vue {
           color: "#868686",
           packageName: "none",
           backgroundColor: this.discountPackages.none.backgroundColor,
-          TFTs: +usd_month / this.TFTPrice
+          TFTs: (+usd_month / this.TFTPrice).toFixed(2)
         },
       ];
     } else {
@@ -229,7 +227,7 @@ export default class Calculator extends Vue {
   }
 
   async calcPrice(){
-    const price = await getPrices(this.$api);
+    const price = await getPrices(this.$api);    
     return price;
   }
 
@@ -237,9 +235,9 @@ export default class Calculator extends Vue {
   this.pricing = await this.calcPrice();
   // discount for Dedicated Nodes
   const discount = this.pricing.discountForDedicationNodes;
-  let totalPrice = price - price * (discount / 100);    
+  let totalPrice = price - price * (discount / 100);     
   // discount for Twin Balance
-  const balance = +(this.balance) * 10000000;
+  const balance = this.balance * 10000000;
    this.discountPackages = {
     "none": {
       duration: 0,
@@ -276,7 +274,7 @@ export default class Calculator extends Vue {
   
   let selectedPackage = "none";  
   for (let pkg in this.discountPackages) {
-    if (balance > totalPrice * this.discountPackages[pkg].duration) {
+    if (this.TFTPrice? balance * this.TFTPrice > totalPrice * this.discountPackages[pkg].duration : null) {
       selectedPackage = pkg;
     }
   }  
@@ -285,8 +283,7 @@ export default class Calculator extends Vue {
 }
 
   async getTFTPrice(api: {query: { tftPriceModule: { tftPrice: any }}}){    
-    const pricing = await api.query.tftPriceModule.tftPrice();
-    console.log("pricing", pricing.words[0]/1000);
+    const pricing = await api.query.tftPriceModule.tftPrice();    
     return pricing.words[0]/1000;
   }
 }
