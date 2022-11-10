@@ -54,7 +54,7 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
                     placeholder="SSD Storage"
-                    :rules="[...inputValidators, diskCheck]"
+                    :rules="[...inputValidators, sruCheck]"
                     label="SRU"
                     suffix="GB"
                     v-model="SRU"
@@ -72,7 +72,7 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
                     placeholder="HDD Storage"
-                    :rules="[...inputValidators, diskCheck]"
+                    :rules="[...inputValidators, hruCheck]"
                     label="HRU"
                     suffix="GB"
                     v-model="HRU"
@@ -184,11 +184,22 @@ export default class Calculator extends Vue {
       return true
     }
   }
-  diskCheck(){
-    if(+this.HRU > 10000 || +this.SRU > 10000){
+  sruCheck(){
+    if(+this.SRU > 10000){
       return "Maximum disk size is 10000 GB"
     }
-    else if(!this.HRU || !this.SRU){
+    else if(!this.SRU){
+      return "disk field is required"
+    }
+    else{
+      return true
+    }
+  }
+  hruCheck(){
+    if(+this.HRU > 10000){
+      return "Maximum disk size is 10000 GB"
+    }
+    else if(!this.HRU){
       return "disk field is required"
     }
     else{
@@ -208,7 +219,7 @@ export default class Calculator extends Vue {
   
   async calculate() {
     if (!this.isValidInputs) return;
-    if (this.$api) {
+    else if (this.$api) {
       if (
         isNaN(+this.balance) ||
         isNaN(+this.CRU) ||
@@ -220,16 +231,7 @@ export default class Calculator extends Vue {
         +this.HRU < 0 ||
         +this.SRU < 0 ||
         +this.MRU < 0
-      ) {
-        this.prices = [
-          {
-            price: "0.0",
-            color: "black",
-            packageName: "none",
-            backgroundColor: "#DaDaDa",
-            TFTs: 0
-          },
-        ];        
+      ) {     
         return;
       }
       this.TFTPrice = await this.getTFTPrice(this.$api)
