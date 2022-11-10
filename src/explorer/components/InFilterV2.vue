@@ -20,7 +20,7 @@
   </v-card>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import IFilterOptions from "../types/FilterOptions";
 import { debounce } from "lodash";
 import { inputValidation } from "../utils/validations"
@@ -60,9 +60,12 @@ export default class InFilterV2 extends Vue {
       this._search({ target: { value: null } } as any);
     }
   }
+  @Watch("errorMsg", {immediate: true}) onErrorMsg(value: string) {
+    this.$emit("invalid", {invalid: value != "", symbol: this.options.symbol})
+  }
   errorMsg:any = ''
   validated(value: string, key: string): string{
-    this.errorMsg = inputValidation(value, key);
+    this.errorMsg = inputValidation(value, key);    
     return this.errorMsg;
   }
 }

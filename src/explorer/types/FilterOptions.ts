@@ -9,5 +9,6 @@ export default interface IFilterOptions {
   init?: boolean;
   symbol: string;
   key: string;
+  invalid?: boolean;
   getValue?: (filter: IFilterOptions) => any;
 }

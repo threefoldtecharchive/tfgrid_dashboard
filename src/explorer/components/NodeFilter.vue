@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import { MutationTypes } from "../store/mutations";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { inputValidation } from "../utils/validations";
 import { ActionTypes } from "../store/actions";
 
@@ -43,6 +43,8 @@ export default class InFilter extends Vue {
   @Prop({ required: true}) placeholder!: string;
   @Prop({ required: true }) filterKey!: string;
   @Prop() value?: string[];
+  
+  invalid = false;
 
   get multiple() {
     return this.filterKey == "farm_ids";
@@ -58,20 +60,20 @@ export default class InFilter extends Vue {
   }
 
   set items(value: string[]) {
+    if(!this.invalid){
     // add the current filter key to the query.
     this.$store.commit("explorer/" + MutationTypes.SET_NODES_FILTER, {
       key: this.filterKey,
       value,
     });
-
     // reset to the first page
     this.$store.commit(
       "explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER,
       1
     );
-
     // load nodes with the changes
     this.$store.dispatch(ActionTypes.REQUEST_NODES);
+    }
   }
 
   remove(index: number): void {
@@ -85,6 +87,14 @@ export default class InFilter extends Vue {
       1
     );
     this.$store.dispatch(ActionTypes.REQUEST_NODES);
+  }
+
+  @Watch("errorMsg", {immediate: true}) onErrorMsg(value: string) {
+    if(value != ""){
+      this.invalid = true;
+    }else{
+      this.invalid = false;
+    }
   }
 
   errorMsg: any = "";

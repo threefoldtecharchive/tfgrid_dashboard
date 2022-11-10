@@ -10,7 +10,7 @@
     <template v-slot:apply-filters>
       <v-btn
         color="primary"
-        :disabled="loading || !changed"
+        :disabled="loading || !changed || isInvalid()"
         :loading="loading"
         @click="onApplyFilter"
         class="mt-2"
@@ -26,6 +26,7 @@
           :options="filter"
           v-model="filter.value"
           @input="changed = true"
+          @invalid="invalidFilter"
         />
       </div>
     </template>
@@ -120,6 +121,7 @@ import getFarmPublicIPs from "../utils/getFarmPublicIps";
 import gql from "graphql-tag";
 import equalArrays from "../utils/equalArrays";
 import LayoutFilters from "../components/LayoutFilters.vue";
+import { execute } from 'graphql';
 @Component({
   components: {
     Layout,
@@ -134,6 +136,8 @@ export default class Farms extends Vue {
   page = 0;
   loading = false;
   changed = false;
+  invalid = false;
+  NotChecked = false;
   // prettier-ignore
   headers = [
     { text: "ID", value: "id" },
@@ -348,6 +352,17 @@ export default class Farms extends Vue {
   }
   closeSheet(): void {
     this.farm = null;
+  }
+
+  invalidFilter(event: {symbol: string, invalid: boolean}) {
+    const checkFilter = this.activeFilters.find((f) => (f.symbol === event.symbol));
+    if(checkFilter){
+      checkFilter.invalid = event.invalid;
+    }
+  }
+
+  isInvalid():boolean {
+    return this.activeFilters.some((f) => f.invalid === true)
   }
 }
 </script>
