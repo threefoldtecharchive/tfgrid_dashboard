@@ -209,11 +209,6 @@ export default class Nodes extends Vue {
       placeholder: "Filter by Free Memory greater than or equal to.",
     },
     {
-      label: "Free CRU (Cores)",
-      key: "free_cru",
-      placeholder: "Filter by Free Cores greater than or equal to.",
-    },
-    {
       label: "Total SRU (GB)",
       key: "total_sru",
       placeholder: "Filter by Total SSD greater than or equal to.",

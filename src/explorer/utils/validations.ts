@@ -12,7 +12,6 @@ export function inputValidation(value: string, key: string): string {
     "free_ips",
     "twin_id",
     "farm_ids",
-    "free_cru",
     "free_mru",
     "free_sru",
     "free_hru",

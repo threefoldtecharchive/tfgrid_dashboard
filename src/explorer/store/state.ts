@@ -79,7 +79,6 @@ export interface IState {
       country: IFilter;
       farmingPolicyName: IFilter;
       free_hru: IFilter;
-      free_cru: IFilter;
       free_mru: IFilter;
       free_sru: IFilter;
       status: IFilter;
@@ -148,7 +147,6 @@ export default {
       farmingPolicyName: createFilter(),
       certificationType: createFilter(),
       free_hru: createFilter(),
-      free_cru: createFilter(),
       free_sru: createFilter(),
       free_mru: createFilter(),
       status: createFilter(),
