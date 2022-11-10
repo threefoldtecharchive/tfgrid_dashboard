@@ -6,73 +6,106 @@
     </h1>
     <v-divider />
     <br />
-    <v-card ref="form">
-      <div class="card">
-        <v-row>
-          <v-col cols="5" class="mx-auto">
-            <v-text-field
-              placeholder="Enter number of CPUs"
-              :rules="[...inputValidators]"
-              label="CRU"
-              suffix="cores"
-              v-model="CRU"
-              outlined
-              @input="calculate"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="5" class="mx-auto">
-            <v-text-field
-              placeholder="Memory"
-              :rules="[...inputValidators]"
-              label="MRU"
-              suffix="GB"
-              v-model="MRU"
-              outlined
-              @input="calculate"
-            ></v-text-field>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="5" class="mx-auto">
-            <v-text-field
-              placeholder="SSD Storage"
-              :rules="[...inputValidators]"
-              label="SRU"
-              suffix="GB"
-              v-model="SRU"
-              outlined
-              @input="calculate"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="5" class="mx-auto">
-            <v-text-field
-              placeholder="HDD Storage"
-              :rules="[...inputValidators]"
-              label="HRU"
-              suffix="GB"
-              v-model="HRU"
-              outlined
-              @input="calculate"
-            ></v-text-field>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="5" class="mx-auto">
-            <v-text-field
-              placeholder="Your Balance"
-              :rules="[...inputValidators]"
-              label="Your Balance"
-              suffix="TFT"
-              v-model="balance"
-              outlined
-              @input="calculate"
-            ></v-text-field>
-          </v-col>
-        </v-row>
-      </div>
-      <div class="row pb-5 px-4 mx-5">
-        <div
-          class="col-5 price-box"
+    <v-card>
+      <v-form v-model="isValidInputs">
+        <div class="card">
+          <v-row>
+            <v-col cols="5" class="mx-auto">
+              <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    placeholder="Enter number of CPUs"
+                    :rules="[...inputValidators, cruCheck]"
+                    label="CRU"
+                    suffix="vCores"
+                    v-model="CRU"
+                    outlined
+                    @input="calculate"
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <span>CPU</span>
+              </v-tooltip>
+
+            </v-col>
+            <v-col cols="5" class="mx-auto">
+              <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    placeholder="Memory"
+                    :rules="[...inputValidators, mruCheck]"
+                    label="MRU"
+                    suffix="GB"
+                    v-model="MRU"
+                    outlined
+                    @input="calculate"
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <span>RAM</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="5" class="mx-auto">
+              <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    placeholder="SSD Storage"
+                    :rules="[...inputValidators, diskCheck(SRU)]"
+                    label="SRU"
+                    suffix="GB"
+                    v-model="SRU"
+                    outlined
+                    @input="calculate"
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <span>SSD</span>
+              </v-tooltip>
+            </v-col>
+            <v-col cols="5" class="mx-auto">
+              <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    placeholder="HDD Storage"
+                    :rules="[...inputValidators, diskCheck(HRU)]"
+                    label="HRU"
+                    suffix="GB"
+                    v-model="HRU"
+                    outlined
+                    @input="calculate"
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <span>HDD</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="5" class="mx-auto">
+              <v-text-field
+                placeholder="Your Balance"
+                :rules="[...inputValidators]"
+                label="Your Balance"
+                suffix="TFT"
+                v-model="balance"
+                outlined
+                @input="calculate"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </div>
+      </v-form>
+
+      <div class="row pb-5 px-4 mx-5"
+      v-if='isValidInputs'
+      >
+        <div class="col-5 price-box"
           v-for="price in prices"
           :key="price.price"
           :style="{ color: price.color, background: price.backgroundColor }"
@@ -80,11 +113,13 @@
           <span class="price">
             <span class="name">
               {{ price.label !== undefined ? price.label + " " : " " }}
-              {{ price.packageName != "none" ? price.packageName + " Package" : "" }}</span
-            >
-            : ${{ price.price }}
+              {{ price.packageName != "none" ? price.packageName + " Package" : "" }}</span>
+            : ${{ price.price }}/month, {{price.TFTs}} TFT/month
           </span>
         </div>
+        <span class="right"
+          >learn more about pricing through this <a href="https://library.threefold.me/info/threefold/#/tfgrid/pricing/threefold__pricing" target="_blank">link</a></span
+        >
       </div>
     </v-card>
   </Layout>
@@ -101,6 +136,7 @@ type priceType = {
   price: string;
   packageName: any;
   backgroundColor: string;
+  TFTs: any;
 };
 
 @Component({
@@ -109,50 +145,85 @@ type priceType = {
   },
 })
 export default class Calculator extends Vue {
-  CRU = "0";
-  SRU = "0";
-  MRU = "0";
-  HRU = "0";
+  CRU = "1";
+  SRU = "25";
+  MRU = "1";
+  HRU = "100";
   balance = "0";
   prices: priceType[] | [] = [];
   $api: any;
   discountPackages: any = {};
   formHasErrors = false;
   pricing: any;
+  TFTPrice: number | undefined;
+  isValidInputs = true;
+  cruCheck(){
+    // eslint-disable-next-line
+    const CRURegex = /^\d+$/;    
+    if(!this.CRU){
+      return "This value is required";
+    }
+    if(+this.CRU === 0 || +this.CRU > 256){
+      return "CRU value must be between 1 and 256";
+    }
+    if (CRURegex.test(this.CRU)) {
+      return true;
+    } 
+    else{
+      return "CRU value must be a positive integer"
+    }
+  }
+  mruCheck(){
+    if(!this.MRU){
+      return "This value is required";
+    }
+    if(+this.MRU > 1024){
+      return "Maximum allowed MRU value is 1024";
+    } 
+    else{
+      return true
+    }
+  }
+  diskCheck(val: string){
+    if(+val > 1000000){
+      return "Maximum disk size is 1000000 GB"
+    }
+    else if(!val){
+      return "disk field is required"
+    }
+    else{
+      return true
+    }
+  }
   inputValidators = [
-    (val: string) =>
-      !isNaN(+(val)) || "This field must be a number and required",
-
-    (val: string) => +(val) >= 0 || "This field must be a positive number",
+    (val: string) => !isNaN(+(val)) || "This field must be a number",
+    (val: string) => +val >= 0 || "This field must be a positive number",
   ];
   get formHasErrrs() {
     return this.$refs.form;
   }
+  async created(){
+    await this.calculate();
+  }
+  
   async calculate() {
-    if (this.$api) {
+    if (!this.isValidInputs) return;
+    else if (this.$api) {
       if (
-        isNaN(+(this.balance)) ||
-        isNaN(+(this.CRU)) ||
-        isNaN(+(this.HRU)) ||
-        isNaN(+(this.SRU)) ||
-        isNaN(+(this.MRU)) ||
-        +(this.balance) < 0 ||
-        +(this.CRU) < 0 ||
-        +(this.HRU) < 0 ||
-        +(this.SRU) < 0 ||
-        +(this.MRU) < 0
-      ) {
-        this.prices = [
-          {
-            price: "0.0",
-            color: "black",
-            packageName: "none",
-            backgroundColor: "#DaDaDa",
-          },
-        ];        
+        isNaN(+this.balance) ||
+        isNaN(+this.CRU) ||
+        isNaN(+this.HRU) ||
+        isNaN(+this.SRU) ||
+        isNaN(+this.MRU) ||
+        +this.balance < 0 ||
+        +this.CRU < 0 ||
+        +this.HRU < 0 ||
+        +this.SRU < 0 ||
+        +this.MRU < 0
+      ) {     
         return;
       }
-
+      this.TFTPrice = await this.getTFTPrice(this.$api)
       const price = await this.calcPrice();
       const CU = calCU(+this.CRU, +this.MRU);
       const SU = calSU(+this.HRU, +this.SRU);
@@ -167,6 +238,8 @@ export default class Calculator extends Vue {
           packageName: selectedPackage,
           backgroundColor:
             this.discountPackages[selectedPackage].backgroundColor,
+          TFTs: (+priceNumber / this.TFTPrice).toFixed(2) 
+            
         },
         {
           label: "Shared Node Price",
@@ -174,6 +247,7 @@ export default class Calculator extends Vue {
           color: "#868686",
           packageName: "none",
           backgroundColor: this.discountPackages.none.backgroundColor,
+          TFTs: (+usd_month / this.TFTPrice).toFixed(2)
         },
       ];
     } else {
@@ -186,7 +260,7 @@ export default class Calculator extends Vue {
   }
 
   async calcPrice(){
-    const price = await getPrices(this.$api);
+    const price = await getPrices(this.$api);    
     return price;
   }
 
@@ -194,9 +268,10 @@ export default class Calculator extends Vue {
   this.pricing = await this.calcPrice();
   // discount for Dedicated Nodes
   const discount = this.pricing.discountForDedicationNodes;
-  let totalPrice = price - price * (discount / 100);    
-  // discount for Twin Balance
-  const balance = +(this.balance) * 10000000;
+  let totalPrice = price - price * (discount / 100);     
+  // discount for Twin Balance in TFT
+  const balance = (this.TFTPrice? this.TFTPrice : 1 )* +this.balance * 10000000;
+  
    this.discountPackages = {
     "none": {
       duration: 0,
@@ -230,10 +305,10 @@ export default class Calculator extends Vue {
 
     },
   };
-
+  
   let selectedPackage = "none";  
   for (let pkg in this.discountPackages) {
-    if (balance > totalPrice * this.discountPackages[pkg].duration) {
+    if (balance > totalPrice * this.discountPackages[pkg].duration) {      
       selectedPackage = pkg;
     }
   }  
@@ -241,6 +316,10 @@ export default class Calculator extends Vue {
   return [totalPrice.toFixed(2), selectedPackage];
 }
 
+  async getTFTPrice(api: {query: { tftPriceModule: { tftPrice: any }}}){    
+    const pricing = await api.query.tftPriceModule.tftPrice();    
+    return pricing.words[0]/1000;
+  }
 }
 </script>
 <style>
@@ -276,7 +355,6 @@ export default class Calculator extends Vue {
   margin: 0 auto;
   text-align: center;
 }
-
 .name {
   font-weight: 900;
   text-transform: capitalize;
