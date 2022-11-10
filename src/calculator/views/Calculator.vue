@@ -6,102 +6,106 @@
     </h1>
     <v-divider />
     <br />
-    <v-card ref="form">
-      <div class="card">
-        <v-row>
-          <v-col cols="5" class="mx-auto">
-            <v-tooltip right>
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  placeholder="Enter number of CPUs"
-                  :rules="[...inputValidators]"
-                  label="CRU"
-                  suffix="Cores"
-                  v-model="CRU"
-                  outlined
-                  @input="calculate"
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <span>CPU</span>
-            </v-tooltip>
+    <v-card>
+      <v-form v-model="isValidInputs">
+        <div class="card">
+          <v-row>
+            <v-col cols="5" class="mx-auto">
+              <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    placeholder="Enter number of CPUs"
+                    :rules="[...inputValidators, cruCheck]"
+                    label="CRU"
+                    suffix="vCores"
+                    v-model="CRU"
+                    outlined
+                    @input="calculate"
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <span>CPU</span>
+              </v-tooltip>
 
-          </v-col>
-          <v-col cols="5" class="mx-auto">
-            <v-tooltip right>
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  placeholder="Memory"
-                  :rules="[...inputValidators]"
-                  label="MRU"
-                  suffix="GB"
-                  v-model="MRU"
-                  outlined
-                  @input="calculate"
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <span>RAM</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="5" class="mx-auto">
-            <v-tooltip right>
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  placeholder="SSD Storage"
-                  :rules="[...inputValidators]"
-                  label="SRU"
-                  suffix="GB"
-                  v-model="SRU"
-                  outlined
-                  @input="calculate"
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <span>SSD</span>
-            </v-tooltip>
-          </v-col>
-          <v-col cols="5" class="mx-auto">
-            <v-tooltip right>
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  placeholder="HDD Storage"
-                  :rules="[...inputValidators]"
-                  label="HRU"
-                  suffix="GB"
-                  v-model="HRU"
-                  outlined
-                  @input="calculate"
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <span>HDD</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="5" class="mx-auto">
-            <v-text-field
-              placeholder="Your Balance"
-              :rules="[...inputValidators]"
-              label="Your Balance"
-              suffix="TFT"
-              v-model="balance"
-              outlined
-              @input="calculate"
-            ></v-text-field>
-          </v-col>
-        </v-row>
-      </div>
-      <div class="row pb-5 px-4 mx-5">
-        <div
-          class="col-5 price-box"
+            </v-col>
+            <v-col cols="5" class="mx-auto">
+              <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    placeholder="Memory"
+                    :rules="[...inputValidators, mruCheck]"
+                    label="MRU"
+                    suffix="GB"
+                    v-model="MRU"
+                    outlined
+                    @input="calculate"
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <span>RAM</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="5" class="mx-auto">
+              <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    placeholder="SSD Storage"
+                    :rules="[...inputValidators, diskCheck]"
+                    label="SRU"
+                    suffix="GB"
+                    v-model="SRU"
+                    outlined
+                    @input="calculate"
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <span>SSD</span>
+              </v-tooltip>
+            </v-col>
+            <v-col cols="5" class="mx-auto">
+              <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    placeholder="HDD Storage"
+                    :rules="[...inputValidators, diskCheck]"
+                    label="HRU"
+                    suffix="GB"
+                    v-model="HRU"
+                    outlined
+                    @input="calculate"
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <span>HDD</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="5" class="mx-auto">
+              <v-text-field
+                placeholder="Your Balance"
+                :rules="[...inputValidators]"
+                label="Your Balance"
+                suffix="TFT"
+                v-model="balance"
+                outlined
+                @input="calculate"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </div>
+      </v-form>
+
+      <div class="row pb-5 px-4 mx-5"
+      v-if='isValidInputs'
+      >
+        <div class="col-5 price-box"
           v-for="price in prices"
           :key="price.price"
           :style="{ color: price.color, background: price.backgroundColor }"
@@ -141,22 +145,59 @@ type priceType = {
   },
 })
 export default class Calculator extends Vue {
-  CRU = 1;
-  SRU = 25;
-  MRU = 1;
-  HRU = 100;
-  balance = 0;
+  CRU = "1";
+  SRU = "25";
+  MRU = "1";
+  HRU = "100";
+  balance = "0";
   prices: priceType[] | [] = [];
   $api: any;
   discountPackages: any = {};
   formHasErrors = false;
   pricing: any;
   TFTPrice: number | undefined;
+  isValidInputs = true;
+  cruCheck(){
+    // eslint-disable-next-line
+    const CRURegex = /^\d+$/;    
+    if(!this.CRU){
+      return "This value is required";
+    }
+    if(+this.CRU === 0 || +this.CRU > 256){
+      return "CRU value must be between 1 and 256";
+    }
+    if (CRURegex.test(this.CRU)) {
+      return true;
+    } 
+    else{
+      return "CRU value must be a positive integer"
+    }
+  }
+  mruCheck(){
+    if(!this.MRU){
+      return "This value is required";
+    }
+    if(+this.MRU > 1024){
+      return "Maximum allowed MRU value is 1024";
+    } 
+    else{
+      return true
+    }
+  }
+  diskCheck(){
+    if(+this.HRU > 10000 || +this.SRU > 10000){
+      return "Maximum disk size is 10000 GB"
+    }
+    else if(!this.HRU || !this.SRU){
+      return "disk field is required"
+    }
+    else{
+      return true
+    }
+  }
   inputValidators = [
-    (val: string) =>
-      !isNaN(+(val)) || "This field must be a number and required",
-
-    (val: string) => +(val) >= 0 || "This field must be a positive number",
+    (val: string) => !isNaN(+(val)) || "This field must be a number",
+    (val: string) => +val >= 0 || "This field must be a positive number",
   ];
   get formHasErrrs() {
     return this.$refs.form;
@@ -166,18 +207,19 @@ export default class Calculator extends Vue {
   }
   
   async calculate() {
+    if (!this.isValidInputs) return;
     if (this.$api) {
       if (
-        isNaN(this.balance) ||
-        isNaN(this.CRU) ||
-        isNaN(this.HRU) ||
-        isNaN(this.SRU) ||
-        isNaN(this.MRU) ||
-        this.balance < 0 ||
-        this.CRU < 0 ||
-        this.HRU < 0 ||
-        this.SRU < 0 ||
-        this.MRU < 0
+        isNaN(+this.balance) ||
+        isNaN(+this.CRU) ||
+        isNaN(+this.HRU) ||
+        isNaN(+this.SRU) ||
+        isNaN(+this.MRU) ||
+        +this.balance < 0 ||
+        +this.CRU < 0 ||
+        +this.HRU < 0 ||
+        +this.SRU < 0 ||
+        +this.MRU < 0
       ) {
         this.prices = [
           {
@@ -192,8 +234,8 @@ export default class Calculator extends Vue {
       }
       this.TFTPrice = await this.getTFTPrice(this.$api)
       const price = await this.calcPrice();
-      const CU = calCU(this.CRU, this.MRU);
-      const SU = calSU(this.HRU, this.SRU);
+      const CU = calCU(+this.CRU, +this.MRU);
+      const SU = calSU(+this.HRU, +this.SRU);
       const musd_month = (CU * price.cu.value + SU * price.su.value) * 24 * 30;
       const usd_month = (musd_month / 10000000).toFixed(2);
       const [priceNumber, selectedPackage] = await this.calDiscount(musd_month);
@@ -237,7 +279,7 @@ export default class Calculator extends Vue {
   const discount = this.pricing.discountForDedicationNodes;
   let totalPrice = price - price * (discount / 100);     
   // discount for Twin Balance in TFT
-  const balance = (this.TFTPrice? this.TFTPrice : 1 )* this.balance * 10000000;
+  const balance = (this.TFTPrice? this.TFTPrice : 1 )* +this.balance * 10000000;
   
    this.discountPackages = {
     "none": {
