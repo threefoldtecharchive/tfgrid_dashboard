@@ -413,12 +413,17 @@ def test_invalid_range_ips(browser):
         assert farm_page.add_range_ips(0, case, 0).is_enabled()==False
         assert farm_page.wait_for('IPs are not the same')
     assert farm_page.add_range_ips('1.1.1.1/16', '1.1.1.3/16', '1.1.1.1').is_enabled()==True
-    cases = ['1.1.1.35/16', '1.1.1.17/16']# '1.1.1.-1/16', '1.1.1.--2/16', '1.1.1.sdf/16', '1.1.1.3a/16']
+    cases = ['1.1.1.35/16', '1.1.1.17/16']
     for case in cases:
         assert farm_page.add_range_ips(0, case, 0).is_enabled()==False
         assert farm_page.wait_for('Range must not exceed 16')
+    assert farm_page.add_range_ips('1.1.1.1/16', '1.1.1.3/16', '1.1.1.1').is_enabled()==True
+    cases = ['1.1.1.--2/16', '1.1.1.sdf/16', '1.1.1.3a/16']
+    for case in cases:
+        assert farm_page.add_range_ips(0, case, 0).is_enabled()==False
+        assert farm_page.wait_for('Incorrect format')
     assert farm_page.add_range_ips('1.1.1.17/16', '1.1.1.18/16', '1.1.1.1').is_enabled()==True
-    cases = ['1.1.1.17/16', '1.1.1.15/16']
+    cases = ['1.1.1.17/16', '1.1.1.15/16', '1.1.1.-1/16',]
     for case in cases:
         assert farm_page.add_range_ips(0, case, 0).is_enabled()==False
         assert farm_page.wait_for('To IP must be bigger than From IP')
