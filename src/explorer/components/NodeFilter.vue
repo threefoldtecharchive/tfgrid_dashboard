@@ -59,13 +59,19 @@ export default class InFilter extends Vue {
   }
 
   set items(value: string[]) {
+    if(!this.invalid){
     // add the current filter key to the query.
     this.$store.commit("explorer/" + MutationTypes.SET_NODES_FILTER, {
       key: this.filterKey,
       value,
     });
-    if(!this.invalid){
-      this.$store.dispatch(ActionTypes.REQUEST_NODES);
+    // reset to the first page
+    this.$store.commit(
+      "explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER,
+      1
+    );
+    // load nodes with the changes
+    this.$store.dispatch(ActionTypes.REQUEST_NODES);
     }
   }
 

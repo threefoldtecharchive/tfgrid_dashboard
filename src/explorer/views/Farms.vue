@@ -131,7 +131,6 @@ import { execute } from 'graphql';
   },
 })
 export default class Farms extends Vue {
-  log = console.log.bind(console);
   sort: { by: string[]; desc: boolean[] } = { by: [], desc: [] };
   value = "";
   page = 0;
@@ -363,7 +362,6 @@ export default class Farms extends Vue {
   }
 
   isInvalid():boolean {
-    console.log("activefilters.some", this.activeFilters.map((f) => f.invalid));    
     return this.activeFilters.some((f) => f.invalid === true)
   }
 }
