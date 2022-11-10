@@ -6,6 +6,7 @@
         background-color="deep-blue accent-4"
         centered
         dark
+        @change="onTabChange()"
       >
         <v-tab
           v-for="tab in tabs"
@@ -19,7 +20,7 @@
 
       <v-tabs-items v-model="activeTab">
         <v-tab-item v-for="tab in tabs" :key="tab.index" :value="tab.query">
-          <NodesTable :tab="tab" :twinId="$route.query.twinID" />
+          <NodesTable :tab="tab" :twinId="$route.query.twinID" :trigger="trigger"/>
         </v-tab-item>
       </v-tabs-items>
     </v-card>
@@ -39,6 +40,7 @@ export default class NodesView extends Vue {
   $api = "";
   address = "";
   activeTab = "";
+  trigger = "";
 
   tabs: ITab[] = [
     {
@@ -70,6 +72,9 @@ export default class NodesView extends Vue {
   }
   updated() {
     this.address;
+  }
+  onTabChange() {
+    this.trigger = Math.random().toString(36).slice(2);
   }
 }
 </script>

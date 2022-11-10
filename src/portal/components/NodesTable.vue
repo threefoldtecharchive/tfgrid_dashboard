@@ -28,7 +28,11 @@
         {{ byteToGB(item.resources.hru) }}
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <NodeActionBtn :nodeId="item.nodeId" :status="item.rentStatus" />
+        <NodeActionBtn
+          :nodeId="item.nodeId"
+          :status="item.rentStatus"
+          @node-status-changed="onStatusUpdate()"
+        />
       </template>
       <template v-slot:[`item.discount`]="{ item }">
         <v-tooltip bottom color="primary" close-delay="700">
@@ -74,6 +78,7 @@ import { byteToGB } from "../lib/nodes";
 export default class NodesTable extends Vue {
   @Prop({ required: true }) tab!: ITab;
   @Prop({ required: true }) twinId: any;
+  @Prop({ required: true }) trigger!: string;
   $api: any;
   expanded: any = [];
   loading = true;
@@ -104,8 +109,11 @@ export default class NodesTable extends Vue {
     await this.getNodes();
   }
 
+  @Watch("trigger", { immediate: true }) onTab() {
+    this.getNodes();
+  }
+
   async mounted() {
-    console.log("mounted");
     await this.getNodes();
   }
 
@@ -113,6 +121,14 @@ export default class NodesTable extends Vue {
     this.pageNumber = pageNumber;
     this.pageSize = pageSize;
     await this.getNodes();
+  }
+
+  async onStatusUpdate() {
+    this.loading = true;
+    this.$toasted.show(`Table may take some time to update the changes.`);
+    setTimeout(async () => {
+      await this.getNodes();
+    }, 5000);
   }
 
   async getNodes() {
