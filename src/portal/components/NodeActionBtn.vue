@@ -48,7 +48,6 @@ import {
   cancelRentContract,
   createRentContract,
   getActiveContracts,
-  getRentedNodes,
   getNodeByID,
 } from "@/portal/lib/nodes";
 import { Component, Prop, Vue } from "vue-property-decorator";
@@ -94,8 +93,8 @@ export default class NodeActionBtn extends Vue {
             this.$toasted.show(
               `Transaction succeeded: Node ${nodeId} reserved`
             );
-            this.status = "yours"
             this.loadingReserveNode = false;
+            this.$emit("node-status-changed");
             break;
         }
       }
@@ -146,9 +145,9 @@ export default class NodeActionBtn extends Vue {
               this.$toasted.show(
                 `Transaction succeeded: Node ${this.nodeIDToUnreserve} Unreserved`
               );
-              this.status = "free"
               this.loadingUnreserveNode = false;
               this.openUnreserveDialog = false;
+              this.$emit("node-status-changed");
               break;
           }
         }

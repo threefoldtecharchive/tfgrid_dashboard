@@ -147,6 +147,14 @@ export function generateNodeSummary(doc: jsPDF, nodes: nodeInterface[]) {
 		cellY + lineOffset * 5,
 	);
 }
+
+export interface ITab {
+	label: string,
+	query: "rentable" | "rented" | "rented_by",
+	value: "rentable" | "rented" | "mine",
+	index: number,
+}
+
 export function generateReceipt(doc: jsPDF, node: nodeInterface) {
 	doc.setFontSize(15);
 
@@ -479,34 +487,31 @@ export async function getNodeByID(nodeId: any) {
 	);
 	return node;
 }
-export async function getRentableNodes() {
-	const res = await fetch(
-		`${config.gridproxyUrl}/nodes?rentable=true&status=up`,
-	).then((res) => res.json());
-	return res;
-}
 
-export async function getRentedNodes() {
-	const res = await fetch(
-		`${config.gridproxyUrl}/nodes?rented=true&status=up`,
-	).then((res) => res.json());
-	return res;
-}
+export async function getDedicatedNodes(twinId: string, query: string, page: number, size: number) {
+	let baseUrl = `${config.gridproxyUrl}/nodes?status=up&ret_count=true&page=${page}&size=${size}`
+	if (query != "rented_by") {
+		baseUrl += `&${query}=true`
+	} else {
+		baseUrl += `&${query}=${twinId}`
+	}
 
-export async function getDedicatedNodes() {
-	const rentedNodes = await getRentableNodes();
-	const rentableNodes = await getRentedNodes();
-	let dedicatedNodes: any[] = [];
-	dedicatedNodes = dedicatedNodes.concat(rentedNodes, rentableNodes);
-	return dedicatedNodes;
+	const res = await fetch(baseUrl)
+	const count = res.headers.get("count")
+	const nodes = await res.json();
+	return {nodes, count};
 }
 
 export async function getDNodes(
 	api: any,
 	address: string,
 	currentTwinID: string,
+	query: string,
+	page: number, 
+	size: number,
 ) {
-	let nodes = await getDedicatedNodes();
+	let { nodes, count } = await getDedicatedNodes(currentTwinID, query, page, size);
+
 	const pricing = await getPrices(api);
 	let dNodes: {
 		nodeId: string;
@@ -567,5 +572,5 @@ export async function getDNodes(
 					: 'taken',
 		});
 	}
-	return dNodes;
+	return {dNodes, count};
 }
