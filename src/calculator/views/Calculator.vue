@@ -54,7 +54,7 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
                     placeholder="SSD Storage"
-                    :rules="[...inputValidators, sruCheck]"
+                    :rules="[...inputValidators, diskCheck(SRU)]"
                     label="SRU"
                     suffix="GB"
                     v-model="SRU"
@@ -72,7 +72,7 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
                     placeholder="HDD Storage"
-                    :rules="[...inputValidators, hruCheck]"
+                    :rules="[...inputValidators, diskCheck(HRU)]"
                     label="HRU"
                     suffix="GB"
                     v-model="HRU"
@@ -184,22 +184,11 @@ export default class Calculator extends Vue {
       return true
     }
   }
-  sruCheck(){
-    if(+this.SRU > 10000){
-      return "Maximum disk size is 10000 GB"
+  diskCheck(val: string){
+    if(+val > 1000000){
+      return "Maximum disk size is 1000000 GB"
     }
-    else if(!this.SRU){
-      return "disk field is required"
-    }
-    else{
-      return true
-    }
-  }
-  hruCheck(){
-    if(+this.HRU > 10000){
-      return "Maximum disk size is 10000 GB"
-    }
-    else if(!this.HRU){
+    else if(!val){
       return "disk field is required"
     }
     else{
