@@ -16,7 +16,7 @@
           :items="accountsAddresses"
           dense
           filled
-          label="Receipient:"
+          label="Recipient:"
           :rules="[
           () => !!receipientAddress || 'This field is required',
           () => transferAddressCheck() || 'invalid address',
