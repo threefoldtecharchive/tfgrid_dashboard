@@ -21,6 +21,7 @@
         :expanded.sync="expanded"
         :loading="loadingNodes"
         show-expand
+        :disable-sort="true"
         item-key="id"
         class="elevation-1"
         sort-by="id"
