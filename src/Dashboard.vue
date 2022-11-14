@@ -330,9 +330,10 @@ export default class Dashboard extends Vue {
     this.$root.$on("closeSidebar", () => {
       this.mini = !this.mini;
       if (this.mini){
-        this.routes[0].active = false;
-        this.routes[1].active = false;
-        this.routes[2].active = false;        
+        const [portal, explorer, calculator] = this.routes;
+        portal.active = false;
+        explorer.active = false;
+        calculator.active = false;        
       }
     });
   }
