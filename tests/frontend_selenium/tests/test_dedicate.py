@@ -27,143 +27,145 @@ def test_dedicate_page(browser):
       Result: User should be navigated to Dedicate Node page.
     """
     before_test_setup(browser)
-    assert 'Dedicated Nodes' in browser.page_source
+    assert 'Rentable' in browser.page_source
+    assert 'Rented' in browser.page_source
+    assert 'Mine' in browser.page_source
 
 
-def test_search_by_valid_name_address(browser):
-    """
-      Test Case: TC997 - Verify the search functionality by valid location or node id
-      Steps:
-          - From the Twin Details Page Click on Dedicated nodes
-          - In the Farms search bar enter the location or the id of the node
-      Test Data: [ ID - Location - case sensitive Location ]
-      Result: The search results should be displayed correctly according to the keywords used.
-    """
-    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
-    node_list = grid_proxy.get_rentable_node()
-    ids = dedicate_page.get_node_id(node_list)
-    locations = dedicate_page.get_node_location(node_list)
-    for id in ids:
-      dedicate_page.search_nodes(id)
-      assert dedicate_page.get_node_count() == 1
-    for location in locations:
-      dedicate_page.search_nodes(location)
-      assert  dedicate_page.get_node_count() >= 1
-      dedicate_page.search_nodes(location.lower())
-      assert  dedicate_page.get_node_count() >= 1
-      dedicate_page.search_nodes(location.upper())
-      assert  dedicate_page.get_node_count() >= 1
+# def test_search_by_valid_name_address(browser):
+#     """
+#       Test Case: TC997 - Verify the search functionality by valid location or node id
+#       Steps:
+#           - From the Twin Details Page Click on Dedicated nodes
+#           - In the Farms search bar enter the location or the id of the node
+#       Test Data: [ ID - Location - case sensitive Location ]
+#       Result: The search results should be displayed correctly according to the keywords used.
+#     """
+#     dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+#     node_list = grid_proxy.get_rentable_node()
+#     ids = dedicate_page.get_node_id(node_list)
+#     locations = dedicate_page.get_node_location(node_list)
+#     for id in ids:
+#       dedicate_page.search_nodes(id)
+#       assert dedicate_page.get_node_count() == 1
+#     for location in locations:
+#       dedicate_page.search_nodes(location)
+#       assert  dedicate_page.get_node_count() >= 1
+#       dedicate_page.search_nodes(location.lower())
+#       assert  dedicate_page.get_node_count() >= 1
+#       dedicate_page.search_nodes(location.upper())
+#       assert  dedicate_page.get_node_count() >= 1
 
 
-def test_search_by_invalid_name_address(browser):
-    """
-      Test Case: TC1133 - Verify the search functionality by invalid location or node id
-      Steps:
-          - From the Twin Details Page Click on Dedicated nodes
-          - In the Farms search bar enter invalid location or the id of the node
-      Result: The search results should be displayed nothing as search keywords are incorrect.
-    """
-    dedicate_page,_,_,_ = before_test_setup(browser)
-    dedicate_page.search_nodes(generate_string())
-    assert 'No data available' in browser.page_source
+# def test_search_by_invalid_name_address(browser):
+#     """
+#       Test Case: TC1133 - Verify the search functionality by invalid location or node id
+#       Steps:
+#           - From the Twin Details Page Click on Dedicated nodes
+#           - In the Farms search bar enter invalid location or the id of the node
+#       Result: The search results should be displayed nothing as search keywords are incorrect.
+#     """
+#     dedicate_page,_,_,_ = before_test_setup(browser)
+#     dedicate_page.search_nodes(generate_string())
+#     assert 'No data available' in browser.page_source
 
 
-def test_sort_node_id(browser):
-    """
-      Test Case: TC998 - Node table sorting by id
-      Steps:
-          - From the Twin Details Page Click on Dedicated nodes
-          - Click on the arrow behind node Id 'once up and once down and once to remove the sorting'
-      Result: You should see the sorting of the table change according to the id.
-    """
-    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
-    node_list = grid_proxy.get_rentable_node()
-    assert dedicate_page.sort_node_id() == sorted(dedicate_page.get_node_id(node_list), reverse=False) 
-    assert dedicate_page.sort_node_id() == sorted(dedicate_page.get_node_id(node_list), reverse=True)
+# def test_sort_node_id(browser):
+#     """
+#       Test Case: TC998 - Node table sorting by id
+#       Steps:
+#           - From the Twin Details Page Click on Dedicated nodes
+#           - Click on the arrow behind node Id 'once up and once down and once to remove the sorting'
+#       Result: You should see the sorting of the table change according to the id.
+#     """
+#     dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+#     node_list = grid_proxy.get_rentable_node()
+#     assert dedicate_page.sort_node_id() == sorted(dedicate_page.get_node_id(node_list), reverse=False) 
+#     assert dedicate_page.sort_node_id() == sorted(dedicate_page.get_node_id(node_list), reverse=True)
 
 
-def test_sort_node_location(browser):
-    """
-      Test Case: TC998 - Node table sorting by location
-      Steps:
-          - From the Twin Details Page Click on Dedicated nodes
-          - Click on the arrow behind node location 'once up and once down and once to remove the sorting'
-      Result: You should see the sorting of the table change according to the location.
-    """
-    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
-    node_list = grid_proxy.get_rentable_node()
-    assert dedicate_page.sort_node_location() == sorted(dedicate_page.get_node_location(node_list), reverse=False) 
-    assert dedicate_page.sort_node_location() == sorted(dedicate_page.get_node_location(node_list), reverse=True)
+# def test_sort_node_location(browser):
+#     """
+#       Test Case: TC998 - Node table sorting by location
+#       Steps:
+#           - From the Twin Details Page Click on Dedicated nodes
+#           - Click on the arrow behind node location 'once up and once down and once to remove the sorting'
+#       Result: You should see the sorting of the table change according to the location.
+#     """
+#     dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+#     node_list = grid_proxy.get_rentable_node()
+#     assert dedicate_page.sort_node_location() == sorted(dedicate_page.get_node_location(node_list), reverse=False) 
+#     assert dedicate_page.sort_node_location() == sorted(dedicate_page.get_node_location(node_list), reverse=True)
 
 
-def test_sort_node_cru(browser):
-    """
-      Test Case: TC998 - Node table sorting by CRU
-      Steps:
-          - From the Twin Details Page Click on Dedicated nodes
-          - Click on the arrow behind node CRU 'once up and once down and once to remove the sorting'
-      Result: You should see the sorting of the table change according to the CRU.
-    """
-    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
-    node_list = grid_proxy.get_rentable_node()
-    assert dedicate_page.sort_node_cru() == sorted(dedicate_page.get_node_cru(node_list), reverse=False) 
-    assert dedicate_page.sort_node_cru() == sorted(dedicate_page.get_node_cru(node_list), reverse=True)
+# def test_sort_node_cru(browser):
+#     """
+#       Test Case: TC998 - Node table sorting by CRU
+#       Steps:
+#           - From the Twin Details Page Click on Dedicated nodes
+#           - Click on the arrow behind node CRU 'once up and once down and once to remove the sorting'
+#       Result: You should see the sorting of the table change according to the CRU.
+#     """
+#     dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+#     node_list = grid_proxy.get_rentable_node()
+#     assert dedicate_page.sort_node_cru() == sorted(dedicate_page.get_node_cru(node_list), reverse=False) 
+#     assert dedicate_page.sort_node_cru() == sorted(dedicate_page.get_node_cru(node_list), reverse=True)
 
 
-def test_sort_node_hru(browser):
-    """
-      Test Case: TC998 - Node table sorting by HRU
-      Steps:
-          - From the Twin Details Page Click on Dedicated nodes
-          - Click on the arrow behind node HRU 'once up and once down and once to remove the sorting'
-      Result: You should see the sorting of the table change according to the HRU.
-    """
-    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
-    node_list = grid_proxy.get_rentable_node()
-    assert dedicate_page.sort_node_hru() == sorted(dedicate_page.get_node_hru(False, node_list), reverse=False) 
-    assert dedicate_page.sort_node_hru() == sorted(dedicate_page.get_node_hru(False, node_list), reverse=True)
+# def test_sort_node_hru(browser):
+#     """
+#       Test Case: TC998 - Node table sorting by HRU
+#       Steps:
+#           - From the Twin Details Page Click on Dedicated nodes
+#           - Click on the arrow behind node HRU 'once up and once down and once to remove the sorting'
+#       Result: You should see the sorting of the table change according to the HRU.
+#     """
+#     dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+#     node_list = grid_proxy.get_rentable_node()
+#     assert dedicate_page.sort_node_hru() == sorted(dedicate_page.get_node_hru(False, node_list), reverse=False) 
+#     assert dedicate_page.sort_node_hru() == sorted(dedicate_page.get_node_hru(False, node_list), reverse=True)
 
 
-def test_sort_node_mru(browser):
-    """
-      Test Case: TC998 - Node table sorting by MRU
-      Steps:
-          - From the Twin Details Page Click on Dedicated nodes
-          - Click on the arrow behind node MRU 'once up and once down and once to remove the sorting'
-      Result: You should see the sorting of the table change according to the MRU.
-    """
-    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
-    node_list = grid_proxy.get_rentable_node()
-    assert dedicate_page.sort_node_mru() == sorted(dedicate_page.get_node_mru(False, node_list), reverse=False) 
-    assert dedicate_page.sort_node_mru() == sorted(dedicate_page.get_node_mru(False, node_list), reverse=True)
+# def test_sort_node_mru(browser):
+#     """
+#       Test Case: TC998 - Node table sorting by MRU
+#       Steps:
+#           - From the Twin Details Page Click on Dedicated nodes
+#           - Click on the arrow behind node MRU 'once up and once down and once to remove the sorting'
+#       Result: You should see the sorting of the table change according to the MRU.
+#     """
+#     dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+#     node_list = grid_proxy.get_rentable_node()
+#     assert dedicate_page.sort_node_mru() == sorted(dedicate_page.get_node_mru(False, node_list), reverse=False) 
+#     assert dedicate_page.sort_node_mru() == sorted(dedicate_page.get_node_mru(False, node_list), reverse=True)
 
 
-def test_sort_node_sru(browser):
-    """
-      Test Case: TC998 - Node table sorting by SRU
-      Steps:
-          - From the Twin Details Page Click on Dedicated nodes
-          - Click on the arrow behind node SRU 'once up and once down and once to remove the sorting'
-      Result: You should see the sorting of the table change according to the SRU.
-    """
-    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
-    node_list = grid_proxy.get_rentable_node()
-    assert dedicate_page.sort_node_sru() == sorted(dedicate_page.get_node_sru(False, node_list), reverse=False) 
-    assert dedicate_page.sort_node_sru() == sorted(dedicate_page.get_node_sru(False, node_list), reverse=True)
+# def test_sort_node_sru(browser):
+#     """
+#       Test Case: TC998 - Node table sorting by SRU
+#       Steps:
+#           - From the Twin Details Page Click on Dedicated nodes
+#           - Click on the arrow behind node SRU 'once up and once down and once to remove the sorting'
+#       Result: You should see the sorting of the table change according to the SRU.
+#     """
+#     dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+#     node_list = grid_proxy.get_rentable_node()
+#     assert dedicate_page.sort_node_sru() == sorted(dedicate_page.get_node_sru(False, node_list), reverse=False) 
+#     assert dedicate_page.sort_node_sru() == sorted(dedicate_page.get_node_sru(False, node_list), reverse=True)
 
 
-def test_sort_node_price(browser):
-    """
-      Test Case: TC998 - Node table sorting by Price
-      Steps:
-          - From the Twin Details Page Click on Dedicated nodes
-          - Click on the arrow behind node Price 'once up and once down and once to remove the sorting'
-      Result: You should see the sorting of the table change according to the Price.
-    """
-    dedicate_page,_,_,_ = before_test_setup(browser)
-    price = dedicate_page.get_node_price()
-    assert dedicate_page.sort_node_price() == sorted(price, reverse=True) 
-    assert dedicate_page.sort_node_price() == sorted(price, reverse=False)
+# def test_sort_node_price(browser):
+#     """
+#       Test Case: TC998 - Node table sorting by Price
+#       Steps:
+#           - From the Twin Details Page Click on Dedicated nodes
+#           - Click on the arrow behind node Price 'once up and once down and once to remove the sorting'
+#       Result: You should see the sorting of the table change according to the Price.
+#     """
+#     dedicate_page,_,_,_ = before_test_setup(browser)
+#     price = dedicate_page.get_node_price()
+#     assert dedicate_page.sort_node_price() == sorted(price, reverse=True) 
+#     assert dedicate_page.sort_node_price() == sorted(price, reverse=False)
 
 
 def test_node_details(browser):
@@ -204,7 +206,7 @@ def test_reserve_node(browser):
       dedicate_page.reserve_node(node_id)
       polka_page.authenticate_with_pass(password)
       assert dedicate_page.wait_for('Transaction succeeded: Node '+ str(node_id) +' reserved')
-      status, counter = 0
+      status = counter = 0
       while(status==0):
         status = grid_proxy.get_dedicate_status(node_id)
         counter += 1
