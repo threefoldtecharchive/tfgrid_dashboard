@@ -13,12 +13,10 @@
         align-baseline
       "
     >
-      <div v-if="farms.length == 0">
-        <h3>Don't have any farms? Start by creating one:</h3>
-      </div>
-      <div v-if="farms.length != 0">
-        <h3>Create another farm:</h3>
-      </div>
+      <h3 v-if="farms.length == 0">
+        Don't have any farms? Start by creating one:
+      </h3>
+      <h3 v-else>Create another farm:</h3>
 
       <v-btn
         @click="openCreateFarmDialog = true"
