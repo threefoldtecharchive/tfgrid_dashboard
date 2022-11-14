@@ -272,13 +272,14 @@ export async function deleteFarm(
 		.deleteFarm(farmId)
 		.signAndSend(address, { signer: injector.signer }, callback);
 }
-export async function getNodesByFarmID(farms: any[]) {
-	const farmIDs = farms.map((farm: { id: any }) => farm.id);
 
-	const res = await fetch(
-		`${config.gridproxyUrl}/nodes?farm_ids=` + farmIDs,
-	).then((res) => res.json());
-	const _nodes = res.flat();
+export async function getNodesByFarmID(farmIDs: any[], page: number, size: number): Promise<any> {
+	const url = `${config.gridproxyUrl}/nodes?ret_count=true&page=${page}&size=${size}&farm_ids=${farmIDs}`
+	const res = await fetch(url)
+	const count = res.headers.get('count')
+
+	const _nodes = await res.json()
+	// const _nodes = res.flat();
 
 	const nodesWithResources = _nodes.map(async (node: nodeInterface) => {
 		try {
@@ -301,8 +302,10 @@ export async function getNodesByFarmID(farms: any[]) {
 		return node;
 	});
 
-	return await Promise.all(nodesWithResources);
+	const nodes = await Promise.all(nodesWithResources)
+	return { nodes, count };
 }
+
 export async function getNodesByFarm(farmID: string) {
 	const res = await axios.post(config.graphqlUrl, {
 		query: `{ nodes (where: {farmID_eq:${farmID}}) { 
