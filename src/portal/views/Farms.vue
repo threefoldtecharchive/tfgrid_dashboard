@@ -1,29 +1,32 @@
 <template>
   <v-container fluid>
     <!-- show only if the twin has no farms -->
-    <div v-if="farms.length == 0">
-      <v-card
-        color="primary"
-        class="
-          white--text
-          my-3
-          pa-3
-          text-center
-          d-flex
-          justify-center
-          align-baseline
-        "
-      >
+    <v-card
+      color="primary"
+      class="
+        white--text
+        my-3
+        pa-3
+        text-center
+        d-flex
+        justify-center
+        align-baseline
+      "
+    >
+      <div v-if="farms.length == 0">
         <h3>Don't have any farms? Start by creating one:</h3>
+      </div>
+      <div v-if="farms.length != 0">
+        <h3>Create another farm:</h3>
+      </div>
 
-        <v-btn
-          @click="openCreateFarmDialog = true"
-          class="farm my-3 mx-5"
-          :loading="loadingCreateFarm"
-          >Create farm</v-btn
-        >
-      </v-card>
-    </div>
+      <v-btn
+        @click="openCreateFarmDialog = true"
+        class="farm my-3 mx-5"
+        :loading="loadingCreateFarm"
+        >Create farm</v-btn
+      >
+    </v-card>
 
     <!-- creating farm form -->
     <v-dialog
@@ -426,7 +429,7 @@ export default class FarmsView extends Vue {
   async getNodes() {
     this.farmsIds = this.farms.map((farm: any) => farm.id);
 
-    if (this.farmsIds.length == 0) return
+    if (this.farmsIds.length == 0) return;
 
     console.log(
       `Request nodes with params. farmids: ${this.farmsIds}, page: ${this.page}, size: ${this.size}`
