@@ -1,9 +1,15 @@
 <template>
   <Layout pageName="Calculator" :noFilter="true">
-    <h1>
+    <div class="d-flex justify-left">
+      <h1>
       Resources Pricing Calculator
       <i class="fa fa-calculator" aria-hidden="true"></i>
     </h1>
+    <span class="link"> 
+      <a href="https://library.threefold.me/info/threefold/#/tfgrid/pricing/threefold__pricing" target="_blank">Threefold Pricing</a>
+    </span>
+    </div>
+
     <v-divider />
     <br />
     <v-card>
@@ -117,9 +123,7 @@
             : ${{ price.price }}/month, {{price.TFTs}} TFT/month
           </span>
         </div>
-        <span class="right"
-          >learn more about pricing through this <a href="https://library.threefold.me/info/threefold/#/tfgrid/pricing/threefold__pricing" target="_blank">link</a></span
-        >
+
       </div>
     </v-card>
   </Layout>
@@ -358,5 +362,10 @@ export default class Calculator extends Vue {
 .name {
   font-weight: 900;
   text-transform: capitalize;
+}
+.link{
+  align-self: center;
+  display: inline-block;
+  margin-left: 1rem;
 }
 </style>
