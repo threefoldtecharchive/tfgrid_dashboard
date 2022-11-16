@@ -6,7 +6,14 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "check-eslint": "eslint .eslintrc.js .",
+    "check-prettier": "npx prettier .prettierrc .",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{py,js,jsx,ts,tsx,css,md,vue,yaml}": "eslint --fix",
+    "*.{py,js,ts,css,md,vue,yaml}": "prettier --write"
   },
   "dependencies": {
     "1x": "^0.0.0",
@@ -77,10 +84,14 @@
     "@vue/vue2-jest": "^27.0.0-alpha.2",
     "babel-jest": "^27.0.6",
     "cypress-xpath": "^2.0.1",
-    "eslint": "^7.32.0",
+    "eslint": "^8.27.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-vue": "^8.0.3",
+    "husky": "^8.0.2",
     "jest": "^27.0.5",
+    "lint-staged": "^13.0.3",
     "node-polyfill-webpack-plugin": "^1.1.4",
+    "prettier": "^2.7.1",
     "sass": "^1.32.7",
     "sass-loader": "^12.0.0",
     "ts-jest": "^27.0.4",

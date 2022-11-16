@@ -330,8 +330,10 @@ export default class Dashboard extends Vue {
     this.$root.$on("closeSidebar", () => {
       this.mini = !this.mini;
       if (this.mini){
-        this.routes[0].active = false;
-        this.routes[1].active = false;
+        const [portal, explorer, calculator] = this.routes;
+        portal.active = false;
+        explorer.active = false;
+        calculator.active = false;        
       }
     });
   }
@@ -490,12 +492,13 @@ export default class Dashboard extends Vue {
       label: "Calculators",
       icon: "calculator",
       prefix: "/calculator/",
+      active: this.mini ? false: true,
       children: [
         {
           label: "Resource Pricing",
           path: "calculator",
           icon: "currency-usd",
-          showBeforeLogIn: false,
+          showBeforeLogIn: true,
         },      
         {
           label: "Simulator",
