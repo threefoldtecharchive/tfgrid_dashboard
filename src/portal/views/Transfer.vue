@@ -16,7 +16,8 @@
           :items="accountsAddresses"
           dense
           filled
-          label="Receipient:"
+          @keydown="setValue"
+          label="Recipient:"
           :rules="[
           () => !!receipientAddress || 'This field is required',
           () => transferAddressCheck() || 'invalid address',
@@ -176,6 +177,12 @@ export default class TransferView extends Vue {
       this.$toasted.show(err.message);
       this.loadingTransfer = false;
     });
+  }
+
+  setValue($event: { target: { value: string }}) {
+    requestAnimationFrame(() => {
+      this.receipientAddress = $event.target.value
+    })
   }
 }
 </script>
