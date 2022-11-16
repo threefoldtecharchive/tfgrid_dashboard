@@ -503,8 +503,8 @@ export default class Dashboard extends Vue {
         {
           label: "Simulator",
           path: "simulator/",
-          icon: "chart-scatter-plot",
-          showBeforeLogIn: true,
+          icon: "chart-line",
+          showBeforeLogIn: false,
           children: [
             {
               label: "Farming",
@@ -516,21 +516,21 @@ export default class Dashboard extends Vue {
       ],
     },
     {
-      label: "Bootstrap",
-      icon: "chart-scatter-plot",
+      label: "Zero-Os Bootstrap",
+      icon: "earth",
       prefix: "/other/bootstrap",
       children: [],
     },
     {
-      label: "Hub",
-      icon: "chart-scatter-plot",
+      label: "Zero-Os Hub",
+      icon: "open-in-new",
       prefix: "https://hub.grid.tf/",
       hyperlink: true,
       children: [],
     },
     {
       label: "Playground",
-      icon: "chart-scatter-plot",
+      icon: "open-in-new",
       prefix: window.configs.PLAYGROUND_URL,
       hyperlink: true,
       children: [],
