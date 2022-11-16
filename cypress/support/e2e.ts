@@ -1,1 +1,1 @@
-require('cypress-xpath');
+require("cypress-xpath");
