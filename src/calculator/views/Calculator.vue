@@ -364,8 +364,9 @@ export default class Calculator extends Vue {
   text-transform: capitalize;
 }
 .link{
-  align-self: center;
+  align-self: end;
   display: inline-block;
   margin-left: 1rem;
+  margin-bottom: 0.3rem;
 }
 </style>
