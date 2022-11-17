@@ -1,24 +1,35 @@
 <template>
   <div>
+    <div style="padding-top:20px"></div>
 
+    <!-- Show only if you have nodes -->
     <div v-if="nodes.length">
-      <v-text-field
+
+      <!-- Searching/Sorting is disabled for now -->
+      <!-- <v-text-field
         v-model="searchTerm"
         color="primary darken-2"
         label="Search by node ID, serial number, certification, farming policy ID"
-      ></v-text-field>
+      ></v-text-field> -->
+
+
+      
       <v-data-table
         :headers="headers"
-        :items="filteredNodes()"
+        :items="nodes"
         :single-expand="true"
         :expanded.sync="expanded"
-        item-key="id"
+        :loading="loadingNodes"
         show-expand
+        :disable-sort="true"
+        item-key="id"
         class="elevation-1"
         sort-by="id"
+        :server-items-length="+count"
+        @update:options="onOptionChange($event.page, $event.itemsPerPage)"
       >
         <template v-slot:top>
-          <v-toolbar flat>
+          <v-toolbar flat class="primary white--text">
             <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
             <v-btn
               v-if="network == 'main'"
@@ -65,6 +76,7 @@
             <span>Add a public config</span>
           </v-tooltip>
         </template>
+
         <!--expanded node view-->
         <template v-slot:expanded-item="{ headers, item }">
           <td
@@ -284,6 +296,7 @@
           </td>
         </template>
       </v-data-table>
+
       <!--public config dialog-->
       <v-dialog
         v-model="openPublicConfigDialog"
@@ -389,6 +402,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
       <!-- delete item dialog-->
       <v-dialog
         v-model="openDeleteDialog"
@@ -450,18 +464,24 @@
         </v-card>
       </v-dialog>
     </div>
-    <div v-if="loadingNodes">
+
+    <div v-if="initLoading">
       <v-data-table
         loading
         loading-text="loading nodes.."
-      ></v-data-table>
+        :headers="headers"
+      >
+      <template v-slot:top>
+          <v-toolbar flat class="primary white--text">
+            <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
+          </v-toolbar>
+        </template>
+    </v-data-table>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-
-import moment from "moment";
 import { default as PrivateIp } from "private-ip";
 import {
   byteToGB,
@@ -554,6 +574,8 @@ export default class FarmNodesTable extends Vue {
   openPublicConfigDialog = false;
   @Prop({ required: true }) nodes!: nodeInterface[];
   @Prop({ required: true }) loadingNodes!: boolean;
+  @Prop({ required: true }) initLoading!: boolean;
+  @Prop({ required: true }) count!: string;
   searchTerm = "";
   ip4 = "";
   gw4 = "";
@@ -571,28 +593,34 @@ export default class FarmNodesTable extends Vue {
   gw6ErrorMessage = "";
   domainErrorMessage = "";
   receipts = [];
+
   updated() {
     this.receiptsPanel = [];
   }
-  filteredNodes() {
-    let nodes = this.nodes;
-    if (this.nodes.length > 0) {
-      nodes = this.nodes.filter(
-        (node: nodeInterface) =>
-          `${node.nodeId}`.includes(this.searchTerm) ||
-          node.serialNumber
-            ?.toLowerCase()
-            .includes(this.searchTerm.toLowerCase()) ||
-          node.certificationType
-            ?.toLowerCase()
-            .includes(this.searchTerm.toLowerCase()) ||
-          `${node.farmingPolicyId}`.includes(this.searchTerm)
-      );
-    }
-    return nodes.map((node) => {
-      return { ...node };
-    });
+  onOptionChange(pageNumber:number, pageSize: number) {
+    this.$emit('options-changed', {pageNumber, pageSize})
   }
+
+  // filteredNodes() {
+  //   let nodes = this.nodes;
+  //   if (this.nodes.length > 0) {
+  //     nodes = this.nodes.filter(
+  //       (node: nodeInterface) =>
+  //         `${node.nodeId}`.includes(this.searchTerm) ||
+  //         node.serialNumber
+  //           ?.toLowerCase()
+  //           .includes(this.searchTerm.toLowerCase()) ||
+  //         node.certificationType
+  //           ?.toLowerCase()
+  //           .includes(this.searchTerm.toLowerCase()) ||
+  //         `${node.farmingPolicyId}`.includes(this.searchTerm)
+  //     );
+  //   }
+  //   return nodes.map((node) => {
+  //     return { ...node };
+  //   });
+  // }
+
   downloadAllReceipts() {
     let docSum = new jsPDF();
     generateNodeSummary(docSum, this.nodes);
