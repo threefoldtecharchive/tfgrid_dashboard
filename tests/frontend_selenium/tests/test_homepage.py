@@ -7,11 +7,13 @@ from utils.base import Base
 
 #  Time required for the run (12 cases) is approximately 2 minutes.
 
+
 def before_test_setup(browser):
     dashboard_page = DashboardPage(browser)
     polka_page = PolkaPage(browser)
     polka_page.load_and_authenticate()
     return dashboard_page, polka_page
+
 
 def test_polka_page(browser):
     """
@@ -23,7 +25,7 @@ def test_polka_page(browser):
           - Click "Download polkadot{.js} extension" button.
       Result: User should be navigated to the download polkadot extesion page.
     """
-    dashboard_page,_ = before_test_setup(browser)
+    dashboard_page, _ = before_test_setup(browser)
     assert dashboard_page.navigate_to_polka() == 'https://polkadot.js.org/extension/'
 
 
@@ -38,7 +40,7 @@ def test_discover_page(browser):
           - Click "Discover the ThreeFold Grid" button
       Result: User should be navigated to the explorer stats page.
     """
-    dashboard_page,_ = before_test_setup(browser)
+    dashboard_page, _ = before_test_setup(browser)
     assert dashboard_page.navigate_to_explorer() == (Base.base_url+'explorer/statistics')
 
 
@@ -53,7 +55,7 @@ def test_manual_page(browser):
         - Click "Learn More" button.
       Result: User should be navigated to the manual page.
     """
-    dashboard_page,_ = before_test_setup(browser)
+    dashboard_page, _ = before_test_setup(browser)
     assert dashboard_page.navigate_to_manual() == 'https://library.threefold.me/info/manual/#/'
 
 
@@ -96,7 +98,7 @@ def test_create_account(browser):
     assert user in dashboard_page.accounts_list()
 
 
-def test_import_account(browser): 
+def test_import_account(browser):
     """
       Test Cases: TC979 - Import account
       Steps:
@@ -125,6 +127,8 @@ def test_import_account(browser):
                   Random char sequence, case sensitive chars) From Account Name or Address ]
   Result: List of all the accounts that matches search input.
 """
+
+
 def test_search_by_name_address(browser):
     dashboard_page, polka_page = before_test_setup(browser)
     user = generate_string()
@@ -136,9 +140,10 @@ def test_search_by_name_address(browser):
     dashboard_page.search_accounts(address)
     address_list = dashboard_page.accounts_list()
     dashboard_page.search_accounts(user.lower())
-    assert  user in account_list and user in dashboard_page.accounts_list()
+    assert user in account_list and user in dashboard_page.accounts_list()
     dashboard_page.search_accounts(address.lower())
-    assert  address in address_list and address in dashboard_page.accounts_list()
+    assert address in address_list and address in dashboard_page.accounts_list()
+
 
 @pytest.mark.parametrize('cases', [0, 9, randint(1, 8)])
 def test_search_by_valid_name_address(browser, cases):
@@ -152,9 +157,10 @@ def test_search_by_valid_name_address(browser, cases):
     dashboard_page.search_accounts(address[cases])
     address_list = dashboard_page.accounts_list()
     dashboard_page.search_accounts(user[cases].lower())
-    assert  user in account_list and user in dashboard_page.accounts_list()
+    assert user in account_list and user in dashboard_page.accounts_list()
     dashboard_page.search_accounts(address[cases].lower())
-    assert  address in address_list and address in dashboard_page.accounts_list()
+    assert address in address_list and address in dashboard_page.accounts_list()
+
 
 @pytest.mark.parametrize('begin, end', [(0, 1), (8, 9), (randint(1, 4), randint(5, 8))])
 def test_search_by_valid_name_address(browser, begin, end):
@@ -168,9 +174,9 @@ def test_search_by_valid_name_address(browser, begin, end):
     dashboard_page.search_accounts(address[begin: end])
     address_list = dashboard_page.accounts_list()
     dashboard_page.search_accounts(user[begin: end].lower())
-    assert  user in account_list and user in dashboard_page.accounts_list()
+    assert user in account_list and user in dashboard_page.accounts_list()
     dashboard_page.search_accounts(address[begin: end].lower())
-    assert  address in address_list and address in dashboard_page.accounts_list()
+    assert address in address_list and address in dashboard_page.accounts_list()
 
 
 @pytest.mark.parametrize('cases', [' ', generate_string()])
@@ -195,8 +201,8 @@ def test_search_by_invalid_name_address(browser, cases):
     dashboard_page.search_accounts(cases)
     address_list = dashboard_page.accounts_list()
     dashboard_page.search_accounts(cases.lower())
-    assert  user not in account_list and user not in dashboard_page.accounts_list()
-    assert  len(account_list) == 0 and len(dashboard_page.accounts_list()) == 0
+    assert user not in account_list and user not in dashboard_page.accounts_list()
+    assert len(account_list) == 0 and len(dashboard_page.accounts_list()) == 0
     dashboard_page.search_accounts(cases.lower())
-    assert  address not in address_list and address not in dashboard_page.accounts_list()
-    assert  len(account_list) == 0 and len(dashboard_page.accounts_list()) == 0
+    assert address not in address_list and address not in dashboard_page.accounts_list()
+    assert len(account_list) == 0 and len(dashboard_page.accounts_list()) == 0

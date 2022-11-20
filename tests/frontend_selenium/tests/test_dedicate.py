@@ -6,6 +6,7 @@ import pytest
 
 #  Time required for the run (12 cases) is approximately 3 minutes.
 
+
 def before_test_setup(browser):
     dedicate_page = DedicatePage(browser)
     polka_page = PolkaPage(browser)
@@ -13,9 +14,10 @@ def before_test_setup(browser):
     user = generate_string()
     password = generate_string()
     polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
+    polka_page.import_account(get_seed(), user, password)
     dedicate_page.navigate(user)
     return dedicate_page, polka_page, grid_proxy, password
+
 
 def test_dedicate_page(browser):
     """
@@ -80,7 +82,7 @@ def test_dedicate_page(browser):
 #     """
 #     dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
 #     node_list = grid_proxy.get_rentable_node()
-#     assert dedicate_page.sort_node_id() == sorted(dedicate_page.get_node_id(node_list), reverse=False) 
+#     assert dedicate_page.sort_node_id() == sorted(dedicate_page.get_node_id(node_list), reverse=False)
 #     assert dedicate_page.sort_node_id() == sorted(dedicate_page.get_node_id(node_list), reverse=True)
 
 
@@ -94,7 +96,7 @@ def test_dedicate_page(browser):
 #     """
 #     dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
 #     node_list = grid_proxy.get_rentable_node()
-#     assert dedicate_page.sort_node_location() == sorted(dedicate_page.get_node_location(node_list), reverse=False) 
+#     assert dedicate_page.sort_node_location() == sorted(dedicate_page.get_node_location(node_list), reverse=False)
 #     assert dedicate_page.sort_node_location() == sorted(dedicate_page.get_node_location(node_list), reverse=True)
 
 
@@ -108,7 +110,7 @@ def test_dedicate_page(browser):
 #     """
 #     dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
 #     node_list = grid_proxy.get_rentable_node()
-#     assert dedicate_page.sort_node_cru() == sorted(dedicate_page.get_node_cru(node_list), reverse=False) 
+#     assert dedicate_page.sort_node_cru() == sorted(dedicate_page.get_node_cru(node_list), reverse=False)
 #     assert dedicate_page.sort_node_cru() == sorted(dedicate_page.get_node_cru(node_list), reverse=True)
 
 
@@ -122,7 +124,7 @@ def test_dedicate_page(browser):
 #     """
 #     dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
 #     node_list = grid_proxy.get_rentable_node()
-#     assert dedicate_page.sort_node_hru() == sorted(dedicate_page.get_node_hru(False, node_list), reverse=False) 
+#     assert dedicate_page.sort_node_hru() == sorted(dedicate_page.get_node_hru(False, node_list), reverse=False)
 #     assert dedicate_page.sort_node_hru() == sorted(dedicate_page.get_node_hru(False, node_list), reverse=True)
 
 
@@ -136,7 +138,7 @@ def test_dedicate_page(browser):
 #     """
 #     dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
 #     node_list = grid_proxy.get_rentable_node()
-#     assert dedicate_page.sort_node_mru() == sorted(dedicate_page.get_node_mru(False, node_list), reverse=False) 
+#     assert dedicate_page.sort_node_mru() == sorted(dedicate_page.get_node_mru(False, node_list), reverse=False)
 #     assert dedicate_page.sort_node_mru() == sorted(dedicate_page.get_node_mru(False, node_list), reverse=True)
 
 
@@ -150,7 +152,7 @@ def test_dedicate_page(browser):
 #     """
 #     dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
 #     node_list = grid_proxy.get_rentable_node()
-#     assert dedicate_page.sort_node_sru() == sorted(dedicate_page.get_node_sru(False, node_list), reverse=False) 
+#     assert dedicate_page.sort_node_sru() == sorted(dedicate_page.get_node_sru(False, node_list), reverse=False)
 #     assert dedicate_page.sort_node_sru() == sorted(dedicate_page.get_node_sru(False, node_list), reverse=True)
 
 
@@ -164,7 +166,7 @@ def test_dedicate_page(browser):
 #     """
 #     dedicate_page,_,_,_ = before_test_setup(browser)
 #     price = dedicate_page.get_node_price()
-#     assert dedicate_page.sort_node_price() == sorted(price, reverse=True) 
+#     assert dedicate_page.sort_node_price() == sorted(price, reverse=True)
 #     assert dedicate_page.sort_node_price() == sorted(price, reverse=False)
 
 
@@ -176,17 +178,17 @@ def test_node_details(browser):
           - Click on expand button on a node
       Result: You should see the node details.
     """
-    dedicate_page,_,grid_proxy,_ = before_test_setup(browser)
+    dedicate_page, _, grid_proxy, _ = before_test_setup(browser)
     node_list = grid_proxy.get_rentable_node()
     nodes = dedicate_page.node_details()
     for i in range(len(nodes)):
-      assert str(dedicate_page.get_node_cru(node_list)[i]) in nodes[i][1]
-      assert str(dedicate_page.get_node_hru(True, node_list)[i]) in nodes[i][2]
-      assert str(dedicate_page.get_node_sru(True, node_list)[i]) in nodes[i][3]
-      assert str(dedicate_page.get_node_mru(True, node_list)[i]) in nodes[i][4]
-      assert dedicate_page.get_node_location(node_list)[i] in nodes[i][5]
-      assert dedicate_page.get_node_city(node_list)[i] in nodes[i][6]
-      assert str(grid_proxy.get_farm_ips((dedicate_page.get_farm_id(nodes[i][0], node_list)))) in nodes[i][7]
+        assert str(dedicate_page.get_node_cru(node_list)[i]) in nodes[i][1]
+        assert str(dedicate_page.get_node_hru(True, node_list)[i]) in nodes[i][2]
+        assert str(dedicate_page.get_node_sru(True, node_list)[i]) in nodes[i][3]
+        assert str(dedicate_page.get_node_mru(True, node_list)[i]) in nodes[i][4]
+        assert dedicate_page.get_node_location(node_list)[i] in nodes[i][5]
+        assert dedicate_page.get_node_city(node_list)[i] in nodes[i][6]
+        assert str(grid_proxy.get_farm_ips((dedicate_page.get_farm_id(nodes[i][0], node_list)))) in nodes[i][7]
 
 
 def test_reserve_node(browser):
@@ -202,22 +204,23 @@ def test_reserve_node(browser):
     dedicate_page, polka_page, grid_proxy, password = before_test_setup(browser)
     node_list = grid_proxy.get_rentable_node()
     node_id = dedicate_page.check_free_node(node_list)
-    if(node_id):
-      dedicate_page.reserve_node(node_id)
-      polka_page.authenticate_with_pass(password)
-      assert dedicate_page.wait_for('Transaction succeeded: Node '+ str(node_id) +' reserved')
-      status = counter = 0
-      while(status==0):
-        status = grid_proxy.get_dedicate_status(node_id)
-        counter += 1
-        if(counter==10):
-          break
-      assert grid_proxy.get_dedicate_status(node_id) == dedicate_page.twin_id
-      dedicate_page.unreserve_node(node_id)
-      polka_page.authenticate_with_pass(password)
-      assert dedicate_page.wait_for('Transaction succeeded: Node '+ str(node_id) +' Unreserved')
-      while(status!=0):
-        status = grid_proxy.get_dedicate_status(node_id)
-      assert grid_proxy.get_dedicate_status(node_id) == False
+    if (node_id):
+        dedicate_page.reserve_node(node_id)
+        polka_page.authenticate_with_pass(password)
+        assert dedicate_page.wait_for('Transaction succeeded: Node ' + str(node_id) + ' reserved')
+        status = counter = 0
+        while (status == 0):
+            status = grid_proxy.get_dedicate_status(node_id)
+            counter += 1
+            if (counter == 10):
+                break
+        assert grid_proxy.get_dedicate_status(node_id) == dedicate_page.twin_id
+        dedicate_page.unreserve_node(node_id)
+        polka_page.authenticate_with_pass(password)
+        assert dedicate_page.wait_for(
+            'Transaction succeeded: Node ' + str(node_id) + ' Unreserved')
+        while (status != 0):
+            status = grid_proxy.get_dedicate_status(node_id)
+        assert grid_proxy.get_dedicate_status(node_id) == False
     else:
-      pytest.skip("Can't test as there isn't a free dedicated node.")
+        pytest.skip("Can't test as there isn't a free dedicated node.")
