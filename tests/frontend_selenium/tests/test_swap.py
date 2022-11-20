@@ -112,7 +112,7 @@ def test_check_deposit(browser):
     assert swap_page.wait_for(amount_text)
     assert bridge_address == 'GDHJP6TF3UXYXTNEZ2P36J5FH7W4BJJQ4AYYAXC66I2Q2AH5B6O6BCFG'
     user_address = swap_page.twin_address()
-    assert grid_proxy.get_twin_address(twin_id[-3:]) == user_address
+    assert grid_proxy.get_twin_address(twin_id[-4:]) == user_address
 
 
 def test_check_withdraw_stellar(browser): 
