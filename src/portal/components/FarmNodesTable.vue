@@ -92,13 +92,13 @@
                   <v-row>
                     <v-flex xs3 class="text-left pr-2">First boot at</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
-                      <span>{{ getDate(item.created) }}</span>
+                      <span>{{ new Date(parseInt(item.created) * 1000) }}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
                     <v-flex xs3 class="text-left pr-2">Updated at</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
-                      <span>{{ getDate(item.updatedAt) }}</span>
+                      <span>{{ new Date(parseInt(item.updatedAt) * 1000) }}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
@@ -776,11 +776,6 @@ export default class FarmNodesTable extends Vue {
     const totalResources = this.expanded[0].total_resources[type];
     if (reservedResources === 0 && totalResources === 0) return 0;
     return (reservedResources / totalResources) * 100;
-  }
-  getDate(time: any) {
-    let date = new Date(0);
-    date.setUTCSeconds(time);
-    return date;
   }
 }
 </script>
