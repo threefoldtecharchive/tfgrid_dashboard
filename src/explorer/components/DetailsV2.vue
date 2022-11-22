@@ -1,10 +1,5 @@
 <template>
-  <v-bottom-sheet
-    v-model="open"
-    persistent
-    no-click-animation
-    @click:outside="$emit('close-sheet')"
-  >
+  <v-bottom-sheet v-model="open" persistent no-click-animation @click:outside="$emit('close-sheet')">
     <v-sheet class="text-center" height="90vh">
       <div class="content" v-if="!loading">
         <v-row>
@@ -13,74 +8,34 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
-            v-if="node"
-          >
+          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="node">
             <NodeDetails :node="node" />
           </v-col>
 
-          <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
-            v-if="data.farm"
-          >
+          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="data.farm">
             <FarmDetails :farm="data.farm" />
           </v-col>
 
           <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
+            :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4"
             v-if="node && node.country && node.location"
           >
-            <LocationDetails
-              :country="node.country"
-              :location="node.location"
-            />
+            <LocationDetails :country="node.country" :location="node.location" />
           </v-col>
 
-          <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
-            v-if="node && node.publicConfig"
-          >
+          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="node && node.publicConfig">
             <PublicConfigDetails :config="node.publicConfig" />
           </v-col>
 
-          <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
-            v-if="country"
-          >
-            <CountryDetails
-              :country="node.country"
-              :city="node.city"
-              :location="node.location"
-              :code="country.code"
-            />
+          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="country">
+            <CountryDetails :country="node.country" :city="node.city" :location="node.location" :code="country.code" />
           </v-col>
 
-          <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
-            v-if="data.twin"
-          >
+          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="data.twin">
             <TwinDetails :twin="data.twin" />
           </v-col>
 
-          <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
-            v-if="node && node.interfaces"
-          >
+          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="node && node.interfaces">
             <InterfacesDetails :interfaces="node.interfaces" />
           </v-col>
         </v-row>
@@ -154,16 +109,18 @@ export default class Details extends Vue {
         }, data);
 
         // update with the data from grid proxy
-        const gproxyData = await fetch(
-          `${window.configs.APP_GRIDPROXY_URL}/nodes/${this.nodeId}`
-        ).then((res) => res.json());
-        this.data.node.status = gproxyData.status === "up";
-        this.data.node.cru = gproxyData.capacity.total_resources.cru;
-        this.data.node.mru = gproxyData.capacity.total_resources.mru;
-        this.data.node.hru = gproxyData.capacity.total_resources.hru;
-        this.data.node.sru = gproxyData.capacity.total_resources.sru;
+        if (this.nodeId) {
+          const gproxyData = await fetch(`${window.configs.APP_GRIDPROXY_URL}/nodes/${this.nodeId}`).then(res =>
+            res.json(),
+          );
+          this.data.node.status = gproxyData.status === "up";
+          this.data.node.cru = gproxyData.capacity.total_resources.cru;
+          this.data.node.mru = gproxyData.capacity.total_resources.mru;
+          this.data.node.hru = gproxyData.capacity.total_resources.hru;
+          this.data.node.sru = gproxyData.capacity.total_resources.sru;
+        }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log("Error", err);
       })
       .finally(() => {
