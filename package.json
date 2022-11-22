@@ -12,8 +12,8 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "*.{py,js,jsx,ts,tsx,css,md,vue,yaml}": "eslint --fix",
-    "*.{py,js,ts,css,md,vue,yaml}": "prettier --write"
+    "*.{js,jsx,ts,tsx,css,md,vue,yaml}": "eslint --fix",
+    "*.{js,ts,css,md,vue,yaml}": "prettier --write"
   },
   "dependencies": {
     "1x": "^0.0.0",

@@ -4,20 +4,22 @@ from pages.polka import PolkaPage
 
 #  Time required for the run (6 cases) is approximately 3 minutes.
 
+
 def before_test_setup(browser, create_account):
     twin_page = TwinPage(browser)
     polka_page = PolkaPage(browser)
     user = generate_string()
     password = generate_string()
     polka_page.load_and_authenticate()
-    if(create_account):
-      polka_page.add_account(user, password)
+    if (create_account):
+        polka_page.add_account(user, password)
     else:
-      polka_page.import_account(get_seed(), user, password)
+        polka_page.import_account(get_seed(), user, password)
     twin_page.navigate(user)
     return twin_page, polka_page, password
 
-def test_accept_terms_conditions(browser): 
+
+def test_accept_terms_conditions(browser):
     """
       Test Case: TC924 - Accept terms and conditions
       Test Cases: TC931- button why do I even need twin
@@ -35,7 +37,8 @@ def test_accept_terms_conditions(browser):
     polka_page.authenticate_with_pass(password)
     assert twin_page.wait_for('Planetary using Yggdrasil IPV6')
     assert 'Planetary using Yggdrasil IPV6' in browser.page_source
-    assert twin_page.Button_why_doIeven_need_twin() == 'https://library.threefold.me/info/manual/#/manual__yggdrasil_client'
+    assert twin_page.Button_why_doIeven_need_twin(
+    ) == 'https://library.threefold.me/info/manual/#/manual__yggdrasil_client'
 
 
 def test_create_twin_IP(browser):
@@ -57,10 +60,12 @@ def test_create_twin_IP(browser):
     twin_page.accept_terms_conditions()
     polka_page.authenticate_with_pass(password)
     assert twin_page.wait_for('Accepted!')
-    cases = [' ', '::g', '1:2:3', ':a', '1:2:3:4:5:6:7:8:9', generate_string(), generate_leters()]
+    cases = [' ', '::g', '1:2:3', ':a', '1:2:3:4:5:6:7:8:9',
+             generate_string(), generate_leters()]
     for case in cases:
-      assert twin_page.Create_twin_Planetarywith_InvalidIP(case).is_enabled() == False
-      assert twin_page.wait_for('IP address is not formatted correctly')  
+        assert twin_page.Create_twin_Planetarywith_InvalidIP(
+            case).is_enabled() == False
+        assert twin_page.wait_for('IP address is not formatted correctly')
     twin_page.Create_twin_Planetarywith_ValidIP()
     polka_page.authenticate_with_pass(password)
     assert twin_page.wait_for('Twin created!')
@@ -84,9 +89,10 @@ def test_edit_twin_ValidInput(browser):
     """
     twin_page, polka_page, password = before_test_setup(browser, False)
     twin_page.press_edit_btn()
-    cases = ['2001:db8:3333:4444:5555:6666:7777:8888','2001:db8:3333:4444:CCCC:DDDD:EEEE:FFFF','2001:db8::','::1234:5678','2001:0db8:0001:0000:0000:0ab9:C0A8:0102','2001:db8::1234:5678', '::1']
+    cases = ['2001:db8:3333:4444:5555:6666:7777:8888', '2001:db8:3333:4444:CCCC:DDDD:EEEE:FFFF',
+             '2001:db8::', '::1234:5678', '2001:0db8:0001:0000:0000:0ab9:C0A8:0102', '2001:db8::1234:5678', '::1']
     for case in cases:
-      assert twin_page.Edit_twin_Input(case) == True
+        assert twin_page.Edit_twin_Input(case) == True
     twin_page.press_submit_btn()
     polka_page.authenticate_with_pass(password)
     assert twin_page.wait_for('Twin updated!')
@@ -105,10 +111,11 @@ def test_edit_twin_InValidInput(browser):
     """
     twin_page, _, _ = before_test_setup(browser, False)
     twin_page.press_edit_btn()
-    cases = [' ', '::g', '1:2:3', ':a', '1:2:3:4:5:6:7:8:9', generate_string(), generate_leters()]
+    cases = [' ', '::g', '1:2:3', ':a', '1:2:3:4:5:6:7:8:9',
+             generate_string(), generate_leters()]
     for case in cases:
-      assert twin_page.Edit_twin_Input(case) == False
-      assert twin_page.wait_for('invalid IP format')
+        assert twin_page.Edit_twin_Input(case) == False
+        assert twin_page.wait_for('invalid IP format')
 
 
 def test_Delete_twin(browser):
@@ -143,4 +150,4 @@ def test_sum_sign(browser):
     twin_page, _, _ = before_test_setup(browser, False)
     twin_page.Sum_sign()
     assert '/html' in browser.page_source
-    # NO checking as devnet don't direct to TF Connect page https://gettft.com/auth/login?next_url=/gettft/shop/#/buy 
+    # NO checking as devnet don't direct to TF Connect page https://gettft.com/auth/login?next_url=/gettft/shop/#/buy

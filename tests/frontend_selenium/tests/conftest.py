@@ -22,7 +22,7 @@ def browser():
     driver.set_window_size(1200, 1100)
 
     # Make its calls wait up to 20 seconds for elements to appear
-    driver.implicitly_wait(60)
+    driver.implicitly_wait(25)
 
     # Return the WebDriver instance for the setup
     yield driver

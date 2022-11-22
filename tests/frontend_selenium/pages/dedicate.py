@@ -32,6 +32,7 @@ class DedicatePage:
         self.browser.find_element(By.XPATH, "//*[contains(text(), '"+ user +"')]").click()
         self.twin_id = int(self.browser.find_element(*self.twin_address).text[4:])
         self.browser.find_element(*self.dedicate_node).click()
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_any_elements_located((By.XPATH, "//*[contains(text(), 'Rows per page:')]")))
     
     def search_nodes(self, node):
         self.browser.find_element(*self.search_bar).send_keys(Keys.CONTROL + "a")
@@ -172,7 +173,8 @@ class DedicatePage:
         for table in tables:
             self.browser.find_element(By.XPATH, "//*[contains(text(), '"+table.capitalize()+"')]").click()
             WebDriverWait(self.browser, 5).until(EC.invisibility_of_element_located((By.XPATH, "//*[contains(text(), 'loading nodes ...')]")))
-            print(len(self.browser.find_elements(By.XPATH, f"//*[@id='{table}']{self.table_xpath}")))
+            if(self.browser.find_element(By.XPATH, f"//*[@id='{table}']/div/div/div[1]/table/tbody/tr").text == 'No data available'):
+                continue 
             for i in range(1, len(self.browser.find_elements(By.XPATH, f"//*[@id='{table}']{self.table_xpath}"))+1):
                 details = []
                 self.browser.find_element(By.XPATH, f"//*[@id='{table}']{self.table_xpath}[{str(i)}]/td[1]/button").click()
@@ -186,7 +188,6 @@ class DedicatePage:
                 details.append(self.browser.find_element(By.XPATH, f"//*[@id='{table}']{self.table_xpath}[{str(i+1)}]/td/div/div[3]/div/div[2]/div/div/div").text) # Farm Public Ips
                 self.browser.find_element(By.XPATH, f"//*[@id='{table}']{self.table_xpath}[{str(i)}]/td[1]/button").click()
                 nodes.append(details)
-                print(details)
         return nodes
 
     def check_free_node(self, node_list):
@@ -199,9 +200,6 @@ class DedicatePage:
         for i in range(1, len(self.browser.find_elements(By.XPATH, f"//*[@id='rentable']{self.table_xpath}"))+1):
             if(int(self.browser.find_element(By.XPATH, f"//*[@id='rentable']{self.table_xpath}[{str(i)}]/td[2]").text) == id):
                 self.browser.find_element(By.XPATH, f"//*[@id='rentable']{self.table_xpath}[{str(i)}]/td[9]/div/button").click()
-        # self.search_nodes(id)
-        # if ((self.browser.find_element(*self.reservation_button).text) == 'Reserve'):
-        #     self.browser.find_element(*self.reservation_button).click()
 
     def unreserve_node(self, id):
         self.browser.find_element(By.XPATH, "//*[contains(text(), 'Rented')]").click()
@@ -211,9 +209,6 @@ class DedicatePage:
                 self.browser.find_element(By.XPATH, f"//*[@id='rented']{self.table_xpath}[{str(i)}]/td[9]/div/button").click()
                 WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Are you sure you want to unreserve this dedicated node?')]")))
                 self.browser.find_element(*self.ok_btn).click()
-        # self.search_nodes(id)
-        # if ((self.browser.find_element(*self.reservation_button).text) == 'Unreserve'):
-        #     self.browser.find_element(*self.reservation_button).click()
 
     def wait_for(self, keyword):
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), '"+ keyword +"')]")))
