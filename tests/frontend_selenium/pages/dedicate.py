@@ -73,6 +73,8 @@ class DedicatePage:
                 node_hru = float("{:.1f}".format(node_hru))
             else:
                 node_hru = math.ceil(node_hru)
+            if(node_hru==0):
+                node_hru = int(node_hru)
             hru.append(node_hru)
         return hru
 
@@ -86,6 +88,8 @@ class DedicatePage:
                 node_mru = float("{:.1f}".format(node_mru))
             else:
                 node_mru = math.ceil(node_mru)
+            if(node_mru==0):
+                node_mru = int(node_mru)
             mru.append(node_mru)
         return mru
 
@@ -99,6 +103,8 @@ class DedicatePage:
                 node_sru = float("{:.1f}".format(node_sru))
             else:
                 node_sru = math.ceil(node_sru)
+            if(node_sru==0):
+                node_sru = int(node_sru)
             sru.append(node_sru)
         return sru
 
