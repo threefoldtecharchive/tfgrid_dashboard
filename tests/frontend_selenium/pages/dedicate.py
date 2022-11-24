@@ -70,7 +70,7 @@ class DedicatePage:
             if(bool and node_hru >= 1024):
                 node_hru = math.floor(node_hru/1024)
             elif (bool):
-                node_hru = float("{:.1f}".format(node_hru))
+                node_hru = float("{:.2f}".format(node_hru))
             else:
                 node_hru = math.ceil(node_hru)
             if(node_hru==0):
@@ -85,7 +85,7 @@ class DedicatePage:
             if(bool and node_mru >= 1024):
                 node_mru = math.floor(node_mru/1024)
             elif (bool):
-                node_mru = float("{:.1f}".format(node_mru))
+                node_mru = float("{:.2f}".format(node_mru))
             else:
                 node_mru = math.ceil(node_mru)
             if(node_mru==0):
@@ -100,7 +100,7 @@ class DedicatePage:
             if(bool and node_sru >= 1024):
                 node_sru = math.floor(node_sru/1024)
             elif (bool):
-                node_sru = float("{:.1f}".format(node_sru))
+                node_sru = float("{:.2f}".format(node_sru))
             else:
                 node_sru = math.ceil(node_sru)
             if(node_sru==0):
