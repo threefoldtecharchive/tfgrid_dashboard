@@ -33,5 +33,5 @@ export async function userAcceptedTermsAndConditions(
 ) {
   const tcs = await api.query.tfgridModule.usersTermsAndConditions(address);
   const parsedTcs = tcs.toJSON();
-  return parsedTcs.length > 0;
+  return parsedTcs ? true : false;
 }
