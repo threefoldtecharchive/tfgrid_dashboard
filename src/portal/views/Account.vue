@@ -128,14 +128,12 @@ export default class AccountView extends Vue {
       this.address = this.$route.params.accountID;
       this.balance = await getBalance(this.$api, this.address);
       this.twinID = await getTwinID(this.$api, this.address);
-      let document = await axios.get(this.documentLink);
-      this.documentHash = md5(document.data);
-
       if (this.twinID) {
         this.twinCreated = true;
       }
-
       this.openDialog = !(await userAcceptedTermsAndConditions(this.$api, this.address));
+      let document = await axios.get(this.documentLink);
+      this.documentHash = md5(document.data);
     } else {
       this.$toasted.show(`Can't connect to Polkadot API right now, please refresh the page or try again later`);
       this.$router.push({
