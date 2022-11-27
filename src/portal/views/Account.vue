@@ -1,9 +1,5 @@
 <template>
-  <v-container
-    fluid
-    v-if="openDialog"
-    height="100%"
-  >
+  <v-container fluid v-if="openDialog" height="100%">
     <v-dialog
       v-model="openDialog"
       persistent
@@ -22,21 +18,12 @@
         width="100px"
         sandbox="allow-forms allow-modals allow-scripts allow-popups allow-same-origin "
       ></iframe>
-      <v-btn
-        @click="acceptTC"
-        :loading="loadingAcceptedTC"
-      >
-        accept terms and conditions
-      </v-btn>
-
+      <v-btn @click="acceptTC" :loading="loadingAcceptedTC"> accept terms and conditions </v-btn>
     </v-dialog>
   </v-container>
 
   <v-container v-else-if="$store.state.portal.accounts.length === 0">
-    <v-card
-      transparent
-      outlined
-    >
+    <v-card transparent outlined>
       <WelcomeWindow />
     </v-card>
   </v-container>
@@ -49,32 +36,21 @@
       </h2>
     </v-card>
 
-    <v-container
-      fluid
-      class="px-0"
-    >
-
-      <v-card
-        class="pa-5 text-center"
-        height="175"
-      >
+    <v-container fluid class="px-0">
+      <v-card class="pa-5 text-center" height="175">
         <h3>Planetary using Yggdrasil IPV6</h3>
         <v-form v-model="isValidIPV6">
           <v-text-field
             label="Twin IP"
             v-model="ip"
             :error-messages="ipErrorMessage"
-            :rules="[() => !!ip || 'This field is required',
-            () => ipcheck() || 'invalid IP']"
+            :rules="[() => !!ip || 'This field is required', () => ipcheck() || 'invalid IP']"
           >
           </v-text-field>
         </v-form>
-        <v-btn
-          class="primary"
-          :loading="loadingTwinCreate"
-          @click="createTwinFunc(ip)"
-          :disabled="!isValidIPV6"
-        >create</v-btn>
+        <v-btn class="primary" :loading="loadingTwinCreate" @click="createTwinFunc(ip)" :disabled="!isValidIPV6"
+          >create</v-btn
+        >
       </v-card>
 
       <v-row>
@@ -84,7 +60,8 @@
               class="primary"
               :target="'blank'"
               :href="'https://library.threefold.me/info/manual/#/manual__yggdrasil_client'"
-            >why do i even need a twin?</v-btn>
+              >why do i even need a twin?</v-btn
+            >
           </v-card>
         </v-col>
       </v-row>
@@ -97,11 +74,8 @@ import axios from "axios";
 import { Component, Vue } from "vue-property-decorator";
 import { balanceInterface, getBalance } from "../lib/balance";
 import { createTwin, getTwin, getTwinID } from "../lib/twin";
-import blake from "blakejs";
-import {
-  acceptTermsAndCondition,
-  userAcceptedTermsAndConditions,
-} from "../lib/accepttc";
+import md5 from "md5";
+import { acceptTermsAndCondition, userAcceptedTermsAndConditions } from "../lib/accepttc";
 import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { activateThroughActivationService } from "../lib/activation";
 import Twin from "./Twin.vue";
@@ -147,29 +121,23 @@ export default class AccountView extends Vue {
         });
       }
     }
-    this.openDialog = !(await userAcceptedTermsAndConditions(
-      this.$api,
-      this.address
-    ));
+    this.openDialog = !(await userAcceptedTermsAndConditions(this.$api, this.address));
   }
   async mounted() {
     if (this.$api) {
       this.address = this.$route.params.accountID;
       this.balance = await getBalance(this.$api, this.address);
       this.twinID = await getTwinID(this.$api, this.address);
+      let document = await axios.get(this.documentLink);
+      this.documentHash = md5(document.data);
+
       if (this.twinID) {
         this.twinCreated = true;
       }
-      this.openDialog = !(await userAcceptedTermsAndConditions(
-        this.$api,
-        this.address
-      ));
-      let document = await axios.get(this.documentLink);
-      this.documentHash = blake.blake2bHex(document.data);
+
+      this.openDialog = !(await userAcceptedTermsAndConditions(this.$api, this.address));
     } else {
-      this.$toasted.show(
-        `Can't connect to Polkadot API right now, please refresh the page or try again later`
-      );
+      this.$toasted.show(`Can't connect to Polkadot API right now, please refresh the page or try again later`);
       this.$router.push({
         name: "accounts",
         path: "/",
@@ -182,20 +150,22 @@ export default class AccountView extends Vue {
     this.twinID = 0;
   }
   ipcheck() {
-    const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    const IPv4SegmentFormat = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
-    const IPv6SegmentFormat = '(?:[0-9a-fA-F]{1,4})';
+    const IPv6SegmentFormat = "(?:[0-9a-fA-F]{1,4})";
 
-    const ip6Regex = new RegExp('^(' +
-      `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
-      `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
-      `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
-      `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
-      `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
-      `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
-      `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
-      `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
-      ')([0-9a-fA-F]{1})?$');
+    const ip6Regex = new RegExp(
+      "^(" +
+        `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
+        `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
+        `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
+        `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
+        `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
+        `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
+        `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
+        `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
+        ")([0-9a-fA-F]{1})?$",
+    );
     if (ip6Regex.test(this.ip)) {
       this.ipErrorMessage = "";
       return true;
@@ -210,10 +180,7 @@ export default class AccountView extends Vue {
       this.address,
       this.$api,
       ip,
-      (res: {
-        events?: never[] | undefined;
-        status: { type: string; asFinalized: string; isFinalized: string };
-      }) => {
+      (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -226,9 +193,7 @@ export default class AccountView extends Vue {
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
-          console.log(
-            `Transaction included at blockHash ${status.asFinalized}`
-          );
+          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           if (!events.length) {
             this.$toasted.show("Twin creation failed!");
             this.loadingTwinCreate = false;
@@ -247,7 +212,7 @@ export default class AccountView extends Vue {
             });
           }
         }
-      }
+      },
     ).catch((err: { message: string }) => {
       this.$toasted.show(err.message);
       this.loadingTwinCreate = false;
@@ -261,10 +226,7 @@ export default class AccountView extends Vue {
       this.address,
       this.documentLink,
       this.documentHash,
-      (res: {
-        events?: never[] | undefined;
-        status: { type: string; asFinalized: string; isFinalized: string };
-      }) => {
+      (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -278,9 +240,7 @@ export default class AccountView extends Vue {
             this.openDialog = false;
         }
         if (status.isFinalized) {
-          console.log(
-            `Transaction included at blockHash ${status.asFinalized}`
-          );
+          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           if (!events.length) {
             this.$toasted.show("rejected");
             this.loadingAcceptedTC = false;
@@ -298,7 +258,7 @@ export default class AccountView extends Vue {
             });
           }
         }
-      }
+      },
     ).catch((err: { message: string }) => {
       this.$toasted.show(err.message);
       this.loadingAcceptedTC = false;
