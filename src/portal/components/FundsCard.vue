@@ -48,7 +48,6 @@ export default class FundsCard extends Vue {
   mounted() {
     this.$root.$on("updateBalance", (balance: number) => {
       this.balanceFree = balance;
-      this;
     });
   }
   async addTFT() {
