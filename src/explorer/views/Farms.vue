@@ -1,22 +1,7 @@
 <template>
   <Layout pageName="Farms">
     <template v-slot:filters>
-      <LayoutFilters
-        :items="filters.map((f) => f.chip_label)"
-        v-model="activeFiltersKeys"
-      />
-    </template>
-
-    <template v-slot:apply-filters>
-      <v-btn
-        color="primary"
-        :disabled="loading || !changed || isInvalid()"
-        :loading="loading"
-        @click="onApplyFilter"
-        class="mt-2"
-      >
-        Apply Filter
-      </v-btn>
+      <LayoutFilters :items="filters.map(f => f.chip_label)" v-model="activeFiltersKeys" />
     </template>
 
     <template v-slot:active-filters>
@@ -25,7 +10,7 @@
           :is="filter.component"
           :options="filter"
           v-model="filter.value"
-          @input="changed = true"
+          @input="onApplyFilter"
           @invalid="invalidFilter"
         />
       </div>
@@ -50,9 +35,7 @@
         @click:row="openSheet"
         :disable-sort="false"
         multi-sort
-        @update:options="
-          onUpdateOptions($event.page, $event.sortBy, $event.sortDesc)
-        "
+        @update:options="onUpdateOptions($event.page, $event.sortBy, $event.sortDesc)"
       >
         <template v-slot:[`item.certificationType`]="{ item }">
           {{ item.certificationType || "None" }}
@@ -104,13 +87,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import DetailsV2 from "../components/DetailsV2.vue";
-import {
-  filterQuery,
-  getFarmsQuery,
-  IFarm,
-  IFetchPaginatedData,
-  IFilterQuery,
-} from "../graphql/api";
+import { filterQuery, getFarmsQuery, IFarm, IFetchPaginatedData, IFilterQuery } from "../graphql/api";
 import Layout from "../components/Layout.vue";
 import { IPaginationData } from "../store/state";
 import { PAGE_LIMIT } from "../json/constants";
@@ -121,7 +98,7 @@ import getFarmPublicIPs from "../utils/getFarmPublicIps";
 import gql from "graphql-tag";
 import equalArrays from "../utils/equalArrays";
 import LayoutFilters from "../components/LayoutFilters.vue";
-import { execute } from 'graphql';
+import { execute } from "graphql";
 @Component({
   components: {
     Layout,
@@ -198,9 +175,9 @@ export default class Farms extends Vue {
             total: count,
             items: this.farms.items.set(this.page, items.map(getFarmPublicIPs)),
           };
-        }
+        },
       )
-      .catch((err) => {
+      .catch(err => {
         console.log("Error", err);
       })
       .finally(() => {
@@ -219,26 +196,26 @@ export default class Farms extends Vue {
   public onApplyFilter() {
     this.changed = false;
     const _vars: any = this.activeFilters
-      .filter((f) => (Array.isArray(f.value) ? f.value.length > 0 : true))
+      .filter(f => (Array.isArray(f.value) ? f.value.length > 0 : true))
       .reduce((res, f) => {
         const { symbol, value, getValue } = f;
         res[symbol] = getValue?.(f) ?? value;
         return res;
       }, {} as { [key: string]: any });
-    const orderBy: string[] = [];
-    for (let i = 0; i < this.sort.by.length; i++) {
-      const by = this.sort.by[i];
-      const desc = this.sort.desc[i];
-      switch (by) {
-        case "id":
-          orderBy.push(desc ? "farmID_DESC" : "farmID_ASC");
-          break;
-        case "name":
-          orderBy.push(desc ? "name_DESC" : "name_ASC");
-          break;
-      }
-    }
-    _vars.orderBy = orderBy.length === 0 ? undefined : orderBy;
+    //   const orderBy: string[] = [];
+    // for (let i = 0; i < this.sort.by.length; i++) {
+    //   const by = this.sort.by[i];
+    //   const desc = this.sort.desc[i];
+    //   switch (by) {
+    //     case "id":
+    //       orderBy.push(desc ? "farmID_DESC" : "farmID_ASC");
+    //       break;
+    //     case "name":
+    //       orderBy.push(desc ? "name_DESC" : "name_ASC");
+    //       break;
+    //   }
+    // }
+    // _vars.orderBy = orderBy.length === 0 ? undefined : orderBy;
     this._vars = _vars;
     this.$store.state.explorer.farms = {
       total: 0,
@@ -250,7 +227,7 @@ export default class Farms extends Vue {
   activeFiltersKeys: string[] = ["Farm ID", "Name"];
   get activeFilters(): IFilterOptions[] {
     const keySet = new Set(this.activeFiltersKeys);
-    return this.filters.filter((f) => keySet.has(f.chip_label));
+    return this.filters.filter(f => keySet.has(f.chip_label));
   }
   public filters: IFilterOptions[] = [
     {
@@ -262,8 +239,9 @@ export default class Farms extends Vue {
       multiple: true,
       symbol: "farmId_in",
       key: "farmID",
-      getValue: (f) => {
-        return (f.value as string[]).map((x) => +x );
+      getValue: f => {
+        f.value = f.value.slice(-1);
+        return (f.value as string[]).map(x => +x);
       },
     },
     {
@@ -272,13 +250,12 @@ export default class Farms extends Vue {
       label: "Filter By Farm Name",
       items(sub_string: string) {
         return fetch(`${window.configs.APP_GRIDPROXY_URL}/farms?name_contains=${sub_string}`)
-        .then((res) =>{
-          return res.json()
-        })
-        .then(( data : any) => {
-          console.log(data);
-          return data.map((x: any) => x.name);
-        });
+          .then(res => {
+            return res.json();
+          })
+          .then((data: any) => {
+            return data.map((x: any) => x.name);
+          });
       },
       value: [],
       multiple: true,
@@ -289,40 +266,42 @@ export default class Farms extends Vue {
       component: InFilterV2,
       chip_label: "Twin ID",
       label: "Filter By Twin ID",
-      items: (_) => Promise.resolve([]),
+      items: _ => Promise.resolve([]),
       value: [],
       multiple: true,
       symbol: "twinId_in",
       key: "twinId",
-      getValue: (f) => {
-        return (f.value as string[]).map((x) => +x );
+      getValue: f => {
+        f.value = f.value.slice(-1);
+        return (f.value as string[]).map(x => +x);
       },
     },
     {
       component: InFilterV2,
       chip_label: "Certification Type",
       label: "Filter By Certification Type",
-      items: (_) => Promise.resolve(["Gold", "NotCertified"]),
+      items: _ => Promise.resolve(["Gold", "NotCertified"]),
       value: [],
       init: true,
       multiple: true,
       symbol: "certificationType_in",
       key: "certificationType",
-      getValue: (f) => {
-        return (f.value as string[]).map((x) => x );
+      getValue: f => {
+        f.value = f.value.slice(-1);
+        return (f.value as string[]).map(x => x);
       },
     },
     {
       component: InFilterV2,
       chip_label: "Pricing Policy",
       label: "Filter By Pricing policy",
-      items: (_) => Promise.resolve([...this._pricingPolicy.values()]),
+      items: _ => Promise.resolve([...this._pricingPolicy.values()]),
       value: [],
       init: true,
       multiple: true,
       symbol: "pricingPolicyId_in",
       key: "pricingPolicyId",
-      getValue: (f) => {
+      getValue: f => {
         return (f.value as string[]).map(this.getKeyByValue.bind(this));
       },
     },
@@ -354,15 +333,15 @@ export default class Farms extends Vue {
     this.farm = null;
   }
 
-  invalidFilter(event: {symbol: string, invalid: boolean}) {
-    const checkFilter = this.activeFilters.find((f) => (f.symbol === event.symbol));
-    if(checkFilter){
+  invalidFilter(event: { symbol: string; invalid: boolean }) {
+    const checkFilter = this.activeFilters.find(f => f.symbol === event.symbol);
+    if (checkFilter) {
       checkFilter.invalid = event.invalid;
     }
   }
 
-  isInvalid():boolean {
-    return this.activeFilters.some((f) => f.invalid === true)
+  isInvalid(): boolean {
+    return this.activeFilters.some(f => f.invalid === true);
   }
 }
 </script>
