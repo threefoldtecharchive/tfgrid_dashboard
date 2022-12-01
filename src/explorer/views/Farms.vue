@@ -236,12 +236,11 @@ export default class Farms extends Vue {
       label: "Filter By Farm ID",
       items: () => Promise.resolve([]),
       value: [],
-      multiple: true,
+      multiple: false,
       symbol: "farmId_in",
       key: "farmID",
       getValue: f => {
-        f.value = f.value.slice(-1);
-        return (f.value as string[]).map(x => +x);
+        return +f.value;
       },
     },
     {
@@ -258,7 +257,7 @@ export default class Farms extends Vue {
           });
       },
       value: [],
-      multiple: true,
+      multiple: false,
       symbol: "name_in",
       key: "farmName",
     },
@@ -268,12 +267,11 @@ export default class Farms extends Vue {
       label: "Filter By Twin ID",
       items: _ => Promise.resolve([]),
       value: [],
-      multiple: true,
+      multiple: false,
       symbol: "twinId_in",
       key: "twinId",
       getValue: f => {
-        f.value = f.value.slice(-1);
-        return (f.value as string[]).map(x => +x);
+        return +f.value;
       },
     },
     {
@@ -283,12 +281,11 @@ export default class Farms extends Vue {
       items: _ => Promise.resolve(["Gold", "NotCertified"]),
       value: [],
       init: true,
-      multiple: true,
+      multiple: false,
       symbol: "certificationType_in",
       key: "certificationType",
       getValue: f => {
-        f.value = f.value.slice(-1);
-        return (f.value as string[]).map(x => x);
+        return +f.value;
       },
     },
     {
@@ -302,7 +299,7 @@ export default class Farms extends Vue {
       symbol: "pricingPolicyId_in",
       key: "pricingPolicyId",
       getValue: f => {
-        return (f.value as string[]).map(this.getKeyByValue.bind(this));
+        return +f.value;
       },
     },
   ];
