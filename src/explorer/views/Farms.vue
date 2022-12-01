@@ -316,9 +316,9 @@ export default class Farms extends Vue {
     this.farm = null;
   }
 
-  invalidFilter(event: { symbol: string; invalid: boolean }) {
-    const checkFilter = this.activeFilters.find(f => f.symbol === event.symbol);
-    if (checkFilter) {
+  invalidFilter(event: {symbol: string, invalid: boolean}) {
+    const checkFilter = this.activeFilters.find((f) => (f.symbol === event.symbol));
+    if(checkFilter){
       checkFilter.invalid = event.invalid;
     }
   }
