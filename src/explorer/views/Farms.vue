@@ -202,20 +202,6 @@ export default class Farms extends Vue {
         res[symbol] = getValue?.(f) ?? value;
         return res;
       }, {} as { [key: string]: any });
-    //   const orderBy: string[] = [];
-    // for (let i = 0; i < this.sort.by.length; i++) {
-    //   const by = this.sort.by[i];
-    //   const desc = this.sort.desc[i];
-    //   switch (by) {
-    //     case "id":
-    //       orderBy.push(desc ? "farmID_DESC" : "farmID_ASC");
-    //       break;
-    //     case "name":
-    //       orderBy.push(desc ? "name_DESC" : "name_ASC");
-    //       break;
-    //   }
-    // }
-    // _vars.orderBy = orderBy.length === 0 ? undefined : orderBy;
     this._vars = _vars;
     this.$store.state.explorer.farms = {
       total: 0,
