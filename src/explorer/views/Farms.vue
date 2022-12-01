@@ -87,18 +87,16 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import DetailsV2 from "../components/DetailsV2.vue";
-import { filterQuery, getFarmsQuery, IFarm, IFetchPaginatedData, IFilterQuery } from "../graphql/api";
+import { getFarmsQuery, IFarm, IFetchPaginatedData } from "../graphql/api";
 import Layout from "../components/Layout.vue";
 import { IPaginationData } from "../store/state";
 import { PAGE_LIMIT } from "../json/constants";
 import InFilterV2 from "../components/InFilterV2.vue";
 import IFilterOptions from "../types/FilterOptions";
-import apollo from "../plugins/apollo";
 import getFarmPublicIPs from "../utils/getFarmPublicIps";
 import gql from "graphql-tag";
 import equalArrays from "../utils/equalArrays";
 import LayoutFilters from "../components/LayoutFilters.vue";
-import { execute } from "graphql";
 @Component({
   components: {
     Layout,
@@ -316,9 +314,9 @@ export default class Farms extends Vue {
     this.farm = null;
   }
 
-  invalidFilter(event: {symbol: string, invalid: boolean}) {
-    const checkFilter = this.activeFilters.find((f) => (f.symbol === event.symbol));
-    if(checkFilter){
+  invalidFilter(event: { symbol: string; invalid: boolean }) {
+    const checkFilter = this.activeFilters.find(f => f.symbol === event.symbol);
+    if (checkFilter) {
       checkFilter.invalid = event.invalid;
     }
   }
