@@ -8,7 +8,13 @@ export async function getBalance(
   api: {
     query: {
       system: {
-        account: (arg0: string) => { data: { free: { toJSON: () => number }; feeFrozen: { toJSON: () => number } } };
+        account: (arg0: string) => {
+          data: {
+            feeFrozen: { toJSON: () => number };
+            free: { toJSON: () => number };
+            reserved: { toJSON: () => number };
+          };
+        };
       };
     };
   },
