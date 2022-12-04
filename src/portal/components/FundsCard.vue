@@ -1,18 +1,10 @@
 <template>
   <v-container>
     <v-card class="d-flex align-center font-weight-bold mr-4 primary">
-      <v-card-text
-        style="padding: 5px;"
-        class="pr-0"
-      >
+      <v-card-text style="padding: 5px" class="pr-0">
         <v-tooltip>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              @click="openBalance = true"
-              v-bind="attrs"
-              v-on="on"
-              class="d-flex align-center"
-            >
+            <v-btn @click="openBalance = true" v-bind="attrs" v-on="on" class="d-flex align-center">
               <p class="mr-1">{{ balanceFree }}</p>
               <p class="font-weight-black">TFT</p>
             </v-btn>
@@ -21,17 +13,10 @@
         </v-tooltip>
       </v-card-text>
       <v-card-actions class="px-0">
-        <v-btn
-          @click="addTFT()"
-          style="max-width: 90px"
-          :loading="loadingAddTFT"
-        >GET TFT</v-btn>
+        <v-btn @click="addTFT()" style="max-width: 90px" :loading="loadingAddTFT">GET TFT</v-btn>
       </v-card-actions>
     </v-card>
-    <v-dialog
-      v-model="openBalance"
-      max-width="600"
-    >
+    <v-dialog v-model="openBalance" max-width="600">
       <v-card>
         <v-toolbar color="primary"> Balance Summary </v-toolbar>
         <v-card-text class="pa-5">
@@ -41,10 +26,7 @@
           </v-container>
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn
-            @click="openBalance = false"
-            color="grey lighten-2 black--text"
-          >Close</v-btn>
+          <v-btn @click="openBalance = false" color="grey lighten-2 black--text">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -63,26 +45,20 @@ export default class FundsCard extends Vue {
   @Prop({ required: true }) balanceFree!: number;
   @Prop({ required: true }) balanceReserved!: number;
   openBalance = false;
-  mounted() { 
-    this.$root.$on('updateBalance', (balance: number) => { 
-     this.balanceFree = balance;
-    })
+  mounted() {
+    this.$root.$on("updateBalance", (balance: number) => {
+      this.balanceFree = balance;
+    });
   }
   async addTFT() {
     if (config.network !== "dev" && config.network !== "qa") {
-      window.open(
-        "https://gettft.com/gettft/",
-        "_blank"
-      );
+      window.open("https://gettft.com/gettft/", "_blank");
     } else {
       this.loadingAddTFT = true;
       getMoreFunds(
         this.$route.params.accountID,
         this.$api,
-        (res: {
-          events?: never[] | undefined;
-          status: { type: string; asFinalized: string; isFinalized: string };
-        }) => {
+        (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
           console.log(res);
           if (res instanceof Error) {
             console.log(res);
@@ -95,9 +71,7 @@ export default class FundsCard extends Vue {
               this.$toasted.show(`Transaction submitted`);
           }
           if (status.isFinalized) {
-            console.log(
-              `Transaction included at blockHash ${status.asFinalized}`
-            );
+            console.log(`Transaction included at blockHash ${status.asFinalized}`);
             if (!events.length) {
               this.$toasted.show("Get more TFT failed!");
               this.loadingAddTFT = false;
@@ -108,23 +82,18 @@ export default class FundsCard extends Vue {
                 if (section === "balances" && method === "Transfer") {
                   this.$toasted.show("Success!");
                   this.loadingAddTFT = false;
-                  getBalance(this.$api, this.$route.params.accountID).then(
-                    (balance) => {
-                      this.$emit("update:balanceFree", balance.free);
-                      this.$emit("update:balanceReserved", balance.reserved);
-                    }
-                  );
-                } else if (
-                  section === "system" &&
-                  method === "ExtrinsicFailed"
-                ) {
+                  getBalance(this.$api, this.$route.params.accountID).then(balance => {
+                    this.$emit("update:balanceFree", balance.free);
+                    this.$emit("update:balanceReserved", balance.reserved);
+                  });
+                } else if (section === "system" && method === "ExtrinsicFailed") {
                   this.$toasted.show("Get more TFT failed!");
                   this.loadingAddTFT = false;
                 }
               });
             }
           }
-        }
+        },
       ).catch((err: { message: string }) => {
         console.log(err.message);
         this.loadingAddTFT = false;
