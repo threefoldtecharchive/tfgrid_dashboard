@@ -114,6 +114,7 @@ export default class NodesTable extends Vue {
   }
 
   async mounted() {
+    this.address = this.$route.params.accountID;
     await this.getNodes();
   }
 

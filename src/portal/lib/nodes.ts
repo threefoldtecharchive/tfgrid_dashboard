@@ -372,7 +372,7 @@ export async function calDiscount(
 
   // discount for Twin Balance
   const balance = await getBalance(api, address);
-  const TFTbalance = balance.free * 10000000;
+  const TFTbalance = balance.free;
 
   const discountPackages: any = {
     none: {
@@ -455,7 +455,7 @@ export async function getDNodes(
   }[] = [];
   for (const node of nodes) {
     const price = countPrice(pricing, node);
-    const [discount, discountLevel] = await calDiscount(api, address, pricing, price);
+    const [discount, discountLevel] = await calDiscount(api, address, pricing, price);    
     const ips = await getIpsForFarm(node.farmId);
     dNodes.push({
       nodeId: node.nodeId,
