@@ -455,7 +455,7 @@ export async function getDNodes(
   }[] = [];
   for (const node of nodes) {
     const price = countPrice(pricing, node);
-    const [discount, discountLevel] = await calDiscount(api, address, pricing, price);    
+    const [discount, discountLevel] = await calDiscount(api, address, pricing, price);
     const ips = await getIpsForFarm(node.farmId);
     dNodes.push({
       nodeId: node.nodeId,
