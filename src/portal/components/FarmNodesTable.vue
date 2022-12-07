@@ -1,31 +1,34 @@
 <template>
   <div>
-    
+    <div style="padding-top: 20px"></div>
+
+    <!-- Show only if you have nodes -->
     <div v-if="nodes.length">
-      <v-text-field
+      <!-- Searching/Sorting is disabled for now -->
+      <!-- <v-text-field
         v-model="searchTerm"
         color="primary darken-2"
         label="Search by node ID, serial number, certification, farming policy ID"
-      ></v-text-field>
+      ></v-text-field> -->
+
       <v-data-table
         :headers="headers"
-        :items="filteredNodes()"
+        :items="nodes"
         :single-expand="true"
         :expanded.sync="expanded"
-        item-key="id"
+        :loading="loadingNodes"
         show-expand
+        :disable-sort="true"
+        item-key="id"
         class="elevation-1"
         sort-by="id"
+        :server-items-length="+count"
+        @update:options="onOptionChange($event.page, $event.itemsPerPage)"
       >
         <template v-slot:top>
-          <v-toolbar flat>
+          <v-toolbar flat class="primary white--text">
             <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
-            <v-btn
-              v-if="network == 'main'"
-              class="ml-auto"
-              @click="downloadAllReceipts()"
-            >Download Receipts</v-btn>
-
+            <v-btn v-if="network == 'main'" class="ml-auto" @click="downloadAllReceipts()">Download Receipts</v-btn>
           </v-toolbar>
         </template>
 
@@ -36,133 +39,88 @@
         </template>
         <template v-slot:[`item.status`]="{ item }">
           <p class="text-center mt-1 mb-0">
-            <v-chip :color="getStatus(item).color">{{
-            getStatus(item).status
-          }}</v-chip>
+            <v-chip :color="getStatus(item).color">{{ getStatus(item).status }}</v-chip>
           </p>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
-          <v-progress-circular
-            v-if="loadingDelete"
-            indeterminate
-            color="primary"
-          ></v-progress-circular>
+          <v-progress-circular v-if="loadingDelete" indeterminate color="primary"></v-progress-circular>
           <!--delete node-->
           <!--removed until fixed -->
           <!--config Ips-->
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-icon
-                class="configIcon"
-                medium
-                v-on="on"
-                v-bind="attrs"
-                @click="openPublicConfig(item)"
-              >
+              <v-icon class="configIcon" medium v-on="on" v-bind="attrs" @click="openPublicConfig(item)">
                 mdi-earth
               </v-icon>
             </template>
             <span>Add a public config</span>
           </v-tooltip>
         </template>
+
         <!--expanded node view-->
         <template v-slot:expanded-item="{ headers, item }">
-          <td
-            :colspan="headers.length"
-            key="item.id"
-          >
-
+          <td :colspan="headers.length" key="item.id">
             <v-container fluid>
               <v-row :justify="'space-around'">
                 <v-col cols="8">
                   <v-row>
-                    <v-flex
-                      xs3
-                      class="text-left pr-2"
-                    >Node ID</v-flex>
+                    <v-flex xs3 class="text-left pr-2">Node ID</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
-                      <span>{{ item.nodeID}}</span>
+                      <span>{{ item.nodeId }}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
-                    <v-flex
-                      xs3
-                      class="text-left pr-2"
-                    >Farm ID</v-flex>
+                    <v-flex xs3 class="text-left pr-2">Farm ID</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
-                      <span>{{ item.farmID }}</span>
+                      <span>{{ item.farmId }}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
-                    <v-flex
-                      xs3
-                      class="text-left pr-2"
-                    >Twin ID</v-flex>
+                    <v-flex xs3 class="text-left pr-2">Twin ID</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
-                      <span>{{ item.twinID }}</span>
+                      <span>{{ item.twinId }}</span>
                     </v-flex>
                   </v-row>
 
                   <v-row>
-                    <v-flex
-                      xs3
-                      class="text-left pr-2"
-                    >Certification </v-flex>
+                    <v-flex xs3 class="text-left pr-2">Certification </v-flex>
 
                     <v-flex class="text-truncate font-weight-bold">
-                      <span>{{ item.certification }}</span>
+                      <span>{{ item.certificationType }}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
-                    <v-flex
-                      xs3
-                      class="text-left pr-2"
-                    >First boot at</v-flex>
+                    <v-flex xs3 class="text-left pr-2">First boot at</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
-                      <span>{{ new Date(parseInt(item.createdAt)) }}</span>
+                      <span>{{ new Date(parseInt(item.created) * 1000) }}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
-                    <v-flex
-                      xs3
-                      class="text-left pr-2"
-                    >Updated at</v-flex>
+                    <v-flex xs3 class="text-left pr-2">Updated at</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
-                      <span>{{ new Date(parseInt(item.updatedAt)) }}</span>
+                      <span>{{ new Date(parseInt(item.updatedAt) * 1000) }}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
-                    <v-flex
-                      xs3
-                      class="text-left pr-2"
-                    >Country</v-flex>
+                    <v-flex xs3 class="text-left pr-2">Country</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
                       <span>{{ item.country }}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
-                    <v-flex
-                      xs3
-                      class="text-left pr-2"
-                    >City</v-flex>
+                    <v-flex xs3 class="text-left pr-2">City</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
                       <span>{{ item.city }}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
-                    <v-flex
-                      xs3
-                      class="text-left pr-2"
-                    >Serial Number</v-flex>
+                    <v-flex xs3 class="text-left pr-2">Serial Number</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
                       <span>{{ item.serialNumber }}</span>
                     </v-flex>
                   </v-row>
                   <v-row>
-                    <v-flex
-                      xs3
-                      class="text-left pr-2"
-                    >Farming Policy ID</v-flex>
+                    <v-flex xs3 class="text-left pr-2">Farming Policy ID</v-flex>
                     <v-flex class="text-truncate font-weight-bold">
                       <span>{{ item.farmingPolicyId }}</span>
                     </v-flex>
@@ -172,13 +130,7 @@
                     <span>For more information visit the Capacity Explorer</span>
                   </v-row>
                 </v-col>
-                <v-col
-                  v-if="network == 'main' "
-                  cols="4"
-                  class="text-center"
-                  :align-self="'center'"
-                >
-
+                <v-col v-if="network == 'main'" cols="4" class="text-center" :align-self="'center'">
                   <v-flex class="text-truncate font-weight-bold">
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
@@ -191,36 +143,22 @@
                           color="light-green darken-2"
                         />
 
-                        <span>
-                          Uptime: {{getNodeUptimePercentage(item) }} %
-
-                        </span>
+                        <span> Uptime: {{ getNodeUptimePercentage(item) }} % </span>
                       </template>
-
+                      <span>Current Node Uptime Percentage (since start of the month)</span>
                     </v-tooltip>
                   </v-flex>
-
                 </v-col>
               </v-row>
             </v-container>
 
             <v-col>
-              <v-expansion-panels
-                v-model="resourcesPanel"
-                :disabled="false"
-                focusable
-              >
+              <v-expansion-panels v-model="resourcesPanel" :disabled="false" focusable>
                 <v-expansion-panel>
-                  <v-expansion-panel-header>
-                    Resource units reserved
-                  </v-expansion-panel-header>
+                  <v-expansion-panel-header> Resource units reserved </v-expansion-panel-header>
                   <v-expansion-panel-content>
                     <v-row>
-                      <v-col
-                        v-for="(value, key) in item.resourcesTotal"
-                        :key="key"
-                        align="center"
-                      >
+                      <v-col v-for="(value, key) in item.total_resources" :key="key" align="center">
                         <v-flex class="text-center pr-2">
                           <span class="text-uppercase">{{ key }}</span>
                         </v-flex>
@@ -232,20 +170,19 @@
                                 :rotate="-90"
                                 :size="100"
                                 :width="15"
-                                :value="isNaN(getPercentage(key))? 0: getPercentage(key)"
+                                :value="isNaN(getPercentage(key)) ? 0 : getPercentage(key)"
                                 color="light-green darken-2"
                               />
-                              <template v-if="item.resourcesUsed">
-                                <span v-if="item.resourcesTotal[key] > 1000">
-                                  {{ byteToGB(item.resourcesUsed[key]) }} /
-                                  {{ byteToGB(item.resourcesTotal[key]) }} GB
+                              <template v-if="item.used_resources">
+                                <span v-if="item.total_resources[key] > 1000">
+                                  {{ byteToGB(item.used_resources[key]) }} /
+                                  {{ byteToGB(item.total_resources[key]) }} GB
                                 </span>
-                                <span v-else-if='item.resourcesTotal[key]== 0' >
-                                  NA
-                                </span>
+
+                                <span v-else-if="item.total_resources[key] == 0"> NA </span>
                                 <span v-else>
-                                  {{ item.resourcesUsed[key] }} /
-                                  {{ item.resourcesTotal[key] }}
+                                  {{ item.used_resources[key] }} /
+                                  {{ item.total_resources[key] }}
                                 </span>
                               </template>
                             </template>
@@ -256,39 +193,26 @@
                   </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>
-
             </v-col>
             <v-col v-if="network == 'main'">
-              <v-expansion-panels
-                v-model="receiptsPanel"
-                :disabled="false"
-                focusable
-                single
-              >
+              <v-expansion-panels v-model="receiptsPanel" :disabled="false" focusable single>
                 <v-expansion-panel>
-                  <v-expansion-panel-header>
-                    Node Statistics
-                  </v-expansion-panel-header>
+                  <v-expansion-panel-header> Node Statistics </v-expansion-panel-header>
                   <v-expansion-panel-content>
-
                     <ReceiptsCalendar :node="item" />
-
                   </v-expansion-panel-content>
                 </v-expansion-panel>
-
               </v-expansion-panels>
             </v-col>
           </td>
         </template>
       </v-data-table>
+
       <!--public config dialog-->
-      <v-dialog
-        v-model="openPublicConfigDialog"
-        width="800"
-      >
+      <v-dialog v-model="openPublicConfigDialog" width="800">
         <v-card>
           <v-card-title class="text-h5">
-            Add a public config to your node with ID: {{ nodeToEdit.id }}
+            Add a public config to your node with ID: {{ nodeToEdit.nodeId }}
           </v-card-title>
 
           <v-card-text class="text">
@@ -362,113 +286,69 @@
           <v-divider></v-divider>
 
           <v-card-actions>
-            <v-btn
-              text
-              color="error"
-              @click="openRemoveConfigWarningDialog = true;"
-            >
-              Remove config
-            </v-btn>
+            <v-btn text color="error" @click="openRemoveConfigWarningDialog = true"> Remove config </v-btn>
             <v-spacer></v-spacer>
-            <v-btn
-              color="grey lighten-2 black--text"
-              @click="openPublicConfigDialog = false"
-            >
-              Cancel
-            </v-btn>
-            <v-btn
-              color="primary white--text"
-              @click=" openWarningDialog = true;"
-              :disabled="!isValidPublicConfig"
-            >
+            <v-btn color="grey lighten-2 black--text" @click="openPublicConfigDialog = false"> Cancel </v-btn>
+            <v-btn color="primary white--text" @click="openWarningDialog = true" :disabled="!isValidPublicConfig">
               Save
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
+
       <!-- delete item dialog-->
-      <v-dialog
-        v-model="openDeleteDialog"
-        max-width="700px"
-      >
+      <v-dialog v-model="openDeleteDialog" max-width="700px">
         <v-card>
-          <v-card-title class="text-h5">Are you certain you want to delete this node from your
-            farm?</v-card-title>
-          <v-card-text>This will delete the node on chain, this action is
-            irreversible</v-card-text>
+          <v-card-title class="text-h5">Are you certain you want to delete this node from your farm?</v-card-title>
+          <v-card-text>This will delete the node on chain, this action is irreversible</v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
-              color="grey lighten-2 black--text"
-              @click="openDeleteDialog = false"
-            >Cancel</v-btn>
-            <v-btn
-              color="primary white--text"
-              @click="deleteItem()"
-            >OK</v-btn>
+            <v-btn color="grey lighten-2 black--text" @click="openDeleteDialog = false">Cancel</v-btn>
+            <v-btn color="primary white--text" @click="deleteItem()">OK</v-btn>
             <v-spacer></v-spacer>
           </v-card-actions>
         </v-card>
       </v-dialog>
 
-      <v-dialog
-        v-model="openWarningDialog"
-        max-width="700"
-      >
+      <v-dialog v-model="openWarningDialog" max-width="700">
         <v-card>
           <v-card-title class="text-h5">Are you certain you want to update this node's public config?</v-card-title>
-          <v-card-text> This action is
-            irreversible</v-card-text>
+          <v-card-text> This action is irreversible</v-card-text>
           <v-card-actions>
-            <v-btn
-              @click="saveConfig()"
-              :loading="loadingPublicConfig"
-            >Submit</v-btn>
+            <v-btn @click="saveConfig()" :loading="loadingPublicConfig">Submit</v-btn>
             <v-btn @click="openWarningDialog = false">Cancel</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
 
-      <v-dialog
-        v-model="openRemoveConfigWarningDialog"
-        max-width="700"
-      >
+      <v-dialog v-model="openRemoveConfigWarningDialog" max-width="700">
         <v-card>
           <v-card-title class="text-h5">Are you certain you want to remove this node's public config?</v-card-title>
-          <v-card-text> This action is
-            irreversible</v-card-text>
+          <v-card-text> This action is irreversible</v-card-text>
           <v-card-actions>
-            <v-btn
-              @click="removeConfig()"
-              :loading="loadingPublicConfig"
-            >Submit</v-btn>
+            <v-btn @click="removeConfig()" :loading="loadingPublicConfig">Submit</v-btn>
             <v-btn @click="openRemoveConfigWarningDialog = false">Cancel</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </div>
-    <div v-if="loadingNodes">
-      <v-data-table
-        loading
-        loading-text="loading nodes.."
-      ></v-data-table>
+
+    <div v-if="initLoading">
+      <v-data-table loading loading-text="loading nodes.." :headers="headers">
+        <template v-slot:top>
+          <v-toolbar flat class="primary white--text">
+            <v-toolbar-title>Your Farm Nodes</v-toolbar-title>
+          </v-toolbar>
+        </template>
+      </v-data-table>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import moment from "moment";
-import {
-  byteToGB,
-  generateNodeSummary,
-  generateReceipt,
-  getNodeUptimePercentage,
-} from "@/portal/lib/nodes";
-import {
-  addNodePublicConfig,
-  deleteNode,
-  nodeInterface,
-} from "@/portal/lib/farms";
+import { default as PrivateIp } from "private-ip";
+import { byteToGB, generateNodeSummary, generateReceipt, getNodeUptimePercentage } from "@/portal/lib/nodes";
+import { addNodePublicConfig, deleteNode, nodeInterface } from "@/portal/lib/farms";
 import { hex2a } from "@/portal/lib/util";
 import ReceiptsCalendar from "./ReceiptsCalendar.vue";
 import jsPDF from "jspdf";
@@ -483,10 +363,11 @@ export default class FarmNodesTable extends Vue {
   receiptsPanel = [];
   resourcesPanel = [];
   network = config.network;
+  validator = require("validator");
 
   headers = [
-    { text: "Node ID", value: "nodeID", align: "center" },
-    { text: "Farm ID", value: "farmID", align: "center" },
+    { text: "Node ID", value: "nodeId", align: "center" },
+    { text: "Farm ID", value: "farmId", align: "center" },
     { text: "Country", value: "country", align: "center" },
     { text: "Serial Number", value: "serialNumber", align: "center" },
     { text: "Status", value: "status", align: "center" },
@@ -498,12 +379,34 @@ export default class FarmNodesTable extends Vue {
   editedIndex = -1;
   editedItem: any;
   nodeToEdit: nodeInterface = {
-    resourcesTotal: {
-      cru: "",
-      hru: "",
-      mru: "",
-      sru: "",
+    id: "",
+    nodeId: 0,
+    farmId: 0,
+    twinId: 0,
+    country: "",
+    gridVersion: 0,
+    city: "",
+    uptime: 0,
+    created: 0,
+    farmingPolicyId: 0,
+    updatedAt: 0,
+    total_resources: {
+      cru: 0,
+      sru: 0,
+      hru: 0,
+      mru: 0,
     },
+    used_resources: {
+      cru: 0,
+      sru: 0,
+      hru: 0,
+      mru: 0,
+    },
+    location: {
+      country: "",
+      city: "",
+    },
+
     publicConfig: {
       domain: "",
       gw4: "",
@@ -511,28 +414,14 @@ export default class FarmNodesTable extends Vue {
       ipv4: "",
       ipv6: "",
     },
+    status: "",
+    certificationType: "",
+    dedicated: true,
+    rentContractId: 0,
+    rentedByTwinId: 0,
     receipts: [],
-    certification: "",
-    city: "",
-    connectionPrice: null,
-    country: "",
-    created: 0,
-    createdAt: "",
-    farmID: 0,
-    farmingPolicyId: 0,
-    gridVersion: 0,
-    id: "",
-    location: {
-      latitude: "",
-      longitude: "",
-    },
-    nodeID: 0,
-    secure: false,
     serialNumber: "",
-    twinID: 0,
-    updatedAt: "",
-    uptime: 0,
-    virtualized: false,
+    downtime: 0,
   };
   nodeToDelete: { id: string } = {
     id: "",
@@ -540,6 +429,8 @@ export default class FarmNodesTable extends Vue {
   openPublicConfigDialog = false;
   @Prop({ required: true }) nodes!: nodeInterface[];
   @Prop({ required: true }) loadingNodes!: boolean;
+  @Prop({ required: true }) initLoading!: boolean;
+  @Prop({ required: true }) count!: string;
   searchTerm = "";
   ip4 = "";
   gw4 = "";
@@ -557,28 +448,34 @@ export default class FarmNodesTable extends Vue {
   gw6ErrorMessage = "";
   domainErrorMessage = "";
   receipts = [];
+
   updated() {
     this.receiptsPanel = [];
   }
-  filteredNodes() {
-    let nodes = this.nodes;
-    if (this.nodes.length > 0) {
-      nodes = this.nodes.filter(
-        (node: nodeInterface) =>
-          `${node.nodeID}`.includes(this.searchTerm) ||
-          node.serialNumber
-            ?.toLowerCase()
-            .includes(this.searchTerm.toLowerCase()) ||
-          node.certification
-            ?.toLowerCase()
-            .includes(this.searchTerm.toLowerCase()) ||
-          `${node.farmingPolicyId}`.includes(this.searchTerm)
-      );
-    }
-    return nodes.map((node) => {
-      return {...node, status: node.updatedAt}
-    })
+  onOptionChange(pageNumber: number, pageSize: number) {
+    this.$emit("options-changed", { pageNumber, pageSize });
   }
+
+  // filteredNodes() {
+  //   let nodes = this.nodes;
+  //   if (this.nodes.length > 0) {
+  //     nodes = this.nodes.filter(
+  //       (node: nodeInterface) =>
+  //         `${node.nodeId}`.includes(this.searchTerm) ||
+  //         node.serialNumber
+  //           ?.toLowerCase()
+  //           .includes(this.searchTerm.toLowerCase()) ||
+  //         node.certificationType
+  //           ?.toLowerCase()
+  //           .includes(this.searchTerm.toLowerCase()) ||
+  //         `${node.farmingPolicyId}`.includes(this.searchTerm)
+  //     );
+  //   }
+  //   return nodes.map((node) => {
+  //     return { ...node };
+  //   });
+  // }
+
   downloadAllReceipts() {
     let docSum = new jsPDF();
     generateNodeSummary(docSum, this.nodes);
@@ -619,22 +516,21 @@ export default class FarmNodesTable extends Vue {
 
     this.save(config);
   }
-  save(config: {
-    ip4: { ip: string; gw: string };
-    ip6?: { ip: string | undefined; gw: string | undefined };
-    domain?: string;
-  } | null) {
+  save(
+    config: {
+      ip4: { ip: string; gw: string };
+      ip6?: { ip: string | undefined; gw: string | undefined };
+      domain?: string;
+    } | null,
+  ) {
     this.loadingPublicConfig = true;
     addNodePublicConfig(
       this.$route.params.accountID,
       this.$api,
-      this.nodeToEdit.farmID,
-      this.nodeToEdit.nodeID,
+      this.nodeToEdit.farmId,
+      this.nodeToEdit.nodeId,
       config,
-      (res: {
-        events?: never[] | undefined;
-        status: { type: string; asFinalized: string; isFinalized: string };
-      }) => {
+      (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -652,14 +548,10 @@ export default class FarmNodesTable extends Vue {
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
-          console.log(
-            `Transaction included at blockHash ${status.asFinalized}`
-          );
+          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           if (!events.length) {
-            if (this.openWarningDialog)
-              this.$toasted.show("Adding Node public config failed");
-            else if (this.openRemoveConfigWarningDialog)
-              this.$toasted.show("Removing Node public config failed");
+            if (this.openWarningDialog) this.$toasted.show("Adding Node public config failed");
+            else if (this.openRemoveConfigWarningDialog) this.$toasted.show("Removing Node public config failed");
 
             this.loadingPublicConfig = false;
             this.openWarningDialog = false;
@@ -668,12 +560,8 @@ export default class FarmNodesTable extends Vue {
             // Loop through Vec<EventRecord> to display all events
             events.forEach(({ phase, event: { data, method, section } }) => {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-              if (
-                section === "tfgridModule" &&
-                method === "NodePublicConfigStored"
-              ) {
-                if (this.openWarningDialog)
-                  this.$toasted.show("Node public config added!");
+              if (section === "tfgridModule" && method === "NodePublicConfigStored") {
+                if (this.openWarningDialog) this.$toasted.show("Node public config added!");
                 else if (this.openRemoveConfigWarningDialog) {
                   this.$toasted.show("Node public config removed!");
                   this.ip4 = "";
@@ -688,10 +576,8 @@ export default class FarmNodesTable extends Vue {
                 this.openWarningDialog = false;
                 this.openRemoveConfigWarningDialog = false;
               } else if (section === "system" && method === "ExtrinsicFailed") {
-                if (this.openWarningDialog)
-                  this.$toasted.show("Adding Node public config failed");
-                else if (this.openRemoveConfigWarningDialog)
-                  this.$toasted.show("Removing Node public config failed");
+                if (this.openWarningDialog) this.$toasted.show("Adding Node public config failed");
+                else if (this.openRemoveConfigWarningDialog) this.$toasted.show("Removing Node public config failed");
                 this.loadingPublicConfig = false;
                 this.openWarningDialog = false;
                 this.openRemoveConfigWarningDialog = false;
@@ -699,13 +585,11 @@ export default class FarmNodesTable extends Vue {
             });
           }
         }
-      }
+      },
     ).catch((err: { message: string }) => {
       console.log(err.message);
-      if (this.openWarningDialog)
-        this.$toasted.show("Adding Node public config failed");
-      else if (this.openRemoveConfigWarningDialog)
-        this.$toasted.show("Removing Node public config failed");
+      if (this.openWarningDialog) this.$toasted.show("Adding Node public config failed");
+      else if (this.openRemoveConfigWarningDialog) this.$toasted.show("Removing Node public config failed");
       this.loadingPublicConfig = false;
       this.openPublicConfigDialog = false;
       this.openWarningDialog = false;
@@ -732,7 +616,11 @@ export default class FarmNodesTable extends Vue {
   }
   ip4check() {
     if (this.ip4 === "") return true;
-    const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    if (PrivateIp(this.ip4.split("/")[0])) {
+      this.ip4ErrorMessage = "IP is not public";
+      return false;
+    }
+    const IPv4SegmentFormat = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
     const ipRegex = new RegExp(`^${IPv4AddressFormat}/(1[6-9]|2[0-9]|3[0-2])$`);
     if (ipRegex.test(this.ip4)) {
@@ -745,19 +633,26 @@ export default class FarmNodesTable extends Vue {
   }
   ip6check() {
     if (!this.ip6) return true;
-    const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    const IPv4SegmentFormat = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
-    const IPv6SegmentFormat = '(?:[0-9a-fA-F]{1,4})';
-    const ipRegex = new RegExp('^(' +
-      `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
-      `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
-      `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
-      `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
-      `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
-      `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
-      `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
-      `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
-      ')([0-9a-fA-F]{1})?(/(1[6-9]|([2-5][0-9])|6[0-4]))?$');
+
+    const IPv6SegmentFormat = "(?:[0-9a-fA-F]{1,4})";
+    const ipRegex = new RegExp(
+      "^(" +
+        `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
+        `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
+        `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
+        `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
+        `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
+        `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
+        `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
+        `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
+        ")([0-9a-fA-F]{1})?/(1[6-9]|([2-5][0-9])|6[0-4])$",
+    );
+    if (PrivateIp(this.ip6.split("/")[0])) {
+      this.ip6ErrorMessage = "IP is not public";
+      return false;
+    }
     if (ipRegex.test(this.ip6)) {
       this.ip6ErrorMessage = "";
       return true;
@@ -767,7 +662,12 @@ export default class FarmNodesTable extends Vue {
     }
   }
   gw4Check() {
-    const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    if (!this.gw4) return true;
+    if (PrivateIp(this.gw4.split("/")[0])) {
+      this.gw4ErrorMessage = "Gateway is not public";
+      return false;
+    }
+    const IPv4SegmentFormat = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
     const gatewayRegex = new RegExp(`^${IPv4AddressFormat}$`);
     if (gatewayRegex.test(this.gw4)) {
@@ -780,20 +680,26 @@ export default class FarmNodesTable extends Vue {
   }
   gw6Check() {
     if (!this.gw6) return true;
-    const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    if (PrivateIp(this.gw6.split("/")[0])) {
+      this.gw6ErrorMessage = "Gateway is not public";
+      return false;
+    }
+    const IPv4SegmentFormat = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
 
-    const IPv6SegmentFormat = '(?:[0-9a-fA-F]{1,4})';
-    const gatewayRegex = new RegExp('^(' +
-      `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
-      `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
-      `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
-      `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
-      `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
-      `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
-      `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
-      `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
-      ')([0-9a-fA-F]{1})?$');
+    const IPv6SegmentFormat = "(?:[0-9a-fA-F]{1,4})";
+    const gatewayRegex = new RegExp(
+      "^(" +
+        `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
+        `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
+        `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
+        `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
+        `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
+        `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
+        `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
+        `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
+        ")([0-9a-fA-F]{1})?$",
+    );
     if (gatewayRegex.test(this.gw6)) {
       this.gw6ErrorMessage = "";
       return true;
@@ -803,8 +709,10 @@ export default class FarmNodesTable extends Vue {
     }
   }
   domainCheck() {
-    return true;
+    if (this.domain == "") return null;
+    if (!this.validator.isURL(this.domain)) return "Invalid url format";
   }
+
   getTime(num: number | undefined) {
     if (num) {
       return new Date(num);
@@ -815,15 +723,9 @@ export default class FarmNodesTable extends Vue {
   getNodeUptimePercentage(node: nodeInterface) {
     return getNodeUptimePercentage(node);
   }
-  getStatus(node: { updatedAt: string }) {
-    const { updatedAt } = node;
-    const startTime = moment();
-    const end = moment(new Date(parseInt(updatedAt)));
-    const hours = startTime.diff(end, "hours");
-    if (hours < 2) return { color: "green", status: "up" };
-    else if (hours > 2 && hours < 3) {
-      return { color: "orange", status: "likely down" };
-    } else return { color: "red", status: "down" };
+  getStatus(node: { status: string }) {
+    if (node.status === "up") return { color: "green", status: "up" };
+    else return { color: "red", status: "down" };
   }
 
   deleteItem() {
@@ -833,10 +735,7 @@ export default class FarmNodesTable extends Vue {
       this.$route.params.accountID,
       this.$api,
       parseInt(this.nodeToDelete.id.split("-")[1]),
-      (res: {
-        events?: never[] | undefined;
-        status: { type: string; asFinalized: string; isFinalized: string };
-      }) => {
+      (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -849,9 +748,7 @@ export default class FarmNodesTable extends Vue {
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
-          console.log(
-            `Transaction included at blockHash ${status.asFinalized}`
-          );
+          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           // Loop through Vec<EventRecord> to display all events
           events.forEach(({ phase, event: { data, method, section } }) => {
             console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
@@ -866,7 +763,7 @@ export default class FarmNodesTable extends Vue {
             }
           });
         }
-      }
+      },
     ).catch((err: { message: string }) => {
       console.log(err.message);
       this.$toasted.show("Deleting a node failed");
@@ -874,9 +771,9 @@ export default class FarmNodesTable extends Vue {
     });
   }
   getPercentage(type: any) {
-    if (!this.expanded[0].resourcesUsed) return 0;
-    const reservedResources = this.expanded[0].resourcesUsed[type];
-    const totalResources = this.expanded[0].resourcesTotal[type];
+    if (!this.expanded[0].used_resources) return 0;
+    const reservedResources = this.expanded[0].used_resources[type];
+    const totalResources = this.expanded[0].total_resources[type];
     if (reservedResources === 0 && totalResources === 0) return 0;
     return (reservedResources / totalResources) * 100;
   }

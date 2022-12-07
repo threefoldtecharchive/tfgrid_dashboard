@@ -193,6 +193,7 @@ def test_add_farmpayout_address(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Address added!')
     assert farm_page.wait_for('Edit')
+    assert farm_page.wait_for('GDHJP6TF3UXYXTNEZ2P36J5FH7W4BJJQ4AYYAXC66I2Q2AH5B6O6BCFG')
 
 
 def test_add_invalid_farmpayout_address(browser):
@@ -241,6 +242,7 @@ def test_edit_farmpayout_address(browser):
     farm_page.add_farmpayout_address(case).click()
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Address added!')
+    assert farm_page.wait_for('GDHJP6TF3UXYXTNEZ2P36J5FH7W4BJJQ4AYYAXC66I2Q2AH5B6O6BCFG')
 
 
 def test_valid_ip(browser):
@@ -364,11 +366,102 @@ def test_add_ip(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
-    farm_page.setup_ip(generate_ip(), farm_name)
-    farm_page.add_gateway(generate_gateway()).click()
+    ip = generate_ip()
+    gateway = generate_gateway()
+    farm_page.setup_ip(ip, farm_name)
+    farm_page.add_gateway(gateway).click()
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('IP created!')
+    assert farm_page.wait_for(ip)
+    assert farm_page.wait_for(gateway)
 
+
+def test_invalid_range_ips(browser):
+    """
+    Test Case: TC1212 - Enter invalid to IP in add range of IPs
+    Steps:
+        - Open the twin
+        - From sidebar Click on Farms.
+        - Create a farm.
+        - Expand farm details.
+        - Click on Public IPs
+        - Click on add IP button
+        - Choose Range
+        - Add From IP, To IP and Gateway.
+        - Click on the save button.
+        - Authenticate polkadot transaction.
+    Test Data for Gateway: [Empty Field,All letters, (-,_),54.54,....1270001,127.0.0..1]
+    Test Data for From IP: [ should be numbers separated by '.' and end with '/' port ex: 127.0.0.01/16]
+    Test Data for To IP: [Invalid IP formats, IPs with smaller or bigger values]
+    Result: You should see the alert with the correct message responding to invalid input entered and the save button will be disabled.
+    """
+    farm_page, polka_page, farm_name, password = before_test_setup(browser)
+    farm_page.create_farm(farm_name)
+    polka_page.authenticate_with_pass(password)
+    assert farm_page.wait_for('Farm created!')
+    assert farm_page.wait_for(farm_name)
+    farm_page.change_to_range_ip(farm_name)
+    cases = [generate_inavalid_ip(), '1.0.0.0/66', '239.255.255/17', '239.15.35.78.5/25', '239.15.35.78.5', ' ', '*.#.@.!|+-']
+    for case in cases:
+        assert farm_page.add_range_ips(case, 0, 0).is_enabled()==False
+        assert farm_page.wait_for('Incorrect format')
+    assert farm_page.add_range_ips('255.0.0.1/32', 0, 0).is_enabled()==False
+    assert farm_page.wait_for('IP is not public')
+    assert farm_page.add_range_ips('1.1.1.254/16', '1.1.1.255/16', '1.1.1.1').is_enabled()==True
+    cases = ['1.0.0.0/66', '239.255.253/17', '239.15.35.78.5/25', '239.15.35.78.5', ' ', '*.#.@.!|+-']
+    for case in cases:
+        assert farm_page.add_range_ips(0, case, 0).is_enabled()==False
+        assert farm_page.wait_for('IPs are not the same')
+    assert farm_page.add_range_ips('1.1.1.1/16', '1.1.1.3/16', '1.1.1.1').is_enabled()==True
+    cases = ['1.1.1.35/16', '1.1.1.17/16']
+    for case in cases:
+        assert farm_page.add_range_ips(0, case, 0).is_enabled()==False
+        assert farm_page.wait_for('Range must not exceed 16')
+    assert farm_page.add_range_ips('1.1.1.1/16', '1.1.1.3/16', '1.1.1.1').is_enabled()==True
+    cases = ['1.1.1.--2/16', '1.1.1.sdf/16', '1.1.1.3a/16']
+    for case in cases:
+        assert farm_page.add_range_ips(0, case, 0).is_enabled()==False
+        assert farm_page.wait_for('Incorrect format')
+    assert farm_page.add_range_ips('1.1.1.17/16', '1.1.1.18/16', '1.1.1.1').is_enabled()==True
+    cases = ['1.1.1.17/16', '1.1.1.15/16', '1.1.1.-1/16',]
+    for case in cases:
+        assert farm_page.add_range_ips(0, case, 0).is_enabled()==False
+        assert farm_page.wait_for('To IP must be bigger than From IP')
+    assert farm_page.add_range_ips('1.1.1.1/16', '1.1.1.3/16', '1.1.1.1').is_enabled()==True
+    cases = [generate_inavalid_gateway(), '1.0.0.',  '1:1:1:1', '522.255.255.255', '.239.35.78', '1.1.1.1/16', '239.15.35.78.5', ' ', '*.#.@.!|+-']
+    for case in cases:
+        assert farm_page.add_range_ips(0, 0, case).is_enabled()==False
+        assert farm_page.wait_for('Gateway is not formatted correctly')
+
+
+def test_add_range_ips(browser):
+    """
+    Test Case: TC1211 - Add range of IPs to Farm
+    Steps:
+        - Open the twin
+        - From sidebar Click on Farms.
+        - Create a farm.
+        - Expand farm details.
+        - Click on Public IPs
+        - Click on add IP button
+        - Choose Range
+        - Add From IP, To IP and Gateway.
+        - Click on the save button.
+        - Authenticate polkadot transaction.
+    Result: You should see the bottom right alert with the message "IP Created!" and the IPs added to your farm.
+    """
+    farm_page, polka_page, farm_name, password = before_test_setup(browser)
+    farm_page.create_farm(farm_name)
+    polka_page.authenticate_with_pass(password)
+    assert farm_page.wait_for('Farm created!')
+    assert farm_page.wait_for(farm_name)
+    farm_page.change_to_range_ip(farm_name)
+    farm_page.add_range_ips('1.2.3.4/16', '1.2.3.6/16', '1.2.3.4').click()
+    polka_page.authenticate_with_pass(password)
+    assert farm_page.wait_for('IP created!')
+    assert farm_page.wait_for('1.2.3.4/16')
+    assert farm_page.wait_for('1.2.3.5/16')
+    assert farm_page.wait_for('1.2.3.6/16')
 
 def test_delete_ip(browser):
     """

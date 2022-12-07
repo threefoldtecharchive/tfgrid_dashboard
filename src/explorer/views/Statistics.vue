@@ -6,9 +6,7 @@
           <StatisticsCard :item="item" />
         </div>
       </section>
-      <v-col cols="10" class="mx-auto">
-        <tf-map :nodes="nodesDistribution"></tf-map
-      ></v-col>
+      <v-col cols="10" class="mx-auto"> <tf-map :nodes="nodesDistribution"></tf-map></v-col>
     </v-row>
 
     <section class="loader" v-if="statistics.length === 0">
@@ -69,12 +67,12 @@ export default class Statistics extends Vue {
       { data: stats.nodes, title: "Nodes Online", icon: "mdi-laptop" },
       { data: stats.farms, title: "Farms", icon: "mdi-tractor" },
       { data: stats.countries, title: "Countries", icon: "mdi-earth" },
-      { data: stats.totalCru, title: "CPUs Online", icon: "mdi-cpu-64-bit" },
+      { data: stats.totalCru, title: "CPUs", icon: "mdi-cpu-64-bit" },
       { data: toTeraOrGigaOrPeta(stats.totalSru.toString()), title: "SSD Storage", icon: "mdi-nas" },
       { data: toTeraOrGigaOrPeta(stats.totalHru.toString()), title: "HDD Storage", icon: "mdi-harddisk" },
-      { data: toTeraOrGigaOrPeta(stats.totalMru.toString()), title: "RAM Online", icon: "mdi-memory" },
+      { data: toTeraOrGigaOrPeta(stats.totalMru.toString()), title: "RAM", icon: "mdi-memory" },
       { data: stats.accessNodes, title: "Access Nodes", icon: "mdi-gate" },
-      { data: stats.gateways, title: "Gateways Online", icon: "mdi-boom-gate-outline" },
+      { data: stats.gateways, title: "Gateways", icon: "mdi-boom-gate-outline" },
       { data: stats.twins, title: "Twins", icon: "mdi-brain" },
       { data: stats.publicIps, title: "Public IPs", icon: "mdi-access-point" },
       { data: stats.contracts, title: "Contracts", icon: "mdi-file-document-edit-outline" },

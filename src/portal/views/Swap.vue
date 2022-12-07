@@ -237,6 +237,12 @@ export default class TransferView extends Vue {
   }
   async swapAddressCheck() {
     const isValid = StrKey.isValidEd25519PublicKey(this.target);
+    const blockedAddresses = ['GBNOTAYUMXVO5QDYWYO2SOCOYIJ3XFIP65GKOQN7H65ZZSO6BK4SLWSC', 'GA2CWNBUHX7NZ3B5GR4I23FMU7VY5RPA77IUJTIXTTTGKYSKDSV6LUA4'];
+
+    if(blockedAddresses.includes(this.target) ){
+      this.targetError = "Blocked Address";
+      return false;
+    }
     if (!isValid || this.target.match(/\W/)) {
       this.targetError = "invalid address";
       return false;

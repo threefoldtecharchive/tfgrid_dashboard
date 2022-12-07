@@ -34,6 +34,11 @@ class FarmPage:
     table_farm_name=(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr[1]/td[3]')
     table = (By.XPATH,'//table/tbody/tr')
     stellar_payout_address = (By.XPATH,'//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr[2]/td/div/div[6]/div[2]/div/div/span')
+    ip_dropdown = (By.XPATH,'//*[@id="app"]/div[5]/div/div/div[2]/div[1]/div/div[1]/div[1]/div')
+    range_selection=(By.XPATH, "//*[contains(text(), 'Range')]")
+    from_ip_input = (By.XPATH, "/html/body/div[1]/div[5]/div/div/div[2]/div[2]/div/div[1]/div/input") 
+    to_ip_input = (By.XPATH, "/html/body/div[1]/div[5]/div/div/div[2]/div[3]/div/div[1]/div/input") 
+    gateway_range_input = (By.XPATH, "/html/body/div[1]/div[5]/div/div/div[2]/div[4]/div/div[1]/div/input") 
     table_row = '//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr['
     farm_public_ips = '//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr[2]/td/div/div[8]/div/div/div/div/div/table/tbody/tr'
     node_expand_details = '//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr[2]/td/div/div['
@@ -222,6 +227,31 @@ class FarmPage:
         self.browser.find_element(*self.gateway_text_field).send_keys(Keys.CONTROL + "a")
         self.browser.find_element(*self.gateway_text_field).send_keys(Keys.DELETE)
         self.browser.find_element(*self.gateway_text_field).send_keys(data) 
+        return self.browser.find_element(*self.save_button)
+
+    def change_to_range_ip(self, farm_name):
+        self.search_functionality(farm_name)
+        self.browser.find_element(*self.details_arrow).click()
+        self.browser.find_element(*self.public_ip_list).click()
+        self.browser.find_element(*self.add_ip_button).click()
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Single')]")))
+        WebDriverWait(self.browser, 30).until(EC.element_to_be_clickable(self.ip_dropdown))
+        self.browser.find_element(*self.ip_dropdown).click()
+        self.browser.find_element(*self.range_selection).click()
+    
+    def add_range_ips(self, from_ip, to_ip, range_gateway):
+        if(from_ip):
+            self.browser.find_element(*self.from_ip_input).send_keys(Keys.CONTROL + "a")
+            self.browser.find_element(*self.from_ip_input).send_keys(Keys.DELETE)
+            self.browser.find_element(*self.from_ip_input).send_keys(from_ip) 
+        if(to_ip):
+            self.browser.find_element(*self.to_ip_input).send_keys(Keys.CONTROL + "a")
+            self.browser.find_element(*self.to_ip_input).send_keys(Keys.DELETE)
+            self.browser.find_element(*self.to_ip_input).send_keys(to_ip) 
+        if(range_gateway):
+            self.browser.find_element(*self.gateway_range_input).send_keys(Keys.CONTROL + "a")
+            self.browser.find_element(*self.gateway_range_input).send_keys(Keys.DELETE)
+            self.browser.find_element(*self.gateway_range_input).send_keys(range_gateway)
         return self.browser.find_element(*self.save_button)
 
     def delete_ip(self, farm_name, ip, gateway):

@@ -5,6 +5,7 @@ from utils.grid_proxy import GridProxy
 
 #  Time required for the run (11 cases) is approximately 3 minutes.
 
+
 def before_test_setup(browser):
     swap_page = SwapPage(browser)
     polka_page = PolkaPage(browser)
@@ -14,6 +15,7 @@ def before_test_setup(browser):
     polka_page.import_account(get_seed(), user, password)
     swap_page.navigate_to_swap(user)
     return swap_page, polka_page, password
+
 
 def test_navigate_swap(browser):
     """
@@ -42,7 +44,7 @@ def test_transfer_chain(browser):
     swap_page.transfer_chain()
 
 
-def test_choose_deposit(browser): 
+def test_choose_deposit(browser):
     """
       Test Case: TC1114 choose deposit
       Steps:
@@ -60,7 +62,7 @@ def test_choose_deposit(browser):
     assert 'Deposit TFT' in browser.page_source
 
 
-def test_choose_withdraw(browser): 
+def test_choose_withdraw(browser):
     """
       Test Case: TC1115 choose withdraw
       Steps:
@@ -78,7 +80,7 @@ def test_choose_withdraw(browser):
     assert 'Withdraw TFT' in browser.page_source
 
 
-def test_how_it_done(browser): 
+def test_how_it_done(browser):
     """
       Test Case: TC1116 how it done
       Steps:
@@ -93,7 +95,7 @@ def test_how_it_done(browser):
     assert swap_page.how_it_done() in 'https://library.threefold.me/info/manual/#/manual__grid3_stellar_tfchain_bridge'
 
 
-def test_check_deposit(browser): 
+def test_check_deposit(browser):
     """
       Test Case: TC1117 check deposit
       Steps:
@@ -112,10 +114,10 @@ def test_check_deposit(browser):
     assert swap_page.wait_for(amount_text)
     assert bridge_address == 'GDHJP6TF3UXYXTNEZ2P36J5FH7W4BJJQ4AYYAXC66I2Q2AH5B6O6BCFG'
     user_address = swap_page.twin_address()
-    assert grid_proxy.get_twin_address(twin_id[-3:]) == user_address
+    assert grid_proxy.get_twin_address(twin_id[-4:]) == user_address
 
 
-def test_check_withdraw_stellar(browser): 
+def test_check_withdraw_stellar(browser):
     """
       Test Case: TC1118 check withdraw stellar
       Steps:
@@ -130,10 +132,10 @@ def test_check_withdraw_stellar(browser):
     """
     swap_page, _, _ = before_test_setup(browser)
     swap_page.transfer_chain()
-    assert swap_page.check_withdraw(get_stellar_address(),'1.01').is_enabled()== True
+    assert swap_page.check_withdraw(get_stellar_address(), '1.01').is_enabled() == True
 
 
-def test_check_withdraw_invalid_stellar(browser): 
+def test_check_withdraw_invalid_stellar(browser):
     """
       Test Case: TC1143 - Check withdraw invalid Stellar address
       Steps:
@@ -153,7 +155,7 @@ def test_check_withdraw_invalid_stellar(browser):
     for case in cases:
         assert swap_page.check_withdraw_invalid_stellar(case) == False
         assert swap_page.wait_for('invalid address')
-      
+
 
 def test_check_withdraw_tft_amount(browser):
     """
@@ -167,7 +169,7 @@ def test_check_withdraw_tft_amount(browser):
           - Put amount of tft you want to send.
           - Click on close button.
       Result: Assert that the amount of tft is right.
-    """ 
+    """
     swap_page, _, _ = before_test_setup(browser)
     swap_page.transfer_chain()
     cases = [1, 0.001, 1.111]
@@ -177,7 +179,7 @@ def test_check_withdraw_tft_amount(browser):
         assert swap_page.check_withdraw_tft_amount(case) == True
 
 
-def test_check_withdraw_invalid_tft_amount(browser): 
+def test_check_withdraw_invalid_tft_amount(browser):
     """
       Test Case: TC1144 - Check withdraw invalid TFT amount
       Steps:
@@ -199,11 +201,11 @@ def test_check_withdraw_invalid_tft_amount(browser):
         assert swap_page.wait_for('Amount cannot be negative or 0')
     assert swap_page.check_withdraw_invalid_tft_amount('1.0123') == False
     assert swap_page.wait_for('Amount must have 3 decimals only')
-    assert swap_page.check_withdraw_invalid_tft_amount(format(float(balance)+100,'.3f')) == False
+    assert swap_page.check_withdraw_invalid_tft_amount(format(float(balance)+100, '.3f')) == False
     assert swap_page.wait_for('Amount cannot exceed balance')
 
 
-def test_check_withdraw(browser): 
+def test_check_withdraw(browser):
     """
       Test Case: TC1132 check withdraw 
       Steps:
@@ -222,7 +224,7 @@ def test_check_withdraw(browser):
     balance = swap_page.get_balance()
     min_balance = float(balance)-1
     max_balance = float(balance)-1.1
-    swap_page.check_withdraw(get_stellar_address(),'1.01').click()
+    swap_page.check_withdraw(get_stellar_address(), '1.01').click()
     polka_page.authenticate_with_pass(password)
     assert swap_page.wait_for('Withdraw submitted!')
-    assert format(float(max_balance),'.3f') <= format(float(swap_page.get_balance_withdraw(balance)),'.3f') <= format(float(min_balance),'.3f')
+    assert format(float(max_balance), '.3f') <= format(float(swap_page.get_balance_withdraw(balance)), '.3f') <= format(float(min_balance), '.3f')

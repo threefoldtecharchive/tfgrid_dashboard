@@ -6,6 +6,12 @@ interface IInFilter {
 }
 const createInFilter = () => ({ enabled: false, value: [] });
 
+interface IFilter {
+  enabled: boolean;
+  value: string[];
+}
+const createFilter = () => ({ enabled: false, value: [] });
+
 interface IRangeFilter {
   enabled: boolean;
   value: {
@@ -65,21 +71,25 @@ export interface IState {
   versions: Array<{ name: string; value: any }>;
   filters: {
     nodes: {
-      node_id: IInFilter;
-      twin_id: IInFilter;
-      createdById: IInFilter;
-      farm_ids: IInFilter;
-      twinId: IInFilter;
-      country: IInFilter;
-      farmingPolicyName: IInFilter;
-      free_hru: IRangeFilter;
-      free_cru: IRangeFilter;
-      free_mru: IRangeFilter;
-      free_sru: IRangeFilter;
-      status: IConditionFilter;
-      countryFullName: IInFilter;
-      certificationType: IInFilter;
-      free_ips: IComparisonFilter;
+      node_id: IFilter;
+      twin_id: IFilter;
+      createdById: IFilter;
+      farm_ids: IFilter;
+      twinId: IFilter;
+      country: IFilter;
+      farmingPolicyName: IFilter;
+      free_hru: IFilter;
+      free_mru: IFilter;
+      free_sru: IFilter;
+      status: IFilter;
+      countryFullName: IFilter;
+      certificationType: IFilter;
+      free_ips: IFilter;
+      farm_name: IFilter;
+      total_hru: IFilter;
+      total_cru: IFilter;
+      total_mru: IFilter;
+      total_sru: IFilter;
     };
     farms: {
       createdById: IInFilter;
@@ -128,21 +138,25 @@ export default {
   twinsNo: 0,
   filters: {
     nodes: {
-      node_id: createInFilter(),
-      twin_id: createInFilter(),
-      createdById: createInFilter(),
-      farm_ids: createInFilter(),
-      twinId: createInFilter(),
-      country: createInFilter(),
-      farmingPolicyName: createInFilter(),
-      certificationType: createInFilter(),
-      free_hru: createRangeFilter(),
-      free_cru: createRangeFilter(),
-      free_sru: createRangeFilter(),
-      free_mru: createRangeFilter(),
-      status: createConditionFilter(),
-      countryFullName: createInFilter(),
-      free_ips: createComparisonFilter(),
+      node_id: createFilter(),
+      twin_id: createFilter(),
+      createdById: createFilter(),
+      farm_ids: createFilter(),
+      twinId: createFilter(),
+      country: createFilter(),
+      farmingPolicyName: createFilter(),
+      certificationType: createFilter(),
+      free_hru: createFilter(),
+      free_sru: createFilter(),
+      free_mru: createFilter(),
+      status: createFilter(),
+      countryFullName: createFilter(),
+      free_ips: createFilter(),
+      farm_name: createFilter(),
+      total_hru: createFilter(),
+      total_cru: createFilter(),
+      total_sru: createFilter(),
+      total_mru: createFilter(),
     },
     farms: {
       createdById: createInFilter(),

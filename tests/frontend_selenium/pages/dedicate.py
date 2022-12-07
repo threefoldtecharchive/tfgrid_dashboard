@@ -21,10 +21,9 @@ class DedicatePage:
     search_bar = (By.XPATH ,'/html/body/div[1]/div[1]/div[3]/div/div/div[1]/div/div[1]/div/input')
     node_table = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr')
     twin_address = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[1]/div[2]/div[1]/div[1]')
-    expand_node_buttom = (By.XPATH,'//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr[1]/td[1]/button')
     reservation_button = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr/td[9]/div/button')
     ok_btn = (By.XPATH, "//*[@id='app']/div[4]/div/div/div[3]/button[1]")
-    table_xpath = '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div[1]/table/tbody/tr'
+    table_xpath = '//div/div/div[1]/table/tbody/tr'
 
     def __init__(self, browser):
         self.browser = browser
@@ -33,7 +32,7 @@ class DedicatePage:
         self.browser.find_element(By.XPATH, "//*[contains(text(), '"+ user +"')]").click()
         self.twin_id = int(self.browser.find_element(*self.twin_address).text[4:])
         self.browser.find_element(*self.dedicate_node).click()
-        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.expand_node_buttom))
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_any_elements_located((By.XPATH, "//*[contains(text(), 'Rows per page:')]")))
     
     def search_nodes(self, node):
         self.browser.find_element(*self.search_bar).send_keys(Keys.CONTROL + "a")
@@ -67,27 +66,45 @@ class DedicatePage:
     def get_node_hru(self, bool, node_list):
         hru = []
         for i in range(len(node_list)):
-            node_hru = math.ceil(node_list[i]['total_resources']['hru']/(1024 ** 3))
+            node_hru = (node_list[i]['total_resources']['hru']/(1024 ** 3))
             if(bool and node_hru >= 1024):
                 node_hru = math.floor(node_hru/1024)
+            elif (bool):
+                node_hru = float("{:.2f}".format(node_hru))
+            else:
+                node_hru = math.ceil(node_hru)
+            if(node_hru==0):
+                node_hru = int(node_hru)
             hru.append(node_hru)
         return hru
 
     def get_node_mru(self, bool, node_list):
         mru = []
         for i in range(len(node_list)):
-            node_mru = math.ceil(node_list[i]['total_resources']['mru']/(1024 ** 3))
+            node_mru = (node_list[i]['total_resources']['mru']/(1024 ** 3))
             if(bool and node_mru >= 1024):
                 node_mru = math.floor(node_mru/1024)
+            elif (bool):
+                node_mru = float("{:.2f}".format(node_mru))
+            else:
+                node_mru = math.ceil(node_mru)
+            if(node_mru==0):
+                node_mru = int(node_mru)
             mru.append(node_mru)
         return mru
 
     def get_node_sru(self, bool, node_list):
         sru = []
         for i in range(len(node_list)):
-            node_sru = math.ceil(node_list[i]['total_resources']['sru']/(1024 ** 3))
+            node_sru = (node_list[i]['total_resources']['sru']/(1024 ** 3))
             if(bool and node_sru >= 1024):
                 node_sru = math.floor(node_sru/1024)
+            elif (bool):
+                node_sru = float("{:.2f}".format(node_sru))
+            else:
+                node_sru = math.ceil(node_sru)
+            if(node_sru==0):
+                node_sru = int(node_sru)
             sru.append(node_sru)
         return sru
 
@@ -158,19 +175,25 @@ class DedicatePage:
     def node_details(self):
         self.browser.find_element(*self.node_id).click()
         nodes = []
-        for i in range(1, len(self.browser.find_elements(*self.node_table))+1):
-            details = []
-            self.browser.find_element(By.XPATH, self.table_xpath+ '['+ str(i) +']/td[1]/button').click()
-            details.append(int(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i)}]/td[2]").text)) # Node ID
-            details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div/div[1]/div/div[2]/div/div/div[1]").text) # CPU Resource Unit
-            details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div/div[1]/div/div[2]/div/div/div[2]").text) # Disk Resource Unit (HDD)
-            details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div/div[1]/div/div[2]/div/div/div[3]").text) # Disk Resource Unit (SSD)
-            details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div/div[1]/div/div[2]/div/div/div[4]").text) # Memory Resource Unit
-            details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div/div[2]/div/div[2]/div/div/div[1]").text) # Country
-            details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div/div[2]/div/div[2]/div/div/div[2]").text) # City
-            details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div/div[3]/div/div[2]/div/div/div").text) # Farm Public Ips
-            self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i)}]/td[1]/button").click()
-            nodes.append(details)
+        tables = ["rentable", "rented"]
+        for table in tables:
+            self.browser.find_element(By.XPATH, "//*[contains(text(), '"+table.capitalize()+"')]").click()
+            WebDriverWait(self.browser, 5).until(EC.invisibility_of_element_located((By.XPATH, "//*[contains(text(), 'loading nodes ...')]")))
+            if(self.browser.find_element(By.XPATH, f"//*[@id='{table}']/div/div/div[1]/table/tbody/tr").text == 'No data available'):
+                continue 
+            for i in range(1, len(self.browser.find_elements(By.XPATH, f"//*[@id='{table}']{self.table_xpath}"))+1):
+                details = []
+                self.browser.find_element(By.XPATH, f"//*[@id='{table}']{self.table_xpath}[{str(i)}]/td[1]/button").click()
+                details.append(int(self.browser.find_element(By.XPATH, f"//*[@id='{table}']{self.table_xpath}[{str(i)}]/td[2]").text)) # Node ID
+                details.append(self.browser.find_element(By.XPATH, f"//*[@id='{table}']{self.table_xpath}[{str(i+1)}]/td/div/div[1]/div/div[2]/div/div/div[1]").text) # CPU Resource Unit
+                details.append(self.browser.find_element(By.XPATH, f"//*[@id='{table}']{self.table_xpath}[{str(i+1)}]/td/div/div[1]/div/div[2]/div/div/div[2]").text) # Disk Resource Unit (HDD)
+                details.append(self.browser.find_element(By.XPATH, f"//*[@id='{table}']{self.table_xpath}[{str(i+1)}]/td/div/div[1]/div/div[2]/div/div/div[3]").text) # Disk Resource Unit (SSD)
+                details.append(self.browser.find_element(By.XPATH, f"//*[@id='{table}']{self.table_xpath}[{str(i+1)}]/td/div/div[1]/div/div[2]/div/div/div[4]").text) # Memory Resource Unit
+                details.append(self.browser.find_element(By.XPATH, f"//*[@id='{table}']{self.table_xpath}[{str(i+1)}]/td/div/div[2]/div/div[2]/div/div/div[1]").text) # Country
+                details.append(self.browser.find_element(By.XPATH, f"//*[@id='{table}']{self.table_xpath}[{str(i+1)}]/td/div/div[2]/div/div[2]/div/div/div[2]").text) # City
+                details.append(self.browser.find_element(By.XPATH, f"//*[@id='{table}']{self.table_xpath}[{str(i+1)}]/td/div/div[3]/div/div[2]/div/div/div").text) # Farm Public Ips
+                self.browser.find_element(By.XPATH, f"//*[@id='{table}']{self.table_xpath}[{str(i)}]/td[1]/button").click()
+                nodes.append(details)
         return nodes
 
     def check_free_node(self, node_list):
@@ -180,16 +203,18 @@ class DedicatePage:
         return 0
 
     def reserve_node(self, id):
-        self.search_nodes(id)
-        if ((self.browser.find_element(*self.reservation_button).text) == 'Reserve'):
-            self.browser.find_element(*self.reservation_button).click()
+        for i in range(1, len(self.browser.find_elements(By.XPATH, f"//*[@id='rentable']{self.table_xpath}"))+1):
+            if(int(self.browser.find_element(By.XPATH, f"//*[@id='rentable']{self.table_xpath}[{str(i)}]/td[2]").text) == id):
+                self.browser.find_element(By.XPATH, f"//*[@id='rentable']{self.table_xpath}[{str(i)}]/td[9]/div/button").click()
 
     def unreserve_node(self, id):
-        self.search_nodes(id)
-        if ((self.browser.find_element(*self.reservation_button).text) == 'Unreserve'):
-            self.browser.find_element(*self.reservation_button).click()
-            WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Are you sure you want to unreserve this dedicated node?')]")))
-            self.browser.find_element(*self.ok_btn).click()
+        self.browser.find_element(By.XPATH, "//*[contains(text(), 'Rented')]").click()
+        WebDriverWait(self.browser, 5).until(EC.invisibility_of_element_located((By.XPATH, "//*[contains(text(), 'loading nodes ...')]")))
+        for i in range(1, len(self.browser.find_elements(By.XPATH, f"//*[@id='rented']{self.table_xpath}"))+1):
+            if(int(self.browser.find_element(By.XPATH, f"//*[@id='rented']{self.table_xpath}[{str(i)}]/td[2]").text) == id):
+                self.browser.find_element(By.XPATH, f"//*[@id='rented']{self.table_xpath}[{str(i)}]/td[9]/div/button").click()
+                WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Are you sure you want to unreserve this dedicated node?')]")))
+                self.browser.find_element(*self.ok_btn).click()
 
     def wait_for(self, keyword):
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), '"+ keyword +"')]")))

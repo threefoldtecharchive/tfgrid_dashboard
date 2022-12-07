@@ -22,43 +22,29 @@
           <div class="d-flex" style="align-items: center;">
             <v-btn
             icon
-            @click="toggle_dark_mode"
-          >
-            <v-icon>mdi-theme-light-dark</v-icon>
-          </v-btn>
-            <v-card
-            class="mx-2 px-1"
-            color="transparent"
-            outlined
-            v-if="$store.state.portal.accounts.length === 0"
-          >
-            <v-btn icon @click="$store.dispatch('portal/subscribeAccounts')">
-              <v-icon
-                class=""
-                color="#F44336"
-              >mdi-lan-disconnect</v-icon>
+            @click="toggle_dark_mode">
+              <v-icon>mdi-theme-light-dark</v-icon>
             </v-btn>
-          </v-card>
-          <v-card
-            outlined
-            v-else
-            color="transparent"
-          >
-            <v-tooltip>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn icon                     
-                  @click="disconnectWallet"
-                  v-bind="attrs"
-                  v-on="on">
-                  <v-icon
-                    color="#4CAF50"
-                  >mdi-lan-connect
-                  </v-icon>
-                </v-btn>
-              </template>
-              <span>Disconnect Wallet</span>
-            </v-tooltip>
-          </v-card>
+
+            <v-card color="transparent" outlined v-if="$store.state.portal.accounts.length === 0">
+              <v-btn
+              @click="$store.dispatch('portal/subscribeAccounts')"
+              color="green"
+                
+              >
+                Connect
+              </v-btn>
+            </v-card>
+            
+
+            <v-btn
+              v-else
+              @click="disconnectWallet"
+              color="red"
+            >
+              Disconnect
+            </v-btn>
+            
           <v-theme-provider root>
           <v-card v-if="isAccountSelected()" style="width: max-content;">
             <v-card-text
@@ -344,8 +330,10 @@ export default class Dashboard extends Vue {
     this.$root.$on("closeSidebar", () => {
       this.mini = !this.mini;
       if (this.mini){
-        this.routes[0].active = false;
-        this.routes[1].active = false;
+        const [portal, explorer, calculator] = this.routes;
+        portal.active = false;
+        explorer.active = false;
+        calculator.active = false;        
       }
     });
   }
@@ -504,17 +492,18 @@ export default class Dashboard extends Vue {
       label: "Calculators",
       icon: "calculator",
       prefix: "/calculator/",
+      active: this.mini ? false: true,
       children: [
         {
           label: "Resource Pricing",
           path: "calculator",
           icon: "currency-usd",
-          showBeforeLogIn: false,
+          showBeforeLogIn: true,
         },      
         {
           label: "Simulator",
           path: "simulator/",
-          icon: "chart-scatter-plot",
+          icon: "chart-line",
           showBeforeLogIn: false,
           children: [
             {
@@ -527,21 +516,21 @@ export default class Dashboard extends Vue {
       ],
     },
     {
-      label: "Bootstrap",
-      icon: "chart-scatter-plot",
+      label: "Zero-Os Bootstrap",
+      icon: "earth",
       prefix: "/other/bootstrap",
       children: [],
     },
     {
-      label: "Hub",
-      icon: "chart-scatter-plot",
+      label: "Zero-Os Hub",
+      icon: "open-in-new",
       prefix: "https://hub.grid.tf/",
       hyperlink: true,
       children: [],
     },
     {
       label: "Playground",
-      icon: "chart-scatter-plot",
+      icon: "open-in-new",
       prefix: window.configs.PLAYGROUND_URL,
       hyperlink: true,
       children: [],

@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: threefolddev/tfgrid_dashboard
   pullPolicy: Always
-  tag: v1.1.4
+  tag: "v1.3.0-rc1"
 
 imagePullSecrets: []
 nameOverride: ""

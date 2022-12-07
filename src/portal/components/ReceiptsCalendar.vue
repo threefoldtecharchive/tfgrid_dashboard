@@ -126,7 +126,7 @@ export default class ReceiptsCalendar extends Vue {
   downloadReceipts() {
     let doc = new jsPDF();
     doc = generateReceipt(doc, this.node);
-    doc.save(`node_${this.node.nodeID}_receipts.pdf`);
+    doc.save(`node_${this.node.nodeId}_receipts.pdf`);
   }
   getEvents() {
     let events: eventInterface[] = [];
