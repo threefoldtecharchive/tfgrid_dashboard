@@ -359,6 +359,20 @@ export function countPrice(
 
   return usdPrice.toFixed(2);
 }
+export async function getTFTPrice(api: {
+  query: {
+    [tftPriceModule: string]: any;
+    system: {
+      account: (arg0: string) => {
+        data: any;
+      };
+    };
+  };
+}) {
+  const pricing = await api.query.tftPriceModule.tftPrice();
+  return pricing.words[0] / 1000;
+}
+
 export async function calDiscount(
   api: { query: { system: { account: (arg0: string) => { data: any } } } },
   address: string,
@@ -367,12 +381,11 @@ export async function calDiscount(
 ) {
   // discount for Dedicated Nodes
   const discount = pricing.discountForDedicationNodes;
-
   let totalPrice = price - price * (discount / 100);
-
+  const TFTprice = await getTFTPrice(api);
   // discount for Twin Balance
   const balance = await getBalance(api, address);
-  const TFTbalance = balance.free;
+  const TFTbalance = TFTprice * balance.free;
 
   const discountPackages: any = {
     none: {
