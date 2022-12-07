@@ -1,7 +1,7 @@
 import math
 import datetime
 import random
-from utils.utils import generate_inavalid_gateway, generate_inavalid_ip, generate_ip, generate_leters, generate_string, get_seed
+from utils.utils import generate_inavalid_gateway, generate_inavalid_ip, generate_ip, generate_leters, generate_string, get_node_seed
 from pages.polka import PolkaPage
 from utils.grid_proxy import GridProxy
 from pages.node import NodePage
@@ -15,7 +15,7 @@ def before_test_setup(browser):
     user = generate_string()
     password = generate_string()
     polka_page.load_and_authenticate()
-    polka_page.import_account(get_seed(),user,password)
+    polka_page.import_account(get_node_seed(),user,password)
     node_page.navigate(user)
     return node_page, polka_page, grid_proxy, password
 
@@ -36,60 +36,60 @@ def test_node_page(browser):
         assert str(node['nodeId']) in browser.page_source
 
 
-def test_search_node(browser):
-    """
-      Test Case: TC1217 - Search node
-      Steps:
-          - Navigate to the dashboard.
-          - Select an account (with node).
-          - Click on Farm from side menu.
-          - Enter keywords on search nodes input.
-          - Search by node ID, serial number, certification, farming policy ID
-      Result: Nodes searched for should be listed.
-    """
-    node_page, _, grid_proxy, _ = before_test_setup(browser)
-    nodes = grid_proxy.get_twin_node(str(node_page.twin_id))
-    for node in nodes:
-        node_page.search_nodes(str(node['nodeId']))
-        assert node_page.get_node_count() == 1
-        node_page.search_nodes(str(node['serialNumber']))
-        assert node_page.get_node_count() == 1
-        node_page.search_nodes(str(node['certificationType']))
-        assert node_page.get_node_count() >= 1
-        node_page.search_nodes(str(node['farmingPolicyId']))
-        assert node_page.get_node_count() >= 1
-    node_page.search_nodes(generate_string())
-    assert 'No data available' in browser.page_source
+# def test_search_node(browser):
+#     """
+#       Test Case: TC1217 - Search node
+#       Steps:
+#           - Navigate to the dashboard.
+#           - Select an account (with node).
+#           - Click on Farm from side menu.
+#           - Enter keywords on search nodes input.
+#           - Search by node ID, serial number, certification, farming policy ID
+#       Result: Nodes searched for should be listed.
+#     """
+#     node_page, _, grid_proxy, _ = before_test_setup(browser)
+#     nodes = grid_proxy.get_twin_node(str(node_page.twin_id))
+#     for node in nodes:
+#         node_page.search_nodes(str(node['nodeId']))
+#         assert node_page.get_node_count() == 1
+#         node_page.search_nodes(str(node['serialNumber']))
+#         assert node_page.get_node_count() == 1
+#         node_page.search_nodes(str(node['certificationType']))
+#         assert node_page.get_node_count() >= 1
+#         node_page.search_nodes(str(node['farmingPolicyId']))
+#         assert node_page.get_node_count() >= 1
+#     node_page.search_nodes(generate_string())
+#     assert 'No data available' in browser.page_source
 
 
-def test_sort_node(browser):
-    """
-      Test Case: TC1218 - Sort nodes
-      Steps:
-          - Navigate to the dashboard.
-          - Select an account (with node).
-          - Click on Farm from side menu.
-          - Click on column header to sort it (once ascend then descend then remove the sorting).
-          - Sort nodes in any order using Node ID, Farm ID, Country, Serial Number, Status
-      Result: Nodes should be sorted using specified column.
-    """
-    node_page, _, grid_proxy, _ = before_test_setup(browser)
-    node_list = grid_proxy.get_twin_node(str(node_page.twin_id))
-    # Sort by Node ID
-    assert node_page.sort_node_id() == sorted(node_page.get_node_id(node_list), reverse=False)
-    assert node_page.sort_node_id() == sorted(node_page.get_node_id(node_list), reverse=True)
-    # Sort by Farm ID
-    assert node_page.sort_farm_id() == sorted(node_page.get_farm_id(node_list), reverse=False)
-    assert node_page.sort_farm_id() == sorted(node_page.get_farm_id(node_list), reverse=True)
-    # Sort by Country
-    assert node_page.sort_country() == sorted(node_page.get_country(node_list), reverse=False)
-    assert node_page.sort_country() == sorted(node_page.get_country(node_list), reverse=True)
-    # Sort by Serial Number
-    assert node_page.sort_serial_number() == sorted(node_page.get_serial_number(node_list), reverse=False)
-    assert node_page.sort_serial_number() == sorted(node_page.get_serial_number(node_list), reverse=True)
-    # Sort by Status
-    assert node_page.sort_status() == sorted(node_page.get_status(node_list), reverse=False)
-    assert node_page.sort_status() == sorted(node_page.get_status(node_list), reverse=True)
+# def test_sort_node(browser):
+#     """
+#       Test Case: TC1218 - Sort nodes
+#       Steps:
+#           - Navigate to the dashboard.
+#           - Select an account (with node).
+#           - Click on Farm from side menu.
+#           - Click on column header to sort it (once ascend then descend then remove the sorting).
+#           - Sort nodes in any order using Node ID, Farm ID, Country, Serial Number, Status
+#       Result: Nodes should be sorted using specified column.
+#     """
+#     node_page, _, grid_proxy, _ = before_test_setup(browser)
+#     node_list = grid_proxy.get_twin_node(str(node_page.twin_id))
+#     # Sort by Node ID
+#     assert node_page.sort_node_id() == sorted(node_page.get_node_id(node_list), reverse=False)
+#     assert node_page.sort_node_id() == sorted(node_page.get_node_id(node_list), reverse=True)
+#     # Sort by Farm ID
+#     assert node_page.sort_farm_id() == sorted(node_page.get_farm_id(node_list), reverse=False)
+#     assert node_page.sort_farm_id() == sorted(node_page.get_farm_id(node_list), reverse=True)
+#     # Sort by Country
+#     assert node_page.sort_country() == sorted(node_page.get_country(node_list), reverse=False)
+#     assert node_page.sort_country() == sorted(node_page.get_country(node_list), reverse=True)
+#     # Sort by Serial Number
+#     assert node_page.sort_serial_number() == sorted(node_page.get_serial_number(node_list), reverse=False)
+#     assert node_page.sort_serial_number() == sorted(node_page.get_serial_number(node_list), reverse=True)
+#     # Sort by Status
+#     assert node_page.sort_status() == sorted(node_page.get_status(node_list), reverse=False)
+#     assert node_page.sort_status() == sorted(node_page.get_status(node_list), reverse=True)
 
 
 def test_node_details(browser):
@@ -104,8 +104,6 @@ def test_node_details(browser):
     node_page, _, grid_proxy, _ = before_test_setup(browser)
     nodes = grid_proxy.get_twin_node(str(node_page.twin_id))
     node_details = node_page.node_details()
-    print(node_details)
-    print(nodes)
     for detail in node_details:
         for node in nodes:
             if detail[1] == node['nodeId']:
@@ -123,7 +121,7 @@ def test_node_details(browser):
                 assert node['created'] == (datetime.datetime.fromtimestamp(detail[11] / 1000).strftime("%a %b %d %Y %X ") + 'GMT+0200 (Eastern European Standard Time)')
                 assert node['farmingPolicyId'] == detail[12]
                 assert node['updatedAt'] == (datetime.datetime.fromtimestamp(detail[13] / 1000).strftime("%a %b %d %Y %X ") + 'GMT+0200 (Eastern European Standard Time)')
-                #assert f"{node['used_resources']['cru']} / {node['total_resources']['cru']}" == detail[14]
+                assert f"{node['used_resources']['cru']} / {node['total_resources']['cru']}" == detail[14]
                 assert f"{math.ceil(node['used_resources']['sru']/(1024**3))} / {math.ceil(node['total_resources']['sru']/(1024**3))} GB" == detail[15]
                 assert f"{math.ceil(node['used_resources']['hru']/(1024**3))} / {math.ceil(node['total_resources']['hru']/(1024**3))} GB" == detail[16]
                 assert f"{math.ceil(node['used_resources']['mru']/(1024**3))} / {math.ceil(node['total_resources']['mru']/(1024**3))} GB" == detail[17]
@@ -148,38 +146,38 @@ def test_config_validation(browser):
     node_id = nodes[random.randint(0,len(nodes)-1)]['nodeId']
     node_page.setup_config(node_id)
     cases = [generate_inavalid_ip(), '1.0.0.0/66', '239.255.255/17', '239.15.35.78.5/25', '239.15.35.78.5', ' ', '*.#.@.!|+-']
-    assert node_page.add_config_input( "1.1.1.1/16", '1.1.1.1', '::1/16', '::1', '').is_enabled() == True
+    assert node_page.add_config_input( "1.1.1.1/16", '1.1.1.1', '::2/16', '::2', '').is_enabled() == True
     for case in cases:
         assert node_page.add_config_input( case, 0, 0, 0, 0).is_enabled()==False
         assert node_page.wait_for('IP address is not formatted correctly')
-    #assert node_page.add_config_input( '255.0.0.1/32', 0, 0, 0, 0).is_enabled()==False
-    #assert node_page.wait_for('IP is not public')
-    assert node_page.add_config_input( "1.1.1.1/16", '1.1.1.1', '::1/16', '::1', '').is_enabled() == True
+    assert node_page.add_config_input( '255.0.0.1/32', 0, 0, 0, 0).is_enabled()==False
+    assert node_page.wait_for('IP is not public')
+    assert node_page.add_config_input( "1.1.1.1/16", '1.1.1.1', '::2/16', '::2', '').is_enabled() == True
     cases = [generate_inavalid_gateway(), '1.0.0.',  '1:1:1:1', '522.255.255.255', '.239.35.78', '1.1.1.1/16', '239.15.35.78.5', ' ', '*.#.@.!|+-']
     for case in cases:
         assert node_page.add_config_input( 0, case, 0, 0, 0).is_enabled()==False
         assert node_page.wait_for('Gateway is not formatted correctly')
-    #assert node_page.add_config_input( 0, '255.0.0.1', 0, 0, 0).is_enabled()==False
-    #assert node_page.wait_for('Gateway is not public')
-    assert node_page.add_config_input( "1.1.1.1/16", '1.1.1.1', '::1/16', '::1', '').is_enabled() == True
-    cases = [' ', '::g', '::1', '::1/65', '::1/15', '1:2:3', ':a', '1:2:3:4:5:6:7:8:9', generate_string(), generate_leters()]
+    assert node_page.add_config_input( 0, '255.0.0.1', 0, 0, 0).is_enabled()==False
+    assert node_page.wait_for('Gateway is not public')
+    assert node_page.add_config_input( "1.1.1.1/16", '1.1.1.1', '::2/16', '::2', '').is_enabled() == True
+    cases = [' ', '::g', '::+', ':: /65', '::2/15', '1:2:3', ':a', '1:2:3:4:5:6:7:8:9', generate_string(), generate_leters()]
     for case in cases:
         assert node_page.add_config_input( 0, 0, case, 0, 0).is_enabled()==False
         assert node_page.wait_for('IPV6 address is not formatted correctly')
-    #assert node_page.add_config_input( 0, 0, 'fd12:3456:789a:1::/64', 0, 0).is_enabled()==False
-    #assert node_page.wait_for('IP is not public')
-    assert node_page.add_config_input( "1.1.1.1/16", '1.1.1.1', '::1/16', '::1', '').is_enabled() == True
+    assert node_page.add_config_input( 0, 0, 'fd12:3456:789a:1::/64', 0, 0).is_enabled()==False
+    assert node_page.wait_for('IP is not public')
+    assert node_page.add_config_input( "1.1.1.1/16", '1.1.1.1', '::2/16', '::2', '').is_enabled() == True
     cases = [' ', '::g', '1:2:3', ':a', '1:2:3:4:5:6:7:8:9', generate_string(), generate_leters()]
     for case in cases:
         assert node_page.add_config_input( 0, 0, 0, case, 0).is_enabled()==False
         assert node_page.wait_for('Gateway is not formatted correctly')
-    #assert node_page.add_config_input( 0, 0,0, 'fd12:3456:789a:1::1', 0).is_enabled()==False
-    #assert node_page.wait_for('Gateway is not public')
-    assert node_page.add_config_input( "1.1.1.1/16", '1.1.1.1', '::1/16', '::1', '').is_enabled() == True
-    #cases = []
-    #for case in cases:
-    #    assert node_page.add_config_input( 0, 0, 0, case, 0).is_enabled()==False
-    #    assert node_page.wait_for('Domain is not formatted correctly')
+    assert node_page.add_config_input( 0, 0,0, 'fd12:3456:789a:1::1', 0).is_enabled()==False
+    assert node_page.wait_for('Gateway is not public')
+    assert node_page.add_config_input( "1.1.1.1/16", '1.1.1.1', '::2/16', '::2', '').is_enabled() == True
+    cases = [generate_inavalid_ip(), generate_inavalid_gateway(), generate_string(), generate_leters(), ' ', '.', '/', 'q', '1', 'ww', 'ww/ww', '22.22']
+    for case in cases:
+        assert node_page.add_config_input( 0, 0, 0, 0, case).is_enabled()==False
+        assert node_page.wait_for('Invalid url format')
 
 
 def test_add_config(browser):
@@ -200,7 +198,7 @@ def test_add_config(browser):
     old_ipv4 = nodes[rand_node]['publicConfig']['gw4']
     node_page.setup_config(node_id)
     new_ipv4 = generate_ip()
-    node_page.add_config_input( new_ipv4, '1.1.1.1', '::1/16', '::1', 'tf.grid').click()
+    node_page.add_config_input( new_ipv4, '1.1.1.1', '::2/16', '::2', 'tf.grid').click()
     node_page.submit_config()
     polka_page.authenticate_with_pass(password)
     node_page.wait_for('Node public config added!')

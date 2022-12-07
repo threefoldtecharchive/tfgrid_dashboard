@@ -2,7 +2,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import time
 
 """
 This module contains Dedicate Node page elements.
@@ -14,9 +13,9 @@ class NodePage:
     node_page = (By.XPATH , "//*[contains(text(), 'Your Farm Nodes')]")
     twin_id_label = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[1]/div[2]/div[1]/div[1]')
     search_node_input = (By.XPATH, '/html/body/div[1]/div[1]/div[3]/div/div/div[5]/div/div[1]/div/div[1]/div/input')
-    node_table = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[5]/div/div[2]/div[1]/table/tbody/tr')
+    node_table = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[5]/div[2]/div[1]/div[1]/table/tbody/tr')
     node_id = (By.XPATH , "//*[contains(text(), 'Node ID')]")
-    farm_id = (By.XPATH , '//*[@id="app"]/div[1]/div[3]/div/div/div[5]/div/div[2]/div[1]/table/thead/tr/th[3]')
+    farm_id = (By.XPATH , '//*[@id="app"]/div[1]/div[3]/div/div/div[5]/div[2]/div[1]/div[1]/table/thead/tr/th[3]')
     country = (By.XPATH , "//*[contains(text(), 'Country')]")
     serial_number = (By.XPATH , "//*[contains(text(), 'Serial Number')]")
     status = (By.XPATH , "//*[contains(text(), 'Status')]")
@@ -31,7 +30,7 @@ class NodePage:
     cancel = (By.XPATH , '//*[@id="app"]/div[4]/div/div/div[3]/button[2]')
     save = (By.XPATH , '//*[@id="app"]/div[4]/div/div/div[3]/button[3]')
     submit = (By.XPATH , '//*[@id="app"]/div[6]/div/div/div[3]/button[1]')
-    table_xpath = '//*[@id="app"]/div[1]/div[3]/div/div/div[5]/div/div[2]/div[1]/table/tbody/tr'
+    table_xpath = '//*[@id="app"]/div[1]/div[3]/div/div/div[5]/div[2]/div[1]/div[1]/table/tbody/tr'
 
     def __init__(self, browser):
         self.browser = browser
@@ -119,9 +118,9 @@ class NodePage:
         self.browser.find_element(*self.node_id).click()
         nodes = []
         for i in range(1, len(self.browser.find_elements(*self.node_table))+1):
-            self.browser.find_element(*self.search_node_input).send_keys(Keys.PAGE_DOWN)
+            self.browser.execute_script("window.scrollTo(0,document.body.scrollHeight)")
             self.browser.find_element(By.XPATH, self.table_xpath+ '['+ str(i) +']/td[1]/button').click()
-            self.browser.find_element(*self.search_node_input).send_keys(Keys.PAGE_DOWN)
+            self.browser.execute_script("window.scrollTo(0,document.body.scrollHeight)")
             details = []
             WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, self.table_xpath+ '['+ str(i) +']/td[7]/button')))
             WebDriverWait(self.browser, 30).until(EC.element_to_be_clickable((By.XPATH, self.table_xpath+ '['+ str(i) +']/td[7]/button')))
@@ -135,7 +134,7 @@ class NodePage:
             details.append(self.browser.find_element(*self.domain).text) # Domain
             self.browser.find_element(*self.cancel).click()
             self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div[2]/div/div").click()
-            self.browser.find_element(*self.search_node_input).send_keys(Keys.PAGE_DOWN)
+            self.browser.execute_script("window.scrollTo(0,document.body.scrollHeight)")
             details.append(int(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div[1]/div/div/div[1]/div[2]/span").text)) # Node ID
             details.append(int(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div[1]/div/div/div[2]/div[2]/span").text)) # Farm ID
             details.append(int(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div[1]/div/div/div[3]/div[2]/span").text)) # Twin ID
@@ -144,7 +143,7 @@ class NodePage:
             details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div[1]/div/div/div[5]/div[2]/span").text) # Created Time
             details.append(int(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div[1]/div/div/div[10]/div[2]/span").text)) # Farming Policy ID
             details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div[1]/div/div/div[6]/div[2]/span").text) # Updated Time
-            #details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div[2]/div/div/div/div/div/div[1]/div[2]/span[2]").text) # CRU
+            details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div[2]/div/div/div/div/div/div[1]/div[2]/span[2]").text) # CRU
             details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div[2]/div/div/div/div/div/div[4]/div[2]/span[2]").text) # SRU
             details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div[2]/div/div/div/div/div/div[2]/div[2]/span[2]").text) # HRU
             details.append(self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i+1)}]/td/div[2]/div/div/div/div/div/div[3]/div[2]/span[2]").text) # MRU
@@ -155,9 +154,10 @@ class NodePage:
         return nodes
     
     def setup_config(self, node_id):
-        self.search_nodes(node_id)
-        self.browser.find_element(By.XPATH, self.table_xpath+ '[1]/td[7]/button').click()
-        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.id))
+        for i in range(1, len(self.browser.find_elements(*self.node_table))+1):
+            if (self.browser.find_element(By.XPATH, f"{self.table_xpath}[{str(i)}]/td[2]/p").text==str(node_id)):
+                self.browser.find_element(By.XPATH, self.table_xpath+ '['+ str(i) +']/td[7]/button').click()
+                WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.id))
 
     def add_config_input(self, ipv4, gw4, ipv6, gw6, domain):
         if(ipv4):
