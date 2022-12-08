@@ -195,7 +195,7 @@ def test_add_config(browser):
     nodes = grid_proxy.get_twin_node(str(node_page.twin_id))
     rand_node = random.randint(0,len(nodes)-1)
     node_id = nodes[rand_node]['nodeId']
-    old_ipv4 = nodes[rand_node]['publicConfig']['gw4']
+    old_ipv4 = nodes[rand_node]['publicConfig']['ipv4']
     node_page.setup_config(node_id)
     new_ipv4 = generate_ip()
     node_page.add_config_input( new_ipv4, '1.1.1.1', '::2/16', '::2', 'tf.grid').click()
