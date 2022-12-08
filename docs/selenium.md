@@ -17,7 +17,7 @@ Prerequisites | version |
 
 - In the root directory run `yarn install & yarn serve`
 - If the port in serve changes from `8080` for any reason, you should change the variable `port` in `tests/frontend selenium/Config.ini` to the new value.
-- Add account `Mnemonic Seed` and `Stellar Address` either in `tests/frontend selenium/Config.ini` or by exporting `TFCHAIN_MNEMONICS` and `STELLAR_ADDRESS`.
+- Add account `Twin Mnemonic`, `Twin With A Node Mnemonic` and `Stellar Address` either in `tests/frontend selenium/Config.ini` or by exporting `TFCHAIN_MNEMONICS`, `TFCHAIN_NODE_MNEMONICS` and `STELLAR_ADDRESS`.
 
 ## Second
 
