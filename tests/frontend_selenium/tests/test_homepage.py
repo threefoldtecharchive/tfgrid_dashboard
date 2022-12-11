@@ -48,11 +48,11 @@ def test_manual_page(browser):
     """
       Test Case: TC976 - Your Guide to The ThreeFold Grid
       Steps:
-        - Navigate to dashboard.
-        - Authenticate polkadot.
-        - Disconnect polka.
-        - Swipe back to previous option.
-        - Click "Learn More" button.
+          - Navigate to dashboard.
+          - Authenticate polkadot.
+          - Disconnect polka.
+          - Swipe back to previous option.
+          - Click "Learn More" button.
       Result: User should be navigated to the manual page.
     """
     dashboard_page, _ = before_test_setup(browser)
@@ -63,10 +63,10 @@ def test_polka_connection(browser):
     """
       Test Case: TC977 - Polkadot connection
       Steps:
-        - Navigate to dashboard.
-        - Authenticate polkadot.
-        - Disconnect from polka.
-        - Reconnect to it.
+          - Navigate to dashboard.
+          - Authenticate polkadot.
+          - Disconnect from polka.
+          - Reconnect to it.
       Result: Polka should be load and authenticated, Assert button works and polka connect and disconnect.
     """
     dashboard_page, polka_page = before_test_setup(browser)
@@ -84,11 +84,11 @@ def test_create_account(browser):
     """
       Test Cases: TC978 - Create account
       Steps:
-        - Navigate to dashboard.
-        - Authenticate and Navigate to polkadot.
-        - Click on "Menu" then "Create new account".
-        - Click on checkbox then "Next step".
-        - Enter username, password (twice) and submit.
+          - Navigate to dashboard.
+          - Authenticate and Navigate to polkadot.
+          - Click on "Menu" then "Create new account".
+          - Click on checkbox then "Next step".
+          - Enter username, password (twice) and submit.
       Result: Account should be listed on the connected account.
     """
     dashboard_page, polka_page = before_test_setup(browser)
@@ -102,11 +102,11 @@ def test_import_account(browser):
     """
       Test Cases: TC979 - Import account
       Steps:
-        - Navigate to dashboard.
-        - Authenticate and Navigate to polkadot.
-        - Click on "Menu" then "import account".
-        - Enter seed then "Next".
-        - Enter username, password (twice) and submit.
+          - Navigate to dashboard.
+          - Authenticate and Navigate to polkadot.
+          - Click on "Menu" then "import account".
+          - Enter seed then "Next".
+          - Enter username, password (twice) and submit.
       Result: Account should be listed on the connected account.
     """
     dashboard_page, polka_page = before_test_setup(browser)
@@ -119,10 +119,10 @@ def test_import_account(browser):
 """
   Test Cases: TC980 - Search by valid account name or address
   Steps:
-    - Navigate to dashboard.
-    - Authenticate polkadot.
-    - Add or Import some accounts.
-    - Type account name or address in SearchBar.
+      - Navigate to dashboard.
+      - Authenticate polkadot.
+      - Add or Import some accounts.
+      - Type account name or address in SearchBar.
   Test Data: [ Name - Address - (First char,  Last char, Random char from middle,
                   Random char sequence, case sensitive chars) From Account Name or Address ]
   Result: List of all the accounts that matches search input.
@@ -184,10 +184,10 @@ def test_search_by_invalid_name_address(browser, cases):
     """
       Test Cases: TC981 - Search by invalid account name or address
       Steps:
-        - Navigate to dashboard.
-        - Authenticate polkadot.
-        - Add or Import some accounts.
-        - Type account name or address in SearchBar.
+          - Navigate to dashboard.
+          - Authenticate polkadot.
+          - Add or Import some accounts.
+          - Type account name or address in SearchBar.
       Test Data: [Empty - Random char or sequence not in both]
       Result: Empty list.
     """

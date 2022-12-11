@@ -21,9 +21,9 @@ def test_navigate_swap(browser):
     """
       Test Case: TC1112 Navigate swap
       Steps:
-        - Navigate to the dashboard.
-        - Select an account.
-        - Click on swap from side menu.
+          - Navigate to the dashboard.
+          - Select an account.
+          - Click on swap from side menu.
       Result: swap page open.
     """
     before_test_setup(browser)
@@ -34,10 +34,10 @@ def test_transfer_chain(browser):
     """
       Test Case: TC1113 transfer chain
       Steps:
-        - Navigate to the dashboard.
-        - Select an account.
-        - Click on swap from side menu.
-        - Click on chain list.
+          - Navigate to the dashboard.
+          - Select an account.
+          - Click on swap from side menu.
+          - Click on chain list.
       Result: Steller should be selected.
     """
     swap_page, _, _ = before_test_setup(browser)
@@ -48,12 +48,12 @@ def test_choose_deposit(browser):
     """
       Test Case: TC1114 choose deposit
       Steps:
-        - Navigate to the dashboard.
-        - Select an account.
-        - Click on swap from side menu.
-        - Click on chain list.
-        - Click on deposit button.
-        - Click on close button.
+          - Navigate to the dashboard.
+          - Select an account.
+          - Click on swap from side menu.
+          - Click on chain list.
+          - Click on deposit button.
+          - Click on close button.
       Result: Deposit tft will be shown.
     """
     swap_page, _, _ = before_test_setup(browser)
@@ -66,12 +66,12 @@ def test_choose_withdraw(browser):
     """
       Test Case: TC1115 choose withdraw
       Steps:
-        - Navigate to the dashboard.
-        - Select an account.
-        - Click on swap from side menu.
-        - Click on chain list.
-        - Click on withdraw button.
-        - Click on close button.
+          - Navigate to the dashboard.
+          - Select an account.
+          - Click on swap from side menu.
+          - Click on chain list.
+          - Click on withdraw button.
+          - Click on close button.
       Result: withdraw tft will be shown.
     """
     swap_page, _, _ = before_test_setup(browser)
@@ -84,10 +84,10 @@ def test_how_it_done(browser):
     """
       Test Case: TC1116 how it done
       Steps:
-        - Navigate to the dashboard.
-        - Select an account.
-        - Click on swap from side menu.
-        - Click on how it's done text.
+          - Navigate to the dashboard.
+          - Select an account.
+          - Click on swap from side menu.
+          - Click on how it's done text.
       Result: it will go to link
     """
     swap_page, _, _ = before_test_setup(browser)
@@ -99,12 +99,12 @@ def test_check_deposit(browser):
     """
       Test Case: TC1117 check deposit
       Steps:
-        - Navigate to the dashboard.
-        - Select an account.
-        - Click on swap from side menu.
-        - Click on chain list.
-        - Click on deposit button.
-        - Click on close button.
+          - Navigate to the dashboard.
+          - Select an account.
+          - Click on swap from side menu.
+          - Click on chain list.
+          - Click on deposit button.
+          - Click on close button.
       Result: Assert that Destination and memo text will come from drid proxy.
     """
     swap_page, _, _ = before_test_setup(browser)
@@ -121,13 +121,13 @@ def test_check_withdraw_stellar(browser):
     """
       Test Case: TC1118 check withdraw stellar
       Steps:
-        - Navigate to the dashboard.
-        - Select an account.
-        - Click on swap from side menu.
-        - Click on chain list.
-        - Click on withdraw button.
-        - Put stellar Address.
-        - Click on close button.
+          - Navigate to the dashboard.
+          - Select an account.
+          - Click on swap from side menu.
+          - Click on chain list.
+          - Click on withdraw button.
+          - Put stellar Address.
+          - Click on close button.
       Result: Assert that stellar address is right.
     """
     swap_page, _, _ = before_test_setup(browser)
@@ -139,13 +139,13 @@ def test_check_withdraw_invalid_stellar(browser):
     """
       Test Case: TC1143 - Check withdraw invalid Stellar address
       Steps:
-        - Navigate to the dashboard.
-        - Select an account.
-        - Click on swap from side menu.
-        - Click on chain list.
-        - Click on withdraw button.
-        - Put stellar Address.
-        - Click on close button.
+          - Navigate to the dashboard.
+          - Select an account.
+          - Click on swap from side menu.
+          - Click on chain list.
+          - Click on withdraw button.
+          - Put stellar Address.
+          - Click on close button.
       Result: Alert with message "invalid address" should be displayed.
     """
     swap_page, _, _ = before_test_setup(browser)
@@ -161,13 +161,13 @@ def test_check_withdraw_tft_amount(browser):
     """
       Test Case: TC1131 check withdraw tft amount
       Steps:
-        - Navigate to the dashboard.
-        - Select an account.
-        - Click on swap from side menu.
-        - Click on chain list.
-        - Click on withdraw button.
-        - Put amount of tft you want to send.
-        - Click on close button.
+          - Navigate to the dashboard.
+          - Select an account.
+          - Click on swap from side menu.
+          - Click on chain list.
+          - Click on withdraw button.
+          - Put amount of tft you want to send.
+          - Click on close button.
       Result: Assert that the amount of tft is right.
     """
     swap_page, _, _ = before_test_setup(browser)
@@ -183,13 +183,13 @@ def test_check_withdraw_invalid_tft_amount(browser):
     """
       Test Case: TC1144 - Check withdraw invalid TFT amount
       Steps:
-        - Navigate to the dashboard.
-        - Select an account.
-        - Click on swap from side menu.
-        - Click on chain list.
-        - Click on withdraw button.
-        - Put amount of tft you want to send.
-        - Click on close button.
+          - Navigate to the dashboard.
+          - Select an account.
+          - Click on swap from side menu.
+          - Click on chain list.
+          - Click on withdraw button.
+          - Put amount of tft you want to send.
+          - Click on close button.
       Result: Alert with message "Amount cannot be negative or 0" should be displayed.
     """
     swap_page, _, _ = before_test_setup(browser)
@@ -209,14 +209,14 @@ def test_check_withdraw(browser):
     """
       Test Case: TC1132 check withdraw 
       Steps:
-        - Navigate to the dashboard.
-        - Select an account.
-        - Click on swap from side menu.
-        - Click on chain list.
-        - Click on withdraw button.
-        - Put stellar Address.
-        - Put amount of tft you want to send.
-        - Click on close button.
+          - Navigate to the dashboard.
+          - Select an account.
+          - Click on swap from side menu.
+          - Click on chain list.
+          - Click on withdraw button.
+          - Put stellar Address.
+          - Put amount of tft you want to send.
+          - Click on close button.
       Result: Assert that Amount of tft should send to the stellar.
     """
     swap_page, polka_page, password = before_test_setup(browser)

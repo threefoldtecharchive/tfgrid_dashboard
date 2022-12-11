@@ -26,6 +26,11 @@ class GridProxy:
         r = requests.post(Base.gridproxy_url + 'nodes/'+ str(node_id))
         dedicate_status = r.json()
         return (dedicate_status['rentedByTwinId'])
+    
+    def get_node_ipv4(self, node_id):
+        r = requests.post(Base.gridproxy_url + 'nodes/'+ str(node_id))
+        farm_node = r.json()
+        return (farm_node['publicConfig']['ipv4'])
 
     def get_twin_address(self, twin_id):
         r = requests.post(Base.gridproxy_url + 'twins?twin_id='+ twin_id)
@@ -36,3 +41,13 @@ class GridProxy:
         r = requests.post(Base.gridproxy_url + 'farms?farm_id='+ farm_id)
         farm_list = r.json()
         return len(farm_list[0]['publicIps'])
+
+    def get_twin_node(self, twin_id):
+        r = requests.post(Base.gridproxy_url + 'farms?twin_id=' + twin_id)
+        details = r.json()
+        farms = ''
+        for detail in details:
+            farms += str(detail['farmId']) + ','
+        r = requests.post(Base.gridproxy_url + 'nodes?farm_ids=' + farms[:-1])
+        details = r.json()
+        return details

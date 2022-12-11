@@ -14,6 +14,17 @@ def get_seed():
             print("You must add account seed either in Config.ini or by exporting TFCHAIN_MNEMONICS.")
     return str(seed)
 
+def get_node_seed():
+    config = configparser.ConfigParser()
+    config.read('Config.ini')
+    seed = config['Utils']['node_seed']
+    if (seed == ''):
+        try:
+            seed = os.environ["TFCHAIN_NODE_MNEMONICS"]
+        except:
+            print("You must add account seed either in Config.ini or by exporting TFCHAIN_NODE_MNEMONICS.")
+    return str(seed)
+
 def get_stellar_address():
     config = configparser.ConfigParser()
     config.read('Config.ini')
