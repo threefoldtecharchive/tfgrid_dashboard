@@ -359,6 +359,16 @@ export function countPrice(
 
   return usdPrice.toFixed(2);
 }
+interface tftPriceModule {
+  allowedOrigin: Function;
+  averageTftPrice: Function;
+  bufferRange: Function;
+  lastBlockSet: Function;
+  maxTftPrice: Function;
+  minTftPrice: Function;
+  tftPrice: Function;
+  tftPriceHistory: Function;
+}
 export async function getTFTPrice(api: {
   query: {
     [tftPriceModule: string]: any;
@@ -370,6 +380,8 @@ export async function getTFTPrice(api: {
   };
 }) {
   const pricing = await api.query.tftPriceModule.tftPrice();
+  console.log(typeof (await api.query.tftPriceModule));
+
   return pricing.words[0] / 1000;
 }
 
