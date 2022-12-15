@@ -8,6 +8,7 @@ import { jsPDF } from "jspdf";
 import { nodeInterface } from "./farms";
 import moment from "moment";
 import "jspdf-autotable";
+import { apiInterface } from "./util";
 export interface receiptInterface {
   hash: string;
   mintingStart?: number;
@@ -183,23 +184,7 @@ export function byteToGB(capacity: number) {
   return (capacity / 1024 / 1024 / 1024).toFixed(0);
 }
 export async function createRentContract(
-  api: {
-    tx: {
-      smartContractModule: {
-        createRentContract: (
-          arg0: any,
-          arg1: any,
-        ) => {
-          (): any;
-          new (): any;
-          signAndSend: {
-            (arg0: any, arg1: { signer: Signer }, arg2: any): any;
-            new (): any;
-          };
-        };
-      };
-    };
-  },
+  api: apiInterface,
   address: string,
   nodeId: string,
   solutionProviderID: string | null,
@@ -210,37 +195,14 @@ export async function createRentContract(
     .createRentContract(nodeId, solutionProviderID)
     .signAndSend(address, { signer: injector.signer }, callback);
 }
-export async function cancelRentContract(
-  api: {
-    tx: {
-      smartContractModule: {
-        cancelContract: (arg0: any) => {
-          (): any;
-          new (): any;
-          signAndSend: {
-            (arg0: any, arg1: { signer: Signer }, arg2: any): any;
-            new (): any;
-          };
-        };
-      };
-    };
-  },
-  address: string,
-  contractId: string,
-  callback: any,
-) {
+export async function cancelRentContract(api: apiInterface, address: string, contractId: string, callback: any) {
   const injector = await web3FromAddress(address);
   return api.tx.smartContractModule
     .cancelContract(contractId)
     .signAndSend(address, { signer: injector.signer }, callback);
 }
 
-export async function getActiveContracts(
-  api: {
-    query: { smartContractModule: { activeNodeContracts: (arg0: any) => any } };
-  },
-  nodeId: string,
-) {
+export async function getActiveContracts(api: apiInterface, nodeId: string) {
   console.log("getActiveContracts", api.query.smartContractModule.activeNodeContracts(nodeId));
   return await api.query.smartContractModule.activeNodeContracts(nodeId);
 }
@@ -335,7 +297,7 @@ export function calCU(cru: number, mru: number) {
 
   return cu;
 }
-export async function getPrices(api: { query: { tfgridModule: { pricingPolicies: (arg0: number) => any } } }) {
+export async function getPrices(api: apiInterface) {
   const pricing = await api.query.tfgridModule.pricingPolicies(1);
   return pricing.toJSON();
 }
@@ -359,34 +321,14 @@ export function countPrice(
 
   return usdPrice.toFixed(2);
 }
-interface tftPriceModule {
-  allowedOrigin: Function;
-  averageTftPrice: Function;
-  bufferRange: Function;
-  lastBlockSet: Function;
-  maxTftPrice: Function;
-  minTftPrice: Function;
-  tftPrice: Function;
-  tftPriceHistory: Function;
-}
-export async function getTFTPrice(api: {
-  query: {
-    [tftPriceModule: string]: any;
-    system: {
-      account: (arg0: string) => {
-        data: any;
-      };
-    };
-  };
-}) {
-  const pricing = await api.query.tftPriceModule.tftPrice();
-  console.log(typeof (await api.query.tftPriceModule));
 
+export async function getTFTPrice(api: apiInterface) {
+  const pricing = await api.query.tftPriceModule.tftPrice();
   return pricing.words[0] / 1000;
 }
 
 export async function calDiscount(
-  api: { query: { system: { account: (arg0: string) => { data: any } } } },
+  api: apiInterface,
   address: string,
   pricing: { discountForDedicationNodes: any },
   price: any,
@@ -455,7 +397,7 @@ export async function getDedicatedNodes(twinId: string, query: string, page: num
 }
 
 export async function getDNodes(
-  api: any,
+  api: apiInterface,
   address: string,
   currentTwinID: string,
   query: string,
