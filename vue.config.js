@@ -9,6 +9,7 @@ module.exports = defineConfig({
         crypto: require.resolve("crypto-browserify"),
         path: require.resolve("path-browserify"),
         stream: require.resolve("stream-browserify"),
+        fs: require.resolve("browserify-fs"),
       },
     },
     plugins: [new NodePolyfillPlugin()],
