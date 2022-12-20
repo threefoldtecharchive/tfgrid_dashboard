@@ -24,14 +24,12 @@
 
       <v-card-text class="mt-2 text-body-1">
         <form class="pt-2">
-          <ProfileManagerMnemonics :value.sync="form.mnemonic.value" :valid.sync="form.mnemonic.valid" />
-
-          <v-textarea label="SSH Key" placeholder="Your Public SSH Key" no-resize>
-            <template #append-outer>
-              <v-btn color="primary" small> Generate SSH Key </v-btn>
-            </template>
-          </v-textarea>
-          {{ form }}
+          <ProfileManagerMnemonics :value.sync="form.mnemonics.value" :valid.sync="form.mnemonics.valid" />
+          <ProfileManagerSSH
+            :value.sync="form.ssh.value"
+            :valid.sync="form.ssh.valid"
+            :disabled="!form.mnemonics.valid"
+          />
         </form>
       </v-card-text>
     </v-card>
@@ -41,28 +39,28 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import ProfileManagerMnemonics from "./ProfileManagerMnemonics.vue";
+import ProfileManagerSSH from "./ProfileManagerSSH.vue";
 
 class ProfileForm {
-  mnemonic = { value: "", valid: false };
+  mnemonics = { value: "", valid: false };
   ssh = { value: "", valid: false };
 
   get valid(): boolean {
-    return this.mnemonic.valid && this.ssh.valid;
+    return this.mnemonics.valid && this.ssh.valid;
   }
 
   get value() {
-    const { mnemonic, ssh } = this;
-    return { mnemonic: mnemonic.value, ssh: ssh.value };
+    const { mnemonics, ssh } = this;
+    return { mnemonics: mnemonics.value, ssh: ssh.value };
   }
 }
 
 @Component({
   name: "ProfileManager",
-  components: { ProfileManagerMnemonics },
+  components: { ProfileManagerMnemonics, ProfileManagerSSH },
 })
 export default class ProfileManager extends Vue {
-  open = false;
-
+  open = true;
   form = new ProfileForm();
 }
 </script>
