@@ -1,9 +1,26 @@
 <template>
   <v-dialog v-model="open" width="800">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn outlined rounded v-bind="attrs" v-on="on">
-        <v-icon left> mdi-account </v-icon>
-        Profile Manager
+      <v-btn
+        outlined
+        rounded
+        :icon="!form.valid"
+        v-bind="attrs"
+        v-on="on"
+        x-large
+        :class="{ 'pa-4': form.valid }"
+        :style="{ height: form.valid ? 'auto' : undefined }"
+      >
+        <v-icon large :class="{ 'mr-5': form.valid }" :left="form.valid"> mdi-account </v-icon>
+        <span v-if="form.valid" class="text-left">
+          <template v-if="loading">
+            <span>Loading...</span>
+          </template>
+          <template v-else>
+            <span class="font-weight-regular mr-1">Balance:</span> <span>{{ balance.free }} TFT</span><br />
+            <span class="font-weight-regular mr-3">Locked:</span> <span>{{ balance.feeFrozen }} TFT</span>
+          </template>
+        </span>
       </v-btn>
     </template>
 
@@ -37,7 +54,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { getGrid } from "@/utils";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import ProfileManagerMnemonics from "./ProfileManagerMnemonics.vue";
 import ProfileManagerSSH from "./ProfileManagerSSH.vue";
 
@@ -62,5 +80,22 @@ class ProfileForm {
 export default class ProfileManager extends Vue {
   open = true;
   form = new ProfileForm();
+  loading = false;
+  balance: { free: number; feeFrozen: number } | null = null;
+
+  @Watch("form.valid", { immediate: true, deep: true })
+  async onValidChange() {
+    if (this.form.valid) {
+      this.loading = true;
+      try {
+        const grid = await getGrid(this.form.value.mnemonics!);
+        this.balance = (await grid.balance.getMyBalance()) as any;
+      } catch (e) {
+        this.onValidChange();
+        return;
+      }
+      this.loading = false;
+    }
+  }
 }
 </script>
