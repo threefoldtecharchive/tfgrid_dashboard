@@ -4,75 +4,49 @@
       <v-app-bar color="#064663" dense dark fixed height="65">
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
-        <v-toolbar-title
-          class="font-weight-bold"
-          @click="redirectToHomePage"
-          style="cursor: pointer;"
-        >Threefold Chain</v-toolbar-title>
+        <v-toolbar-title class="font-weight-bold" @click="redirectToHomePage" style="cursor: pointer"
+          >Threefold Chain</v-toolbar-title
+        >
 
         <v-spacer></v-spacer>
         <div class="d-flex">
           <FundsCard
-          v-if="$route.path !='/' && $route.query.balanceFree"
-          :balanceFree.sync='balanceFree'
-          :balanceReserved.sync='balanceReserved'
-          @update:balanceFree="$route.query.balanceFree=$event"
-          @update:balanceReserved="$route.query.balanceReserved=$event"
-        />
-          <div class="d-flex" style="align-items: center;">
-            <v-btn
-            icon
-            @click="toggle_dark_mode">
+            v-if="$route.path != '/' && $route.query.balanceFree"
+            :balanceFree.sync="balanceFree"
+            :balanceReserved.sync="balanceReserved"
+            @update:balanceFree="$route.query.balanceFree = $event"
+            @update:balanceReserved="$route.query.balanceReserved = $event"
+          />
+          <div class="d-flex" style="align-items: center">
+            <v-btn icon @click="toggle_dark_mode">
               <v-icon>mdi-theme-light-dark</v-icon>
             </v-btn>
 
             <v-card color="transparent" outlined v-if="$store.state.portal.accounts.length === 0">
-              <v-btn
-              @click="$store.dispatch('portal/subscribeAccounts')"
-              color="green"
-                
-              >
-                Connect
-              </v-btn>
+              <v-btn @click="$store.dispatch('portal/subscribeAccounts')" color="green"> Connect </v-btn>
             </v-card>
-            
 
-            <v-btn
-              v-else
-              @click="disconnectWallet"
-              color="red"
-            >
-              Disconnect
-            </v-btn>
-            
-          <v-theme-provider root>
-          <v-card v-if="isAccountSelected()" style="width: max-content;">
-            <v-card-text
-              style="padding: 10px 0px 10px 30px;"
-              v-for="account in filteredAccounts()"
-              :key="account.address"
-            >
-              <v-row class="d-flex align-center mx-0">
-                <p
-                  class="font-weight-black"
-                  style="font-size: 15px;"
-                >{{ account.meta.name }}</p>
+            <v-btn v-else @click="disconnectWallet" color="red"> Disconnect </v-btn>
 
-                <v-btn
-                  icon
-                  class="mr-2"
-                  @click="redirectToHomePage"
+            <v-theme-provider root>
+              <v-card v-if="isAccountSelected()" style="width: max-content">
+                <v-card-text
+                  style="padding: 10px 0px 10px 30px"
+                  v-for="account in filteredAccounts()"
+                  :key="account.address"
                 >
-                  <v-icon>mdi-logout theme-light-dark</v-icon>
-                </v-btn>
-              </v-row>
-            </v-card-text>
-          </v-card>
-          </v-theme-provider>
+                  <v-row class="d-flex align-center mx-0">
+                    <p class="font-weight-black" style="font-size: 15px">{{ account.meta.name }}</p>
+
+                    <v-btn icon class="mr-2" @click="redirectToHomePage">
+                      <v-icon>mdi-logout theme-light-dark</v-icon>
+                    </v-btn>
+                  </v-row>
+                </v-card-text>
+              </v-card>
+            </v-theme-provider>
           </div>
         </div>
-
-
       </v-app-bar>
     </div>
 
@@ -91,16 +65,11 @@
             <v-img src="./assets/logo.png"></v-img>
           </v-list-item-avatar>
 
-          <v-list-item-title
-            class="white--text"
-            @click="redirectToHomePage"
-            style="cursor: pointer;"
-          >Threefold Chain</v-list-item-title>
-
-          <v-btn
-            icon
-            @click.stop="toggle()"
+          <v-list-item-title class="white--text" @click="redirectToHomePage" style="cursor: pointer"
+            >Threefold Chain</v-list-item-title
           >
+
+          <v-btn icon @click.stop="toggle()">
             <v-icon class="white--text">mdi-chevron-left</v-icon>
           </v-btn>
         </v-list-item>
@@ -134,10 +103,7 @@
           >
             <template v-slot:activator>
               <v-list-item-icon>
-                <v-icon
-                  class="white--text"
-                  v-text="'mdi-' + route.icon"
-                />
+                <v-icon class="white--text" v-text="'mdi-' + route.icon" />
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title class="white--text">
@@ -149,36 +115,19 @@
             </template>
 
             <div v-if="route.prefix === '/'">
-              <div 
-                v-for="account in filteredAccounts()"
-                :key="account.address"
-              >
+              <div v-for="account in filteredAccounts()" :key="account.address">
                 <v-list-item
                   :active="account.active"
                   v-for="subchild in route.children"
                   :key="subchild.label"
-                  @click="
-                  redirectToSubchild(
-                    subchild.label,
-                    subchild.path || '',
-                    account.address,
-                    account.meta.name
-                  )
-                "
+                  @click="redirectToSubchild(subchild.label, subchild.path || '', account.address, account.meta.name)"
                   class="white--text pl-16"
                 >
                   <v-list-item-icon>
-                    <v-icon
-                      class="white--text"
-                      v-text="'mdi-' + subchild.icon"
-                    />
+                    <v-icon class="white--text" v-text="'mdi-' + subchild.icon" />
                   </v-list-item-icon>
                   <v-list-item-content>
-                    <v-list-item-title
-                      class="white--text text-capitalize"
-                      v-text="subchild.label"
-                    >
-                    </v-list-item-title>
+                    <v-list-item-title class="white--text text-capitalize" v-text="subchild.label"> </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </div>
@@ -191,37 +140,31 @@
                 :to="route.prefix + child.path"
                 class="pl-16"
               >
-                <v-list-item-icon
-                  class="mr-4"
-                  v-if="child.icon"
-                >
-                  <v-icon
-                    class="white--text"
-                    v-text="'mdi-' + child.icon"
-                  />
+                <v-list-item-icon class="mr-4" v-if="child.icon">
+                  <v-icon class="white--text" v-text="'mdi-' + child.icon" />
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title
-                    class="white--text"
-                    v-text="child.label"
-                  >
-                  </v-list-item-title>
+                  <v-list-item-title class="white--text" v-text="child.label"> </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </div>
           </v-list-group>
         </template>
       </v-list>
-      <div :style="mini ? 'display: none' : 'position: fixed; bottom: 2%; right: 7%; background-color: rgb(25, 130, 177); padding: 5px 10px; border-radius: 15px;'">
-        <span>{{version ? version : "no version provided"}}</span>
+      <div
+        :style="
+          mini
+            ? 'display: none'
+            : 'position: fixed; bottom: 2%; right: 7%; background-color: rgb(25, 130, 177); padding: 5px 10px; border-radius: 15px;'
+        "
+      >
+        <span>{{ version ? version : "no version provided" }}</span>
       </div>
     </v-navigation-drawer>
     <v-dialog v-model="loadingAPI" persistent class="loadingDialog">
       <div class="d-flex justify-center" style="display: block; padding: 10%">
         <v-progress-circular indeterminate color="green" :size="335" :width="7">
-          <span style="font-size: large; color: black"
-            >Connecting to Polkadot</span
-          >
+          <span style="font-size: large; color: black">Connecting to Polkadot</span>
         </v-progress-circular>
       </div>
     </v-dialog>
@@ -248,7 +191,7 @@ import { getTwin, getTwinID } from "./portal/lib/twin";
 import { accountInterface } from "./portal/store/state";
 import WelcomeWindow from "./portal/components/WelcomeWindow.vue";
 import FundsCard from "./portal/components/FundsCard.vue";
-import config from "@/portal/config"
+import config from "@/portal/config";
 
 interface SidenavItem {
   label: string;
@@ -290,10 +233,7 @@ export default class Dashboard extends Vue {
   balanceFree: string | (string | null)[] = "";
   balanceReserved: string | (string | null)[] = "";
 
-  @Watch("this.$route.query.balance") async onBalanceUpdate(
-    value: number,
-    oldValue: number
-  ) {
+  @Watch("this.$route.query.balance") async onBalanceUpdate(value: number, oldValue: number) {
     this.balanceFree = this.$route.query.balanceFree;
     this.balanceReserved = this.$route.query.balanceReserved;
     console.log(`balance went from ${oldValue}, to ${value}`);
@@ -315,10 +255,7 @@ export default class Dashboard extends Vue {
       } else {
         this.$vuetify.theme.dark = false;
       }
-    } else if (
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-    ) {
+    } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
       this.$vuetify.theme.dark = true;
       localStorage.setItem("dark_theme", this.$vuetify.theme.dark.toString());
     }
@@ -329,11 +266,11 @@ export default class Dashboard extends Vue {
 
     this.$root.$on("closeSidebar", () => {
       this.mini = !this.mini;
-      if (this.mini){
+      if (this.mini) {
         const [portal, explorer, calculator] = this.routes;
         portal.active = false;
         explorer.active = false;
-        calculator.active = false;        
+        calculator.active = false;
       }
     });
   }
@@ -358,7 +295,7 @@ export default class Dashboard extends Vue {
     this.$store.dispatch("portal/unsubscribeAccounts");
   }
   public filteredAccounts() {
-    return this.accounts.filter((account) => account.active);
+    return this.accounts.filter(account => account.active);
   }
   public isAccountSelected() {
     if (this.$route.query.accountName) {
@@ -376,7 +313,7 @@ export default class Dashboard extends Vue {
     }
   }
   public redirectToHomePage() {
-    this.accounts.map((account) => account.active = false);
+    this.accounts.map(account => (account.active = false));
     this.routes[0].active = false;
     if (this.$route.path !== "/") {
       this.$router.push({
@@ -385,21 +322,13 @@ export default class Dashboard extends Vue {
       });
     }
   }
-  public async redirectToSubchild(
-    label: string,
-    path: string,
-    address: string,
-    name: string
-  ) {
+  public async redirectToSubchild(label: string, path: string, address: string, name: string) {
     //
     this.twinID = await getTwinID(this.$api, address);
     this.balance = await getBalance(this.$api, address);
     if (this.twinID) {
       this.twin = await getTwin(this.$api, this.twinID);
-      if (
-        !this.$route.path.includes(path) ||
-        this.$route.params.accountID !== address
-      ) {
+      if (!this.$route.path.includes(path) || this.$route.params.accountID !== address) {
         this.$router.push({
           name: `${path}`,
           params: { accountID: `${address}` },
@@ -433,7 +362,7 @@ export default class Dashboard extends Vue {
       label: "Portal",
       icon: "account-convert-outline",
       prefix: "/",
-      active: this.mini ? false: true,
+      active: this.mini ? false : true,
       children: [
         {
           label: "twin",
@@ -453,21 +382,21 @@ export default class Dashboard extends Vue {
           icon: "account-arrow-right-outline",
           showBeforeLogIn: false,
         },
-        { label: "farms", path: "account-farms", icon: "silo", showBeforeLogIn: false, },
+        { label: "farms", path: "account-farms", icon: "silo", showBeforeLogIn: false },
         {
           label: "dedicated nodes",
           path: "account-nodes",
           icon: "resistor-nodes",
           showBeforeLogIn: false,
         },
-        { label: "dao", path: "account-dao", icon: "note-check-outline", showBeforeLogIn: false, },
+        { label: "dao", path: "account-dao", icon: "note-check-outline", showBeforeLogIn: false },
       ],
     },
     {
       label: "Explorer",
       icon: "database-search-outline",
       prefix: "/explorer/",
-      active: this.mini ? false: true,
+      active: this.mini ? false : true,
       children: [
         {
           label: "Statistics",
@@ -486,20 +415,21 @@ export default class Dashboard extends Vue {
           path: "farms",
           icon: "lan-connect",
           showBeforeLogIn: true,
-        }
+        },
       ],
-    },  {
+    },
+    {
       label: "Calculators",
       icon: "calculator",
       prefix: "/calculator/",
-      active: this.mini ? false: true,
+      active: this.mini ? false : true,
       children: [
         {
           label: "Resource Pricing",
           path: "calculator",
           icon: "currency-usd",
           showBeforeLogIn: true,
-        },      
+        },
         {
           label: "Simulator",
           path: "simulator/",
@@ -510,7 +440,7 @@ export default class Dashboard extends Vue {
               label: "Farming",
               path: "farm",
               icon: "lan-connect",
-            }
+            },
           ],
         },
       ],
@@ -519,6 +449,13 @@ export default class Dashboard extends Vue {
       label: "Zero-Os Bootstrap",
       icon: "earth",
       prefix: "/other/bootstrap",
+      children: [],
+    },
+    {
+      label: "Monitoring dashboard",
+      icon: "monitor",
+      prefix: "https://metrics.grid.tf",
+      hyperlink: true,
       children: [],
     },
     {
@@ -537,7 +474,7 @@ export default class Dashboard extends Vue {
     },
   ];
   toggle() {
-    this.$root.$emit('closeSidebar');
+    this.$root.$emit("closeSidebar");
   }
 }
 </script>
@@ -569,13 +506,15 @@ export default class Dashboard extends Vue {
 .v-list .v-list-item--active {
   border-radius: 20px;
 }
-.theme--dark.v-card > .v-card__text, .theme--dark.v-card > .v-card__subtitle {
-    color: rgb(255, 255, 255);
+.theme--dark.v-card > .v-card__text,
+.theme--dark.v-card > .v-card__subtitle {
+  color: rgb(255, 255, 255);
 }
-.theme--light.v-card > .v-card__text, .theme--light.v-card > .v-card__subtitle {
-    color: rgb(0, 0, 0);
+.theme--light.v-card > .v-card__text,
+.theme--light.v-card > .v-card__subtitle {
+  color: rgb(0, 0, 0);
 }
 .theme--light.v-btn.v-btn--icon {
-    color: rgba(0, 0, 0);
+  color: rgba(0, 0, 0);
 }
 </style>
