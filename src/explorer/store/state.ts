@@ -30,10 +30,10 @@ const createFilter = () => ({ enabled: false, value: [] });
 
 // const createConditionFilter = () => ({ enabled: false, value: true });
 
-// interface IComparisonFilter {
-//   enabled: boolean;
-//   value: number;
-// }
+interface IComparisonFilter {
+  enabled: boolean;
+  value: number;
+}
 
 const createComparisonFilter = () => ({ enabled: false, value: 0 });
 
