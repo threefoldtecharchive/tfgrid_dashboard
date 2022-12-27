@@ -452,8 +452,8 @@ export default class Dashboard extends Vue {
       children: [],
     },
     {
-      label: "Monitoring dashboard",
-      icon: "monitor",
+      label: "Monitoring",
+      icon: "equalizer",
       prefix: "https://metrics.grid.tf",
       hyperlink: true,
       children: [],
