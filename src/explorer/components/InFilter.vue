@@ -12,21 +12,15 @@
       solo
       type="text"
       @input.native="validated($event.srcElement.value, key2)"
-      >
+    >
       <template v-slot:selection="{ attrs, item, select, selected }">
-        <v-chip
-          v-bind="attrs"
-          :input-value="selected"
-          close
-          @click="select"
-          @click:close="remove(item)"
-        >
+        <v-chip v-bind="attrs" :input-value="selected" close @click="select" @click:close="remove(item)">
           <strong>{{ item }}</strong>
         </v-chip>
       </template>
     </v-combobox>
     <v-alert dense type="error" v-if="errorMsg">
-        {{ errorMsg }}
+      {{ errorMsg }}
     </v-alert>
   </v-card>
 </template>
@@ -34,7 +28,7 @@
 import { MutationTypes } from "../store/mutations";
 import { IState } from "../store/state";
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { inputValidation } from "../utils/validations"
+import { inputValidation } from "../utils/validations";
 @Component({})
 export default class InFilter extends Vue {
   @Prop({ required: true }) key1!: keyof IState["filters"];
@@ -54,8 +48,7 @@ export default class InFilter extends Vue {
       .map((e: any) => e[this.key2]);
   }
   get items(): string[] {
-    return this.$store.getters["explorer/getFilter"](this.key1, this.key2)
-      .value;
+    return this.$store.getters["explorer/getFilter"](this.key1, this.key2).value;
   }
   set items(value: string[]) {
     this.$store.commit("explorer/" + MutationTypes.SET_FILTER_VALUE, {
@@ -66,14 +59,14 @@ export default class InFilter extends Vue {
   }
   remove(item: string): void {
     const items = this.items;
-    const idx = items.findIndex((i) => i == item);
+    const idx = items.findIndex(i => i == item);
     if (idx > -1) {
       items.splice(idx, 1);
       this.items = items;
     }
   }
-  errorMsg:any = ''
-  validated(value: string, key: string): string{
+  errorMsg: any = "";
+  validated(value: string, key: string): string {
     this.errorMsg = inputValidation(value, key);
     return this.errorMsg;
   }

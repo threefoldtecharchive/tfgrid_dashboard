@@ -97,10 +97,7 @@ function createBaseBridgeValidator(): BridgeValidator {
 }
 
 export const BridgeValidator = {
-  encode(
-    message: BridgeValidator,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: BridgeValidator, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.power.isZero()) {
       writer.uint32(8).uint64(message.power);
     }
@@ -134,29 +131,20 @@ export const BridgeValidator = {
   fromJSON(object: any): BridgeValidator {
     return {
       power: isSet(object.power) ? Long.fromString(object.power) : Long.UZERO,
-      ethereumAddress: isSet(object.ethereumAddress)
-        ? String(object.ethereumAddress)
-        : "",
+      ethereumAddress: isSet(object.ethereumAddress) ? String(object.ethereumAddress) : "",
     };
   },
 
   toJSON(message: BridgeValidator): unknown {
     const obj: any = {};
-    message.power !== undefined &&
-      (obj.power = (message.power || Long.UZERO).toString());
-    message.ethereumAddress !== undefined &&
-      (obj.ethereumAddress = message.ethereumAddress);
+    message.power !== undefined && (obj.power = (message.power || Long.UZERO).toString());
+    message.ethereumAddress !== undefined && (obj.ethereumAddress = message.ethereumAddress);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<BridgeValidator>, I>>(
-    object: I
-  ): BridgeValidator {
+  fromPartial<I extends Exact<DeepPartial<BridgeValidator>, I>>(object: I): BridgeValidator {
     const message = createBaseBridgeValidator();
-    message.power =
-      object.power !== undefined && object.power !== null
-        ? Long.fromValue(object.power)
-        : Long.UZERO;
+    message.power = object.power !== undefined && object.power !== null ? Long.fromValue(object.power) : Long.UZERO;
     message.ethereumAddress = object.ethereumAddress ?? "";
     return message;
   },
@@ -173,10 +161,7 @@ function createBaseValset(): Valset {
 }
 
 export const Valset = {
-  encode(
-    message: Valset,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: Valset, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.nonce.isZero()) {
       writer.uint32(8).uint64(message.nonce);
     }
@@ -228,51 +213,32 @@ export const Valset = {
   fromJSON(object: any): Valset {
     return {
       nonce: isSet(object.nonce) ? Long.fromString(object.nonce) : Long.UZERO,
-      members: Array.isArray(object?.members)
-        ? object.members.map((e: any) => BridgeValidator.fromJSON(e))
-        : [],
-      height: isSet(object.height)
-        ? Long.fromString(object.height)
-        : Long.UZERO,
-      rewardAmount: isSet(object.rewardAmount)
-        ? String(object.rewardAmount)
-        : "",
+      members: Array.isArray(object?.members) ? object.members.map((e: any) => BridgeValidator.fromJSON(e)) : [],
+      height: isSet(object.height) ? Long.fromString(object.height) : Long.UZERO,
+      rewardAmount: isSet(object.rewardAmount) ? String(object.rewardAmount) : "",
       rewardToken: isSet(object.rewardToken) ? String(object.rewardToken) : "",
     };
   },
 
   toJSON(message: Valset): unknown {
     const obj: any = {};
-    message.nonce !== undefined &&
-      (obj.nonce = (message.nonce || Long.UZERO).toString());
+    message.nonce !== undefined && (obj.nonce = (message.nonce || Long.UZERO).toString());
     if (message.members) {
-      obj.members = message.members.map((e) =>
-        e ? BridgeValidator.toJSON(e) : undefined
-      );
+      obj.members = message.members.map(e => (e ? BridgeValidator.toJSON(e) : undefined));
     } else {
       obj.members = [];
     }
-    message.height !== undefined &&
-      (obj.height = (message.height || Long.UZERO).toString());
-    message.rewardAmount !== undefined &&
-      (obj.rewardAmount = message.rewardAmount);
-    message.rewardToken !== undefined &&
-      (obj.rewardToken = message.rewardToken);
+    message.height !== undefined && (obj.height = (message.height || Long.UZERO).toString());
+    message.rewardAmount !== undefined && (obj.rewardAmount = message.rewardAmount);
+    message.rewardToken !== undefined && (obj.rewardToken = message.rewardToken);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Valset>, I>>(object: I): Valset {
     const message = createBaseValset();
-    message.nonce =
-      object.nonce !== undefined && object.nonce !== null
-        ? Long.fromValue(object.nonce)
-        : Long.UZERO;
-    message.members =
-      object.members?.map((e) => BridgeValidator.fromPartial(e)) || [];
-    message.height =
-      object.height !== undefined && object.height !== null
-        ? Long.fromValue(object.height)
-        : Long.UZERO;
+    message.nonce = object.nonce !== undefined && object.nonce !== null ? Long.fromValue(object.nonce) : Long.UZERO;
+    message.members = object.members?.map(e => BridgeValidator.fromPartial(e)) || [];
+    message.height = object.height !== undefined && object.height !== null ? Long.fromValue(object.height) : Long.UZERO;
     message.rewardAmount = object.rewardAmount ?? "";
     message.rewardToken = object.rewardToken ?? "";
     return message;
@@ -284,10 +250,7 @@ function createBaseLastObservedEthereumBlockHeight(): LastObservedEthereumBlockH
 }
 
 export const LastObservedEthereumBlockHeight = {
-  encode(
-    message: LastObservedEthereumBlockHeight,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: LastObservedEthereumBlockHeight, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.cosmosBlockHeight.isZero()) {
       writer.uint32(8).uint64(message.cosmosBlockHeight);
     }
@@ -297,10 +260,7 @@ export const LastObservedEthereumBlockHeight = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): LastObservedEthereumBlockHeight {
+  decode(input: _m0.Reader | Uint8Array, length?: number): LastObservedEthereumBlockHeight {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseLastObservedEthereumBlockHeight();
@@ -323,40 +283,30 @@ export const LastObservedEthereumBlockHeight = {
 
   fromJSON(object: any): LastObservedEthereumBlockHeight {
     return {
-      cosmosBlockHeight: isSet(object.cosmosBlockHeight)
-        ? Long.fromString(object.cosmosBlockHeight)
-        : Long.UZERO,
-      ethereumBlockHeight: isSet(object.ethereumBlockHeight)
-        ? Long.fromString(object.ethereumBlockHeight)
-        : Long.UZERO,
+      cosmosBlockHeight: isSet(object.cosmosBlockHeight) ? Long.fromString(object.cosmosBlockHeight) : Long.UZERO,
+      ethereumBlockHeight: isSet(object.ethereumBlockHeight) ? Long.fromString(object.ethereumBlockHeight) : Long.UZERO,
     };
   },
 
   toJSON(message: LastObservedEthereumBlockHeight): unknown {
     const obj: any = {};
     message.cosmosBlockHeight !== undefined &&
-      (obj.cosmosBlockHeight = (
-        message.cosmosBlockHeight || Long.UZERO
-      ).toString());
+      (obj.cosmosBlockHeight = (message.cosmosBlockHeight || Long.UZERO).toString());
     message.ethereumBlockHeight !== undefined &&
-      (obj.ethereumBlockHeight = (
-        message.ethereumBlockHeight || Long.UZERO
-      ).toString());
+      (obj.ethereumBlockHeight = (message.ethereumBlockHeight || Long.UZERO).toString());
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<LastObservedEthereumBlockHeight>, I>>(
-    object: I
+    object: I,
   ): LastObservedEthereumBlockHeight {
     const message = createBaseLastObservedEthereumBlockHeight();
     message.cosmosBlockHeight =
-      object.cosmosBlockHeight !== undefined &&
-      object.cosmosBlockHeight !== null
+      object.cosmosBlockHeight !== undefined && object.cosmosBlockHeight !== null
         ? Long.fromValue(object.cosmosBlockHeight)
         : Long.UZERO;
     message.ethereumBlockHeight =
-      object.ethereumBlockHeight !== undefined &&
-      object.ethereumBlockHeight !== null
+      object.ethereumBlockHeight !== undefined && object.ethereumBlockHeight !== null
         ? Long.fromValue(object.ethereumBlockHeight)
         : Long.UZERO;
     return message;
@@ -368,10 +318,7 @@ function createBaseERC20ToDenom(): ERC20ToDenom {
 }
 
 export const ERC20ToDenom = {
-  encode(
-    message: ERC20ToDenom,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: ERC20ToDenom, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.erc20 !== "") {
       writer.uint32(10).string(message.erc20);
     }
@@ -416,9 +363,7 @@ export const ERC20ToDenom = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<ERC20ToDenom>, I>>(
-    object: I
-  ): ERC20ToDenom {
+  fromPartial<I extends Exact<DeepPartial<ERC20ToDenom>, I>>(object: I): ERC20ToDenom {
     const message = createBaseERC20ToDenom();
     message.erc20 = object.erc20 ?? "";
     message.denom = object.denom ?? "";
@@ -431,10 +376,7 @@ function createBaseUnhaltBridgeProposal(): UnhaltBridgeProposal {
 }
 
 export const UnhaltBridgeProposal = {
-  encode(
-    message: UnhaltBridgeProposal,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: UnhaltBridgeProposal, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.title !== "") {
       writer.uint32(10).string(message.title);
     }
@@ -447,10 +389,7 @@ export const UnhaltBridgeProposal = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): UnhaltBridgeProposal {
+  decode(input: _m0.Reader | Uint8Array, length?: number): UnhaltBridgeProposal {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseUnhaltBridgeProposal();
@@ -478,32 +417,24 @@ export const UnhaltBridgeProposal = {
     return {
       title: isSet(object.title) ? String(object.title) : "",
       description: isSet(object.description) ? String(object.description) : "",
-      targetNonce: isSet(object.targetNonce)
-        ? Long.fromString(object.targetNonce)
-        : Long.UZERO,
+      targetNonce: isSet(object.targetNonce) ? Long.fromString(object.targetNonce) : Long.UZERO,
     };
   },
 
   toJSON(message: UnhaltBridgeProposal): unknown {
     const obj: any = {};
     message.title !== undefined && (obj.title = message.title);
-    message.description !== undefined &&
-      (obj.description = message.description);
-    message.targetNonce !== undefined &&
-      (obj.targetNonce = (message.targetNonce || Long.UZERO).toString());
+    message.description !== undefined && (obj.description = message.description);
+    message.targetNonce !== undefined && (obj.targetNonce = (message.targetNonce || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<UnhaltBridgeProposal>, I>>(
-    object: I
-  ): UnhaltBridgeProposal {
+  fromPartial<I extends Exact<DeepPartial<UnhaltBridgeProposal>, I>>(object: I): UnhaltBridgeProposal {
     const message = createBaseUnhaltBridgeProposal();
     message.title = object.title ?? "";
     message.description = object.description ?? "";
     message.targetNonce =
-      object.targetNonce !== undefined && object.targetNonce !== null
-        ? Long.fromValue(object.targetNonce)
-        : Long.UZERO;
+      object.targetNonce !== undefined && object.targetNonce !== null ? Long.fromValue(object.targetNonce) : Long.UZERO;
     return message;
   },
 };
@@ -519,10 +450,7 @@ function createBaseAirdropProposal(): AirdropProposal {
 }
 
 export const AirdropProposal = {
-  encode(
-    message: AirdropProposal,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: AirdropProposal, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.title !== "") {
       writer.uint32(10).string(message.title);
     }
@@ -585,42 +513,33 @@ export const AirdropProposal = {
       title: isSet(object.title) ? String(object.title) : "",
       description: isSet(object.description) ? String(object.description) : "",
       denom: isSet(object.denom) ? String(object.denom) : "",
-      recipients: isSet(object.recipients)
-        ? bytesFromBase64(object.recipients)
-        : new Uint8Array(),
-      amounts: Array.isArray(object?.amounts)
-        ? object.amounts.map((e: any) => Long.fromString(e))
-        : [],
+      recipients: isSet(object.recipients) ? bytesFromBase64(object.recipients) : new Uint8Array(),
+      amounts: Array.isArray(object?.amounts) ? object.amounts.map((e: any) => Long.fromString(e)) : [],
     };
   },
 
   toJSON(message: AirdropProposal): unknown {
     const obj: any = {};
     message.title !== undefined && (obj.title = message.title);
-    message.description !== undefined &&
-      (obj.description = message.description);
+    message.description !== undefined && (obj.description = message.description);
     message.denom !== undefined && (obj.denom = message.denom);
     message.recipients !== undefined &&
-      (obj.recipients = base64FromBytes(
-        message.recipients !== undefined ? message.recipients : new Uint8Array()
-      ));
+      (obj.recipients = base64FromBytes(message.recipients !== undefined ? message.recipients : new Uint8Array()));
     if (message.amounts) {
-      obj.amounts = message.amounts.map((e) => (e || Long.UZERO).toString());
+      obj.amounts = message.amounts.map(e => (e || Long.UZERO).toString());
     } else {
       obj.amounts = [];
     }
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<AirdropProposal>, I>>(
-    object: I
-  ): AirdropProposal {
+  fromPartial<I extends Exact<DeepPartial<AirdropProposal>, I>>(object: I): AirdropProposal {
     const message = createBaseAirdropProposal();
     message.title = object.title ?? "";
     message.description = object.description ?? "";
     message.denom = object.denom ?? "";
     message.recipients = object.recipients ?? new Uint8Array();
-    message.amounts = object.amounts?.map((e) => Long.fromValue(e)) || [];
+    message.amounts = object.amounts?.map(e => Long.fromValue(e)) || [];
     return message;
   },
 };
@@ -630,10 +549,7 @@ function createBaseIBCMetadataProposal(): IBCMetadataProposal {
 }
 
 export const IBCMetadataProposal = {
-  encode(
-    message: IBCMetadataProposal,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: IBCMetadataProposal, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.title !== "") {
       writer.uint32(10).string(message.title);
     }
@@ -680,9 +596,7 @@ export const IBCMetadataProposal = {
     return {
       title: isSet(object.title) ? String(object.title) : "",
       description: isSet(object.description) ? String(object.description) : "",
-      metadata: isSet(object.metadata)
-        ? Metadata.fromJSON(object.metadata)
-        : undefined,
+      metadata: isSet(object.metadata) ? Metadata.fromJSON(object.metadata) : undefined,
       ibcDenom: isSet(object.ibcDenom) ? String(object.ibcDenom) : "",
     };
   },
@@ -690,26 +604,18 @@ export const IBCMetadataProposal = {
   toJSON(message: IBCMetadataProposal): unknown {
     const obj: any = {};
     message.title !== undefined && (obj.title = message.title);
-    message.description !== undefined &&
-      (obj.description = message.description);
-    message.metadata !== undefined &&
-      (obj.metadata = message.metadata
-        ? Metadata.toJSON(message.metadata)
-        : undefined);
+    message.description !== undefined && (obj.description = message.description);
+    message.metadata !== undefined && (obj.metadata = message.metadata ? Metadata.toJSON(message.metadata) : undefined);
     message.ibcDenom !== undefined && (obj.ibcDenom = message.ibcDenom);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<IBCMetadataProposal>, I>>(
-    object: I
-  ): IBCMetadataProposal {
+  fromPartial<I extends Exact<DeepPartial<IBCMetadataProposal>, I>>(object: I): IBCMetadataProposal {
     const message = createBaseIBCMetadataProposal();
     message.title = object.title ?? "";
     message.description = object.description ?? "";
     message.metadata =
-      object.metadata !== undefined && object.metadata !== null
-        ? Metadata.fromPartial(object.metadata)
-        : undefined;
+      object.metadata !== undefined && object.metadata !== null ? Metadata.fromPartial(object.metadata) : undefined;
     message.ibcDenom = object.ibcDenom ?? "";
     return message;
   },
@@ -727,8 +633,7 @@ var globalThis: any = (() => {
 })();
 
 const atob: (b64: string) => string =
-  globalThis.atob ||
-  ((b64) => globalThis.Buffer.from(b64, "base64").toString("binary"));
+  globalThis.atob || (b64 => globalThis.Buffer.from(b64, "base64").toString("binary"));
 function bytesFromBase64(b64: string): Uint8Array {
   const bin = atob(b64);
   const arr = new Uint8Array(bin.length);
@@ -739,8 +644,7 @@ function bytesFromBase64(b64: string): Uint8Array {
 }
 
 const btoa: (bin: string) => string =
-  globalThis.btoa ||
-  ((bin) => globalThis.Buffer.from(bin, "binary").toString("base64"));
+  globalThis.btoa || (bin => globalThis.Buffer.from(bin, "binary").toString("base64"));
 function base64FromBytes(arr: Uint8Array): string {
   const bin: string[] = [];
   for (const byte of arr) {
@@ -749,14 +653,7 @@ function base64FromBytes(arr: Uint8Array): string {
   return btoa(bin.join(""));
 }
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -773,10 +670,7 @@ export type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<
-        Exclude<keyof I, KeysOfUnion<P>>,
-        never
-      >;
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<Exclude<keyof I, KeysOfUnion<P>>, never>;
 
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;

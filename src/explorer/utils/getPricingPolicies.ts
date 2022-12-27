@@ -3,7 +3,7 @@ import types from "@/types.json";
 const URL = window.configs.APP_API_URL;
 
 function _toString(bytes: ArrayLike<number>): string {
-  return Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
+  return Array.from(bytes, byte => String.fromCharCode(byte)).join("");
 }
 
 export default function getPricingPolicies(): Promise<Map<number, string>> {
@@ -22,11 +22,11 @@ export default function getPricingPolicies(): Promise<Map<number, string>> {
               words: [id],
             },
             name,
-          }: any
+          }: any,
         ) => {
           return map.set(id, _toString(name));
         },
-        new Map<number, string>()
+        new Map<number, string>(),
       );
     });
 }

@@ -5,9 +5,7 @@
         <v-icon size="40" class="mr-2">mdi-map-outline</v-icon>
       </v-list-item-icon>
       <v-list-item-content>
-        <v-list-item-title style="font-size: 30px">
-          Country Details
-        </v-list-item-title>
+        <v-list-item-title style="font-size: 30px"> Country Details </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
     <v-list>
@@ -84,14 +82,11 @@ export default class CountryDetails extends Vue {
   @Prop({ required: false }) code?: string;
 
   get src(): string {
-    const conuntryCode =
-      this.country && this.country?.length > 2
-        ? byCountry(this.country)?.internet
-        : this.country;
+    const conuntryCode = this.country && this.country?.length > 2 ? byCountry(this.country)?.internet : this.country;
 
-    return conuntryCode?.toLocaleLowerCase() != "ch" 
-        ? `https://www.worldatlas.com/r/w425/img/flag/${conuntryCode?.toLocaleLowerCase()}-flag.jpg`
-        : `https://www.worldatlas.com/r/w425/img/flag/${conuntryCode?.toLocaleLowerCase()}-flag.png`;
+    return conuntryCode?.toLocaleLowerCase() != "ch"
+      ? `https://www.worldatlas.com/r/w425/img/flag/${conuntryCode?.toLocaleLowerCase()}-flag.jpg`
+      : `https://www.worldatlas.com/r/w425/img/flag/${conuntryCode?.toLocaleLowerCase()}-flag.png`;
   }
 }
 </script>

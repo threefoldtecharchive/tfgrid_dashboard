@@ -66,12 +66,11 @@
                 ['#c0392b', 'No With Veto'],
               ]"
               :key="color[0]"
-              style="display: flex; align-items: center; margin-bottom: 4px;"
+              style="display: flex; align-items: center; margin-bottom: 4px"
             >
               <span
                 :style="
-                  'display: inline-block; margin-right: 10px;height: 20px; width: 20px; background-color:' +
-                  color[0]
+                  'display: inline-block; margin-right: 10px;height: 20px; width: 20px; background-color:' + color[0]
                 "
               />
               <span>{{ color[1] }}</span>
@@ -103,12 +102,7 @@
       </template>
 
       <template v-slot:[`item.details`]="{ item }">
-        <v-btn
-          color="primary"
-          @click="$router.push('/hub/proposal/' + item.proposalId)"
-        >
-          View Details
-        </v-btn>
+        <v-btn color="primary" @click="$router.push('/hub/proposal/' + item.proposalId)"> View Details </v-btn>
       </template>
     </v-data-table>
   </v-container>
@@ -116,10 +110,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import {
-  CosmosGovV1Beta1QueryParamsResponse,
-  CosmosGovV1Beta1QueryProposalsResponse,
-} from "../rest/cosmos";
+import { CosmosGovV1Beta1QueryParamsResponse, CosmosGovV1Beta1QueryProposalsResponse } from "../rest/cosmos";
 import { listProposals, parameters, tally } from "../utils/gov";
 import { formatUnits } from "ethers/lib/utils";
 import VoteCircle from "../components/VoteCircle.vue";
@@ -160,10 +151,7 @@ export default class ListGov extends Vue {
     let proposals = this.proposals || [];
     for (const proposal of proposals) {
       if (proposal.status == "PROPOSAL_STATUS_VOTING_PERIOD") {
-        let currentTally = await tally(
-          this.$store.state.hub.config.cosmos_rest,
-          proposal.proposalId || ""
-        );
+        let currentTally = await tally(this.$store.state.hub.config.cosmos_rest, proposal.proposalId || "");
         proposal.finalTallyResult = currentTally.tally;
       }
     }
@@ -173,19 +161,17 @@ export default class ListGov extends Vue {
     this.loading = true;
 
     parameters(this.$store.state.hub.config.cosmos_rest)
-      .then((res) => {
+      .then(res => {
         this.tally = res.tallyParams!;
         this.deposit = res.depositParams!;
         this.deposit.minDeposit[0].amount = formatUnits(
           this.deposit.minDeposit[0].amount,
-          this.$store.state.hub.config.tft_decimals
+          this.$store.state.hub.config.tft_decimals,
         );
         this.voting = res.votingParams!;
       })
       .catch((err: any) => {
-        this.error =
-          "Couldn't get voting parameters (refresh to try again): " +
-          err.message;
+        this.error = "Couldn't get voting parameters (refresh to try again): " + err.message;
       });
 
     listProposals(this.$store.state.hub.config.cosmos_rest)
@@ -193,9 +179,8 @@ export default class ListGov extends Vue {
         this.proposals = res.proposals;
         this.fillPendingProposalsVotes();
       })
-      .catch((err) => {
-        this.error =
-          "Couldn't list proposals (refresh to try again): " + err.message;
+      .catch(err => {
+        this.error = "Couldn't list proposals (refresh to try again): " + err.message;
       })
       .finally(() => {
         this.loading = false;
@@ -211,6 +196,6 @@ export default class ListGov extends Vue {
 
 <style scoped>
 ul {
-  font-size: .9rem;
+  font-size: 0.9rem;
 }
 </style>

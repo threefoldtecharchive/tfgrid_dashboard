@@ -10,5 +10,5 @@ export const calculatorRouter: RouteConfig[] = [
     path: "/calculator/simulator",
     name: "Simulator",
     component: () => import("../views/Simulator.vue"),
-  }
+  },
 ];

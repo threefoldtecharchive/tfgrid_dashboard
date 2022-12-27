@@ -26,7 +26,7 @@ const routes: Array<RouteConfig> = [
     component: CalculatorView,
     path: "/calculator",
     children: calculatorRouter,
-  }, 
+  },
   {
     component: OtherView,
     path: "/other",

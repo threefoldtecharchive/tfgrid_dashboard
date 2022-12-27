@@ -1,45 +1,25 @@
 <template>
   <v-container>
     <h1>BSC transactions</h1>
-    <v-alert
-      type="error"
-      v-if="permError != null"
-    >
+    <v-alert type="error" v-if="permError != null">
       {{ permError }}
     </v-alert>
     <v-tabs v-model="tab">
-      <v-tab
-        v-for="t in tabs"
-        :key="t.symbol"
-      >
+      <v-tab v-for="t in tabs" :key="t.symbol">
         {{ t.label }}
       </v-tab>
     </v-tabs>
 
     <v-tabs-items v-model="tab">
-      <v-tab-item
-        v-for="t in tabs"
-        :key="t.symbol"
-      >
-        <v-data-table
-          :headers="t.headers"
-          :items="list[t.symbol]"
-        >
+      <v-tab-item v-for="t in tabs" :key="t.symbol">
+        <v-data-table :headers="t.headers" :items="list[t.symbol]">
           <template v-slot:[`item.erc20Token.amount`]="{ item }">
             {{ normalize(item.erc20Token.amount) }}
           </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  fab
-                  small
-                  dark
-                  color="red"
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="onCancelSendToEth(item.id)"
-                >
+                <v-btn fab small dark color="red" v-bind="attrs" v-on="on" @click="onCancelSendToEth(item.id)">
                   <v-icon> mdi-delete </v-icon>
                 </v-btn>
               </template>
@@ -50,22 +30,10 @@
         </v-data-table>
       </v-tab-item>
     </v-tabs-items>
-    <v-snackbar
-      :value="error != null"
-      color="red"
-      absolute
-      left
-      top
-    >
+    <v-snackbar :value="error != null" color="red" absolute left top>
       {{ error }}
       <template v-slot:action="{ attrs }">
-        <v-btn
-          color="grey lighten-2 black--text"
-          v-bind="attrs"
-          @click="error = null"
-        >
-          Close
-        </v-btn>
+        <v-btn color="grey lighten-2 black--text" v-bind="attrs" @click="error = null"> Close </v-btn>
       </template>
     </v-snackbar>
   </v-container>
@@ -117,10 +85,7 @@ export default class ListEth extends Vue {
     this.updateWhenLoaded();
   }
   normalize(tokens: string): string {
-    return formatUnits(
-      BigNumber.from(tokens),
-      this.$store.state.hub.config.tft_decimals
-    );
+    return formatUnits(BigNumber.from(tokens), this.$store.state.hub.config.tft_decimals);
   }
 
   updateWhenLoaded() {
@@ -132,24 +97,17 @@ export default class ListEth extends Vue {
   }
   updateList() {
     this.permError = null;
-    pendingSendToEth(
-      this.$store.state.hub.config.cosmos_rest,
-      this.$store.state.hub.config.chain_id
-    )
+    pendingSendToEth(this.$store.state.hub.config.cosmos_rest, this.$store.state.hub.config.chain_id)
       .then((res: GravityV1QueryPendingSendToEthResponse) => {
         this.list = res;
       })
-      .catch((err) => {
-        this.permError =
-          "Couldn't list BSC transcations (refresh to try again): " +
-          err.message;
+      .catch(err => {
+        this.permError = "Couldn't list BSC transcations (refresh to try again): " + err.message;
       });
   }
 
   onCancelSendToEth(txId: string) {
-    const cancel = confirm(
-      `Are you sure you want to cancel transaction(${txId})?`
-    );
+    const cancel = confirm(`Are you sure you want to cancel transaction(${txId})?`);
 
     if (!cancel) return;
 
@@ -159,12 +117,12 @@ export default class ListEth extends Vue {
       this.$store.state.hub.config.cosmos_rest,
       this.$store.state.hub.config.gas_price,
       this.$store.state.hub.config.chain_id,
-      txId
+      txId,
     )
       .then(() => {
         this.updateList();
       })
-      .catch((err) => {
+      .catch(err => {
         this.error = "Couldn't cancel the BSC transaction: " + err.message;
       });
   }

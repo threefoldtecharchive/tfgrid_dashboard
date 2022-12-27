@@ -1,43 +1,25 @@
 <template>
-  <v-expansion-panels
-    v-model="panel"
-    :disabled="disabled"
-  >
+  <v-expansion-panels v-model="panel" :disabled="disabled">
     <v-expansion-panel>
       <v-expansion-panel-header>Public IPs</v-expansion-panel-header>
       <v-expansion-panel-content>
         <v-simple-table class="table">
           <template v-slot:top>
             <v-toolbar flat>
-
-              <CreateIP
-                :loadingCreate="loadingCreate"
-                @create="createPublicIP"
-              />
+              <CreateIP :loadingCreate="loadingCreate" @create="createPublicIP" />
             </v-toolbar>
           </template>
           <template v-slot:default>
             <thead>
               <tr>
-                <th class="text-left">
-                  IP
-                </th>
-                <th class="text-left">
-                  Gateway
-                </th>
-                <th class="text-left">
-                  Deployed Contract ID
-                </th>
-                <th>
-                  Actions
-                </th>
+                <th class="text-left">IP</th>
+                <th class="text-left">Gateway</th>
+                <th class="text-left">Deployed Contract ID</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="ip, i in ips"
-                :key="ip.ip"
-              >
+              <tr v-for="(ip, i) in ips" :key="ip.ip">
                 <td>{{ decodeHex(ip.ip) }}</td>
                 <td>{{ decodeHex(ip.gateway) }}</td>
                 <td>{{ ip.contractId }}</td>
@@ -49,11 +31,7 @@
                     color="primary"
                     class="d-flex mx-auto"
                   ></v-progress-circular>
-                  <DeleteIP
-                    v-else
-                    :ip="ip"
-                    @delete="deletePublicIP(ip, i)"
-                  />
+                  <DeleteIP v-else :ip="ip" @delete="deletePublicIP(ip, i)" />
                 </td>
               </tr>
             </tbody>

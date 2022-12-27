@@ -102,10 +102,7 @@ function createBaseAttestation(): Attestation {
 }
 
 export const Attestation = {
-  encode(
-    message: Attestation,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: Attestation, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.observed === true) {
       writer.uint32(8).bool(message.observed);
     }
@@ -151,12 +148,8 @@ export const Attestation = {
   fromJSON(object: any): Attestation {
     return {
       observed: isSet(object.observed) ? Boolean(object.observed) : false,
-      votes: Array.isArray(object?.votes)
-        ? object.votes.map((e: any) => String(e))
-        : [],
-      height: isSet(object.height)
-        ? Long.fromString(object.height)
-        : Long.UZERO,
+      votes: Array.isArray(object?.votes) ? object.votes.map((e: any) => String(e)) : [],
+      height: isSet(object.height) ? Long.fromString(object.height) : Long.UZERO,
       claim: isSet(object.claim) ? Any.fromJSON(object.claim) : undefined,
     };
   },
@@ -165,31 +158,21 @@ export const Attestation = {
     const obj: any = {};
     message.observed !== undefined && (obj.observed = message.observed);
     if (message.votes) {
-      obj.votes = message.votes.map((e) => e);
+      obj.votes = message.votes.map(e => e);
     } else {
       obj.votes = [];
     }
-    message.height !== undefined &&
-      (obj.height = (message.height || Long.UZERO).toString());
-    message.claim !== undefined &&
-      (obj.claim = message.claim ? Any.toJSON(message.claim) : undefined);
+    message.height !== undefined && (obj.height = (message.height || Long.UZERO).toString());
+    message.claim !== undefined && (obj.claim = message.claim ? Any.toJSON(message.claim) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Attestation>, I>>(
-    object: I
-  ): Attestation {
+  fromPartial<I extends Exact<DeepPartial<Attestation>, I>>(object: I): Attestation {
     const message = createBaseAttestation();
     message.observed = object.observed ?? false;
-    message.votes = object.votes?.map((e) => e) || [];
-    message.height =
-      object.height !== undefined && object.height !== null
-        ? Long.fromValue(object.height)
-        : Long.UZERO;
-    message.claim =
-      object.claim !== undefined && object.claim !== null
-        ? Any.fromPartial(object.claim)
-        : undefined;
+    message.votes = object.votes?.map(e => e) || [];
+    message.height = object.height !== undefined && object.height !== null ? Long.fromValue(object.height) : Long.UZERO;
+    message.claim = object.claim !== undefined && object.claim !== null ? Any.fromPartial(object.claim) : undefined;
     return message;
   },
 };
@@ -199,10 +182,7 @@ function createBaseERC20Token(): ERC20Token {
 }
 
 export const ERC20Token = {
-  encode(
-    message: ERC20Token,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: ERC20Token, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.contract !== "") {
       writer.uint32(10).string(message.contract);
     }
@@ -247,9 +227,7 @@ export const ERC20Token = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<ERC20Token>, I>>(
-    object: I
-  ): ERC20Token {
+  fromPartial<I extends Exact<DeepPartial<ERC20Token>, I>>(object: I): ERC20Token {
     const message = createBaseERC20Token();
     message.contract = object.contract ?? "";
     message.amount = object.amount ?? "";
@@ -257,14 +235,7 @@ export const ERC20Token = {
   },
 };
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -281,10 +252,7 @@ export type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<
-        Exclude<keyof I, KeysOfUnion<P>>,
-        never
-      >;
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<Exclude<keyof I, KeysOfUnion<P>>, never>;
 
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;

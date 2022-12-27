@@ -1,11 +1,5 @@
 import { GetDataQueryType, INode } from "../graphql/api";
-import {
-  applyFilters,
-  comparisonFilter,
-  conditionFilter,
-  inFilter,
-  rangeFilter,
-} from "../utils/filters";
+import { applyFilters, comparisonFilter, conditionFilter, inFilter, rangeFilter } from "../utils/filters";
 import { GetterTree } from "vuex";
 import { IState } from "./state";
 import toTeraOrGigaOrPeta from "../filters/toTeraOrGigaOrPeta";
@@ -45,48 +39,34 @@ export function fallbackDataExtractor(key: any, state?: any) {
   if (state) return state.data?.[key] ?? [];
   return (state: any) => state.data?.[key] ?? [];
 }
+
 export function getTotalCPUs(state: IState) {
   const nodes: any | undefined = state.data?.nodes;
 }
-
 function isPrivateIP(ip: string) {
   const parts = ip.split(".");
   return (
     parts[0] === "10" ||
-    (parts[0] === "172" &&
-      parseInt(parts[1], 10) >= 16 &&
-      parseInt(parts[1], 10) <= 31) ||
+    (parts[0] === "172" && parseInt(parts[1], 10) >= 16 && parseInt(parts[1], 10) <= 31) ||
     (parts[0] === "192" && parts[1] === "168")
   );
 }
-
 function getAccessNodesCount(nodes: INode[]) {
   return nodes.reduce((total, node) => {
-    if (node.publicConfig?.ipv4 && !isPrivateIP(node.publicConfig.ipv4))
-      total += 1;
+    if (node.publicConfig?.ipv4 && !isPrivateIP(node.publicConfig.ipv4)) total += 1;
     return total;
   }, 0);
 }
 
 function getGatewaysCount(nodes: INode[]) {
   return nodes.reduce((total, node) => {
-    if (
-      node.publicConfig?.ipv4 &&
-      !isPrivateIP(node.publicConfig.ipv4) &&
-      node.publicConfig.domain
-    )
-      total += 1;
+    if (node.publicConfig?.ipv4 && !isPrivateIP(node.publicConfig.ipv4) && node.publicConfig.domain) total += 1;
     return total;
   }, 0);
 }
 
-export function getFarmPublicIPs(
-  state: IState,
-  farmId: number
-): [number, number, number] {
-  const farm = fallbackDataExtractor("farms")(state).find(
-    (f) => f.farmId === farmId
-  );
+export function getFarmPublicIPs(state: IState, farmId: number): [number, number, number] {
+  const farm = fallbackDataExtractor("farms")(state).find(f => f.farmId === farmId);
   if (farm) {
     const freePublicIps = getFarmFreePublicIps(farm);
     const usedPublicIps = getFarmUsedPublicIps(farm);
@@ -133,16 +113,16 @@ export function getStatistics(state: IState): IStatistics[] {
 }
 
 export default {
-  loading: (state) => state.loading,
-  tableLoading: (state) => state.tableLoading,
+  loading: state => state.loading,
+  tableLoading: state => state.tableLoading,
 
-  nodes: (state) => {
+  nodes: state => {
     return state.nodes;
   },
-  farms: (state) => {
+  farms: state => {
     const farms = fallbackDataExtractor("farms")(state);
 
-    return farms.map((f) => {
+    return farms.map(f => {
       return {
         ...f,
         pricingPolicyName: state.pricingPolicies.get(f.pricingPolicyId),
@@ -157,16 +137,16 @@ export default {
   location: findById("locations", "id"),
 
   /* filters helpers */
-  getFilter: (state) => {
+  getFilter: state => {
     return (key1: string, key2: string) => {
       return (state.filters as any)[key1][key2];
     };
   },
 
   filtered_farm: applyFilters(
-    (state) => {
+    state => {
       const farms = fallbackDataExtractor("farms")(state);
-      return farms.map((f) => {
+      return farms.map(f => {
         return {
           ...f,
           totalPublicIPs: f.publicIPs.length,
@@ -176,14 +156,14 @@ export default {
         };
       });
     },
-    (state) => state.filters.farms,
+    state => state.filters.farms,
     inFilter("createdById"),
     inFilter("farmId"),
     inFilter("twinId"),
     inFilter("certificationType"),
     inFilter("name"),
     comparisonFilter("freePublicIPs", ">="),
-    inFilter("pricingPolicyName")
+    inFilter("pricingPolicyName"),
   ),
 
   /* visual helpers */
@@ -196,8 +176,8 @@ export default {
   },
 
   listFilteredNodes: applyFilters(
-    (state) => state.nodes,
-    (state) => state.filters.nodes,
+    state => state.nodes,
+    state => state.filters.nodes,
     inFilter("nodeId"),
     inFilter("createdById"),
     inFilter("farmId"),
@@ -211,21 +191,21 @@ export default {
     rangeFilter("sru"),
     rangeFilter("cru"),
     conditionFilter("status"),
-    comparisonFilter("freePublicIPs", ">=")
+    comparisonFilter("freePublicIPs", ">="),
   ),
 
-  getSingleNode: (state) => (nodeId: any) => {
-    return state.nodes.find((node) => node.nodeId == nodeId);
+  getSingleNode: state => (nodeId: any) => {
+    return state.nodes.find(node => node.nodeId == nodeId);
   },
 
   statistics: getStatistics,
-  nodesDistribution: (state) => state.nodesDistribution,
+  nodesDistribution: state => state.nodesDistribution,
 
-  getNodesCount: (state) => state.nodesCount,
-  getNodesTablePageNumber: (state) => state.nodesTablePageNumber,
-  getNodesTablePageSize: (state) => state.nodesTablePageSize,
-  getNodesUpFilter: (state) => state.nodesUpFilter,
-  getNodesGatewayFilter: (state) => state.nodesGatewayFilter,
+  getNodesCount: state => state.nodesCount,
+  getNodesTablePageNumber: state => state.nodesTablePageNumber,
+  getNodesTablePageSize: state => state.nodesTablePageSize,
+  getNodesUpFilter: state => state.nodesUpFilter,
+  getNodesGatewayFilter: state => state.nodesGatewayFilter,
 
-  getNodesFilter: (state) => state.nodesFilter,
+  getNodesFilter: state => state.nodesFilter,
 } as GetterTree<IState, IState>;

@@ -5,15 +5,12 @@
         <v-icon size="40" class="mr-2">mdi-boom-gate-outline</v-icon>
       </v-list-item-icon>
       <v-list-item-content>
-        <v-list-item-title style="font-size: 30px">
-          Interfaces Details
-        </v-list-item-title>
+        <v-list-item-title style="font-size: 30px"> Interfaces Details </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
 
     <div style="max-height: 300px; overflow-y: auto">
       <v-list v-for="intf in interfaces" :key="intf.id" class="mb-6">
-
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title> Name </v-list-item-title>

@@ -249,10 +249,7 @@ function createBaseMsgSetOrchestratorAddress(): MsgSetOrchestratorAddress {
 }
 
 export const MsgSetOrchestratorAddress = {
-  encode(
-    message: MsgSetOrchestratorAddress,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgSetOrchestratorAddress, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.validator !== "") {
       writer.uint32(10).string(message.validator);
     }
@@ -265,10 +262,7 @@ export const MsgSetOrchestratorAddress = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgSetOrchestratorAddress {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSetOrchestratorAddress {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgSetOrchestratorAddress();
@@ -295,9 +289,7 @@ export const MsgSetOrchestratorAddress = {
   fromJSON(object: any): MsgSetOrchestratorAddress {
     return {
       validator: isSet(object.validator) ? String(object.validator) : "",
-      orchestrator: isSet(object.orchestrator)
-        ? String(object.orchestrator)
-        : "",
+      orchestrator: isSet(object.orchestrator) ? String(object.orchestrator) : "",
       ethAddress: isSet(object.ethAddress) ? String(object.ethAddress) : "",
     };
   },
@@ -305,15 +297,12 @@ export const MsgSetOrchestratorAddress = {
   toJSON(message: MsgSetOrchestratorAddress): unknown {
     const obj: any = {};
     message.validator !== undefined && (obj.validator = message.validator);
-    message.orchestrator !== undefined &&
-      (obj.orchestrator = message.orchestrator);
+    message.orchestrator !== undefined && (obj.orchestrator = message.orchestrator);
     message.ethAddress !== undefined && (obj.ethAddress = message.ethAddress);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgSetOrchestratorAddress>, I>>(
-    object: I
-  ): MsgSetOrchestratorAddress {
+  fromPartial<I extends Exact<DeepPartial<MsgSetOrchestratorAddress>, I>>(object: I): MsgSetOrchestratorAddress {
     const message = createBaseMsgSetOrchestratorAddress();
     message.validator = object.validator ?? "";
     message.orchestrator = object.orchestrator ?? "";
@@ -327,17 +316,11 @@ function createBaseMsgSetOrchestratorAddressResponse(): MsgSetOrchestratorAddres
 }
 
 export const MsgSetOrchestratorAddressResponse = {
-  encode(
-    _: MsgSetOrchestratorAddressResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgSetOrchestratorAddressResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgSetOrchestratorAddressResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSetOrchestratorAddressResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgSetOrchestratorAddressResponse();
@@ -361,9 +344,9 @@ export const MsgSetOrchestratorAddressResponse = {
     return obj;
   },
 
-  fromPartial<
-    I extends Exact<DeepPartial<MsgSetOrchestratorAddressResponse>, I>
-  >(_: I): MsgSetOrchestratorAddressResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgSetOrchestratorAddressResponse>, I>>(
+    _: I,
+  ): MsgSetOrchestratorAddressResponse {
     const message = createBaseMsgSetOrchestratorAddressResponse();
     return message;
   },
@@ -374,10 +357,7 @@ function createBaseMsgValsetConfirm(): MsgValsetConfirm {
 }
 
 export const MsgValsetConfirm = {
-  encode(
-    message: MsgValsetConfirm,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgValsetConfirm, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.nonce.isZero()) {
       writer.uint32(8).uint64(message.nonce);
     }
@@ -423,9 +403,7 @@ export const MsgValsetConfirm = {
   fromJSON(object: any): MsgValsetConfirm {
     return {
       nonce: isSet(object.nonce) ? Long.fromString(object.nonce) : Long.UZERO,
-      orchestrator: isSet(object.orchestrator)
-        ? String(object.orchestrator)
-        : "",
+      orchestrator: isSet(object.orchestrator) ? String(object.orchestrator) : "",
       ethAddress: isSet(object.ethAddress) ? String(object.ethAddress) : "",
       signature: isSet(object.signature) ? String(object.signature) : "",
     };
@@ -433,23 +411,16 @@ export const MsgValsetConfirm = {
 
   toJSON(message: MsgValsetConfirm): unknown {
     const obj: any = {};
-    message.nonce !== undefined &&
-      (obj.nonce = (message.nonce || Long.UZERO).toString());
-    message.orchestrator !== undefined &&
-      (obj.orchestrator = message.orchestrator);
+    message.nonce !== undefined && (obj.nonce = (message.nonce || Long.UZERO).toString());
+    message.orchestrator !== undefined && (obj.orchestrator = message.orchestrator);
     message.ethAddress !== undefined && (obj.ethAddress = message.ethAddress);
     message.signature !== undefined && (obj.signature = message.signature);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgValsetConfirm>, I>>(
-    object: I
-  ): MsgValsetConfirm {
+  fromPartial<I extends Exact<DeepPartial<MsgValsetConfirm>, I>>(object: I): MsgValsetConfirm {
     const message = createBaseMsgValsetConfirm();
-    message.nonce =
-      object.nonce !== undefined && object.nonce !== null
-        ? Long.fromValue(object.nonce)
-        : Long.UZERO;
+    message.nonce = object.nonce !== undefined && object.nonce !== null ? Long.fromValue(object.nonce) : Long.UZERO;
     message.orchestrator = object.orchestrator ?? "";
     message.ethAddress = object.ethAddress ?? "";
     message.signature = object.signature ?? "";
@@ -462,17 +433,11 @@ function createBaseMsgValsetConfirmResponse(): MsgValsetConfirmResponse {
 }
 
 export const MsgValsetConfirmResponse = {
-  encode(
-    _: MsgValsetConfirmResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgValsetConfirmResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgValsetConfirmResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgValsetConfirmResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgValsetConfirmResponse();
@@ -496,9 +461,7 @@ export const MsgValsetConfirmResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgValsetConfirmResponse>, I>>(
-    _: I
-  ): MsgValsetConfirmResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgValsetConfirmResponse>, I>>(_: I): MsgValsetConfirmResponse {
     const message = createBaseMsgValsetConfirmResponse();
     return message;
   },
@@ -509,10 +472,7 @@ function createBaseMsgSendToEth(): MsgSendToEth {
 }
 
 export const MsgSendToEth = {
-  encode(
-    message: MsgSendToEth,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgSendToEth, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.sender !== "") {
       writer.uint32(10).string(message.sender);
     }
@@ -560,9 +520,7 @@ export const MsgSendToEth = {
       sender: isSet(object.sender) ? String(object.sender) : "",
       ethDest: isSet(object.ethDest) ? String(object.ethDest) : "",
       amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
-      bridgeFee: isSet(object.bridgeFee)
-        ? Coin.fromJSON(object.bridgeFee)
-        : undefined,
+      bridgeFee: isSet(object.bridgeFee) ? Coin.fromJSON(object.bridgeFee) : undefined,
     };
   },
 
@@ -570,29 +528,19 @@ export const MsgSendToEth = {
     const obj: any = {};
     message.sender !== undefined && (obj.sender = message.sender);
     message.ethDest !== undefined && (obj.ethDest = message.ethDest);
-    message.amount !== undefined &&
-      (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
-    message.bridgeFee !== undefined &&
-      (obj.bridgeFee = message.bridgeFee
-        ? Coin.toJSON(message.bridgeFee)
-        : undefined);
+    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
+    message.bridgeFee !== undefined && (obj.bridgeFee = message.bridgeFee ? Coin.toJSON(message.bridgeFee) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgSendToEth>, I>>(
-    object: I
-  ): MsgSendToEth {
+  fromPartial<I extends Exact<DeepPartial<MsgSendToEth>, I>>(object: I): MsgSendToEth {
     const message = createBaseMsgSendToEth();
     message.sender = object.sender ?? "";
     message.ethDest = object.ethDest ?? "";
     message.amount =
-      object.amount !== undefined && object.amount !== null
-        ? Coin.fromPartial(object.amount)
-        : undefined;
+      object.amount !== undefined && object.amount !== null ? Coin.fromPartial(object.amount) : undefined;
     message.bridgeFee =
-      object.bridgeFee !== undefined && object.bridgeFee !== null
-        ? Coin.fromPartial(object.bridgeFee)
-        : undefined;
+      object.bridgeFee !== undefined && object.bridgeFee !== null ? Coin.fromPartial(object.bridgeFee) : undefined;
     return message;
   },
 };
@@ -602,17 +550,11 @@ function createBaseMsgSendToEthResponse(): MsgSendToEthResponse {
 }
 
 export const MsgSendToEthResponse = {
-  encode(
-    _: MsgSendToEthResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgSendToEthResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgSendToEthResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSendToEthResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgSendToEthResponse();
@@ -636,9 +578,7 @@ export const MsgSendToEthResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgSendToEthResponse>, I>>(
-    _: I
-  ): MsgSendToEthResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgSendToEthResponse>, I>>(_: I): MsgSendToEthResponse {
     const message = createBaseMsgSendToEthResponse();
     return message;
   },
@@ -649,10 +589,7 @@ function createBaseMsgRequestBatch(): MsgRequestBatch {
 }
 
 export const MsgRequestBatch = {
-  encode(
-    message: MsgRequestBatch,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgRequestBatch, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.sender !== "") {
       writer.uint32(10).string(message.sender);
     }
@@ -697,9 +634,7 @@ export const MsgRequestBatch = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgRequestBatch>, I>>(
-    object: I
-  ): MsgRequestBatch {
+  fromPartial<I extends Exact<DeepPartial<MsgRequestBatch>, I>>(object: I): MsgRequestBatch {
     const message = createBaseMsgRequestBatch();
     message.sender = object.sender ?? "";
     message.denom = object.denom ?? "";
@@ -712,17 +647,11 @@ function createBaseMsgRequestBatchResponse(): MsgRequestBatchResponse {
 }
 
 export const MsgRequestBatchResponse = {
-  encode(
-    _: MsgRequestBatchResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgRequestBatchResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgRequestBatchResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgRequestBatchResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgRequestBatchResponse();
@@ -746,9 +675,7 @@ export const MsgRequestBatchResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgRequestBatchResponse>, I>>(
-    _: I
-  ): MsgRequestBatchResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgRequestBatchResponse>, I>>(_: I): MsgRequestBatchResponse {
     const message = createBaseMsgRequestBatchResponse();
     return message;
   },
@@ -765,10 +692,7 @@ function createBaseMsgConfirmBatch(): MsgConfirmBatch {
 }
 
 export const MsgConfirmBatch = {
-  encode(
-    message: MsgConfirmBatch,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgConfirmBatch, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.nonce.isZero()) {
       writer.uint32(8).uint64(message.nonce);
     }
@@ -820,38 +744,26 @@ export const MsgConfirmBatch = {
   fromJSON(object: any): MsgConfirmBatch {
     return {
       nonce: isSet(object.nonce) ? Long.fromString(object.nonce) : Long.UZERO,
-      tokenContract: isSet(object.tokenContract)
-        ? String(object.tokenContract)
-        : "",
+      tokenContract: isSet(object.tokenContract) ? String(object.tokenContract) : "",
       ethSigner: isSet(object.ethSigner) ? String(object.ethSigner) : "",
-      orchestrator: isSet(object.orchestrator)
-        ? String(object.orchestrator)
-        : "",
+      orchestrator: isSet(object.orchestrator) ? String(object.orchestrator) : "",
       signature: isSet(object.signature) ? String(object.signature) : "",
     };
   },
 
   toJSON(message: MsgConfirmBatch): unknown {
     const obj: any = {};
-    message.nonce !== undefined &&
-      (obj.nonce = (message.nonce || Long.UZERO).toString());
-    message.tokenContract !== undefined &&
-      (obj.tokenContract = message.tokenContract);
+    message.nonce !== undefined && (obj.nonce = (message.nonce || Long.UZERO).toString());
+    message.tokenContract !== undefined && (obj.tokenContract = message.tokenContract);
     message.ethSigner !== undefined && (obj.ethSigner = message.ethSigner);
-    message.orchestrator !== undefined &&
-      (obj.orchestrator = message.orchestrator);
+    message.orchestrator !== undefined && (obj.orchestrator = message.orchestrator);
     message.signature !== undefined && (obj.signature = message.signature);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgConfirmBatch>, I>>(
-    object: I
-  ): MsgConfirmBatch {
+  fromPartial<I extends Exact<DeepPartial<MsgConfirmBatch>, I>>(object: I): MsgConfirmBatch {
     const message = createBaseMsgConfirmBatch();
-    message.nonce =
-      object.nonce !== undefined && object.nonce !== null
-        ? Long.fromValue(object.nonce)
-        : Long.UZERO;
+    message.nonce = object.nonce !== undefined && object.nonce !== null ? Long.fromValue(object.nonce) : Long.UZERO;
     message.tokenContract = object.tokenContract ?? "";
     message.ethSigner = object.ethSigner ?? "";
     message.orchestrator = object.orchestrator ?? "";
@@ -865,17 +777,11 @@ function createBaseMsgConfirmBatchResponse(): MsgConfirmBatchResponse {
 }
 
 export const MsgConfirmBatchResponse = {
-  encode(
-    _: MsgConfirmBatchResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgConfirmBatchResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgConfirmBatchResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgConfirmBatchResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgConfirmBatchResponse();
@@ -899,9 +805,7 @@ export const MsgConfirmBatchResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgConfirmBatchResponse>, I>>(
-    _: I
-  ): MsgConfirmBatchResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgConfirmBatchResponse>, I>>(_: I): MsgConfirmBatchResponse {
     const message = createBaseMsgConfirmBatchResponse();
     return message;
   },
@@ -918,10 +822,7 @@ function createBaseMsgConfirmLogicCall(): MsgConfirmLogicCall {
 }
 
 export const MsgConfirmLogicCall = {
-  encode(
-    message: MsgConfirmLogicCall,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgConfirmLogicCall, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.invalidationId !== "") {
       writer.uint32(10).string(message.invalidationId);
     }
@@ -972,43 +873,30 @@ export const MsgConfirmLogicCall = {
 
   fromJSON(object: any): MsgConfirmLogicCall {
     return {
-      invalidationId: isSet(object.invalidationId)
-        ? String(object.invalidationId)
-        : "",
-      invalidationNonce: isSet(object.invalidationNonce)
-        ? Long.fromString(object.invalidationNonce)
-        : Long.UZERO,
+      invalidationId: isSet(object.invalidationId) ? String(object.invalidationId) : "",
+      invalidationNonce: isSet(object.invalidationNonce) ? Long.fromString(object.invalidationNonce) : Long.UZERO,
       ethSigner: isSet(object.ethSigner) ? String(object.ethSigner) : "",
-      orchestrator: isSet(object.orchestrator)
-        ? String(object.orchestrator)
-        : "",
+      orchestrator: isSet(object.orchestrator) ? String(object.orchestrator) : "",
       signature: isSet(object.signature) ? String(object.signature) : "",
     };
   },
 
   toJSON(message: MsgConfirmLogicCall): unknown {
     const obj: any = {};
-    message.invalidationId !== undefined &&
-      (obj.invalidationId = message.invalidationId);
+    message.invalidationId !== undefined && (obj.invalidationId = message.invalidationId);
     message.invalidationNonce !== undefined &&
-      (obj.invalidationNonce = (
-        message.invalidationNonce || Long.UZERO
-      ).toString());
+      (obj.invalidationNonce = (message.invalidationNonce || Long.UZERO).toString());
     message.ethSigner !== undefined && (obj.ethSigner = message.ethSigner);
-    message.orchestrator !== undefined &&
-      (obj.orchestrator = message.orchestrator);
+    message.orchestrator !== undefined && (obj.orchestrator = message.orchestrator);
     message.signature !== undefined && (obj.signature = message.signature);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgConfirmLogicCall>, I>>(
-    object: I
-  ): MsgConfirmLogicCall {
+  fromPartial<I extends Exact<DeepPartial<MsgConfirmLogicCall>, I>>(object: I): MsgConfirmLogicCall {
     const message = createBaseMsgConfirmLogicCall();
     message.invalidationId = object.invalidationId ?? "";
     message.invalidationNonce =
-      object.invalidationNonce !== undefined &&
-      object.invalidationNonce !== null
+      object.invalidationNonce !== undefined && object.invalidationNonce !== null
         ? Long.fromValue(object.invalidationNonce)
         : Long.UZERO;
     message.ethSigner = object.ethSigner ?? "";
@@ -1023,17 +911,11 @@ function createBaseMsgConfirmLogicCallResponse(): MsgConfirmLogicCallResponse {
 }
 
 export const MsgConfirmLogicCallResponse = {
-  encode(
-    _: MsgConfirmLogicCallResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgConfirmLogicCallResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgConfirmLogicCallResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgConfirmLogicCallResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgConfirmLogicCallResponse();
@@ -1057,9 +939,7 @@ export const MsgConfirmLogicCallResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgConfirmLogicCallResponse>, I>>(
-    _: I
-  ): MsgConfirmLogicCallResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgConfirmLogicCallResponse>, I>>(_: I): MsgConfirmLogicCallResponse {
     const message = createBaseMsgConfirmLogicCallResponse();
     return message;
   },
@@ -1078,10 +958,7 @@ function createBaseMsgSendToCosmosClaim(): MsgSendToCosmosClaim {
 }
 
 export const MsgSendToCosmosClaim = {
-  encode(
-    message: MsgSendToCosmosClaim,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgSendToCosmosClaim, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.eventNonce.isZero()) {
       writer.uint32(8).uint64(message.eventNonce);
     }
@@ -1106,10 +983,7 @@ export const MsgSendToCosmosClaim = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgSendToCosmosClaim {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSendToCosmosClaim {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgSendToCosmosClaim();
@@ -1147,58 +1021,34 @@ export const MsgSendToCosmosClaim = {
 
   fromJSON(object: any): MsgSendToCosmosClaim {
     return {
-      eventNonce: isSet(object.eventNonce)
-        ? Long.fromString(object.eventNonce)
-        : Long.UZERO,
-      blockHeight: isSet(object.blockHeight)
-        ? Long.fromString(object.blockHeight)
-        : Long.UZERO,
-      tokenContract: isSet(object.tokenContract)
-        ? String(object.tokenContract)
-        : "",
+      eventNonce: isSet(object.eventNonce) ? Long.fromString(object.eventNonce) : Long.UZERO,
+      blockHeight: isSet(object.blockHeight) ? Long.fromString(object.blockHeight) : Long.UZERO,
+      tokenContract: isSet(object.tokenContract) ? String(object.tokenContract) : "",
       amount: isSet(object.amount) ? String(object.amount) : "",
-      ethereumSender: isSet(object.ethereumSender)
-        ? String(object.ethereumSender)
-        : "",
-      cosmosReceiver: isSet(object.cosmosReceiver)
-        ? String(object.cosmosReceiver)
-        : "",
-      orchestrator: isSet(object.orchestrator)
-        ? String(object.orchestrator)
-        : "",
+      ethereumSender: isSet(object.ethereumSender) ? String(object.ethereumSender) : "",
+      cosmosReceiver: isSet(object.cosmosReceiver) ? String(object.cosmosReceiver) : "",
+      orchestrator: isSet(object.orchestrator) ? String(object.orchestrator) : "",
     };
   },
 
   toJSON(message: MsgSendToCosmosClaim): unknown {
     const obj: any = {};
-    message.eventNonce !== undefined &&
-      (obj.eventNonce = (message.eventNonce || Long.UZERO).toString());
-    message.blockHeight !== undefined &&
-      (obj.blockHeight = (message.blockHeight || Long.UZERO).toString());
-    message.tokenContract !== undefined &&
-      (obj.tokenContract = message.tokenContract);
+    message.eventNonce !== undefined && (obj.eventNonce = (message.eventNonce || Long.UZERO).toString());
+    message.blockHeight !== undefined && (obj.blockHeight = (message.blockHeight || Long.UZERO).toString());
+    message.tokenContract !== undefined && (obj.tokenContract = message.tokenContract);
     message.amount !== undefined && (obj.amount = message.amount);
-    message.ethereumSender !== undefined &&
-      (obj.ethereumSender = message.ethereumSender);
-    message.cosmosReceiver !== undefined &&
-      (obj.cosmosReceiver = message.cosmosReceiver);
-    message.orchestrator !== undefined &&
-      (obj.orchestrator = message.orchestrator);
+    message.ethereumSender !== undefined && (obj.ethereumSender = message.ethereumSender);
+    message.cosmosReceiver !== undefined && (obj.cosmosReceiver = message.cosmosReceiver);
+    message.orchestrator !== undefined && (obj.orchestrator = message.orchestrator);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgSendToCosmosClaim>, I>>(
-    object: I
-  ): MsgSendToCosmosClaim {
+  fromPartial<I extends Exact<DeepPartial<MsgSendToCosmosClaim>, I>>(object: I): MsgSendToCosmosClaim {
     const message = createBaseMsgSendToCosmosClaim();
     message.eventNonce =
-      object.eventNonce !== undefined && object.eventNonce !== null
-        ? Long.fromValue(object.eventNonce)
-        : Long.UZERO;
+      object.eventNonce !== undefined && object.eventNonce !== null ? Long.fromValue(object.eventNonce) : Long.UZERO;
     message.blockHeight =
-      object.blockHeight !== undefined && object.blockHeight !== null
-        ? Long.fromValue(object.blockHeight)
-        : Long.UZERO;
+      object.blockHeight !== undefined && object.blockHeight !== null ? Long.fromValue(object.blockHeight) : Long.UZERO;
     message.tokenContract = object.tokenContract ?? "";
     message.amount = object.amount ?? "";
     message.ethereumSender = object.ethereumSender ?? "";
@@ -1213,17 +1063,11 @@ function createBaseMsgSendToCosmosClaimResponse(): MsgSendToCosmosClaimResponse 
 }
 
 export const MsgSendToCosmosClaimResponse = {
-  encode(
-    _: MsgSendToCosmosClaimResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgSendToCosmosClaimResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgSendToCosmosClaimResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSendToCosmosClaimResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgSendToCosmosClaimResponse();
@@ -1247,9 +1091,7 @@ export const MsgSendToCosmosClaimResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgSendToCosmosClaimResponse>, I>>(
-    _: I
-  ): MsgSendToCosmosClaimResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgSendToCosmosClaimResponse>, I>>(_: I): MsgSendToCosmosClaimResponse {
     const message = createBaseMsgSendToCosmosClaimResponse();
     return message;
   },
@@ -1266,10 +1108,7 @@ function createBaseMsgBatchSendToEthClaim(): MsgBatchSendToEthClaim {
 }
 
 export const MsgBatchSendToEthClaim = {
-  encode(
-    message: MsgBatchSendToEthClaim,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgBatchSendToEthClaim, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.eventNonce.isZero()) {
       writer.uint32(8).uint64(message.eventNonce);
     }
@@ -1288,10 +1127,7 @@ export const MsgBatchSendToEthClaim = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgBatchSendToEthClaim {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgBatchSendToEthClaim {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgBatchSendToEthClaim();
@@ -1323,55 +1159,32 @@ export const MsgBatchSendToEthClaim = {
 
   fromJSON(object: any): MsgBatchSendToEthClaim {
     return {
-      eventNonce: isSet(object.eventNonce)
-        ? Long.fromString(object.eventNonce)
-        : Long.UZERO,
-      blockHeight: isSet(object.blockHeight)
-        ? Long.fromString(object.blockHeight)
-        : Long.UZERO,
-      batchNonce: isSet(object.batchNonce)
-        ? Long.fromString(object.batchNonce)
-        : Long.UZERO,
-      tokenContract: isSet(object.tokenContract)
-        ? String(object.tokenContract)
-        : "",
-      orchestrator: isSet(object.orchestrator)
-        ? String(object.orchestrator)
-        : "",
+      eventNonce: isSet(object.eventNonce) ? Long.fromString(object.eventNonce) : Long.UZERO,
+      blockHeight: isSet(object.blockHeight) ? Long.fromString(object.blockHeight) : Long.UZERO,
+      batchNonce: isSet(object.batchNonce) ? Long.fromString(object.batchNonce) : Long.UZERO,
+      tokenContract: isSet(object.tokenContract) ? String(object.tokenContract) : "",
+      orchestrator: isSet(object.orchestrator) ? String(object.orchestrator) : "",
     };
   },
 
   toJSON(message: MsgBatchSendToEthClaim): unknown {
     const obj: any = {};
-    message.eventNonce !== undefined &&
-      (obj.eventNonce = (message.eventNonce || Long.UZERO).toString());
-    message.blockHeight !== undefined &&
-      (obj.blockHeight = (message.blockHeight || Long.UZERO).toString());
-    message.batchNonce !== undefined &&
-      (obj.batchNonce = (message.batchNonce || Long.UZERO).toString());
-    message.tokenContract !== undefined &&
-      (obj.tokenContract = message.tokenContract);
-    message.orchestrator !== undefined &&
-      (obj.orchestrator = message.orchestrator);
+    message.eventNonce !== undefined && (obj.eventNonce = (message.eventNonce || Long.UZERO).toString());
+    message.blockHeight !== undefined && (obj.blockHeight = (message.blockHeight || Long.UZERO).toString());
+    message.batchNonce !== undefined && (obj.batchNonce = (message.batchNonce || Long.UZERO).toString());
+    message.tokenContract !== undefined && (obj.tokenContract = message.tokenContract);
+    message.orchestrator !== undefined && (obj.orchestrator = message.orchestrator);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgBatchSendToEthClaim>, I>>(
-    object: I
-  ): MsgBatchSendToEthClaim {
+  fromPartial<I extends Exact<DeepPartial<MsgBatchSendToEthClaim>, I>>(object: I): MsgBatchSendToEthClaim {
     const message = createBaseMsgBatchSendToEthClaim();
     message.eventNonce =
-      object.eventNonce !== undefined && object.eventNonce !== null
-        ? Long.fromValue(object.eventNonce)
-        : Long.UZERO;
+      object.eventNonce !== undefined && object.eventNonce !== null ? Long.fromValue(object.eventNonce) : Long.UZERO;
     message.blockHeight =
-      object.blockHeight !== undefined && object.blockHeight !== null
-        ? Long.fromValue(object.blockHeight)
-        : Long.UZERO;
+      object.blockHeight !== undefined && object.blockHeight !== null ? Long.fromValue(object.blockHeight) : Long.UZERO;
     message.batchNonce =
-      object.batchNonce !== undefined && object.batchNonce !== null
-        ? Long.fromValue(object.batchNonce)
-        : Long.UZERO;
+      object.batchNonce !== undefined && object.batchNonce !== null ? Long.fromValue(object.batchNonce) : Long.UZERO;
     message.tokenContract = object.tokenContract ?? "";
     message.orchestrator = object.orchestrator ?? "";
     return message;
@@ -1383,17 +1196,11 @@ function createBaseMsgBatchSendToEthClaimResponse(): MsgBatchSendToEthClaimRespo
 }
 
 export const MsgBatchSendToEthClaimResponse = {
-  encode(
-    _: MsgBatchSendToEthClaimResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgBatchSendToEthClaimResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgBatchSendToEthClaimResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgBatchSendToEthClaimResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgBatchSendToEthClaimResponse();
@@ -1417,9 +1224,7 @@ export const MsgBatchSendToEthClaimResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgBatchSendToEthClaimResponse>, I>>(
-    _: I
-  ): MsgBatchSendToEthClaimResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgBatchSendToEthClaimResponse>, I>>(_: I): MsgBatchSendToEthClaimResponse {
     const message = createBaseMsgBatchSendToEthClaimResponse();
     return message;
   },
@@ -1439,10 +1244,7 @@ function createBaseMsgERC20DeployedClaim(): MsgERC20DeployedClaim {
 }
 
 export const MsgERC20DeployedClaim = {
-  encode(
-    message: MsgERC20DeployedClaim,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgERC20DeployedClaim, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.eventNonce.isZero()) {
       writer.uint32(8).uint64(message.eventNonce);
     }
@@ -1470,10 +1272,7 @@ export const MsgERC20DeployedClaim = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgERC20DeployedClaim {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgERC20DeployedClaim {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgERC20DeployedClaim();
@@ -1514,66 +1313,42 @@ export const MsgERC20DeployedClaim = {
 
   fromJSON(object: any): MsgERC20DeployedClaim {
     return {
-      eventNonce: isSet(object.eventNonce)
-        ? Long.fromString(object.eventNonce)
-        : Long.UZERO,
-      blockHeight: isSet(object.blockHeight)
-        ? Long.fromString(object.blockHeight)
-        : Long.UZERO,
+      eventNonce: isSet(object.eventNonce) ? Long.fromString(object.eventNonce) : Long.UZERO,
+      blockHeight: isSet(object.blockHeight) ? Long.fromString(object.blockHeight) : Long.UZERO,
       cosmosDenom: isSet(object.cosmosDenom) ? String(object.cosmosDenom) : "",
-      tokenContract: isSet(object.tokenContract)
-        ? String(object.tokenContract)
-        : "",
+      tokenContract: isSet(object.tokenContract) ? String(object.tokenContract) : "",
       name: isSet(object.name) ? String(object.name) : "",
       symbol: isSet(object.symbol) ? String(object.symbol) : "",
-      decimals: isSet(object.decimals)
-        ? Long.fromString(object.decimals)
-        : Long.UZERO,
-      orchestrator: isSet(object.orchestrator)
-        ? String(object.orchestrator)
-        : "",
+      decimals: isSet(object.decimals) ? Long.fromString(object.decimals) : Long.UZERO,
+      orchestrator: isSet(object.orchestrator) ? String(object.orchestrator) : "",
     };
   },
 
   toJSON(message: MsgERC20DeployedClaim): unknown {
     const obj: any = {};
-    message.eventNonce !== undefined &&
-      (obj.eventNonce = (message.eventNonce || Long.UZERO).toString());
-    message.blockHeight !== undefined &&
-      (obj.blockHeight = (message.blockHeight || Long.UZERO).toString());
-    message.cosmosDenom !== undefined &&
-      (obj.cosmosDenom = message.cosmosDenom);
-    message.tokenContract !== undefined &&
-      (obj.tokenContract = message.tokenContract);
+    message.eventNonce !== undefined && (obj.eventNonce = (message.eventNonce || Long.UZERO).toString());
+    message.blockHeight !== undefined && (obj.blockHeight = (message.blockHeight || Long.UZERO).toString());
+    message.cosmosDenom !== undefined && (obj.cosmosDenom = message.cosmosDenom);
+    message.tokenContract !== undefined && (obj.tokenContract = message.tokenContract);
     message.name !== undefined && (obj.name = message.name);
     message.symbol !== undefined && (obj.symbol = message.symbol);
-    message.decimals !== undefined &&
-      (obj.decimals = (message.decimals || Long.UZERO).toString());
-    message.orchestrator !== undefined &&
-      (obj.orchestrator = message.orchestrator);
+    message.decimals !== undefined && (obj.decimals = (message.decimals || Long.UZERO).toString());
+    message.orchestrator !== undefined && (obj.orchestrator = message.orchestrator);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgERC20DeployedClaim>, I>>(
-    object: I
-  ): MsgERC20DeployedClaim {
+  fromPartial<I extends Exact<DeepPartial<MsgERC20DeployedClaim>, I>>(object: I): MsgERC20DeployedClaim {
     const message = createBaseMsgERC20DeployedClaim();
     message.eventNonce =
-      object.eventNonce !== undefined && object.eventNonce !== null
-        ? Long.fromValue(object.eventNonce)
-        : Long.UZERO;
+      object.eventNonce !== undefined && object.eventNonce !== null ? Long.fromValue(object.eventNonce) : Long.UZERO;
     message.blockHeight =
-      object.blockHeight !== undefined && object.blockHeight !== null
-        ? Long.fromValue(object.blockHeight)
-        : Long.UZERO;
+      object.blockHeight !== undefined && object.blockHeight !== null ? Long.fromValue(object.blockHeight) : Long.UZERO;
     message.cosmosDenom = object.cosmosDenom ?? "";
     message.tokenContract = object.tokenContract ?? "";
     message.name = object.name ?? "";
     message.symbol = object.symbol ?? "";
     message.decimals =
-      object.decimals !== undefined && object.decimals !== null
-        ? Long.fromValue(object.decimals)
-        : Long.UZERO;
+      object.decimals !== undefined && object.decimals !== null ? Long.fromValue(object.decimals) : Long.UZERO;
     message.orchestrator = object.orchestrator ?? "";
     return message;
   },
@@ -1584,17 +1359,11 @@ function createBaseMsgERC20DeployedClaimResponse(): MsgERC20DeployedClaimRespons
 }
 
 export const MsgERC20DeployedClaimResponse = {
-  encode(
-    _: MsgERC20DeployedClaimResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgERC20DeployedClaimResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgERC20DeployedClaimResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgERC20DeployedClaimResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgERC20DeployedClaimResponse();
@@ -1618,9 +1387,7 @@ export const MsgERC20DeployedClaimResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgERC20DeployedClaimResponse>, I>>(
-    _: I
-  ): MsgERC20DeployedClaimResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgERC20DeployedClaimResponse>, I>>(_: I): MsgERC20DeployedClaimResponse {
     const message = createBaseMsgERC20DeployedClaimResponse();
     return message;
   },
@@ -1637,10 +1404,7 @@ function createBaseMsgLogicCallExecutedClaim(): MsgLogicCallExecutedClaim {
 }
 
 export const MsgLogicCallExecutedClaim = {
-  encode(
-    message: MsgLogicCallExecutedClaim,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgLogicCallExecutedClaim, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.eventNonce.isZero()) {
       writer.uint32(8).uint64(message.eventNonce);
     }
@@ -1659,10 +1423,7 @@ export const MsgLogicCallExecutedClaim = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgLogicCallExecutedClaim {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgLogicCallExecutedClaim {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgLogicCallExecutedClaim();
@@ -1694,61 +1455,37 @@ export const MsgLogicCallExecutedClaim = {
 
   fromJSON(object: any): MsgLogicCallExecutedClaim {
     return {
-      eventNonce: isSet(object.eventNonce)
-        ? Long.fromString(object.eventNonce)
-        : Long.UZERO,
-      blockHeight: isSet(object.blockHeight)
-        ? Long.fromString(object.blockHeight)
-        : Long.UZERO,
-      invalidationId: isSet(object.invalidationId)
-        ? bytesFromBase64(object.invalidationId)
-        : new Uint8Array(),
-      invalidationNonce: isSet(object.invalidationNonce)
-        ? Long.fromString(object.invalidationNonce)
-        : Long.UZERO,
-      orchestrator: isSet(object.orchestrator)
-        ? String(object.orchestrator)
-        : "",
+      eventNonce: isSet(object.eventNonce) ? Long.fromString(object.eventNonce) : Long.UZERO,
+      blockHeight: isSet(object.blockHeight) ? Long.fromString(object.blockHeight) : Long.UZERO,
+      invalidationId: isSet(object.invalidationId) ? bytesFromBase64(object.invalidationId) : new Uint8Array(),
+      invalidationNonce: isSet(object.invalidationNonce) ? Long.fromString(object.invalidationNonce) : Long.UZERO,
+      orchestrator: isSet(object.orchestrator) ? String(object.orchestrator) : "",
     };
   },
 
   toJSON(message: MsgLogicCallExecutedClaim): unknown {
     const obj: any = {};
-    message.eventNonce !== undefined &&
-      (obj.eventNonce = (message.eventNonce || Long.UZERO).toString());
-    message.blockHeight !== undefined &&
-      (obj.blockHeight = (message.blockHeight || Long.UZERO).toString());
+    message.eventNonce !== undefined && (obj.eventNonce = (message.eventNonce || Long.UZERO).toString());
+    message.blockHeight !== undefined && (obj.blockHeight = (message.blockHeight || Long.UZERO).toString());
     message.invalidationId !== undefined &&
       (obj.invalidationId = base64FromBytes(
-        message.invalidationId !== undefined
-          ? message.invalidationId
-          : new Uint8Array()
+        message.invalidationId !== undefined ? message.invalidationId : new Uint8Array(),
       ));
     message.invalidationNonce !== undefined &&
-      (obj.invalidationNonce = (
-        message.invalidationNonce || Long.UZERO
-      ).toString());
-    message.orchestrator !== undefined &&
-      (obj.orchestrator = message.orchestrator);
+      (obj.invalidationNonce = (message.invalidationNonce || Long.UZERO).toString());
+    message.orchestrator !== undefined && (obj.orchestrator = message.orchestrator);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgLogicCallExecutedClaim>, I>>(
-    object: I
-  ): MsgLogicCallExecutedClaim {
+  fromPartial<I extends Exact<DeepPartial<MsgLogicCallExecutedClaim>, I>>(object: I): MsgLogicCallExecutedClaim {
     const message = createBaseMsgLogicCallExecutedClaim();
     message.eventNonce =
-      object.eventNonce !== undefined && object.eventNonce !== null
-        ? Long.fromValue(object.eventNonce)
-        : Long.UZERO;
+      object.eventNonce !== undefined && object.eventNonce !== null ? Long.fromValue(object.eventNonce) : Long.UZERO;
     message.blockHeight =
-      object.blockHeight !== undefined && object.blockHeight !== null
-        ? Long.fromValue(object.blockHeight)
-        : Long.UZERO;
+      object.blockHeight !== undefined && object.blockHeight !== null ? Long.fromValue(object.blockHeight) : Long.UZERO;
     message.invalidationId = object.invalidationId ?? new Uint8Array();
     message.invalidationNonce =
-      object.invalidationNonce !== undefined &&
-      object.invalidationNonce !== null
+      object.invalidationNonce !== undefined && object.invalidationNonce !== null
         ? Long.fromValue(object.invalidationNonce)
         : Long.UZERO;
     message.orchestrator = object.orchestrator ?? "";
@@ -1761,17 +1498,11 @@ function createBaseMsgLogicCallExecutedClaimResponse(): MsgLogicCallExecutedClai
 }
 
 export const MsgLogicCallExecutedClaimResponse = {
-  encode(
-    _: MsgLogicCallExecutedClaimResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgLogicCallExecutedClaimResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgLogicCallExecutedClaimResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgLogicCallExecutedClaimResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgLogicCallExecutedClaimResponse();
@@ -1795,9 +1526,9 @@ export const MsgLogicCallExecutedClaimResponse = {
     return obj;
   },
 
-  fromPartial<
-    I extends Exact<DeepPartial<MsgLogicCallExecutedClaimResponse>, I>
-  >(_: I): MsgLogicCallExecutedClaimResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgLogicCallExecutedClaimResponse>, I>>(
+    _: I,
+  ): MsgLogicCallExecutedClaimResponse {
     const message = createBaseMsgLogicCallExecutedClaimResponse();
     return message;
   },
@@ -1816,10 +1547,7 @@ function createBaseMsgValsetUpdatedClaim(): MsgValsetUpdatedClaim {
 }
 
 export const MsgValsetUpdatedClaim = {
-  encode(
-    message: MsgValsetUpdatedClaim,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgValsetUpdatedClaim, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.eventNonce.isZero()) {
       writer.uint32(8).uint64(message.eventNonce);
     }
@@ -1844,10 +1572,7 @@ export const MsgValsetUpdatedClaim = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgValsetUpdatedClaim {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgValsetUpdatedClaim {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgValsetUpdatedClaim();
@@ -1885,70 +1610,41 @@ export const MsgValsetUpdatedClaim = {
 
   fromJSON(object: any): MsgValsetUpdatedClaim {
     return {
-      eventNonce: isSet(object.eventNonce)
-        ? Long.fromString(object.eventNonce)
-        : Long.UZERO,
-      valsetNonce: isSet(object.valsetNonce)
-        ? Long.fromString(object.valsetNonce)
-        : Long.UZERO,
-      blockHeight: isSet(object.blockHeight)
-        ? Long.fromString(object.blockHeight)
-        : Long.UZERO,
-      members: Array.isArray(object?.members)
-        ? object.members.map((e: any) => BridgeValidator.fromJSON(e))
-        : [],
-      rewardAmount: isSet(object.rewardAmount)
-        ? String(object.rewardAmount)
-        : "",
+      eventNonce: isSet(object.eventNonce) ? Long.fromString(object.eventNonce) : Long.UZERO,
+      valsetNonce: isSet(object.valsetNonce) ? Long.fromString(object.valsetNonce) : Long.UZERO,
+      blockHeight: isSet(object.blockHeight) ? Long.fromString(object.blockHeight) : Long.UZERO,
+      members: Array.isArray(object?.members) ? object.members.map((e: any) => BridgeValidator.fromJSON(e)) : [],
+      rewardAmount: isSet(object.rewardAmount) ? String(object.rewardAmount) : "",
       rewardToken: isSet(object.rewardToken) ? String(object.rewardToken) : "",
-      orchestrator: isSet(object.orchestrator)
-        ? String(object.orchestrator)
-        : "",
+      orchestrator: isSet(object.orchestrator) ? String(object.orchestrator) : "",
     };
   },
 
   toJSON(message: MsgValsetUpdatedClaim): unknown {
     const obj: any = {};
-    message.eventNonce !== undefined &&
-      (obj.eventNonce = (message.eventNonce || Long.UZERO).toString());
-    message.valsetNonce !== undefined &&
-      (obj.valsetNonce = (message.valsetNonce || Long.UZERO).toString());
-    message.blockHeight !== undefined &&
-      (obj.blockHeight = (message.blockHeight || Long.UZERO).toString());
+    message.eventNonce !== undefined && (obj.eventNonce = (message.eventNonce || Long.UZERO).toString());
+    message.valsetNonce !== undefined && (obj.valsetNonce = (message.valsetNonce || Long.UZERO).toString());
+    message.blockHeight !== undefined && (obj.blockHeight = (message.blockHeight || Long.UZERO).toString());
     if (message.members) {
-      obj.members = message.members.map((e) =>
-        e ? BridgeValidator.toJSON(e) : undefined
-      );
+      obj.members = message.members.map(e => (e ? BridgeValidator.toJSON(e) : undefined));
     } else {
       obj.members = [];
     }
-    message.rewardAmount !== undefined &&
-      (obj.rewardAmount = message.rewardAmount);
-    message.rewardToken !== undefined &&
-      (obj.rewardToken = message.rewardToken);
-    message.orchestrator !== undefined &&
-      (obj.orchestrator = message.orchestrator);
+    message.rewardAmount !== undefined && (obj.rewardAmount = message.rewardAmount);
+    message.rewardToken !== undefined && (obj.rewardToken = message.rewardToken);
+    message.orchestrator !== undefined && (obj.orchestrator = message.orchestrator);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgValsetUpdatedClaim>, I>>(
-    object: I
-  ): MsgValsetUpdatedClaim {
+  fromPartial<I extends Exact<DeepPartial<MsgValsetUpdatedClaim>, I>>(object: I): MsgValsetUpdatedClaim {
     const message = createBaseMsgValsetUpdatedClaim();
     message.eventNonce =
-      object.eventNonce !== undefined && object.eventNonce !== null
-        ? Long.fromValue(object.eventNonce)
-        : Long.UZERO;
+      object.eventNonce !== undefined && object.eventNonce !== null ? Long.fromValue(object.eventNonce) : Long.UZERO;
     message.valsetNonce =
-      object.valsetNonce !== undefined && object.valsetNonce !== null
-        ? Long.fromValue(object.valsetNonce)
-        : Long.UZERO;
+      object.valsetNonce !== undefined && object.valsetNonce !== null ? Long.fromValue(object.valsetNonce) : Long.UZERO;
     message.blockHeight =
-      object.blockHeight !== undefined && object.blockHeight !== null
-        ? Long.fromValue(object.blockHeight)
-        : Long.UZERO;
-    message.members =
-      object.members?.map((e) => BridgeValidator.fromPartial(e)) || [];
+      object.blockHeight !== undefined && object.blockHeight !== null ? Long.fromValue(object.blockHeight) : Long.UZERO;
+    message.members = object.members?.map(e => BridgeValidator.fromPartial(e)) || [];
     message.rewardAmount = object.rewardAmount ?? "";
     message.rewardToken = object.rewardToken ?? "";
     message.orchestrator = object.orchestrator ?? "";
@@ -1961,17 +1657,11 @@ function createBaseMsgValsetUpdatedClaimResponse(): MsgValsetUpdatedClaimRespons
 }
 
 export const MsgValsetUpdatedClaimResponse = {
-  encode(
-    _: MsgValsetUpdatedClaimResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgValsetUpdatedClaimResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgValsetUpdatedClaimResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgValsetUpdatedClaimResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgValsetUpdatedClaimResponse();
@@ -1995,9 +1685,7 @@ export const MsgValsetUpdatedClaimResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgValsetUpdatedClaimResponse>, I>>(
-    _: I
-  ): MsgValsetUpdatedClaimResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgValsetUpdatedClaimResponse>, I>>(_: I): MsgValsetUpdatedClaimResponse {
     const message = createBaseMsgValsetUpdatedClaimResponse();
     return message;
   },
@@ -2008,10 +1696,7 @@ function createBaseMsgCancelSendToEth(): MsgCancelSendToEth {
 }
 
 export const MsgCancelSendToEth = {
-  encode(
-    message: MsgCancelSendToEth,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgCancelSendToEth, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.transactionId.isZero()) {
       writer.uint32(8).uint64(message.transactionId);
     }
@@ -2044,24 +1729,19 @@ export const MsgCancelSendToEth = {
 
   fromJSON(object: any): MsgCancelSendToEth {
     return {
-      transactionId: isSet(object.transactionId)
-        ? Long.fromString(object.transactionId)
-        : Long.UZERO,
+      transactionId: isSet(object.transactionId) ? Long.fromString(object.transactionId) : Long.UZERO,
       sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: MsgCancelSendToEth): unknown {
     const obj: any = {};
-    message.transactionId !== undefined &&
-      (obj.transactionId = (message.transactionId || Long.UZERO).toString());
+    message.transactionId !== undefined && (obj.transactionId = (message.transactionId || Long.UZERO).toString());
     message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgCancelSendToEth>, I>>(
-    object: I
-  ): MsgCancelSendToEth {
+  fromPartial<I extends Exact<DeepPartial<MsgCancelSendToEth>, I>>(object: I): MsgCancelSendToEth {
     const message = createBaseMsgCancelSendToEth();
     message.transactionId =
       object.transactionId !== undefined && object.transactionId !== null
@@ -2077,17 +1757,11 @@ function createBaseMsgCancelSendToEthResponse(): MsgCancelSendToEthResponse {
 }
 
 export const MsgCancelSendToEthResponse = {
-  encode(
-    _: MsgCancelSendToEthResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgCancelSendToEthResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgCancelSendToEthResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgCancelSendToEthResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgCancelSendToEthResponse();
@@ -2111,9 +1785,7 @@ export const MsgCancelSendToEthResponse = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgCancelSendToEthResponse>, I>>(
-    _: I
-  ): MsgCancelSendToEthResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgCancelSendToEthResponse>, I>>(_: I): MsgCancelSendToEthResponse {
     const message = createBaseMsgCancelSendToEthResponse();
     return message;
   },
@@ -2124,10 +1796,7 @@ function createBaseMsgSubmitBadSignatureEvidence(): MsgSubmitBadSignatureEvidenc
 }
 
 export const MsgSubmitBadSignatureEvidence = {
-  encode(
-    message: MsgSubmitBadSignatureEvidence,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgSubmitBadSignatureEvidence, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.subject !== undefined) {
       Any.encode(message.subject, writer.uint32(10).fork()).ldelim();
     }
@@ -2140,10 +1809,7 @@ export const MsgSubmitBadSignatureEvidence = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgSubmitBadSignatureEvidence {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSubmitBadSignatureEvidence {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgSubmitBadSignatureEvidence();
@@ -2177,21 +1843,18 @@ export const MsgSubmitBadSignatureEvidence = {
 
   toJSON(message: MsgSubmitBadSignatureEvidence): unknown {
     const obj: any = {};
-    message.subject !== undefined &&
-      (obj.subject = message.subject ? Any.toJSON(message.subject) : undefined);
+    message.subject !== undefined && (obj.subject = message.subject ? Any.toJSON(message.subject) : undefined);
     message.signature !== undefined && (obj.signature = message.signature);
     message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgSubmitBadSignatureEvidence>, I>>(
-    object: I
+    object: I,
   ): MsgSubmitBadSignatureEvidence {
     const message = createBaseMsgSubmitBadSignatureEvidence();
     message.subject =
-      object.subject !== undefined && object.subject !== null
-        ? Any.fromPartial(object.subject)
-        : undefined;
+      object.subject !== undefined && object.subject !== null ? Any.fromPartial(object.subject) : undefined;
     message.signature = object.signature ?? "";
     message.sender = object.sender ?? "";
     return message;
@@ -2203,17 +1866,11 @@ function createBaseMsgSubmitBadSignatureEvidenceResponse(): MsgSubmitBadSignatur
 }
 
 export const MsgSubmitBadSignatureEvidenceResponse = {
-  encode(
-    _: MsgSubmitBadSignatureEvidenceResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgSubmitBadSignatureEvidenceResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgSubmitBadSignatureEvidenceResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSubmitBadSignatureEvidenceResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseMsgSubmitBadSignatureEvidenceResponse();
@@ -2237,9 +1894,9 @@ export const MsgSubmitBadSignatureEvidenceResponse = {
     return obj;
   },
 
-  fromPartial<
-    I extends Exact<DeepPartial<MsgSubmitBadSignatureEvidenceResponse>, I>
-  >(_: I): MsgSubmitBadSignatureEvidenceResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgSubmitBadSignatureEvidenceResponse>, I>>(
+    _: I,
+  ): MsgSubmitBadSignatureEvidenceResponse {
     const message = createBaseMsgSubmitBadSignatureEvidenceResponse();
     return message;
   },
@@ -2251,33 +1908,15 @@ export interface Msg {
   SendToEth(request: MsgSendToEth): Promise<MsgSendToEthResponse>;
   RequestBatch(request: MsgRequestBatch): Promise<MsgRequestBatchResponse>;
   ConfirmBatch(request: MsgConfirmBatch): Promise<MsgConfirmBatchResponse>;
-  ConfirmLogicCall(
-    request: MsgConfirmLogicCall
-  ): Promise<MsgConfirmLogicCallResponse>;
-  SendToCosmosClaim(
-    request: MsgSendToCosmosClaim
-  ): Promise<MsgSendToCosmosClaimResponse>;
-  BatchSendToEthClaim(
-    request: MsgBatchSendToEthClaim
-  ): Promise<MsgBatchSendToEthClaimResponse>;
-  ValsetUpdateClaim(
-    request: MsgValsetUpdatedClaim
-  ): Promise<MsgValsetUpdatedClaimResponse>;
-  ERC20DeployedClaim(
-    request: MsgERC20DeployedClaim
-  ): Promise<MsgERC20DeployedClaimResponse>;
-  LogicCallExecutedClaim(
-    request: MsgLogicCallExecutedClaim
-  ): Promise<MsgLogicCallExecutedClaimResponse>;
-  SetOrchestratorAddress(
-    request: MsgSetOrchestratorAddress
-  ): Promise<MsgSetOrchestratorAddressResponse>;
-  CancelSendToEth(
-    request: MsgCancelSendToEth
-  ): Promise<MsgCancelSendToEthResponse>;
-  SubmitBadSignatureEvidence(
-    request: MsgSubmitBadSignatureEvidence
-  ): Promise<MsgSubmitBadSignatureEvidenceResponse>;
+  ConfirmLogicCall(request: MsgConfirmLogicCall): Promise<MsgConfirmLogicCallResponse>;
+  SendToCosmosClaim(request: MsgSendToCosmosClaim): Promise<MsgSendToCosmosClaimResponse>;
+  BatchSendToEthClaim(request: MsgBatchSendToEthClaim): Promise<MsgBatchSendToEthClaimResponse>;
+  ValsetUpdateClaim(request: MsgValsetUpdatedClaim): Promise<MsgValsetUpdatedClaimResponse>;
+  ERC20DeployedClaim(request: MsgERC20DeployedClaim): Promise<MsgERC20DeployedClaimResponse>;
+  LogicCallExecutedClaim(request: MsgLogicCallExecutedClaim): Promise<MsgLogicCallExecutedClaimResponse>;
+  SetOrchestratorAddress(request: MsgSetOrchestratorAddress): Promise<MsgSetOrchestratorAddressResponse>;
+  CancelSendToEth(request: MsgCancelSendToEth): Promise<MsgCancelSendToEthResponse>;
+  SubmitBadSignatureEvidence(request: MsgSubmitBadSignatureEvidence): Promise<MsgSubmitBadSignatureEvidenceResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -2296,170 +1935,89 @@ export class MsgClientImpl implements Msg {
     this.LogicCallExecutedClaim = this.LogicCallExecutedClaim.bind(this);
     this.SetOrchestratorAddress = this.SetOrchestratorAddress.bind(this);
     this.CancelSendToEth = this.CancelSendToEth.bind(this);
-    this.SubmitBadSignatureEvidence =
-      this.SubmitBadSignatureEvidence.bind(this);
+    this.SubmitBadSignatureEvidence = this.SubmitBadSignatureEvidence.bind(this);
   }
   ValsetConfirm(request: MsgValsetConfirm): Promise<MsgValsetConfirmResponse> {
     const data = MsgValsetConfirm.encode(request).finish();
     const promise = this.rpc.request("gravity.v1.Msg", "ValsetConfirm", data);
-    return promise.then((data) =>
-      MsgValsetConfirmResponse.decode(new _m0.Reader(data))
-    );
+    return promise.then(data => MsgValsetConfirmResponse.decode(new _m0.Reader(data)));
   }
 
   SendToEth(request: MsgSendToEth): Promise<MsgSendToEthResponse> {
     const data = MsgSendToEth.encode(request).finish();
     const promise = this.rpc.request("gravity.v1.Msg", "SendToEth", data);
-    return promise.then((data) =>
-      MsgSendToEthResponse.decode(new _m0.Reader(data))
-    );
+    return promise.then(data => MsgSendToEthResponse.decode(new _m0.Reader(data)));
   }
 
   RequestBatch(request: MsgRequestBatch): Promise<MsgRequestBatchResponse> {
     const data = MsgRequestBatch.encode(request).finish();
     const promise = this.rpc.request("gravity.v1.Msg", "RequestBatch", data);
-    return promise.then((data) =>
-      MsgRequestBatchResponse.decode(new _m0.Reader(data))
-    );
+    return promise.then(data => MsgRequestBatchResponse.decode(new _m0.Reader(data)));
   }
 
   ConfirmBatch(request: MsgConfirmBatch): Promise<MsgConfirmBatchResponse> {
     const data = MsgConfirmBatch.encode(request).finish();
     const promise = this.rpc.request("gravity.v1.Msg", "ConfirmBatch", data);
-    return promise.then((data) =>
-      MsgConfirmBatchResponse.decode(new _m0.Reader(data))
-    );
+    return promise.then(data => MsgConfirmBatchResponse.decode(new _m0.Reader(data)));
   }
 
-  ConfirmLogicCall(
-    request: MsgConfirmLogicCall
-  ): Promise<MsgConfirmLogicCallResponse> {
+  ConfirmLogicCall(request: MsgConfirmLogicCall): Promise<MsgConfirmLogicCallResponse> {
     const data = MsgConfirmLogicCall.encode(request).finish();
-    const promise = this.rpc.request(
-      "gravity.v1.Msg",
-      "ConfirmLogicCall",
-      data
-    );
-    return promise.then((data) =>
-      MsgConfirmLogicCallResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("gravity.v1.Msg", "ConfirmLogicCall", data);
+    return promise.then(data => MsgConfirmLogicCallResponse.decode(new _m0.Reader(data)));
   }
 
-  SendToCosmosClaim(
-    request: MsgSendToCosmosClaim
-  ): Promise<MsgSendToCosmosClaimResponse> {
+  SendToCosmosClaim(request: MsgSendToCosmosClaim): Promise<MsgSendToCosmosClaimResponse> {
     const data = MsgSendToCosmosClaim.encode(request).finish();
-    const promise = this.rpc.request(
-      "gravity.v1.Msg",
-      "SendToCosmosClaim",
-      data
-    );
-    return promise.then((data) =>
-      MsgSendToCosmosClaimResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("gravity.v1.Msg", "SendToCosmosClaim", data);
+    return promise.then(data => MsgSendToCosmosClaimResponse.decode(new _m0.Reader(data)));
   }
 
-  BatchSendToEthClaim(
-    request: MsgBatchSendToEthClaim
-  ): Promise<MsgBatchSendToEthClaimResponse> {
+  BatchSendToEthClaim(request: MsgBatchSendToEthClaim): Promise<MsgBatchSendToEthClaimResponse> {
     const data = MsgBatchSendToEthClaim.encode(request).finish();
-    const promise = this.rpc.request(
-      "gravity.v1.Msg",
-      "BatchSendToEthClaim",
-      data
-    );
-    return promise.then((data) =>
-      MsgBatchSendToEthClaimResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("gravity.v1.Msg", "BatchSendToEthClaim", data);
+    return promise.then(data => MsgBatchSendToEthClaimResponse.decode(new _m0.Reader(data)));
   }
 
-  ValsetUpdateClaim(
-    request: MsgValsetUpdatedClaim
-  ): Promise<MsgValsetUpdatedClaimResponse> {
+  ValsetUpdateClaim(request: MsgValsetUpdatedClaim): Promise<MsgValsetUpdatedClaimResponse> {
     const data = MsgValsetUpdatedClaim.encode(request).finish();
-    const promise = this.rpc.request(
-      "gravity.v1.Msg",
-      "ValsetUpdateClaim",
-      data
-    );
-    return promise.then((data) =>
-      MsgValsetUpdatedClaimResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("gravity.v1.Msg", "ValsetUpdateClaim", data);
+    return promise.then(data => MsgValsetUpdatedClaimResponse.decode(new _m0.Reader(data)));
   }
 
-  ERC20DeployedClaim(
-    request: MsgERC20DeployedClaim
-  ): Promise<MsgERC20DeployedClaimResponse> {
+  ERC20DeployedClaim(request: MsgERC20DeployedClaim): Promise<MsgERC20DeployedClaimResponse> {
     const data = MsgERC20DeployedClaim.encode(request).finish();
-    const promise = this.rpc.request(
-      "gravity.v1.Msg",
-      "ERC20DeployedClaim",
-      data
-    );
-    return promise.then((data) =>
-      MsgERC20DeployedClaimResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("gravity.v1.Msg", "ERC20DeployedClaim", data);
+    return promise.then(data => MsgERC20DeployedClaimResponse.decode(new _m0.Reader(data)));
   }
 
-  LogicCallExecutedClaim(
-    request: MsgLogicCallExecutedClaim
-  ): Promise<MsgLogicCallExecutedClaimResponse> {
+  LogicCallExecutedClaim(request: MsgLogicCallExecutedClaim): Promise<MsgLogicCallExecutedClaimResponse> {
     const data = MsgLogicCallExecutedClaim.encode(request).finish();
-    const promise = this.rpc.request(
-      "gravity.v1.Msg",
-      "LogicCallExecutedClaim",
-      data
-    );
-    return promise.then((data) =>
-      MsgLogicCallExecutedClaimResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("gravity.v1.Msg", "LogicCallExecutedClaim", data);
+    return promise.then(data => MsgLogicCallExecutedClaimResponse.decode(new _m0.Reader(data)));
   }
 
-  SetOrchestratorAddress(
-    request: MsgSetOrchestratorAddress
-  ): Promise<MsgSetOrchestratorAddressResponse> {
+  SetOrchestratorAddress(request: MsgSetOrchestratorAddress): Promise<MsgSetOrchestratorAddressResponse> {
     const data = MsgSetOrchestratorAddress.encode(request).finish();
-    const promise = this.rpc.request(
-      "gravity.v1.Msg",
-      "SetOrchestratorAddress",
-      data
-    );
-    return promise.then((data) =>
-      MsgSetOrchestratorAddressResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("gravity.v1.Msg", "SetOrchestratorAddress", data);
+    return promise.then(data => MsgSetOrchestratorAddressResponse.decode(new _m0.Reader(data)));
   }
 
-  CancelSendToEth(
-    request: MsgCancelSendToEth
-  ): Promise<MsgCancelSendToEthResponse> {
+  CancelSendToEth(request: MsgCancelSendToEth): Promise<MsgCancelSendToEthResponse> {
     const data = MsgCancelSendToEth.encode(request).finish();
     const promise = this.rpc.request("gravity.v1.Msg", "CancelSendToEth", data);
-    return promise.then((data) =>
-      MsgCancelSendToEthResponse.decode(new _m0.Reader(data))
-    );
+    return promise.then(data => MsgCancelSendToEthResponse.decode(new _m0.Reader(data)));
   }
 
-  SubmitBadSignatureEvidence(
-    request: MsgSubmitBadSignatureEvidence
-  ): Promise<MsgSubmitBadSignatureEvidenceResponse> {
+  SubmitBadSignatureEvidence(request: MsgSubmitBadSignatureEvidence): Promise<MsgSubmitBadSignatureEvidenceResponse> {
     const data = MsgSubmitBadSignatureEvidence.encode(request).finish();
-    const promise = this.rpc.request(
-      "gravity.v1.Msg",
-      "SubmitBadSignatureEvidence",
-      data
-    );
-    return promise.then((data) =>
-      MsgSubmitBadSignatureEvidenceResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("gravity.v1.Msg", "SubmitBadSignatureEvidence", data);
+    return promise.then(data => MsgSubmitBadSignatureEvidenceResponse.decode(new _m0.Reader(data)));
   }
 }
 
 interface Rpc {
-  request(
-    service: string,
-    method: string,
-    data: Uint8Array
-  ): Promise<Uint8Array>;
+  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
 declare var self: any | undefined;
@@ -2474,8 +2032,7 @@ var globalThis: any = (() => {
 })();
 
 const atob: (b64: string) => string =
-  globalThis.atob ||
-  ((b64) => globalThis.Buffer.from(b64, "base64").toString("binary"));
+  globalThis.atob || (b64 => globalThis.Buffer.from(b64, "base64").toString("binary"));
 function bytesFromBase64(b64: string): Uint8Array {
   const bin = atob(b64);
   const arr = new Uint8Array(bin.length);
@@ -2486,8 +2043,7 @@ function bytesFromBase64(b64: string): Uint8Array {
 }
 
 const btoa: (bin: string) => string =
-  globalThis.btoa ||
-  ((bin) => globalThis.Buffer.from(bin, "binary").toString("base64"));
+  globalThis.btoa || (bin => globalThis.Buffer.from(bin, "binary").toString("base64"));
 function base64FromBytes(arr: Uint8Array): string {
   const bin: string[] = [];
   for (const byte of arr) {
@@ -2496,14 +2052,7 @@ function base64FromBytes(arr: Uint8Array): string {
   return btoa(bin.join(""));
 }
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -2520,10 +2069,7 @@ export type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<
-        Exclude<keyof I, KeysOfUnion<P>>,
-        never
-      >;
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<Exclude<keyof I, KeysOfUnion<P>>, never>;
 
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;

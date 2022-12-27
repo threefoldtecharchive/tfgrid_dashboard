@@ -1,10 +1,5 @@
 <template>
-  <v-bottom-sheet
-    v-model="open"
-    persistent
-    no-click-animation
-    @click:outside="$emit('close-sheet')"
-  >
+  <v-bottom-sheet v-model="open" persistent no-click-animation @click:outside="$emit('close-sheet')">
     <v-sheet class="text-center" height="90vh">
       <div class="content">
         <v-row>
@@ -13,70 +8,34 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
-            v-if="node"
-          >
+          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="node">
             <NodeDetails :node="node" />
           </v-col>
 
-          <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
-            v-if="farm"
-          >
+          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="farm">
             <FarmDetails :farm="farm" />
           </v-col>
 
-          <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
-            v-if="twin"
-          >
+          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="twin">
             <LocationDetails :country="country" :location="location" />
           </v-col>
 
-          <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
-            v-if="config"
-          >
+          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="config">
             <PublicConfigDetails :config="config" />
           </v-col>
 
-          <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
-            v-if="country"
-          >
-            <CountryDetails
-              :country="country"
-              :city="city"
-              :location="location"
-            />
+          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="country">
+            <CountryDetails :country="country" :city="city" :location="location" />
           </v-col>
 
           <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
+            :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4"
             v-if="country && location && twin"
           >
             <TwinDetails :twin="twin" />
           </v-col>
 
-          <v-col
-            :cols="
-              screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4
-            "
-            v-if="node && node.interfaces"
-          >
+          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="node && node.interfaces">
             <InterfacesDetails :interfaces="node.interfaces" />
           </v-col>
         </v-row>

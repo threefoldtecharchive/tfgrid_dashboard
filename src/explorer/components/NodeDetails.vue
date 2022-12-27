@@ -7,9 +7,7 @@
         <v-icon size="40" class="mr-2">mdi-resistor-nodes</v-icon>
       </v-list-item-icon>
       <v-list-item-content>
-        <v-list-item-title style="font-size: 30px">
-          Node Details
-        </v-list-item-title>
+        <v-list-item-title style="font-size: 30px"> Node Details </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
 
@@ -262,9 +260,7 @@ export default class NodeDetails_ extends Vue {
       return 0;
     }
     const v = this.node[key];
-    const value = v
-      ? +v / this.$store.getters["explorer/maxValueOf"]("nodes", key)
-      : 0;
+    const value = v ? +v / this.$store.getters["explorer/maxValueOf"]("nodes", key) : 0;
 
     return Math.round(value * 10000) / 100;
   }
@@ -275,16 +271,16 @@ export default class NodeDetails_ extends Vue {
 
   getZOSVersion(nodeId: number) {
     return fetch(`${window.configs.APP_GRIDPROXY_URL}/nodes/${nodeId}`)
-      .then((res) => res.json())
-      .then<string>((res) => {
+      .then(res => res.json())
+      .then<string>(res => {
         if ("Error" in res) return;
         return res.zosVersion;
       })
-      .catch((err) => console.log("something went wrong", err));
+      .catch(err => console.log("something went wrong", err));
   }
   created() {
     if (isNodeOnline(this.node)) {
-      this.getZOSVersion(this.node.nodeId).then((zosVersion) => {
+      this.getZOSVersion(this.node.nodeId).then(zosVersion => {
         if (zosVersion) this.zosVersion = zosVersion!;
       });
     }

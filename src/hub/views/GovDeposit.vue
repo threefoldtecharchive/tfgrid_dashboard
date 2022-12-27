@@ -13,14 +13,7 @@
           :hint="'Min deposit is ' + proposal.minDeposit"
         />
 
-        <v-btn
-          color="primary"
-          type="submit"
-          :disabled="loading"
-          :loading="loading"
-        >
-          Submit
-        </v-btn>
+        <v-btn color="primary" type="submit" :disabled="loading" :loading="loading"> Submit </v-btn>
       </form>
     </div>
 
@@ -56,10 +49,10 @@ export default class GovDeposit extends Vue {
     this.loading = true;
 
     getProposal(this.$store.state.hub.config.cosmos_rest, this.$route.params.id)
-      .then((proposal) => {
+      .then(proposal => {
         this.proposal = proposal.proposal;
       })
-      .catch((err) => {
+      .catch(err => {
         this.error = err.message;
       })
       .finally(() => {
@@ -79,12 +72,12 @@ export default class GovDeposit extends Vue {
       this.$store.state.hub.config.chain_id,
       this.proposal.proposalId,
       parseUnits(this.amount, this.$store.state.hub.config.tft_decimals),
-      this.$store.state.hub.config.proposal_denom
+      this.$store.state.hub.config.proposal_denom,
     )
-      .then((res) => {
+      .then(res => {
         this.result = `Successfully deposited ${this.amount} to proposal #${this.proposal.proposalId}`;
       })
-      .catch((err) => {
+      .catch(err => {
         this.error = err.message;
       })
       .finally(() => {

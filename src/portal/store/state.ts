@@ -1,4 +1,3 @@
-
 export interface accountInterface {
   address: string;
   meta: { genesisHash: string; name: string; source: string };
@@ -7,14 +6,8 @@ export interface accountInterface {
 }
 
 export interface PortalState {
-  accounts: accountInterface[],
-
-
-
-
+  accounts: accountInterface[];
 }
 export default {
   accounts: [],
-
-
-}
+};

@@ -136,15 +136,18 @@ component: () => import("../views/Farms.vue"),
 ```
 
 #### In the views folder
+
 ```
 .
 ├── Farms.vue
 ├── Nodes.vue
 └── Statistics.vue
 ```
-* you need to add the component that you want to route to
-* each component should have a name and a template
-* for example : Statistics.vue
+
+- you need to add the component that you want to route to
+- each component should have a name and a template
+- for example : Statistics.vue
+
 ```
 <template>
   <Layout pageName="Statistics" v-if="stats" :noFilter="true">
@@ -167,12 +170,14 @@ component: () => import("../views/Farms.vue"),
   </Layout>
 </template>
 ```
-* take a look at the template and see how it is structured in Statistics.vue file
 
+- take a look at the template and see how it is structured in Statistics.vue file
 
 #### In the components folder
-* you need to add the components that you want to use in the views
-* for example : StatisticsCard.vue
+
+- you need to add the components that you want to use in the views
+- for example : StatisticsCard.vue
+
 ```
 <template>
   <v-card class="mx-auto" max-width="300">
@@ -190,24 +195,27 @@ component: () => import("../views/Farms.vue"),
   </v-card>
 ```
 
-
-
 #### In the graphql folder
+
 - you need to add the queries that you want to use in the project
 - and its relative types within its own files
+
 #### In the store folder
+
 - here you have your REDUX store files
 
-
 #### In the plugins folder
-* here you have your plugins files example:
-  * axios.ts = > where you can add your <a href="https://axios-http.com/docs/instance">axios</a> Instance configuration base url,headers,etc
-  * apollo.ts => where you can add your <a href="https://www.apollographql.com/docs/">apollo</a>
- configuration  
-  * vuetify.ts => where you can add your <a href="https://vuetifyjs.com/en/getting-started/quick-start/">vuetify</a> configuration
+
+- here you have your plugins files example:
+  - axios.ts = > where you can add your <a href="https://axios-http.com/docs/instance">axios</a> Instance configuration base url,headers,etc
+  - apollo.ts => where you can add your <a href="https://www.apollographql.com/docs/">apollo</a>
+    configuration
+  - vuetify.ts => where you can add your <a href="https://vuetifyjs.com/en/getting-started/quick-start/">vuetify</a> configuration
 
 #### In the utils folder
-* here you have your manipulative functions in each file
+
+- here you have your manipulative functions in each file
 
 #### In the types folder
-* here you have your typescript types
+
+- here you have your typescript types

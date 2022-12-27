@@ -17,7 +17,7 @@ export default function mediaMatcher(query: string) {
     },
   };
 
-  media.onchange = (e) => {
+  media.onchange = e => {
     ref.matches = e.matches;
   };
 

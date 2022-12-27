@@ -45,8 +45,7 @@ function fillNodesFields(state: IState, node: any, farms: any): INode {
     twinId: node.twinId,
     cityId: 0,
 
-    totalPublicIPs: farms.find((farm: any) => farm.farmId === node.farmId)
-      ?.publicIps.length,
+    totalPublicIPs: farms.find((farm: any) => farm.farmId === node.farmId)?.publicIps.length,
     freePublicIPs: farms
       .find((farm: any) => farm.farmId === node.farmId)
       ?.publicIps.filter((ip: any) => ip.contractId === 0).length,
@@ -72,10 +71,7 @@ function fillNodesFields(state: IState, node: any, farms: any): INode {
     status: node.status,
     certificationType: node.certificationType,
     farmingPolicyName: state.policies[node.farmingPolicyId],
-    countryFullName:
-      node.country && node.country?.length == 2
-        ? byInternet(node.country)?.country
-        : node.country,
+    countryFullName: node.country && node.country?.length == 2 ? byInternet(node.country)?.country : node.country,
   };
 }
 

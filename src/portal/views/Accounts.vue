@@ -1,11 +1,8 @@
 <template>
-  <v-container v-if="!$store.state.portal.accounts.length ">
+  <v-container v-if="!$store.state.portal.accounts.length">
     <WelcomeWindow />
   </v-container>
-  <v-container
-    v-else
-    style=""
-  >
+  <v-container v-else style="">
     <h1 class="text-center">Connected Accounts</h1>
 
     <v-container fluid>
@@ -64,19 +61,17 @@ export default class AccountsView extends Vue {
   public filteredAccounts() {
     if (this.searchTerm.length !== 0) {
       return this.accounts.filter(
-        (account) =>
-          account.meta.name
-            .toLowerCase()
-            .includes(this.searchTerm.toLowerCase()) ||
-          account.address.toLowerCase().includes(this.searchTerm.toLowerCase())
+        account =>
+          account.meta.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+          account.address.toLowerCase().includes(this.searchTerm.toLowerCase()),
       );
     }
     return this.accounts;
   }
   async addAccountRoute(account: accountInterface) {
-    this.accounts.map((account) => account.active = false)
+    this.accounts.map(account => (account.active = false));
     account.active = true;
-    this.$root.$emit('selectAccount');
+    this.$root.$emit("selectAccount");
     this.$router.push({
       name: "account",
       path: "account",

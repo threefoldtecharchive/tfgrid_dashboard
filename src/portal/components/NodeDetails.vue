@@ -1,23 +1,14 @@
 <template>
   <v-row>
     <v-col :cols="4">
-      <v-card
-        flat
-        color="transparent"
-        tag="div"
-      >
+      <v-card flat color="transparent" tag="div">
         <!-- Title -->
         <v-list-item>
           <v-list-item-icon>
-            <v-icon
-              size="30"
-              class="mr-2"
-            >mdi-harddisk</v-icon>
+            <v-icon size="30" class="mr-2">mdi-harddisk</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title style="font-size: 20px">
-              Node Resources
-            </v-list-item-title>
+            <v-list-item-title style="font-size: 20px"> Node Resources </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -35,9 +26,7 @@
 
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title>
-                    Disk Resource Unit (HDD)
-                  </v-list-item-title>
+                  <v-list-item-title> Disk Resource Unit (HDD) </v-list-item-title>
                 </v-list-item-content>
                 {{ node.resources.hru | toTeraOrGigaOrPeta }}
               </v-list-item>
@@ -45,9 +34,7 @@
 
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title>
-                    Disk Resource Unit (SSD)
-                  </v-list-item-title>
+                  <v-list-item-title> Disk Resource Unit (SSD) </v-list-item-title>
                 </v-list-item-content>
                 {{ node.resources.sru | toTeraOrGigaOrPeta }}
               </v-list-item>
@@ -66,23 +53,14 @@
     </v-col>
 
     <v-col :cols="4">
-      <v-card
-        flat
-        color="transparent"
-        tag="div"
-      >
+      <v-card flat color="transparent" tag="div">
         <!-- Title -->
         <v-list-item>
           <v-list-item-icon>
-            <v-icon
-              size="30"
-              class="mr-2"
-            >mdi-map-marker</v-icon>
+            <v-icon size="30" class="mr-2">mdi-map-marker</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title style="font-size: 20px">
-              Location
-            </v-list-item-title>
+            <v-list-item-title style="font-size: 20px"> Location </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -126,23 +104,14 @@
       </v-card>
     </v-col>
     <v-col :cols="4">
-      <v-card
-        flat
-        color="transparent"
-        tag="div"
-      >
+      <v-card flat color="transparent" tag="div">
         <!-- Title -->
         <v-list-item>
           <v-list-item-icon>
-            <v-icon
-              size="30"
-              class="mr-2"
-            >mdi-earth</v-icon>
+            <v-icon size="30" class="mr-2">mdi-earth</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title style="font-size: 20px">
-              Public IPs
-            </v-list-item-title>
+            <v-list-item-title style="font-size: 20px"> Public IPs </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 

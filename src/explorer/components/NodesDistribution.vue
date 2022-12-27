@@ -60,12 +60,7 @@ export default class NodesDistribution extends Vue {
 
   controllTooltip(e: MouseEvent) {
     // hide/show tooltip
-    if (
-      !this.map ||
-      !this._instance ||
-      !this._virtualElement ||
-      !(e.target instanceof SVGPathElement)
-    ) {
+    if (!this.map || !this._instance || !this._virtualElement || !(e.target instanceof SVGPathElement)) {
       return (this.display = "none");
     }
     this.display = "block";
@@ -75,10 +70,7 @@ export default class NodesDistribution extends Vue {
     this.country = target.getAttribute("title")!;
     this.value = target.getAttribute("data-value")!;
 
-    this._virtualElement.getBoundingClientRect = generateGetBoundingClientRect(
-      x,
-      y - 10
-    );
+    this._virtualElement.getBoundingClientRect = generateGetBoundingClientRect(x, y - 10);
     this._instance.update();
   }
 
@@ -96,10 +88,7 @@ export default class NodesDistribution extends Vue {
       const path = this.map.querySelector(`path[title='${key}']`);
 
       if (!path) continue;
-      path.setAttribute(
-        "fill",
-        `rgba(82, 255, 82, ${0.5 + counter[key] / (max * 2)})`
-      );
+      path.setAttribute("fill", `rgba(82, 255, 82, ${0.5 + counter[key] / (max * 2)})`);
       path.setAttribute("data-value", `${counter[key]}`);
     }
 
@@ -120,13 +109,9 @@ export default class NodesDistribution extends Vue {
       getBoundingClientRect: generateGetBoundingClientRect(),
     };
 
-    this._instance = createPopper(
-      this._virtualElement as any,
-      this.$refs.tooltip as any,
-      {
-        placement: "top",
-      }
-    );
+    this._instance = createPopper(this._virtualElement as any, this.$refs.tooltip as any, {
+      placement: "top",
+    });
   }
 
   destroyed() {

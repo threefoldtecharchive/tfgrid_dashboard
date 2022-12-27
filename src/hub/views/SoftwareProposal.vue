@@ -3,40 +3,15 @@
     <h1>Add Software Proposal</h1>
 
     <form @submit.prevent="onSubmitSoftwareUpgradeProposal()">
-      <v-text-field
-        label="Title"
-        v-model="title"
-      />
-      <v-text-field
-        label="Description"
-        v-model="description"
-      />
-      <v-text-field
-        label="Name"
-        v-model="name"
-      />
-      <v-text-field
-        label="Initial Deposit"
-        placeholder="Initial Deposit"
-        v-model="initialDeposit"
-      />
-      <v-text-field
-        label="Height"
-        type="number"
-        v-model="height"
-      />
+      <v-text-field label="Title" v-model="title" />
+      <v-text-field label="Description" v-model="description" />
+      <v-text-field label="Name" v-model="name" />
+      <v-text-field label="Initial Deposit" placeholder="Initial Deposit" v-model="initialDeposit" />
+      <v-text-field label="Height" type="number" v-model="height" />
 
-      <v-row
-        justify="space-between"
-        class="mt-5 ml-0"
-      >
+      <v-row justify="space-between" class="mt-5 ml-0">
         <h3>Operating Systems</h3>
-        <v-btn
-          fab
-          small
-          color="success"
-          @click="onAddSystem()"
-        >
+        <v-btn fab small color="success" @click="onAddSystem()">
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </v-row>
@@ -49,26 +24,12 @@
         @on:remove="onRemoveSystem(idx)"
       />
 
-      <v-row
-        justify="center"
-        class="mt-4"
-      >
-        <v-btn
-          color="primary"
-          type="submit"
-          :disabled="loading"
-          :loading="loading"
-        >
-          Submit
-        </v-btn>
+      <v-row justify="center" class="mt-4">
+        <v-btn color="primary" type="submit" :disabled="loading" :loading="loading"> Submit </v-btn>
       </v-row>
     </form>
 
-    <CustomAlert
-      :loading="loading"
-      :result="result"
-      :error="error"
-    />
+    <CustomAlert :loading="loading" :result="result" :error="error" />
   </v-container>
 </template>
 
@@ -132,12 +93,12 @@ export default class SoftwareProposal extends Vue {
       this.$store.state.hub.config.chain_id,
       proposal,
       parseUnits(initialDeposit, this.$store.state.hub.config.tft_decimals),
-      this.$store.state.hub.config.tft_denom
+      this.$store.state.hub.config.tft_denom,
     )
       .then(() => {
         this.result = "Proposal added succefully!";
       })
-      .catch((err) => {
+      .catch(err => {
         this.error = err.message;
       })
       .finally(() => {

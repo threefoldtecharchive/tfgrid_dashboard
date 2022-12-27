@@ -24,8 +24,7 @@ export default class ConditionFilter extends Vue {
   @Prop({ required: true }) labels!: string[];
 
   get value(): boolean {
-    return this.$store.getters["explorer/getFilter"](this.key1, this.key2)
-      .value;
+    return this.$store.getters["explorer/getFilter"](this.key1, this.key2).value;
   }
 
   set value(value: boolean) {

@@ -3,38 +3,16 @@
     <h1>Send to Threefold Hub</h1>
 
     <form @submit.prevent="onSendToCosmos()">
-      <v-text-field
-        label="Amount"
-        placeholder="Amount"
-        v-model="amount"
-        :rules="[money]"
-      />
+      <v-text-field label="Amount" placeholder="Amount" v-model="amount" :rules="[money]" />
 
-      <v-text-field
-        label="Destination"
-        placeholder="Destination"
-        v-model="destination"
-        :rules="[bech32Address]"
-      />
+      <v-text-field label="Destination" placeholder="Destination" v-model="destination" :rules="[bech32Address]" />
 
       <v-row justify="center">
-        <v-btn
-          color="primary"
-          x-large
-          type="submit"
-          :disabled="inValid || loading"
-          :loading="loading"
-        >
-          Send
-        </v-btn>
+        <v-btn color="primary" x-large type="submit" :disabled="inValid || loading" :loading="loading"> Send </v-btn>
       </v-row>
     </form>
 
-    <CustomAlert
-      :loading="loading"
-      :result="result"
-      :error="error"
-    />
+    <CustomAlert :loading="loading" :result="result" :error="error" />
   </v-container>
 </template>
 
@@ -62,9 +40,7 @@ export default class Cosmos extends Vue {
   destination = "";
 
   get inValid() {
-    return (
-      this.money() !== true || this.bech32Address(this.destination) !== true
-    );
+    return this.money() !== true || this.bech32Address(this.destination) !== true;
   }
 
   parseAmount(): BigNumber {
@@ -104,16 +80,11 @@ export default class Cosmos extends Vue {
       const config = this.$store.state.hub.config as Config;
       let amount = this.parseAmount();
 
-      sendToCosmos(
-        config.tft_token_contract_address,
-        config.gravity_contract_address,
-        destination,
-        amount
-      )
+      sendToCosmos(config.tft_token_contract_address, config.gravity_contract_address, destination, amount)
         .then(() => {
           this.result = "Transaction submitted succefully!";
         })
-        .catch((err) => {
+        .catch(err => {
           this.error = err.message;
         })
         .finally(() => {

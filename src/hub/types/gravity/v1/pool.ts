@@ -56,16 +56,14 @@ export const IDSet = {
 
   fromJSON(object: any): IDSet {
     return {
-      ids: Array.isArray(object?.ids)
-        ? object.ids.map((e: any) => Long.fromString(e))
-        : [],
+      ids: Array.isArray(object?.ids) ? object.ids.map((e: any) => Long.fromString(e)) : [],
     };
   },
 
   toJSON(message: IDSet): unknown {
     const obj: any = {};
     if (message.ids) {
-      obj.ids = message.ids.map((e) => (e || Long.UZERO).toString());
+      obj.ids = message.ids.map(e => (e || Long.UZERO).toString());
     } else {
       obj.ids = [];
     }
@@ -74,7 +72,7 @@ export const IDSet = {
 
   fromPartial<I extends Exact<DeepPartial<IDSet>, I>>(object: I): IDSet {
     const message = createBaseIDSet();
-    message.ids = object.ids?.map((e) => Long.fromValue(e)) || [];
+    message.ids = object.ids?.map(e => Long.fromValue(e)) || [];
     return message;
   },
 };
@@ -84,10 +82,7 @@ function createBaseBatchFees(): BatchFees {
 }
 
 export const BatchFees = {
-  encode(
-    message: BatchFees,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: BatchFees, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.token !== "") {
       writer.uint32(10).string(message.token);
     }
@@ -128,9 +123,7 @@ export const BatchFees = {
     return {
       token: isSet(object.token) ? String(object.token) : "",
       totalFees: isSet(object.totalFees) ? String(object.totalFees) : "",
-      txCount: isSet(object.txCount)
-        ? Long.fromString(object.txCount)
-        : Long.UZERO,
+      txCount: isSet(object.txCount) ? Long.fromString(object.txCount) : Long.UZERO,
     };
   },
 
@@ -138,33 +131,21 @@ export const BatchFees = {
     const obj: any = {};
     message.token !== undefined && (obj.token = message.token);
     message.totalFees !== undefined && (obj.totalFees = message.totalFees);
-    message.txCount !== undefined &&
-      (obj.txCount = (message.txCount || Long.UZERO).toString());
+    message.txCount !== undefined && (obj.txCount = (message.txCount || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<BatchFees>, I>>(
-    object: I
-  ): BatchFees {
+  fromPartial<I extends Exact<DeepPartial<BatchFees>, I>>(object: I): BatchFees {
     const message = createBaseBatchFees();
     message.token = object.token ?? "";
     message.totalFees = object.totalFees ?? "";
     message.txCount =
-      object.txCount !== undefined && object.txCount !== null
-        ? Long.fromValue(object.txCount)
-        : Long.UZERO;
+      object.txCount !== undefined && object.txCount !== null ? Long.fromValue(object.txCount) : Long.UZERO;
     return message;
   },
 };
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -181,10 +162,7 @@ export type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<
-        Exclude<keyof I, KeysOfUnion<P>>,
-        never
-      >;
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<Exclude<keyof I, KeysOfUnion<P>>, never>;
 
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;

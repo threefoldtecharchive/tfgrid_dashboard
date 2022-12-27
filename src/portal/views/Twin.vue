@@ -5,60 +5,36 @@
     </v-card>
   </v-container>
 
-  <div
-    style="padding-top: 100px"
-    v-else
-  >
+  <div style="padding-top: 100px" v-else>
     <v-container v-if="editingTwin">
-      <v-dialog
-        transition="dialog-bottom-transition"
-        max-width="600"
-        v-model="editingTwin"
-      >
+      <v-dialog transition="dialog-bottom-transition" max-width="600" v-model="editingTwin">
         <v-card>
-          <v-toolbar
-            color="primary"
-            dark
-          >Edit Twin</v-toolbar>
+          <v-toolbar color="primary" dark>Edit Twin</v-toolbar>
           <v-card-text>
             <div class="text-h2 pa-12">
               <v-form v-model="isValidTwinIP">
                 <v-text-field
                   v-model="ipEntered"
                   label="Twin IP"
-                  :rules="[() => !!ipEntered || 'This field is required', 
-                  () => ipcheck() || 'invalid IP format']"
+                  :rules="[() => !!ipEntered || 'This field is required', () => ipcheck() || 'invalid IP format']"
                 ></v-text-field>
               </v-form>
             </div>
           </v-card-text>
           <v-card-actions class="justify-end">
-            <v-btn
-              @click="editingTwin = false;"
-              class="grey lighten-2 black--text"
-            >Close</v-btn>
-            <v-btn
-              class="primary white--text"
-              @click="updateTwin"
-              :loading="loadingEditTwin"
-              :disabled="!isValidTwinIP"
-            >Submit</v-btn>
+            <v-btn @click="editingTwin = false" class="grey lighten-2 black--text">Close</v-btn>
+            <v-btn class="primary white--text" @click="updateTwin" :loading="loadingEditTwin" :disabled="!isValidTwinIP"
+              >Submit</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-dialog>
     </v-container>
     <v-container>
-      <v-card
-        color="primary white--text"
-        class="my-3 pa-3 text-center"
-      >
-        <h2>
-          Twin Details
-
-        </h2>
+      <v-card color="primary white--text" class="my-3 pa-3 text-center">
+        <h2>Twin Details</h2>
       </v-card>
       <v-card class="my-3 pa-3 text-center">
-
         <v-list>
           <v-list-item> ID: {{ id }} </v-list-item>
 
@@ -67,37 +43,19 @@
           <v-list-item> ADDRESS: {{ address }} </v-list-item>
         </v-list>
         <v-card-actions class="justify-end">
-          <v-btn
-            @click="editTwin"
-            color="primary"
-          >Edit</v-btn>
-          <v-btn
-            @click="openDeleteTwin"
-            :loading="loadingDeleteTwin"
-            color="red"
-            class="white--text"
-          >Delete</v-btn>
+          <v-btn @click="editTwin" color="primary">Edit</v-btn>
+          <v-btn @click="openDeleteTwin" :loading="loadingDeleteTwin" color="red" class="white--text">Delete</v-btn>
         </v-card-actions>
       </v-card>
     </v-container>
-    <v-dialog
-      max-width="600"
-      v-model="openDeleteTwinDialog"
-    >
+    <v-dialog max-width="600" v-model="openDeleteTwinDialog">
       <v-card>
         <v-card-title class="text-h5">Are you certain you want to delete this twin?</v-card-title>
-        <v-card-text>This will delete the twin on the chain, this action is
-          irreversible</v-card-text>
+        <v-card-text>This will delete the twin on the chain, this action is irreversible</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="grey lighten-2 black--text"
-            @click="openDeleteTwinDialog = false"
-          >Cancel</v-btn>
-          <v-btn
-            color="primary white--text"
-            @click="callDeleteTwin()"
-          >OK</v-btn>
+          <v-btn color="grey lighten-2 black--text" @click="openDeleteTwinDialog = false">Cancel</v-btn>
+          <v-btn color="primary white--text" @click="callDeleteTwin()">OK</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
@@ -153,21 +111,23 @@ export default class TwinView extends Vue {
     this.address = "";
   }
   ipcheck() {
-    const IPv4SegmentFormat = '(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    const IPv4SegmentFormat = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
     const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
-    const IPv6SegmentFormat = '(?:[0-9a-fA-F]{1,4})';
+    const IPv6SegmentFormat = "(?:[0-9a-fA-F]{1,4})";
 
-    const ip6Regex = new RegExp('^(' +
-      `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
-      `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
-      `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
-      `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
-      `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
-      `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
-      `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
-      `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
-      ')([0-9a-fA-F]{1})?$');
-      if (ip6Regex.test(this.ipEntered)) {
+    const ip6Regex = new RegExp(
+      "^(" +
+        `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
+        `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
+        `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
+        `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
+        `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
+        `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
+        `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
+        `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
+        ")([0-9a-fA-F]{1})?$",
+    );
+    if (ip6Regex.test(this.ipEntered)) {
       return true;
     }
     return false;
@@ -185,10 +145,7 @@ export default class TwinView extends Vue {
       this.$route.params.accountID,
       this.$api,
       `${this.ipEntered}`,
-      (res: {
-        events?: never[] | undefined;
-        status: { type: string; asFinalized: string; isFinalized: string };
-      }) => {
+      (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         if (res instanceof Error) {
           console.log(res);
           return;
@@ -200,44 +157,31 @@ export default class TwinView extends Vue {
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
-          console.log(
-            `Transaction included at blockHash ${status.asFinalized}`
-          );
+          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           if (!events.length) {
             this.$toasted.show("Twin creation/update failed!");
             this.loadingEditTwin = false;
           } else {
             // Loop through Vec<EventRecord> to display all events
-            events.forEach(
-              async ({ phase, event: { data, method, section } }) => {
-                console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-                if (section === "tfgridModule" && method === "TwinUpdated") {
-                  this.loadingEditTwin = false;
-                  this.$toasted.show("Twin updated!");
-                  this.id = await getTwinID(
-                    this.$api,
-                    this.$route.params.accountID
-                  );
-                  this.twin = await getTwin(
-                    this.$api,
-                    parseFloat(`${this.id}`)
-                  );
-                  this.ipFetched = this.twin.ip;
-                  this.editingTwin = false;
-                  this.ipEntered = "";
-                } else if (
-                  section === "system" &&
-                  method === "ExtrinsicFailed"
-                ) {
-                  this.$toasted.show("Twin creation/update failed!");
-                  this.loadingEditTwin = false;
-                  this.ipEntered = "";
-                }
+            events.forEach(async ({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "tfgridModule" && method === "TwinUpdated") {
+                this.loadingEditTwin = false;
+                this.$toasted.show("Twin updated!");
+                this.id = await getTwinID(this.$api, this.$route.params.accountID);
+                this.twin = await getTwin(this.$api, parseFloat(`${this.id}`));
+                this.ipFetched = this.twin.ip;
+                this.editingTwin = false;
+                this.ipEntered = "";
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Twin creation/update failed!");
+                this.loadingEditTwin = false;
+                this.ipEntered = "";
               }
-            );
+            });
           }
         }
-      }
+      },
     ).catch((err: { message: string }) => {
       console.log(err.message);
       this.$toasted.show("Twin creation/update failed!");
@@ -255,10 +199,7 @@ export default class TwinView extends Vue {
       this.address,
       this.$api,
       `${this.id}`,
-      (res: {
-        events?: never[] | undefined;
-        status: { type: string; asFinalized: string; isFinalized: string };
-      }) => {
+      (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -271,9 +212,7 @@ export default class TwinView extends Vue {
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
-          console.log(
-            `Transaction included at blockHash ${status.asFinalized}`
-          );
+          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           if (!events.length) {
             this.$toasted.show("Deleting a twin failed");
             this.loadingDeleteTwin = false;
@@ -298,7 +237,7 @@ export default class TwinView extends Vue {
             });
           }
         }
-      }
+      },
     ).catch((err: { message: string }) => {
       this.$toasted.show(err.message);
       this.loadingDeleteTwin = false;

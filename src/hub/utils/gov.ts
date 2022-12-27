@@ -11,11 +11,7 @@ import {
 import { GasPrice, SigningStargateClient } from "@cosmjs/stargate";
 import { snakeToCamelCase } from "./camel";
 import { myRegistry } from "./registry";
-import {
-  MsgDeposit,
-  MsgSubmitProposal,
-  MsgVote,
-} from "../types/cosmos/gov/v1beta1/tx";
+import { MsgDeposit, MsgSubmitProposal, MsgVote } from "../types/cosmos/gov/v1beta1/tx";
 import { MsgDelegate } from "../types/cosmos/staking/v1beta1/tx";
 import { TextProposal, VoteOption } from "../types/cosmos/gov/v1beta1/gov";
 import { Any } from "../types/google/protobuf/any";
@@ -34,7 +30,7 @@ async function listProposals(
     | "PROPOSAL_STATUS_REJECTED"
     | "PROPOSAL_STATUS_FAILED",
   offset?: number,
-  limit?: number
+  limit?: number,
 ): Promise<CosmosGovV1Beta1QueryProposalsResponse> {
   const queryClient = new Api({ baseUrl: cosmos_rest });
   const response = await queryClient.cosmos.cosmosGovV1Beta1Proposals(
@@ -43,7 +39,7 @@ async function listProposals(
       "pagination.offset": offset?.toString(),
       "pagination.limit": limit?.toString(),
     },
-    { format: "json" }
+    { format: "json" },
   );
   snakeToCamelCase(response.data);
   return response.data as CosmosGovV1Beta1QueryProposalsResponse;
@@ -52,7 +48,7 @@ async function listProposals(
 async function listValidators(
   cosmos_rest: string,
   offset?: number,
-  limit?: number
+  limit?: number,
 ): Promise<CosmosStakingV1Beta1QueryValidatorsResponse> {
   const queryClient = new Api({ baseUrl: cosmos_rest });
   const response = await queryClient.cosmos.cosmosStakingV1Beta1Validators(
@@ -60,7 +56,7 @@ async function listValidators(
       "pagination.offset": offset?.toString(),
       "pagination.limit": limit?.toString(),
     },
-    { format: "json" }
+    { format: "json" },
   );
   snakeToCamelCase(response.data);
   return response.data as CosmosStakingV1Beta1QueryValidatorsResponse;
@@ -70,7 +66,7 @@ async function listVotes(
   cosmos_rest: string,
   proposalId: string,
   offset?: number,
-  limit?: number
+  limit?: number,
 ): Promise<CosmosGovV1Beta1QueryVotesResponse> {
   const queryClient = new Api({ baseUrl: cosmos_rest });
   const response = await queryClient.cosmos.cosmosGovV1Beta1Votes(
@@ -79,7 +75,7 @@ async function listVotes(
       "pagination.limit": limit?.toString(),
       "pagination.offset": offset?.toString(),
     },
-    { format: "json" }
+    { format: "json" },
   );
   snakeToCamelCase(response.data);
   return response.data as CosmosGovV1Beta1QueryVotesResponse;
@@ -89,7 +85,7 @@ async function listDeposites(
   cosmos_rest: string,
   proposalId: string,
   offset?: number,
-  limit?: number
+  limit?: number,
 ): Promise<CosmosGovV1Beta1QueryDepositsResponse> {
   const queryClient = new Api({ baseUrl: cosmos_rest });
   const response = await queryClient.cosmos.cosmosGovV1Beta1Deposits(
@@ -98,21 +94,15 @@ async function listDeposites(
       "pagination.limit": limit?.toString(),
       "pagination.offset": offset?.toString(),
     },
-    { format: "json" }
+    { format: "json" },
   );
   snakeToCamelCase(response.data);
   return response.data as CosmosGovV1Beta1QueryDepositsResponse;
 }
 
-async function getProposal(
-  cosmos_rest: string,
-  proposalId: string
-): Promise<CosmosGovV1Beta1QueryProposalResponse> {
+async function getProposal(cosmos_rest: string, proposalId: string): Promise<CosmosGovV1Beta1QueryProposalResponse> {
   const queryClient = new Api({ baseUrl: cosmos_rest });
-  const response = await queryClient.cosmos.cosmosGovV1Beta1Proposal(
-    proposalId,
-    { format: "json" }
-  );
+  const response = await queryClient.cosmos.cosmosGovV1Beta1Proposal(proposalId, { format: "json" });
   snakeToCamelCase(response.data);
   if (response.data.proposal?.status == "PROPOSAL_STATUS_VOTING_PERIOD") {
     const currentTally = await tally(cosmos_rest, proposalId);
@@ -121,35 +111,21 @@ async function getProposal(
   return response.data as CosmosGovV1Beta1QueryProposalResponse;
 }
 
-async function tally(
-  cosmos_rest: string,
-  proposalId: string
-): Promise<CosmosGovV1Beta1QueryTallyResultResponse> {
+async function tally(cosmos_rest: string, proposalId: string): Promise<CosmosGovV1Beta1QueryTallyResultResponse> {
   const queryClient = new Api({ baseUrl: cosmos_rest });
-  const response = await queryClient.cosmos.cosmosGovV1Beta1TallyResult(
-    proposalId,
-    { format: "json" }
-  );
+  const response = await queryClient.cosmos.cosmosGovV1Beta1TallyResult(proposalId, { format: "json" });
   snakeToCamelCase(response.data);
   return response.data as CosmosGovV1Beta1QueryTallyResultResponse;
 }
 
-async function parameters(
-  cosmos_rest: string
-): Promise<CosmosGovV1Beta1QueryParamsResponse> {
+async function parameters(cosmos_rest: string): Promise<CosmosGovV1Beta1QueryParamsResponse> {
   const queryClient = new Api({ baseUrl: cosmos_rest });
   // requesting all params is not supported over rest
   const params = await queryClient.cosmos.cosmosGovV1Beta1Params("deposit", {
     format: "json",
   });
-  const tallying_params = await queryClient.cosmos.cosmosGovV1Beta1Params(
-    "tallying",
-    { format: "json" }
-  );
-  const voting_params = await queryClient.cosmos.cosmosGovV1Beta1Params(
-    "voting",
-    { format: "json" }
-  );
+  const tallying_params = await queryClient.cosmos.cosmosGovV1Beta1Params("tallying", { format: "json" });
+  const voting_params = await queryClient.cosmos.cosmosGovV1Beta1Params("voting", { format: "json" });
   snakeToCamelCase(params.data);
   snakeToCamelCase(tallying_params.data);
   snakeToCamelCase(voting_params.data);
@@ -165,7 +141,7 @@ async function submitProposal(
   chain_id: string,
   content: TextProposal,
   initialDeposit: BigNumber,
-  denom: string
+  denom: string,
 ) {
   if (!window.keplr) {
     throw new Error("keplr is not installed");
@@ -176,11 +152,11 @@ async function submitProposal(
   return SigningStargateClient.connectWithSigner(
     tendermint_rpc, // Replace with your own RPC endpoint
     offlineSigner,
-    { registry: myRegistry, gasPrice: GasPrice.fromString(gas_price) }
+    { registry: myRegistry, gasPrice: GasPrice.fromString(gas_price) },
   )
-    .then((_client) => (client = _client))
+    .then(_client => (client = _client))
     .then(() => window.keplr.getKey(chain_id))
-    .then((account) => {
+    .then(account => {
       const message = {
         typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal", // Same as above
         value: MsgSubmitProposal.fromPartial({
@@ -197,14 +173,7 @@ async function submitProposal(
           proposer: sender.address,
         }),
       };
-      return submitWithCheck(
-        client,
-        cosmos_rest,
-        account.bech32Address,
-        [message],
-        "auto",
-        initialDeposit
-      );
+      return submitWithCheck(client, cosmos_rest, account.bech32Address, [message], "auto", initialDeposit);
     });
 }
 
@@ -215,7 +184,7 @@ async function submitSoftwareUpgradeProposal(
   chain_id: string,
   content: SoftwareUpgradeProposal,
   initialDeposit: BigNumber,
-  denom: string
+  denom: string,
 ) {
   if (!window.keplr) {
     throw new Error("keplr is not installed");
@@ -227,11 +196,11 @@ async function submitSoftwareUpgradeProposal(
   return SigningStargateClient.connectWithSigner(
     tendermint_rpc, // Replace with your own RPC endpoint
     offlineSigner,
-    { registry: myRegistry, gasPrice: GasPrice.fromString(gas_price) }
+    { registry: myRegistry, gasPrice: GasPrice.fromString(gas_price) },
   )
-    .then((_client) => (client = _client))
+    .then(_client => (client = _client))
     .then(() => window.keplr.getKey(chain_id))
-    .then((account) => {
+    .then(account => {
       const message = {
         typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal", // Same as above
         value: MsgSubmitProposal.fromPartial({
@@ -248,14 +217,7 @@ async function submitSoftwareUpgradeProposal(
           proposer: sender.address,
         }),
       };
-      return submitWithCheck(
-        client,
-        cosmos_rest,
-        account.bech32Address,
-        [message],
-        "auto",
-        initialDeposit
-      );
+      return submitWithCheck(client, cosmos_rest, account.bech32Address, [message], "auto", initialDeposit);
     });
 
   // TODO: how to check transaction errors
@@ -268,7 +230,7 @@ async function deposit(
   chain_id: string,
   proposalId: string,
   deposit: BigNumber,
-  denom: string
+  denom: string,
 ) {
   if (!window.keplr) {
     throw new Error("keplr is not installed");
@@ -279,11 +241,11 @@ async function deposit(
   return SigningStargateClient.connectWithSigner(
     tendermint_rpc, // Replace with your own RPC endpoint
     offlineSigner,
-    { registry: myRegistry, gasPrice: GasPrice.fromString(gas_price) }
+    { registry: myRegistry, gasPrice: GasPrice.fromString(gas_price) },
   )
-    .then((_client) => (client = _client))
+    .then(_client => (client = _client))
     .then(() => window.keplr.getKey(chain_id))
-    .then((account) => {
+    .then(account => {
       const message = {
         typeUrl: "/cosmos.gov.v1beta1.MsgDeposit", // Same as above
         value: MsgDeposit.fromPartial({
@@ -297,14 +259,7 @@ async function deposit(
           proposalId: proposalId,
         }),
       };
-      return submitWithCheck(
-        client,
-        cosmos_rest,
-        account.bech32Address,
-        [message],
-        "auto",
-        deposit
-      );
+      return submitWithCheck(client, cosmos_rest, account.bech32Address, [message], "auto", deposit);
     });
 }
 
@@ -315,7 +270,7 @@ async function delegate(
   chain_id: string,
   validatorAddress: string,
   amount: BigNumber,
-  denom: string
+  denom: string,
 ) {
   if (!window.keplr) {
     throw new Error("keplr is not installed");
@@ -326,11 +281,11 @@ async function delegate(
   return SigningStargateClient.connectWithSigner(
     tendermint_rpc, // Replace with your own RPC endpoint
     offlineSigner,
-    { registry: myRegistry, gasPrice: GasPrice.fromString(gas_price) }
+    { registry: myRegistry, gasPrice: GasPrice.fromString(gas_price) },
   )
-    .then((_client) => (client = _client))
+    .then(_client => (client = _client))
     .then(() => window.keplr.getKey(chain_id))
-    .then((account) => {
+    .then(account => {
       const message = {
         typeUrl: "/cosmos.staking.v1beta1.MsgDelegate", // Same as above
         value: MsgDelegate.fromPartial({
@@ -342,14 +297,7 @@ async function delegate(
           validatorAddress: validatorAddress,
         }),
       };
-      return submitWithCheck(
-        client,
-        cosmos_rest,
-        account.bech32Address,
-        [message],
-        "auto",
-        amount
-      );
+      return submitWithCheck(client, cosmos_rest, account.bech32Address, [message], "auto", amount);
     });
 }
 
@@ -359,7 +307,7 @@ async function submitVote(
   gas_price: string,
   chain_id: string,
   proposalId: string,
-  vote: VoteOption
+  vote: VoteOption,
 ) {
   if (!window.keplr) {
     throw new Error("keplr is not installed");
@@ -370,11 +318,11 @@ async function submitVote(
   return SigningStargateClient.connectWithSigner(
     tendermint_rpc, // Replace with your own RPC endpoint
     offlineSigner,
-    { registry: myRegistry, gasPrice: GasPrice.fromString(gas_price) }
+    { registry: myRegistry, gasPrice: GasPrice.fromString(gas_price) },
   )
-    .then((_client) => (client = _client))
+    .then(_client => (client = _client))
     .then(() => window.keplr.getKey(chain_id))
-    .then((account) => {
+    .then(account => {
       const message = {
         typeUrl: "/cosmos.gov.v1beta1.MsgVote", // Same as above
         value: MsgVote.fromPartial({
@@ -383,14 +331,7 @@ async function submitVote(
           option: vote,
         }),
       };
-      return submitWithCheck(
-        client,
-        cosmos_rest,
-        account.bech32Address,
-        [message],
-        "auto",
-        BigNumber.from("0")
-      );
+      return submitWithCheck(client, cosmos_rest, account.bech32Address, [message], "auto", BigNumber.from("0"));
     });
 }
 

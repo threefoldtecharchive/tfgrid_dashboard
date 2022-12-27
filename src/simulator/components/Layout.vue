@@ -6,11 +6,7 @@
     <v-divider />
     <br />
     <v-row>
-      <v-col
-        :cols="screen_max_1400 ? 12 : 3"
-        :order="screen_max_1400 ? 1 : undefined"
-        v-if="!noFilter"
-      >
+      <v-col :cols="screen_max_1400 ? 12 : 3" :order="screen_max_1400 ? 1 : undefined" v-if="!noFilter">
         <h3>Filters</h3>
         <br />
         <v-row>
@@ -56,7 +52,7 @@ export default class Layout extends Vue {
   mounted() {
     this._screen_max_1400 = window.matchMedia("(max-width: 1400px)");
     this.screen_max_1400 = this._screen_max_1400.matches;
-    this._screen_max_1400.onchange = (e) => {
+    this._screen_max_1400.onchange = e => {
       this.screen_max_1400 = e.matches;
       this._resizePanel();
     };

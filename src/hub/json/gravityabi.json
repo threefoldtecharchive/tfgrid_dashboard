@@ -250,9 +250,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "address", "name": "_erc20Address", "type": "address" }
-    ],
+    "inputs": [{ "internalType": "address", "name": "_erc20Address", "type": "address" }],
     "name": "lastBatchNonce",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",

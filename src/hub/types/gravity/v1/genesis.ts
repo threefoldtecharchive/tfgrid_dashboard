@@ -9,11 +9,7 @@ import {
   MsgConfirmLogicCall,
   MsgSetOrchestratorAddress,
 } from "../../gravity/v1/msgs";
-import {
-  OutgoingTxBatch,
-  OutgoingLogicCall,
-  OutgoingTransferTx,
-} from "../../gravity/v1/batch";
+import { OutgoingTxBatch, OutgoingLogicCall, OutgoingTransferTx } from "../../gravity/v1/batch";
 import { Attestation } from "../../gravity/v1/attestation";
 
 export const protobufPackage = "gravity.v1";
@@ -144,10 +140,7 @@ function createBaseParams(): Params {
 }
 
 export const Params = {
-  encode(
-    message: Params,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: Params, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.gravityId !== "") {
       writer.uint32(10).string(message.gravityId);
     }
@@ -277,30 +270,16 @@ export const Params = {
   fromJSON(object: any): Params {
     return {
       gravityId: isSet(object.gravityId) ? String(object.gravityId) : "",
-      contractSourceHash: isSet(object.contractSourceHash)
-        ? String(object.contractSourceHash)
-        : "",
-      bridgeEthereumAddress: isSet(object.bridgeEthereumAddress)
-        ? String(object.bridgeEthereumAddress)
-        : "",
-      bridgeChainId: isSet(object.bridgeChainId)
-        ? Long.fromString(object.bridgeChainId)
-        : Long.UZERO,
-      signedValsetsWindow: isSet(object.signedValsetsWindow)
-        ? Long.fromString(object.signedValsetsWindow)
-        : Long.UZERO,
-      signedBatchesWindow: isSet(object.signedBatchesWindow)
-        ? Long.fromString(object.signedBatchesWindow)
-        : Long.UZERO,
+      contractSourceHash: isSet(object.contractSourceHash) ? String(object.contractSourceHash) : "",
+      bridgeEthereumAddress: isSet(object.bridgeEthereumAddress) ? String(object.bridgeEthereumAddress) : "",
+      bridgeChainId: isSet(object.bridgeChainId) ? Long.fromString(object.bridgeChainId) : Long.UZERO,
+      signedValsetsWindow: isSet(object.signedValsetsWindow) ? Long.fromString(object.signedValsetsWindow) : Long.UZERO,
+      signedBatchesWindow: isSet(object.signedBatchesWindow) ? Long.fromString(object.signedBatchesWindow) : Long.UZERO,
       signedLogicCallsWindow: isSet(object.signedLogicCallsWindow)
         ? Long.fromString(object.signedLogicCallsWindow)
         : Long.UZERO,
-      targetBatchTimeout: isSet(object.targetBatchTimeout)
-        ? Long.fromString(object.targetBatchTimeout)
-        : Long.UZERO,
-      averageBlockTime: isSet(object.averageBlockTime)
-        ? Long.fromString(object.averageBlockTime)
-        : Long.UZERO,
+      targetBatchTimeout: isSet(object.targetBatchTimeout) ? Long.fromString(object.targetBatchTimeout) : Long.UZERO,
+      averageBlockTime: isSet(object.averageBlockTime) ? Long.fromString(object.averageBlockTime) : Long.UZERO,
       averageEthereumBlockTime: isSet(object.averageEthereumBlockTime)
         ? Long.fromString(object.averageEthereumBlockTime)
         : Long.UZERO,
@@ -319,12 +298,8 @@ export const Params = {
       slashFractionBadEthSignature: isSet(object.slashFractionBadEthSignature)
         ? bytesFromBase64(object.slashFractionBadEthSignature)
         : new Uint8Array(),
-      valsetReward: isSet(object.valsetReward)
-        ? Coin.fromJSON(object.valsetReward)
-        : undefined,
-      bridgeActive: isSet(object.bridgeActive)
-        ? Boolean(object.bridgeActive)
-        : false,
+      valsetReward: isSet(object.valsetReward) ? Coin.fromJSON(object.valsetReward) : undefined,
+      bridgeActive: isSet(object.bridgeActive) ? Boolean(object.bridgeActive) : false,
       ethereumBlacklist: Array.isArray(object?.ethereumBlacklist)
         ? object.ethereumBlacklist.map((e: any) => String(e))
         : [],
@@ -334,72 +309,44 @@ export const Params = {
   toJSON(message: Params): unknown {
     const obj: any = {};
     message.gravityId !== undefined && (obj.gravityId = message.gravityId);
-    message.contractSourceHash !== undefined &&
-      (obj.contractSourceHash = message.contractSourceHash);
-    message.bridgeEthereumAddress !== undefined &&
-      (obj.bridgeEthereumAddress = message.bridgeEthereumAddress);
-    message.bridgeChainId !== undefined &&
-      (obj.bridgeChainId = (message.bridgeChainId || Long.UZERO).toString());
+    message.contractSourceHash !== undefined && (obj.contractSourceHash = message.contractSourceHash);
+    message.bridgeEthereumAddress !== undefined && (obj.bridgeEthereumAddress = message.bridgeEthereumAddress);
+    message.bridgeChainId !== undefined && (obj.bridgeChainId = (message.bridgeChainId || Long.UZERO).toString());
     message.signedValsetsWindow !== undefined &&
-      (obj.signedValsetsWindow = (
-        message.signedValsetsWindow || Long.UZERO
-      ).toString());
+      (obj.signedValsetsWindow = (message.signedValsetsWindow || Long.UZERO).toString());
     message.signedBatchesWindow !== undefined &&
-      (obj.signedBatchesWindow = (
-        message.signedBatchesWindow || Long.UZERO
-      ).toString());
+      (obj.signedBatchesWindow = (message.signedBatchesWindow || Long.UZERO).toString());
     message.signedLogicCallsWindow !== undefined &&
-      (obj.signedLogicCallsWindow = (
-        message.signedLogicCallsWindow || Long.UZERO
-      ).toString());
+      (obj.signedLogicCallsWindow = (message.signedLogicCallsWindow || Long.UZERO).toString());
     message.targetBatchTimeout !== undefined &&
-      (obj.targetBatchTimeout = (
-        message.targetBatchTimeout || Long.UZERO
-      ).toString());
+      (obj.targetBatchTimeout = (message.targetBatchTimeout || Long.UZERO).toString());
     message.averageBlockTime !== undefined &&
-      (obj.averageBlockTime = (
-        message.averageBlockTime || Long.UZERO
-      ).toString());
+      (obj.averageBlockTime = (message.averageBlockTime || Long.UZERO).toString());
     message.averageEthereumBlockTime !== undefined &&
-      (obj.averageEthereumBlockTime = (
-        message.averageEthereumBlockTime || Long.UZERO
-      ).toString());
+      (obj.averageEthereumBlockTime = (message.averageEthereumBlockTime || Long.UZERO).toString());
     message.slashFractionValset !== undefined &&
       (obj.slashFractionValset = base64FromBytes(
-        message.slashFractionValset !== undefined
-          ? message.slashFractionValset
-          : new Uint8Array()
+        message.slashFractionValset !== undefined ? message.slashFractionValset : new Uint8Array(),
       ));
     message.slashFractionBatch !== undefined &&
       (obj.slashFractionBatch = base64FromBytes(
-        message.slashFractionBatch !== undefined
-          ? message.slashFractionBatch
-          : new Uint8Array()
+        message.slashFractionBatch !== undefined ? message.slashFractionBatch : new Uint8Array(),
       ));
     message.slashFractionLogicCall !== undefined &&
       (obj.slashFractionLogicCall = base64FromBytes(
-        message.slashFractionLogicCall !== undefined
-          ? message.slashFractionLogicCall
-          : new Uint8Array()
+        message.slashFractionLogicCall !== undefined ? message.slashFractionLogicCall : new Uint8Array(),
       ));
     message.unbondSlashingValsetsWindow !== undefined &&
-      (obj.unbondSlashingValsetsWindow = (
-        message.unbondSlashingValsetsWindow || Long.UZERO
-      ).toString());
+      (obj.unbondSlashingValsetsWindow = (message.unbondSlashingValsetsWindow || Long.UZERO).toString());
     message.slashFractionBadEthSignature !== undefined &&
       (obj.slashFractionBadEthSignature = base64FromBytes(
-        message.slashFractionBadEthSignature !== undefined
-          ? message.slashFractionBadEthSignature
-          : new Uint8Array()
+        message.slashFractionBadEthSignature !== undefined ? message.slashFractionBadEthSignature : new Uint8Array(),
       ));
     message.valsetReward !== undefined &&
-      (obj.valsetReward = message.valsetReward
-        ? Coin.toJSON(message.valsetReward)
-        : undefined);
-    message.bridgeActive !== undefined &&
-      (obj.bridgeActive = message.bridgeActive);
+      (obj.valsetReward = message.valsetReward ? Coin.toJSON(message.valsetReward) : undefined);
+    message.bridgeActive !== undefined && (obj.bridgeActive = message.bridgeActive);
     if (message.ethereumBlacklist) {
-      obj.ethereumBlacklist = message.ethereumBlacklist.map((e) => e);
+      obj.ethereumBlacklist = message.ethereumBlacklist.map(e => e);
     } else {
       obj.ethereumBlacklist = [];
     }
@@ -416,23 +363,19 @@ export const Params = {
         ? Long.fromValue(object.bridgeChainId)
         : Long.UZERO;
     message.signedValsetsWindow =
-      object.signedValsetsWindow !== undefined &&
-      object.signedValsetsWindow !== null
+      object.signedValsetsWindow !== undefined && object.signedValsetsWindow !== null
         ? Long.fromValue(object.signedValsetsWindow)
         : Long.UZERO;
     message.signedBatchesWindow =
-      object.signedBatchesWindow !== undefined &&
-      object.signedBatchesWindow !== null
+      object.signedBatchesWindow !== undefined && object.signedBatchesWindow !== null
         ? Long.fromValue(object.signedBatchesWindow)
         : Long.UZERO;
     message.signedLogicCallsWindow =
-      object.signedLogicCallsWindow !== undefined &&
-      object.signedLogicCallsWindow !== null
+      object.signedLogicCallsWindow !== undefined && object.signedLogicCallsWindow !== null
         ? Long.fromValue(object.signedLogicCallsWindow)
         : Long.UZERO;
     message.targetBatchTimeout =
-      object.targetBatchTimeout !== undefined &&
-      object.targetBatchTimeout !== null
+      object.targetBatchTimeout !== undefined && object.targetBatchTimeout !== null
         ? Long.fromValue(object.targetBatchTimeout)
         : Long.UZERO;
     message.averageBlockTime =
@@ -440,28 +383,23 @@ export const Params = {
         ? Long.fromValue(object.averageBlockTime)
         : Long.UZERO;
     message.averageEthereumBlockTime =
-      object.averageEthereumBlockTime !== undefined &&
-      object.averageEthereumBlockTime !== null
+      object.averageEthereumBlockTime !== undefined && object.averageEthereumBlockTime !== null
         ? Long.fromValue(object.averageEthereumBlockTime)
         : Long.UZERO;
-    message.slashFractionValset =
-      object.slashFractionValset ?? new Uint8Array();
+    message.slashFractionValset = object.slashFractionValset ?? new Uint8Array();
     message.slashFractionBatch = object.slashFractionBatch ?? new Uint8Array();
-    message.slashFractionLogicCall =
-      object.slashFractionLogicCall ?? new Uint8Array();
+    message.slashFractionLogicCall = object.slashFractionLogicCall ?? new Uint8Array();
     message.unbondSlashingValsetsWindow =
-      object.unbondSlashingValsetsWindow !== undefined &&
-      object.unbondSlashingValsetsWindow !== null
+      object.unbondSlashingValsetsWindow !== undefined && object.unbondSlashingValsetsWindow !== null
         ? Long.fromValue(object.unbondSlashingValsetsWindow)
         : Long.UZERO;
-    message.slashFractionBadEthSignature =
-      object.slashFractionBadEthSignature ?? new Uint8Array();
+    message.slashFractionBadEthSignature = object.slashFractionBadEthSignature ?? new Uint8Array();
     message.valsetReward =
       object.valsetReward !== undefined && object.valsetReward !== null
         ? Coin.fromPartial(object.valsetReward)
         : undefined;
     message.bridgeActive = object.bridgeActive ?? false;
-    message.ethereumBlacklist = object.ethereumBlacklist?.map((e) => e) || [];
+    message.ethereumBlacklist = object.ethereumBlacklist?.map(e => e) || [];
     return message;
   },
 };
@@ -484,18 +422,12 @@ function createBaseGenesisState(): GenesisState {
 }
 
 export const GenesisState = {
-  encode(
-    message: GenesisState,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: GenesisState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.params !== undefined) {
       Params.encode(message.params, writer.uint32(10).fork()).ldelim();
     }
     if (message.gravityNonces !== undefined) {
-      GravityNonces.encode(
-        message.gravityNonces,
-        writer.uint32(18).fork()
-      ).ldelim();
+      GravityNonces.encode(message.gravityNonces, writer.uint32(18).fork()).ldelim();
     }
     for (const v of message.valsets) {
       Valset.encode(v!, writer.uint32(26).fork()).ldelim();
@@ -547,47 +479,31 @@ export const GenesisState = {
           message.valsets.push(Valset.decode(reader, reader.uint32()));
           break;
         case 4:
-          message.valsetConfirms.push(
-            MsgValsetConfirm.decode(reader, reader.uint32())
-          );
+          message.valsetConfirms.push(MsgValsetConfirm.decode(reader, reader.uint32()));
           break;
         case 5:
           message.batches.push(OutgoingTxBatch.decode(reader, reader.uint32()));
           break;
         case 6:
-          message.batchConfirms.push(
-            MsgConfirmBatch.decode(reader, reader.uint32())
-          );
+          message.batchConfirms.push(MsgConfirmBatch.decode(reader, reader.uint32()));
           break;
         case 7:
-          message.logicCalls.push(
-            OutgoingLogicCall.decode(reader, reader.uint32())
-          );
+          message.logicCalls.push(OutgoingLogicCall.decode(reader, reader.uint32()));
           break;
         case 8:
-          message.logicCallConfirms.push(
-            MsgConfirmLogicCall.decode(reader, reader.uint32())
-          );
+          message.logicCallConfirms.push(MsgConfirmLogicCall.decode(reader, reader.uint32()));
           break;
         case 9:
-          message.attestations.push(
-            Attestation.decode(reader, reader.uint32())
-          );
+          message.attestations.push(Attestation.decode(reader, reader.uint32()));
           break;
         case 10:
-          message.delegateKeys.push(
-            MsgSetOrchestratorAddress.decode(reader, reader.uint32())
-          );
+          message.delegateKeys.push(MsgSetOrchestratorAddress.decode(reader, reader.uint32()));
           break;
         case 11:
-          message.erc20ToDenoms.push(
-            ERC20ToDenom.decode(reader, reader.uint32())
-          );
+          message.erc20ToDenoms.push(ERC20ToDenom.decode(reader, reader.uint32()));
           break;
         case 12:
-          message.unbatchedTransfers.push(
-            OutgoingTransferTx.decode(reader, reader.uint32())
-          );
+          message.unbatchedTransfers.push(OutgoingTransferTx.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -600,18 +516,12 @@ export const GenesisState = {
   fromJSON(object: any): GenesisState {
     return {
       params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
-      gravityNonces: isSet(object.gravityNonces)
-        ? GravityNonces.fromJSON(object.gravityNonces)
-        : undefined,
-      valsets: Array.isArray(object?.valsets)
-        ? object.valsets.map((e: any) => Valset.fromJSON(e))
-        : [],
+      gravityNonces: isSet(object.gravityNonces) ? GravityNonces.fromJSON(object.gravityNonces) : undefined,
+      valsets: Array.isArray(object?.valsets) ? object.valsets.map((e: any) => Valset.fromJSON(e)) : [],
       valsetConfirms: Array.isArray(object?.valsetConfirms)
         ? object.valsetConfirms.map((e: any) => MsgValsetConfirm.fromJSON(e))
         : [],
-      batches: Array.isArray(object?.batches)
-        ? object.batches.map((e: any) => OutgoingTxBatch.fromJSON(e))
-        : [],
+      batches: Array.isArray(object?.batches) ? object.batches.map((e: any) => OutgoingTxBatch.fromJSON(e)) : [],
       batchConfirms: Array.isArray(object?.batchConfirms)
         ? object.batchConfirms.map((e: any) => MsgConfirmBatch.fromJSON(e))
         : [],
@@ -619,147 +529,99 @@ export const GenesisState = {
         ? object.logicCalls.map((e: any) => OutgoingLogicCall.fromJSON(e))
         : [],
       logicCallConfirms: Array.isArray(object?.logicCallConfirms)
-        ? object.logicCallConfirms.map((e: any) =>
-            MsgConfirmLogicCall.fromJSON(e)
-          )
+        ? object.logicCallConfirms.map((e: any) => MsgConfirmLogicCall.fromJSON(e))
         : [],
       attestations: Array.isArray(object?.attestations)
         ? object.attestations.map((e: any) => Attestation.fromJSON(e))
         : [],
       delegateKeys: Array.isArray(object?.delegateKeys)
-        ? object.delegateKeys.map((e: any) =>
-            MsgSetOrchestratorAddress.fromJSON(e)
-          )
+        ? object.delegateKeys.map((e: any) => MsgSetOrchestratorAddress.fromJSON(e))
         : [],
       erc20ToDenoms: Array.isArray(object?.erc20ToDenoms)
         ? object.erc20ToDenoms.map((e: any) => ERC20ToDenom.fromJSON(e))
         : [],
       unbatchedTransfers: Array.isArray(object?.unbatchedTransfers)
-        ? object.unbatchedTransfers.map((e: any) =>
-            OutgoingTransferTx.fromJSON(e)
-          )
+        ? object.unbatchedTransfers.map((e: any) => OutgoingTransferTx.fromJSON(e))
         : [],
     };
   },
 
   toJSON(message: GenesisState): unknown {
     const obj: any = {};
-    message.params !== undefined &&
-      (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
     message.gravityNonces !== undefined &&
-      (obj.gravityNonces = message.gravityNonces
-        ? GravityNonces.toJSON(message.gravityNonces)
-        : undefined);
+      (obj.gravityNonces = message.gravityNonces ? GravityNonces.toJSON(message.gravityNonces) : undefined);
     if (message.valsets) {
-      obj.valsets = message.valsets.map((e) =>
-        e ? Valset.toJSON(e) : undefined
-      );
+      obj.valsets = message.valsets.map(e => (e ? Valset.toJSON(e) : undefined));
     } else {
       obj.valsets = [];
     }
     if (message.valsetConfirms) {
-      obj.valsetConfirms = message.valsetConfirms.map((e) =>
-        e ? MsgValsetConfirm.toJSON(e) : undefined
-      );
+      obj.valsetConfirms = message.valsetConfirms.map(e => (e ? MsgValsetConfirm.toJSON(e) : undefined));
     } else {
       obj.valsetConfirms = [];
     }
     if (message.batches) {
-      obj.batches = message.batches.map((e) =>
-        e ? OutgoingTxBatch.toJSON(e) : undefined
-      );
+      obj.batches = message.batches.map(e => (e ? OutgoingTxBatch.toJSON(e) : undefined));
     } else {
       obj.batches = [];
     }
     if (message.batchConfirms) {
-      obj.batchConfirms = message.batchConfirms.map((e) =>
-        e ? MsgConfirmBatch.toJSON(e) : undefined
-      );
+      obj.batchConfirms = message.batchConfirms.map(e => (e ? MsgConfirmBatch.toJSON(e) : undefined));
     } else {
       obj.batchConfirms = [];
     }
     if (message.logicCalls) {
-      obj.logicCalls = message.logicCalls.map((e) =>
-        e ? OutgoingLogicCall.toJSON(e) : undefined
-      );
+      obj.logicCalls = message.logicCalls.map(e => (e ? OutgoingLogicCall.toJSON(e) : undefined));
     } else {
       obj.logicCalls = [];
     }
     if (message.logicCallConfirms) {
-      obj.logicCallConfirms = message.logicCallConfirms.map((e) =>
-        e ? MsgConfirmLogicCall.toJSON(e) : undefined
-      );
+      obj.logicCallConfirms = message.logicCallConfirms.map(e => (e ? MsgConfirmLogicCall.toJSON(e) : undefined));
     } else {
       obj.logicCallConfirms = [];
     }
     if (message.attestations) {
-      obj.attestations = message.attestations.map((e) =>
-        e ? Attestation.toJSON(e) : undefined
-      );
+      obj.attestations = message.attestations.map(e => (e ? Attestation.toJSON(e) : undefined));
     } else {
       obj.attestations = [];
     }
     if (message.delegateKeys) {
-      obj.delegateKeys = message.delegateKeys.map((e) =>
-        e ? MsgSetOrchestratorAddress.toJSON(e) : undefined
-      );
+      obj.delegateKeys = message.delegateKeys.map(e => (e ? MsgSetOrchestratorAddress.toJSON(e) : undefined));
     } else {
       obj.delegateKeys = [];
     }
     if (message.erc20ToDenoms) {
-      obj.erc20ToDenoms = message.erc20ToDenoms.map((e) =>
-        e ? ERC20ToDenom.toJSON(e) : undefined
-      );
+      obj.erc20ToDenoms = message.erc20ToDenoms.map(e => (e ? ERC20ToDenom.toJSON(e) : undefined));
     } else {
       obj.erc20ToDenoms = [];
     }
     if (message.unbatchedTransfers) {
-      obj.unbatchedTransfers = message.unbatchedTransfers.map((e) =>
-        e ? OutgoingTransferTx.toJSON(e) : undefined
-      );
+      obj.unbatchedTransfers = message.unbatchedTransfers.map(e => (e ? OutgoingTransferTx.toJSON(e) : undefined));
     } else {
       obj.unbatchedTransfers = [];
     }
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<GenesisState>, I>>(
-    object: I
-  ): GenesisState {
+  fromPartial<I extends Exact<DeepPartial<GenesisState>, I>>(object: I): GenesisState {
     const message = createBaseGenesisState();
     message.params =
-      object.params !== undefined && object.params !== null
-        ? Params.fromPartial(object.params)
-        : undefined;
+      object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
     message.gravityNonces =
       object.gravityNonces !== undefined && object.gravityNonces !== null
         ? GravityNonces.fromPartial(object.gravityNonces)
         : undefined;
-    message.valsets = object.valsets?.map((e) => Valset.fromPartial(e)) || [];
-    message.valsetConfirms =
-      object.valsetConfirms?.map((e) => MsgValsetConfirm.fromPartial(e)) || [];
-    message.batches =
-      object.batches?.map((e) => OutgoingTxBatch.fromPartial(e)) || [];
-    message.batchConfirms =
-      object.batchConfirms?.map((e) => MsgConfirmBatch.fromPartial(e)) || [];
-    message.logicCalls =
-      object.logicCalls?.map((e) => OutgoingLogicCall.fromPartial(e)) || [];
-    message.logicCallConfirms =
-      object.logicCallConfirms?.map((e) =>
-        MsgConfirmLogicCall.fromPartial(e)
-      ) || [];
-    message.attestations =
-      object.attestations?.map((e) => Attestation.fromPartial(e)) || [];
-    message.delegateKeys =
-      object.delegateKeys?.map((e) =>
-        MsgSetOrchestratorAddress.fromPartial(e)
-      ) || [];
-    message.erc20ToDenoms =
-      object.erc20ToDenoms?.map((e) => ERC20ToDenom.fromPartial(e)) || [];
-    message.unbatchedTransfers =
-      object.unbatchedTransfers?.map((e) =>
-        OutgoingTransferTx.fromPartial(e)
-      ) || [];
+    message.valsets = object.valsets?.map(e => Valset.fromPartial(e)) || [];
+    message.valsetConfirms = object.valsetConfirms?.map(e => MsgValsetConfirm.fromPartial(e)) || [];
+    message.batches = object.batches?.map(e => OutgoingTxBatch.fromPartial(e)) || [];
+    message.batchConfirms = object.batchConfirms?.map(e => MsgConfirmBatch.fromPartial(e)) || [];
+    message.logicCalls = object.logicCalls?.map(e => OutgoingLogicCall.fromPartial(e)) || [];
+    message.logicCallConfirms = object.logicCallConfirms?.map(e => MsgConfirmLogicCall.fromPartial(e)) || [];
+    message.attestations = object.attestations?.map(e => Attestation.fromPartial(e)) || [];
+    message.delegateKeys = object.delegateKeys?.map(e => MsgSetOrchestratorAddress.fromPartial(e)) || [];
+    message.erc20ToDenoms = object.erc20ToDenoms?.map(e => ERC20ToDenom.fromPartial(e)) || [];
+    message.unbatchedTransfers = object.unbatchedTransfers?.map(e => OutgoingTransferTx.fromPartial(e)) || [];
     return message;
   },
 };
@@ -777,10 +639,7 @@ function createBaseGravityNonces(): GravityNonces {
 }
 
 export const GravityNonces = {
-  encode(
-    message: GravityNonces,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: GravityNonces, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.latestValsetNonce.isZero()) {
       writer.uint32(8).uint64(message.latestValsetNonce);
     }
@@ -843,12 +702,8 @@ export const GravityNonces = {
 
   fromJSON(object: any): GravityNonces {
     return {
-      latestValsetNonce: isSet(object.latestValsetNonce)
-        ? Long.fromString(object.latestValsetNonce)
-        : Long.UZERO,
-      lastObservedNonce: isSet(object.lastObservedNonce)
-        ? Long.fromString(object.lastObservedNonce)
-        : Long.UZERO,
+      latestValsetNonce: isSet(object.latestValsetNonce) ? Long.fromString(object.latestValsetNonce) : Long.UZERO,
+      lastObservedNonce: isSet(object.lastObservedNonce) ? Long.fromString(object.lastObservedNonce) : Long.UZERO,
       lastSlashedValsetNonce: isSet(object.lastSlashedValsetNonce)
         ? Long.fromString(object.lastSlashedValsetNonce)
         : Long.UZERO,
@@ -858,71 +713,48 @@ export const GravityNonces = {
       lastSlashedLogicCallBlock: isSet(object.lastSlashedLogicCallBlock)
         ? Long.fromString(object.lastSlashedLogicCallBlock)
         : Long.UZERO,
-      lastTxPoolId: isSet(object.lastTxPoolId)
-        ? Long.fromString(object.lastTxPoolId)
-        : Long.UZERO,
-      lastBatchId: isSet(object.lastBatchId)
-        ? Long.fromString(object.lastBatchId)
-        : Long.UZERO,
+      lastTxPoolId: isSet(object.lastTxPoolId) ? Long.fromString(object.lastTxPoolId) : Long.UZERO,
+      lastBatchId: isSet(object.lastBatchId) ? Long.fromString(object.lastBatchId) : Long.UZERO,
     };
   },
 
   toJSON(message: GravityNonces): unknown {
     const obj: any = {};
     message.latestValsetNonce !== undefined &&
-      (obj.latestValsetNonce = (
-        message.latestValsetNonce || Long.UZERO
-      ).toString());
+      (obj.latestValsetNonce = (message.latestValsetNonce || Long.UZERO).toString());
     message.lastObservedNonce !== undefined &&
-      (obj.lastObservedNonce = (
-        message.lastObservedNonce || Long.UZERO
-      ).toString());
+      (obj.lastObservedNonce = (message.lastObservedNonce || Long.UZERO).toString());
     message.lastSlashedValsetNonce !== undefined &&
-      (obj.lastSlashedValsetNonce = (
-        message.lastSlashedValsetNonce || Long.UZERO
-      ).toString());
+      (obj.lastSlashedValsetNonce = (message.lastSlashedValsetNonce || Long.UZERO).toString());
     message.lastSlashedBatchBlock !== undefined &&
-      (obj.lastSlashedBatchBlock = (
-        message.lastSlashedBatchBlock || Long.UZERO
-      ).toString());
+      (obj.lastSlashedBatchBlock = (message.lastSlashedBatchBlock || Long.UZERO).toString());
     message.lastSlashedLogicCallBlock !== undefined &&
-      (obj.lastSlashedLogicCallBlock = (
-        message.lastSlashedLogicCallBlock || Long.UZERO
-      ).toString());
-    message.lastTxPoolId !== undefined &&
-      (obj.lastTxPoolId = (message.lastTxPoolId || Long.UZERO).toString());
-    message.lastBatchId !== undefined &&
-      (obj.lastBatchId = (message.lastBatchId || Long.UZERO).toString());
+      (obj.lastSlashedLogicCallBlock = (message.lastSlashedLogicCallBlock || Long.UZERO).toString());
+    message.lastTxPoolId !== undefined && (obj.lastTxPoolId = (message.lastTxPoolId || Long.UZERO).toString());
+    message.lastBatchId !== undefined && (obj.lastBatchId = (message.lastBatchId || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<GravityNonces>, I>>(
-    object: I
-  ): GravityNonces {
+  fromPartial<I extends Exact<DeepPartial<GravityNonces>, I>>(object: I): GravityNonces {
     const message = createBaseGravityNonces();
     message.latestValsetNonce =
-      object.latestValsetNonce !== undefined &&
-      object.latestValsetNonce !== null
+      object.latestValsetNonce !== undefined && object.latestValsetNonce !== null
         ? Long.fromValue(object.latestValsetNonce)
         : Long.UZERO;
     message.lastObservedNonce =
-      object.lastObservedNonce !== undefined &&
-      object.lastObservedNonce !== null
+      object.lastObservedNonce !== undefined && object.lastObservedNonce !== null
         ? Long.fromValue(object.lastObservedNonce)
         : Long.UZERO;
     message.lastSlashedValsetNonce =
-      object.lastSlashedValsetNonce !== undefined &&
-      object.lastSlashedValsetNonce !== null
+      object.lastSlashedValsetNonce !== undefined && object.lastSlashedValsetNonce !== null
         ? Long.fromValue(object.lastSlashedValsetNonce)
         : Long.UZERO;
     message.lastSlashedBatchBlock =
-      object.lastSlashedBatchBlock !== undefined &&
-      object.lastSlashedBatchBlock !== null
+      object.lastSlashedBatchBlock !== undefined && object.lastSlashedBatchBlock !== null
         ? Long.fromValue(object.lastSlashedBatchBlock)
         : Long.UZERO;
     message.lastSlashedLogicCallBlock =
-      object.lastSlashedLogicCallBlock !== undefined &&
-      object.lastSlashedLogicCallBlock !== null
+      object.lastSlashedLogicCallBlock !== undefined && object.lastSlashedLogicCallBlock !== null
         ? Long.fromValue(object.lastSlashedLogicCallBlock)
         : Long.UZERO;
     message.lastTxPoolId =
@@ -930,9 +762,7 @@ export const GravityNonces = {
         ? Long.fromValue(object.lastTxPoolId)
         : Long.UZERO;
     message.lastBatchId =
-      object.lastBatchId !== undefined && object.lastBatchId !== null
-        ? Long.fromValue(object.lastBatchId)
-        : Long.UZERO;
+      object.lastBatchId !== undefined && object.lastBatchId !== null ? Long.fromValue(object.lastBatchId) : Long.UZERO;
     return message;
   },
 };
@@ -949,8 +779,7 @@ var globalThis: any = (() => {
 })();
 
 const atob: (b64: string) => string =
-  globalThis.atob ||
-  ((b64) => globalThis.Buffer.from(b64, "base64").toString("binary"));
+  globalThis.atob || (b64 => globalThis.Buffer.from(b64, "base64").toString("binary"));
 function bytesFromBase64(b64: string): Uint8Array {
   const bin = atob(b64);
   const arr = new Uint8Array(bin.length);
@@ -961,8 +790,7 @@ function bytesFromBase64(b64: string): Uint8Array {
 }
 
 const btoa: (bin: string) => string =
-  globalThis.btoa ||
-  ((bin) => globalThis.Buffer.from(bin, "binary").toString("base64"));
+  globalThis.btoa || (bin => globalThis.Buffer.from(bin, "binary").toString("base64"));
 function base64FromBytes(arr: Uint8Array): string {
   const bin: string[] = [];
   for (const byte of arr) {
@@ -971,14 +799,7 @@ function base64FromBytes(arr: Uint8Array): string {
   return btoa(bin.join(""));
 }
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -995,10 +816,7 @@ export type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<
-        Exclude<keyof I, KeysOfUnion<P>>,
-        never
-      >;
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<Exclude<keyof I, KeysOfUnion<P>>, never>;
 
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;

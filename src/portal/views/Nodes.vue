@@ -1,26 +1,15 @@
 <template>
   <v-container>
     <v-card>
-      <v-tabs
-        v-model="activeTab"
-        background-color="deep-blue accent-4"
-        centered
-        dark
-        @change="onTabChange()"
-      >
-        <v-tab
-          v-for="tab in tabs"
-          :key="tab.index"
-          :value="tab.query"
-          :href="'#' + tab.query"
-        >
+      <v-tabs v-model="activeTab" background-color="deep-blue accent-4" centered dark @change="onTabChange()">
+        <v-tab v-for="tab in tabs" :key="tab.index" :value="tab.query" :href="'#' + tab.query">
           {{ tab.label }}
         </v-tab>
       </v-tabs>
 
       <v-tabs-items v-model="activeTab">
         <v-tab-item v-for="tab in tabs" :key="tab.index" :value="tab.query">
-          <NodesTable :tab="tab" :twinId="$route.query.twinID" :trigger="trigger"/>
+          <NodesTable :tab="tab" :twinId="$route.query.twinID" :trigger="trigger" />
         </v-tab-item>
       </v-tabs-items>
     </v-card>
