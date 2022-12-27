@@ -1,10 +1,7 @@
 <template>
   <Layout pageName="Nodes">
     <template v-slot:filters>
-      <LayoutFilters
-        :items="filters.map((f) => f.label)"
-        v-model="activeFiltersList"
-      />
+      <LayoutFilters :items="filters.map(f => f.label)" v-model="activeFiltersList" />
     </template>
 
     <template v-slot:active-filters>
@@ -14,14 +11,7 @@
     </template>
 
     <template v-slot:table>
-      <div
-        style="
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-          justify-content: center;
-        "
-      >
+      <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center">
         <div>
           <v-switch
             label="Gateways (Only)"
@@ -29,11 +19,7 @@
             v-model="gatewayFilter"
             @change="requestNodes"
           />
-          <v-switch
-            label="Online (Only)"
-            v-model="onlineFilter"
-            @change="requestNodes"
-          />
+          <v-switch label="Online (Only)" v-model="onlineFilter" @change="requestNodes" />
         </div>
       </div>
       <div class="d-flex justify-center">
@@ -102,9 +88,7 @@
 
         <template v-slot:[`item.status`]="{ item }">
           <p class="text-left mt-1 mb-0">
-            <v-chip :color="getStatus(item).color">{{
-              getStatus(item).status
-            }}</v-chip>
+            <v-chip :color="getStatus(item).color">{{ getStatus(item).status }}</v-chip>
           </p>
         </template>
       </v-data-table>
@@ -120,10 +104,7 @@
                 nodeId: node.nodeId,
                 farmId: node.farmId,
                 twinId: node.twinId,
-                country:
-                  node.country === 'United States'
-                    ? 'United States of America'
-                    : node.country,
+                country: node.country === 'United States' ? 'United States of America' : node.country,
               }
             : {}
         "
@@ -160,9 +141,9 @@ export default class Nodes extends Vue {
     { text: "Total Public IPs", value: "totalPublicIPs", align: "center", customAlign: "text-center" },
     { text: "Free Public IPs", value: "freePublicIPs", align: "center", customAlign: "text-center" },
     { text: "HRU", value: "hru", align: "center", customAlign: "text-center", description: "Total HDD" },
-    { text: "SRU", value: "sru", align: "center", customAlign: "text-center", description: "Total SSD"  },
-    { text: "MRU", value: "mru", align: "center", customAlign: "text-center", description: "Total Memory"  },
-    { text: "CRU", value: "cru", align: "center", customAlign: "text-center", description: "Total Cores"  },
+    { text: "SRU", value: "sru", align: "center", customAlign: "text-center", description: "Total SSD" },
+    { text: "MRU", value: "mru", align: "center", customAlign: "text-center", description: "Total Memory" },
+    { text: "CRU", value: "cru", align: "center", customAlign: "text-center", description: "Total Cores" },
     { text: "Up Time", value: "uptime", align: "center", customAlign: "text-center" },
     { text: "Status", value: "status", align: "center", customAlign: "text-center" },
   ];
@@ -241,14 +222,11 @@ export default class Nodes extends Vue {
     return this.$store.getters["explorer/getNodesTablePageNumber"];
   }
   set page(value) {
-    this.$store.commit(
-      "explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER,
-      value
-    );
+    this.$store.commit("explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER, value);
   }
   get activeFilters() {
     const keySet = new Set(this.activeFiltersList);
-    return this.filters.filter((filter) => keySet.has(filter.label));
+    return this.filters.filter(filter => keySet.has(filter.label));
   }
 
   // Filter computed props, two-way binding on store.
@@ -270,14 +248,8 @@ export default class Nodes extends Vue {
 
   // update the page/size of the request
   onUpdateOptions(pageNumber: number, pageSize: number) {
-    this.$store.commit(
-      "explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER,
-      pageNumber
-    );
-    this.$store.commit(
-      "explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_SIZE,
-      pageSize
-    );
+    this.$store.commit("explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER, pageNumber);
+    this.$store.commit("explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_SIZE, pageSize);
 
     // reload if the page/size changed; leads to double requests at init
     this.requestNodes();
@@ -294,17 +266,12 @@ export default class Nodes extends Vue {
   }
 
   toggleActive(label: string): void {
-    this.activeFiltersList = this.activeFiltersList.filter((x) => x !== label);
+    this.activeFiltersList = this.activeFiltersList.filter(x => x !== label);
   }
 
   node: INode | null = null;
   query = gql`
-    query getNodeDetails(
-      $nodeId: Int!
-      $farmId: Int!
-      $twinId: Int!
-      $country: String!
-    ) {
+    query getNodeDetails($nodeId: Int!, $farmId: Int!, $twinId: Int!, $country: String!) {
       node: nodes(where: { nodeID_eq: $nodeId }) {
         country
         city
@@ -353,9 +320,7 @@ export default class Nodes extends Vue {
         ip
       }
 
-      country: countries(
-        where: { name_eq: $country, OR: { code_eq: $country } }
-      ) {
+      country: countries(where: { name_eq: $country, OR: { code_eq: $country } }) {
         code
       }
     }
@@ -370,4 +335,3 @@ export default class Nodes extends Vue {
   }
 }
 </script>
-

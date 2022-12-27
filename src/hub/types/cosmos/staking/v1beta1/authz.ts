@@ -95,24 +95,15 @@ function createBaseStakeAuthorization(): StakeAuthorization {
 }
 
 export const StakeAuthorization = {
-  encode(
-    message: StakeAuthorization,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: StakeAuthorization, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.maxTokens !== undefined) {
       Coin.encode(message.maxTokens, writer.uint32(10).fork()).ldelim();
     }
     if (message.allowList !== undefined) {
-      StakeAuthorization_Validators.encode(
-        message.allowList,
-        writer.uint32(18).fork()
-      ).ldelim();
+      StakeAuthorization_Validators.encode(message.allowList, writer.uint32(18).fork()).ldelim();
     }
     if (message.denyList !== undefined) {
-      StakeAuthorization_Validators.encode(
-        message.denyList,
-        writer.uint32(26).fork()
-      ).ldelim();
+      StakeAuthorization_Validators.encode(message.denyList, writer.uint32(26).fork()).ldelim();
     }
     if (message.authorizationType !== 0) {
       writer.uint32(32).int32(message.authorizationType);
@@ -131,16 +122,10 @@ export const StakeAuthorization = {
           message.maxTokens = Coin.decode(reader, reader.uint32());
           break;
         case 2:
-          message.allowList = StakeAuthorization_Validators.decode(
-            reader,
-            reader.uint32()
-          );
+          message.allowList = StakeAuthorization_Validators.decode(reader, reader.uint32());
           break;
         case 3:
-          message.denyList = StakeAuthorization_Validators.decode(
-            reader,
-            reader.uint32()
-          );
+          message.denyList = StakeAuthorization_Validators.decode(reader, reader.uint32());
           break;
         case 4:
           message.authorizationType = reader.int32() as any;
@@ -155,50 +140,29 @@ export const StakeAuthorization = {
 
   fromJSON(object: any): StakeAuthorization {
     return {
-      maxTokens: isSet(object.maxTokens)
-        ? Coin.fromJSON(object.maxTokens)
-        : undefined,
-      allowList: isSet(object.allowList)
-        ? StakeAuthorization_Validators.fromJSON(object.allowList)
-        : undefined,
-      denyList: isSet(object.denyList)
-        ? StakeAuthorization_Validators.fromJSON(object.denyList)
-        : undefined,
-      authorizationType: isSet(object.authorizationType)
-        ? authorizationTypeFromJSON(object.authorizationType)
-        : 0,
+      maxTokens: isSet(object.maxTokens) ? Coin.fromJSON(object.maxTokens) : undefined,
+      allowList: isSet(object.allowList) ? StakeAuthorization_Validators.fromJSON(object.allowList) : undefined,
+      denyList: isSet(object.denyList) ? StakeAuthorization_Validators.fromJSON(object.denyList) : undefined,
+      authorizationType: isSet(object.authorizationType) ? authorizationTypeFromJSON(object.authorizationType) : 0,
     };
   },
 
   toJSON(message: StakeAuthorization): unknown {
     const obj: any = {};
-    message.maxTokens !== undefined &&
-      (obj.maxTokens = message.maxTokens
-        ? Coin.toJSON(message.maxTokens)
-        : undefined);
+    message.maxTokens !== undefined && (obj.maxTokens = message.maxTokens ? Coin.toJSON(message.maxTokens) : undefined);
     message.allowList !== undefined &&
-      (obj.allowList = message.allowList
-        ? StakeAuthorization_Validators.toJSON(message.allowList)
-        : undefined);
+      (obj.allowList = message.allowList ? StakeAuthorization_Validators.toJSON(message.allowList) : undefined);
     message.denyList !== undefined &&
-      (obj.denyList = message.denyList
-        ? StakeAuthorization_Validators.toJSON(message.denyList)
-        : undefined);
+      (obj.denyList = message.denyList ? StakeAuthorization_Validators.toJSON(message.denyList) : undefined);
     message.authorizationType !== undefined &&
-      (obj.authorizationType = authorizationTypeToJSON(
-        message.authorizationType
-      ));
+      (obj.authorizationType = authorizationTypeToJSON(message.authorizationType));
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<StakeAuthorization>, I>>(
-    object: I
-  ): StakeAuthorization {
+  fromPartial<I extends Exact<DeepPartial<StakeAuthorization>, I>>(object: I): StakeAuthorization {
     const message = createBaseStakeAuthorization();
     message.maxTokens =
-      object.maxTokens !== undefined && object.maxTokens !== null
-        ? Coin.fromPartial(object.maxTokens)
-        : undefined;
+      object.maxTokens !== undefined && object.maxTokens !== null ? Coin.fromPartial(object.maxTokens) : undefined;
     message.allowList =
       object.allowList !== undefined && object.allowList !== null
         ? StakeAuthorization_Validators.fromPartial(object.allowList)
@@ -217,20 +181,14 @@ function createBaseStakeAuthorization_Validators(): StakeAuthorization_Validator
 }
 
 export const StakeAuthorization_Validators = {
-  encode(
-    message: StakeAuthorization_Validators,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: StakeAuthorization_Validators, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.address) {
       writer.uint32(10).string(v!);
     }
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): StakeAuthorization_Validators {
+  decode(input: _m0.Reader | Uint8Array, length?: number): StakeAuthorization_Validators {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseStakeAuthorization_Validators();
@@ -250,16 +208,14 @@ export const StakeAuthorization_Validators = {
 
   fromJSON(object: any): StakeAuthorization_Validators {
     return {
-      address: Array.isArray(object?.address)
-        ? object.address.map((e: any) => String(e))
-        : [],
+      address: Array.isArray(object?.address) ? object.address.map((e: any) => String(e)) : [],
     };
   },
 
   toJSON(message: StakeAuthorization_Validators): unknown {
     const obj: any = {};
     if (message.address) {
-      obj.address = message.address.map((e) => e);
+      obj.address = message.address.map(e => e);
     } else {
       obj.address = [];
     }
@@ -267,22 +223,15 @@ export const StakeAuthorization_Validators = {
   },
 
   fromPartial<I extends Exact<DeepPartial<StakeAuthorization_Validators>, I>>(
-    object: I
+    object: I,
   ): StakeAuthorization_Validators {
     const message = createBaseStakeAuthorization_Validators();
-    message.address = object.address?.map((e) => e) || [];
+    message.address = object.address?.map(e => e) || [];
     return message;
   },
 };
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -299,10 +248,7 @@ export type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<
-        Exclude<keyof I, KeysOfUnion<P>>,
-        never
-      >;
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<Exclude<keyof I, KeysOfUnion<P>>, never>;
 
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;

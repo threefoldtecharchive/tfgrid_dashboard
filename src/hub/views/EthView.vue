@@ -3,13 +3,7 @@
     <h1>Send to BSC</h1>
 
     <form @submit.prevent="onSendToEth()">
-      <v-text-field
-        label="Amount"
-        placeholder="Amount"
-        v-model="amount"
-        @input="debounceTxFees"
-        :rules="[money]"
-      />
+      <v-text-field label="Amount" placeholder="Amount" v-model="amount" @input="debounceTxFees" :rules="[money]" />
 
       <v-text-field
         label="Destination"
@@ -19,45 +13,18 @@
         :rules="[bscAddress]"
       />
 
-      <v-text-field
-        label="BridgeFees"
-        placeholder="Bridge fees"
-        v-model="fees"
-        :disabled="true"
-      />
+      <v-text-field label="BridgeFees" placeholder="Bridge fees" v-model="fees" :disabled="true" />
 
-      <v-text-field
-        label="TransactionFees"
-        placeholder="Transaction fees"
-        v-model="txFees"
-        :disabled="true"
-      />
+      <v-text-field label="TransactionFees" placeholder="Transaction fees" v-model="txFees" :disabled="true" />
 
-      <v-text-field
-        label="TotalAmount"
-        placeholder="Total amount"
-        v-model="total_amount"
-        :disabled="true"
-      />
+      <v-text-field label="TotalAmount" placeholder="Total amount" v-model="total_amount" :disabled="true" />
 
       <v-row justify="center">
-        <v-btn
-          color="primary"
-          x-large
-          type="submit"
-          :disabled="empty || loading"
-          :loading="loading"
-        >
-          Send
-        </v-btn>
+        <v-btn color="primary" x-large type="submit" :disabled="empty || loading" :loading="loading"> Send </v-btn>
       </v-row>
     </form>
 
-    <CustomAlert
-      :loading="loading"
-      :result="result"
-      :error="error"
-    />
+    <CustomAlert :loading="loading" :result="result" :error="error" />
   </v-container>
 </template>
 
@@ -87,8 +54,7 @@ export default class Eth extends Vue {
   txFees = "0";
 
   get fees() {
-    const bridge_fees =
-      this.$store.state.hub.config.bridge_fees || BigNumber.from(0);
+    const bridge_fees = this.$store.state.hub.config.bridge_fees || BigNumber.from(0);
     const decimals = this.$store.state.hub.config.tft_decimals || 0;
     return formatUnits(bridge_fees, decimals);
   }
@@ -111,12 +77,12 @@ export default class Eth extends Vue {
         destination,
         amountBN,
         config.bridge_fees,
-        config.tft_denom
+        config.tft_denom,
       )
-        .then((data) => {
+        .then(data => {
           this.txFees = formatUnits(data.amount[0].amount, config.tft_decimals);
         })
-        .catch((err) => {
+        .catch(err => {
           // ignore error
           this.error = "Can't estimate transaction fees: " + err;
         });
@@ -134,17 +100,13 @@ export default class Eth extends Vue {
   }
 
   get total_amount() {
-    let bridge_fees =
-      this.$store.state.hub.config.bridge_fees || BigNumber.from(0);
+    let bridge_fees = this.$store.state.hub.config.bridge_fees || BigNumber.from(0);
     const decimals = this.$store.state.hub.config.tft_decimals || 0;
     let amountBN = BigNumber.from(0);
     let txFeesBN = BigNumber.from(0);
     try {
       amountBN = this.parseAmount(this.amount);
-      txFeesBN = parseUnits(
-        this.txFees,
-        this.$store.state.hub.config.tft_decimals || 0
-      );
+      txFeesBN = parseUnits(this.txFees, this.$store.state.hub.config.tft_decimals || 0);
     } catch (e) {
       return 0;
     }
@@ -204,12 +166,12 @@ export default class Eth extends Vue {
       destination,
       amountBN,
       config.bridge_fees,
-      config.tft_denom
+      config.tft_denom,
     )
       .then(() => {
         this.result = "Transaction submitted succefully!";
       })
-      .catch((err) => {
+      .catch(err => {
         this.error = err.message;
       })
       .finally(() => {

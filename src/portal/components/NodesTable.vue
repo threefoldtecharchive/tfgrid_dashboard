@@ -28,11 +28,7 @@
         {{ byteToGB(item.resources.hru) }}
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <NodeActionBtn
-          :nodeId="item.nodeId"
-          :status="item.rentStatus"
-          @node-status-changed="onStatusUpdate()"
-        />
+        <NodeActionBtn :nodeId="item.nodeId" :status="item.rentStatus" @node-status-changed="onStatusUpdate()" />
       </template>
       <template v-slot:[`item.discount`]="{ item }">
         <v-tooltip bottom color="primary" close-delay="700">
@@ -101,10 +97,7 @@ export default class NodesTable extends Vue {
     { text: "Actions", value: "actions", align: "center", sortable: false },
   ];
 
-  @Watch("$route.params.accountID") async onPropertyChanged(
-    value: string,
-    oldValue: string
-  ) {
+  @Watch("$route.params.accountID") async onPropertyChanged(value: string, oldValue: string) {
     console.log(`removing nodes of ${oldValue}, putting in nodes of ${value}`);
     await this.getNodes();
   }
@@ -142,7 +135,7 @@ export default class NodesTable extends Vue {
       this.twinId,
       this.tab.query,
       this.pageNumber,
-      this.pageSize
+      this.pageSize,
     );
 
     this.nodes = dNodes;

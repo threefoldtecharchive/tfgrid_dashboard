@@ -46,10 +46,7 @@ function createBaseOutgoingTxBatch(): OutgoingTxBatch {
 }
 
 export const OutgoingTxBatch = {
-  encode(
-    message: OutgoingTxBatch,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: OutgoingTxBatch, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.batchNonce.isZero()) {
       writer.uint32(8).uint64(message.batchNonce);
     }
@@ -82,9 +79,7 @@ export const OutgoingTxBatch = {
           message.batchTimeout = reader.uint64() as Long;
           break;
         case 3:
-          message.transactions.push(
-            OutgoingTransferTx.decode(reader, reader.uint32())
-          );
+          message.transactions.push(OutgoingTransferTx.decode(reader, reader.uint32()));
           break;
         case 4:
           message.tokenContract = reader.string();
@@ -102,61 +97,41 @@ export const OutgoingTxBatch = {
 
   fromJSON(object: any): OutgoingTxBatch {
     return {
-      batchNonce: isSet(object.batchNonce)
-        ? Long.fromString(object.batchNonce)
-        : Long.UZERO,
-      batchTimeout: isSet(object.batchTimeout)
-        ? Long.fromString(object.batchTimeout)
-        : Long.UZERO,
+      batchNonce: isSet(object.batchNonce) ? Long.fromString(object.batchNonce) : Long.UZERO,
+      batchTimeout: isSet(object.batchTimeout) ? Long.fromString(object.batchTimeout) : Long.UZERO,
       transactions: Array.isArray(object?.transactions)
         ? object.transactions.map((e: any) => OutgoingTransferTx.fromJSON(e))
         : [],
-      tokenContract: isSet(object.tokenContract)
-        ? String(object.tokenContract)
-        : "",
+      tokenContract: isSet(object.tokenContract) ? String(object.tokenContract) : "",
       block: isSet(object.block) ? Long.fromString(object.block) : Long.UZERO,
     };
   },
 
   toJSON(message: OutgoingTxBatch): unknown {
     const obj: any = {};
-    message.batchNonce !== undefined &&
-      (obj.batchNonce = (message.batchNonce || Long.UZERO).toString());
-    message.batchTimeout !== undefined &&
-      (obj.batchTimeout = (message.batchTimeout || Long.UZERO).toString());
+    message.batchNonce !== undefined && (obj.batchNonce = (message.batchNonce || Long.UZERO).toString());
+    message.batchTimeout !== undefined && (obj.batchTimeout = (message.batchTimeout || Long.UZERO).toString());
     if (message.transactions) {
-      obj.transactions = message.transactions.map((e) =>
-        e ? OutgoingTransferTx.toJSON(e) : undefined
-      );
+      obj.transactions = message.transactions.map(e => (e ? OutgoingTransferTx.toJSON(e) : undefined));
     } else {
       obj.transactions = [];
     }
-    message.tokenContract !== undefined &&
-      (obj.tokenContract = message.tokenContract);
-    message.block !== undefined &&
-      (obj.block = (message.block || Long.UZERO).toString());
+    message.tokenContract !== undefined && (obj.tokenContract = message.tokenContract);
+    message.block !== undefined && (obj.block = (message.block || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<OutgoingTxBatch>, I>>(
-    object: I
-  ): OutgoingTxBatch {
+  fromPartial<I extends Exact<DeepPartial<OutgoingTxBatch>, I>>(object: I): OutgoingTxBatch {
     const message = createBaseOutgoingTxBatch();
     message.batchNonce =
-      object.batchNonce !== undefined && object.batchNonce !== null
-        ? Long.fromValue(object.batchNonce)
-        : Long.UZERO;
+      object.batchNonce !== undefined && object.batchNonce !== null ? Long.fromValue(object.batchNonce) : Long.UZERO;
     message.batchTimeout =
       object.batchTimeout !== undefined && object.batchTimeout !== null
         ? Long.fromValue(object.batchTimeout)
         : Long.UZERO;
-    message.transactions =
-      object.transactions?.map((e) => OutgoingTransferTx.fromPartial(e)) || [];
+    message.transactions = object.transactions?.map(e => OutgoingTransferTx.fromPartial(e)) || [];
     message.tokenContract = object.tokenContract ?? "";
-    message.block =
-      object.block !== undefined && object.block !== null
-        ? Long.fromValue(object.block)
-        : Long.UZERO;
+    message.block = object.block !== undefined && object.block !== null ? Long.fromValue(object.block) : Long.UZERO;
     return message;
   },
 };
@@ -172,10 +147,7 @@ function createBaseOutgoingTransferTx(): OutgoingTransferTx {
 }
 
 export const OutgoingTransferTx = {
-  encode(
-    message: OutgoingTransferTx,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: OutgoingTransferTx, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.id.isZero()) {
       writer.uint32(8).uint64(message.id);
     }
@@ -229,41 +201,26 @@ export const OutgoingTransferTx = {
       id: isSet(object.id) ? Long.fromString(object.id) : Long.UZERO,
       sender: isSet(object.sender) ? String(object.sender) : "",
       destAddress: isSet(object.destAddress) ? String(object.destAddress) : "",
-      erc20Token: isSet(object.erc20Token)
-        ? ERC20Token.fromJSON(object.erc20Token)
-        : undefined,
-      erc20Fee: isSet(object.erc20Fee)
-        ? ERC20Token.fromJSON(object.erc20Fee)
-        : undefined,
+      erc20Token: isSet(object.erc20Token) ? ERC20Token.fromJSON(object.erc20Token) : undefined,
+      erc20Fee: isSet(object.erc20Fee) ? ERC20Token.fromJSON(object.erc20Fee) : undefined,
     };
   },
 
   toJSON(message: OutgoingTransferTx): unknown {
     const obj: any = {};
-    message.id !== undefined &&
-      (obj.id = (message.id || Long.UZERO).toString());
+    message.id !== undefined && (obj.id = (message.id || Long.UZERO).toString());
     message.sender !== undefined && (obj.sender = message.sender);
-    message.destAddress !== undefined &&
-      (obj.destAddress = message.destAddress);
+    message.destAddress !== undefined && (obj.destAddress = message.destAddress);
     message.erc20Token !== undefined &&
-      (obj.erc20Token = message.erc20Token
-        ? ERC20Token.toJSON(message.erc20Token)
-        : undefined);
+      (obj.erc20Token = message.erc20Token ? ERC20Token.toJSON(message.erc20Token) : undefined);
     message.erc20Fee !== undefined &&
-      (obj.erc20Fee = message.erc20Fee
-        ? ERC20Token.toJSON(message.erc20Fee)
-        : undefined);
+      (obj.erc20Fee = message.erc20Fee ? ERC20Token.toJSON(message.erc20Fee) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<OutgoingTransferTx>, I>>(
-    object: I
-  ): OutgoingTransferTx {
+  fromPartial<I extends Exact<DeepPartial<OutgoingTransferTx>, I>>(object: I): OutgoingTransferTx {
     const message = createBaseOutgoingTransferTx();
-    message.id =
-      object.id !== undefined && object.id !== null
-        ? Long.fromValue(object.id)
-        : Long.UZERO;
+    message.id = object.id !== undefined && object.id !== null ? Long.fromValue(object.id) : Long.UZERO;
     message.sender = object.sender ?? "";
     message.destAddress = object.destAddress ?? "";
     message.erc20Token =
@@ -271,9 +228,7 @@ export const OutgoingTransferTx = {
         ? ERC20Token.fromPartial(object.erc20Token)
         : undefined;
     message.erc20Fee =
-      object.erc20Fee !== undefined && object.erc20Fee !== null
-        ? ERC20Token.fromPartial(object.erc20Fee)
-        : undefined;
+      object.erc20Fee !== undefined && object.erc20Fee !== null ? ERC20Token.fromPartial(object.erc20Fee) : undefined;
     return message;
   },
 };
@@ -292,10 +247,7 @@ function createBaseOutgoingLogicCall(): OutgoingLogicCall {
 }
 
 export const OutgoingLogicCall = {
-  encode(
-    message: OutgoingLogicCall,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: OutgoingLogicCall, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.transfers) {
       ERC20Token.encode(v!, writer.uint32(10).fork()).ldelim();
     }
@@ -364,27 +316,13 @@ export const OutgoingLogicCall = {
 
   fromJSON(object: any): OutgoingLogicCall {
     return {
-      transfers: Array.isArray(object?.transfers)
-        ? object.transfers.map((e: any) => ERC20Token.fromJSON(e))
-        : [],
-      fees: Array.isArray(object?.fees)
-        ? object.fees.map((e: any) => ERC20Token.fromJSON(e))
-        : [],
-      logicContractAddress: isSet(object.logicContractAddress)
-        ? String(object.logicContractAddress)
-        : "",
-      payload: isSet(object.payload)
-        ? bytesFromBase64(object.payload)
-        : new Uint8Array(),
-      timeout: isSet(object.timeout)
-        ? Long.fromString(object.timeout)
-        : Long.UZERO,
-      invalidationId: isSet(object.invalidationId)
-        ? bytesFromBase64(object.invalidationId)
-        : new Uint8Array(),
-      invalidationNonce: isSet(object.invalidationNonce)
-        ? Long.fromString(object.invalidationNonce)
-        : Long.UZERO,
+      transfers: Array.isArray(object?.transfers) ? object.transfers.map((e: any) => ERC20Token.fromJSON(e)) : [],
+      fees: Array.isArray(object?.fees) ? object.fees.map((e: any) => ERC20Token.fromJSON(e)) : [],
+      logicContractAddress: isSet(object.logicContractAddress) ? String(object.logicContractAddress) : "",
+      payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
+      timeout: isSet(object.timeout) ? Long.fromString(object.timeout) : Long.UZERO,
+      invalidationId: isSet(object.invalidationId) ? bytesFromBase64(object.invalidationId) : new Uint8Array(),
+      invalidationNonce: isSet(object.invalidationNonce) ? Long.fromString(object.invalidationNonce) : Long.UZERO,
       block: isSet(object.block) ? Long.fromString(object.block) : Long.UZERO,
     };
   },
@@ -392,65 +330,43 @@ export const OutgoingLogicCall = {
   toJSON(message: OutgoingLogicCall): unknown {
     const obj: any = {};
     if (message.transfers) {
-      obj.transfers = message.transfers.map((e) =>
-        e ? ERC20Token.toJSON(e) : undefined
-      );
+      obj.transfers = message.transfers.map(e => (e ? ERC20Token.toJSON(e) : undefined));
     } else {
       obj.transfers = [];
     }
     if (message.fees) {
-      obj.fees = message.fees.map((e) =>
-        e ? ERC20Token.toJSON(e) : undefined
-      );
+      obj.fees = message.fees.map(e => (e ? ERC20Token.toJSON(e) : undefined));
     } else {
       obj.fees = [];
     }
-    message.logicContractAddress !== undefined &&
-      (obj.logicContractAddress = message.logicContractAddress);
+    message.logicContractAddress !== undefined && (obj.logicContractAddress = message.logicContractAddress);
     message.payload !== undefined &&
-      (obj.payload = base64FromBytes(
-        message.payload !== undefined ? message.payload : new Uint8Array()
-      ));
-    message.timeout !== undefined &&
-      (obj.timeout = (message.timeout || Long.UZERO).toString());
+      (obj.payload = base64FromBytes(message.payload !== undefined ? message.payload : new Uint8Array()));
+    message.timeout !== undefined && (obj.timeout = (message.timeout || Long.UZERO).toString());
     message.invalidationId !== undefined &&
       (obj.invalidationId = base64FromBytes(
-        message.invalidationId !== undefined
-          ? message.invalidationId
-          : new Uint8Array()
+        message.invalidationId !== undefined ? message.invalidationId : new Uint8Array(),
       ));
     message.invalidationNonce !== undefined &&
-      (obj.invalidationNonce = (
-        message.invalidationNonce || Long.UZERO
-      ).toString());
-    message.block !== undefined &&
-      (obj.block = (message.block || Long.UZERO).toString());
+      (obj.invalidationNonce = (message.invalidationNonce || Long.UZERO).toString());
+    message.block !== undefined && (obj.block = (message.block || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<OutgoingLogicCall>, I>>(
-    object: I
-  ): OutgoingLogicCall {
+  fromPartial<I extends Exact<DeepPartial<OutgoingLogicCall>, I>>(object: I): OutgoingLogicCall {
     const message = createBaseOutgoingLogicCall();
-    message.transfers =
-      object.transfers?.map((e) => ERC20Token.fromPartial(e)) || [];
-    message.fees = object.fees?.map((e) => ERC20Token.fromPartial(e)) || [];
+    message.transfers = object.transfers?.map(e => ERC20Token.fromPartial(e)) || [];
+    message.fees = object.fees?.map(e => ERC20Token.fromPartial(e)) || [];
     message.logicContractAddress = object.logicContractAddress ?? "";
     message.payload = object.payload ?? new Uint8Array();
     message.timeout =
-      object.timeout !== undefined && object.timeout !== null
-        ? Long.fromValue(object.timeout)
-        : Long.UZERO;
+      object.timeout !== undefined && object.timeout !== null ? Long.fromValue(object.timeout) : Long.UZERO;
     message.invalidationId = object.invalidationId ?? new Uint8Array();
     message.invalidationNonce =
-      object.invalidationNonce !== undefined &&
-      object.invalidationNonce !== null
+      object.invalidationNonce !== undefined && object.invalidationNonce !== null
         ? Long.fromValue(object.invalidationNonce)
         : Long.UZERO;
-    message.block =
-      object.block !== undefined && object.block !== null
-        ? Long.fromValue(object.block)
-        : Long.UZERO;
+    message.block = object.block !== undefined && object.block !== null ? Long.fromValue(object.block) : Long.UZERO;
     return message;
   },
 };
@@ -467,8 +383,7 @@ var globalThis: any = (() => {
 })();
 
 const atob: (b64: string) => string =
-  globalThis.atob ||
-  ((b64) => globalThis.Buffer.from(b64, "base64").toString("binary"));
+  globalThis.atob || (b64 => globalThis.Buffer.from(b64, "base64").toString("binary"));
 function bytesFromBase64(b64: string): Uint8Array {
   const bin = atob(b64);
   const arr = new Uint8Array(bin.length);
@@ -479,8 +394,7 @@ function bytesFromBase64(b64: string): Uint8Array {
 }
 
 const btoa: (bin: string) => string =
-  globalThis.btoa ||
-  ((bin) => globalThis.Buffer.from(bin, "binary").toString("base64"));
+  globalThis.btoa || (bin => globalThis.Buffer.from(bin, "binary").toString("base64"));
 function base64FromBytes(arr: Uint8Array): string {
   const bin: string[] = [];
   for (const byte of arr) {
@@ -489,14 +403,7 @@ function base64FromBytes(arr: Uint8Array): string {
   return btoa(bin.join(""));
 }
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -513,10 +420,7 @@ export type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<
-        Exclude<keyof I, KeysOfUnion<P>>,
-        never
-      >;
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & Record<Exclude<keyof I, KeysOfUnion<P>>, never>;
 
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;

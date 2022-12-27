@@ -1,37 +1,17 @@
 <template>
   <v-container fluid>
     <!-- show only if the twin has no farms -->
-    <v-card
-      color="primary"
-      class="
-        white--text
-        my-3
-        pa-3
-        text-center
-        d-flex
-        justify-center
-        align-baseline
-      "
-    >
-      <h3 v-if="farms.length == 0">
-        Don't have any farms? Start by creating one:
-      </h3>
+    <v-card color="primary" class="white--text my-3 pa-3 text-center d-flex justify-center align-baseline">
+      <h3 v-if="farms.length == 0">Don't have any farms? Start by creating one:</h3>
       <h3 v-else>Create another farm:</h3>
 
-      <v-btn
-        @click="openCreateFarmDialog = true"
-        class="farm my-3 mx-5"
-        :loading="loadingCreateFarm"
+      <v-btn @click="openCreateFarmDialog = true" class="farm my-3 mx-5" :loading="loadingCreateFarm"
         >Create farm</v-btn
       >
     </v-card>
 
     <!-- creating farm form -->
-    <v-dialog
-      transition="dialog-bottom-transition"
-      v-model="openCreateFarmDialog"
-      max-width="500"
-    >
+    <v-dialog transition="dialog-bottom-transition" v-model="openCreateFarmDialog" max-width="500">
       <v-card>
         <v-toolbar color="primary" class="white--text">Create Farm</v-toolbar>
         <v-card-text>
@@ -44,12 +24,8 @@
               :rules="[
                 () => !!farmName || 'This field is required',
                 farmNameCheck,
-                () =>
-                  farmName.length <= 40 ||
-                  'Name too long, only 40 characters permitted',
-                () =>
-                  farmName.length >= 3 ||
-                  'Name should be more than or equal 3 characters',
+                () => farmName.length <= 40 || 'Name too long, only 40 characters permitted',
+                () => farmName.length >= 3 || 'Name should be more than or equal 3 characters',
               ]"
             ></v-text-field>
           </v-form>
@@ -62,20 +38,12 @@
             :disabled="!isValidFarmName"
             >Submit</v-btn
           >
-          <v-btn
-            @click="openCreateFarmDialog = false"
-            color="grey lighten-2 black--text"
-            >Close</v-btn
-          >
+          <v-btn @click="openCreateFarmDialog = false" color="grey lighten-2 black--text">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-text-field
-      v-model="searchTerm"
-      color="primary darken-2"
-      label="Search by farm name or ID"
-    ></v-text-field>
+    <v-text-field v-model="searchTerm" color="primary darken-2" label="Search by farm name or ID"></v-text-field>
 
     <!-- Farms table -->
     <v-data-table
@@ -158,38 +126,24 @@
               <v-col v-if="item.v2address">
                 <v-row
                   class="d-flex align-baseline justify-between"
-                  style="
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                    overflow: hidden;
-                  "
+                  style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden"
                 >
                   <v-row style="margin: 0">
                     <span style="font-size: small">
                       {{ item.v2address }}
                     </span>
                   </v-row>
-                  <v-btn x-small @click="openV2AddressDialog = true"
-                    >Edit</v-btn
-                  >
+                  <v-btn x-small @click="openV2AddressDialog = true">Edit</v-btn>
                 </v-row>
               </v-col>
               <v-col v-else>
                 <v-flex>
-                  <v-btn x-small @click="openV2AddressDialog = true"
-                    >Add V2 Address</v-btn
-                  >
+                  <v-btn x-small @click="openV2AddressDialog = true">Add V2 Address</v-btn>
                 </v-flex>
               </v-col>
-              <v-dialog
-                transition="dialog-bottom-transition"
-                v-model="openV2AddressDialog"
-                max-width="500"
-              >
+              <v-dialog transition="dialog-bottom-transition" v-model="openV2AddressDialog" max-width="500">
                 <v-card>
-                  <v-toolbar color="primary"
-                    >Add/Edit V2 Stellar Address</v-toolbar
-                  >
+                  <v-toolbar color="primary">Add/Edit V2 Stellar Address</v-toolbar>
                   <v-card-text>
                     <v-form v-model="isValidStellarV2Address">
                       <v-text-field
@@ -204,11 +158,7 @@
                     </v-form>
                   </v-card-text>
                   <v-card-actions class="justify-end">
-                    <v-btn
-                      @click="openV2AddressDialog = false"
-                      color="grey lighten-2 black--text"
-                      >Close</v-btn
-                    >
+                    <v-btn @click="openV2AddressDialog = false" color="grey lighten-2 black--text">Close</v-btn>
                     <v-btn
                       @click="addV2Address"
                       color="primary white--text"
@@ -226,12 +176,7 @@
               </v-col>
               <v-col>
                 <v-flex>
-                  <v-btn
-                    x-small
-                    v-bind:href="'https://v3.bootstrap.grid.tf/'"
-                    target="blank"
-                    >view bootstrap</v-btn
-                  >
+                  <v-btn x-small v-bind:href="'https://v3.bootstrap.grid.tf/'" target="blank">view bootstrap</v-btn>
                 </v-flex>
               </v-col>
             </v-row>
@@ -261,28 +206,12 @@
     <!-- delete farm form -->
     <v-dialog v-model="openDeleteFarmDialog" max-width="700px">
       <v-card>
-        <v-card-title class="text-h5"
-          >Are you certain you want to delete this farm?</v-card-title
-        >
-        <v-card-text
-          >This will delete the farm on the chain, this action is
-          irreversible</v-card-text
-        >
+        <v-card-title class="text-h5">Are you certain you want to delete this farm?</v-card-title>
+        <v-card-text>This will delete the farm on the chain, this action is irreversible</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="grey lighten-2 black--text"
-            text
-            @click="openDeleteFarmDialog = false"
-            >Cancel</v-btn
-          >
-          <v-btn
-            color="primary white--text"
-            text
-            :loading="loadingDeleteFarm"
-            @click="callDeleteFarm()"
-            >OK</v-btn
-          >
+          <v-btn color="grey lighten-2 black--text" text @click="openDeleteFarmDialog = false">Cancel</v-btn>
+          <v-btn color="primary white--text" text :loading="loadingDeleteFarm" @click="callDeleteFarm()">OK</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
@@ -387,13 +316,8 @@ export default class FarmsView extends Vue {
   }
 
   // Watchers
-  @Watch("$route.query.twinID") async onPropertyChanged(
-    value: number,
-    oldValue: number
-  ) {
-    console.log(
-      `switching from account ${oldValue} farms to account ${value} farms`
-    );
+  @Watch("$route.query.twinID") async onPropertyChanged(value: number, oldValue: number) {
+    console.log(`switching from account ${oldValue} farms to account ${value} farms`);
     this.farms = await getFarm(this.$api, value);
 
     await this.getNodes();
@@ -410,8 +334,7 @@ export default class FarmsView extends Vue {
     if (this.farms.length > 0) {
       return this.farms.filter(
         (farm: { name: string; id: any }) =>
-          farm.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-          `${farm.id}`.includes(this.searchTerm)
+          farm.name.toLowerCase().includes(this.searchTerm.toLowerCase()) || `${farm.id}`.includes(this.searchTerm),
       );
     }
     return this.farms;
@@ -429,16 +352,10 @@ export default class FarmsView extends Vue {
 
     if (this.farmsIds.length == 0) return;
 
-    console.log(
-      `Request nodes with params. farmids: ${this.farmsIds}, page: ${this.page}, size: ${this.size}`
-    );
+    console.log(`Request nodes with params. farmids: ${this.farmsIds}, page: ${this.page}, size: ${this.size}`);
 
     this.loadingNodes = true;
-    let { nodes, count } = await getNodesByFarmID(
-      this.farmsIds,
-      this.page,
-      this.size
-    );
+    let { nodes, count } = await getNodesByFarmID(this.farmsIds, this.page, this.size);
     this.nodes = nodes;
     this.count = count;
     this.loadingNodes = false;
@@ -456,10 +373,7 @@ export default class FarmsView extends Vue {
       this.address,
       this.$api,
       this.farmToDelete.id,
-      (res: {
-        events?: never[] | undefined;
-        status: { type: string; asFinalized: string; isFinalized: string };
-      }) => {
+      (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -472,9 +386,7 @@ export default class FarmsView extends Vue {
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
-          console.log(
-            `Transaction included at blockHash ${status.asFinalized}`
-          );
+          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           if (!events.length) {
             this.$toasted.show("Deleting a farm failed");
             this.loadingDeleteFarm = false;
@@ -494,7 +406,7 @@ export default class FarmsView extends Vue {
             });
           }
         }
-      }
+      },
     ).catch((err: { message: string }) => {
       this.$toasted.show(err.message);
       this.loadingDeleteFarm = false;
@@ -508,10 +420,7 @@ export default class FarmsView extends Vue {
       this.$api,
       this.expanded[0].id,
       publicIP,
-      (res: {
-        events?: never[] | undefined;
-        status: { type: string; asFinalized: string; isFinalized: string };
-      }) => {
+      (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -524,9 +433,7 @@ export default class FarmsView extends Vue {
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
-          console.log(
-            `Transaction included at blockHash ${status.asFinalized}`
-          );
+          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           if (!events.length) {
             this.$toasted.show("IP deletion failed!");
             this.loadingDeleteIP = false;
@@ -536,7 +443,7 @@ export default class FarmsView extends Vue {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
               if (section === "tfgridModule" && method === "FarmUpdated") {
                 this.$toasted.show("IP deleted!");
-                getFarm(this.$api, this.id).then((farms) => {
+                getFarm(this.$api, this.id).then(farms => {
                   this.farms = farms;
                   this.loadingDeleteIP = false;
                 });
@@ -547,8 +454,8 @@ export default class FarmsView extends Vue {
             });
           }
         }
-      }
-    ).catch((err) => {
+      },
+    ).catch(err => {
       this.$toasted.show(err.message);
       this.loadingDeleteIP = false;
     });
@@ -573,12 +480,10 @@ export default class FarmsView extends Vue {
         }
         if (status.isFinalized) {
           events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(
-              `phase: ${phase}, section: ${section}, method: ${method}`
-            );
+            console.log(`phase: ${phase}, section: ${section}, method: ${method}`);
             if (section === "utility" && method === "BatchCompleted") {
               this.$toasted.show("IP created!");
-              getFarm(this.$api, this.id).then((farms) => {
+              getFarm(this.$api, this.id).then(farms => {
                 this.farms = farms;
               });
               resolve("IP created!");
@@ -592,18 +497,13 @@ export default class FarmsView extends Vue {
         }
       };
       try {
-        batchCreateIP(
-          this.$route.params.accountID,
-          this.$api,
-          this.expanded[0].id,
-          publicIPs,
-          gateway,
-          callback
-        ).catch((e) => {
-          console.log("error from catch batch", e);
-          this.$toasted.show(`Transaction cancelled`);
-          this.loadingCreateIP = false;
-        });
+        batchCreateIP(this.$route.params.accountID, this.$api, this.expanded[0].id, publicIPs, gateway, callback).catch(
+          e => {
+            console.log("error from catch batch", e);
+            this.$toasted.show(`Transaction cancelled`);
+            this.loadingCreateIP = false;
+          },
+        );
       } catch (e) {
         reject(e);
         this.loadingCreateIP = false;
@@ -617,8 +517,7 @@ export default class FarmsView extends Vue {
       this.farmNameErrorMessage = "";
       return true;
     } else {
-      this.farmNameErrorMessage =
-        "Name is not formatted correctly (All letters + numbers and (-,_) are allowed";
+      this.farmNameErrorMessage = "Name is not formatted correctly (All letters + numbers and (-,_) are allowed";
       return false;
     }
   }
@@ -630,10 +529,7 @@ export default class FarmsView extends Vue {
       this.address,
       this.$api,
       this.farmName,
-      (res: {
-        events?: never[] | undefined;
-        status: { type: string; asFinalized: string; isFinalized: string };
-      }) => {
+      (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -647,9 +543,7 @@ export default class FarmsView extends Vue {
             this.openCreateFarmDialog = false;
         }
         if (status.isFinalized) {
-          console.log(
-            `Transaction included at blockHash ${status.asFinalized}`
-          );
+          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           if (!events.length) {
             this.$toasted.show("Farm creation failed!");
             this.openCreateFarmDialog = false;
@@ -662,7 +556,7 @@ export default class FarmsView extends Vue {
                 this.$toasted.show("Farm created!");
                 this.loadingCreateFarm = false;
                 this.farmName = "";
-                getFarm(this.$api, this.id).then((farms) => {
+                getFarm(this.$api, this.id).then(farms => {
                   this.farms = farms;
                 });
                 this.openCreateFarmDialog = false;
@@ -674,8 +568,8 @@ export default class FarmsView extends Vue {
             });
           }
         }
-      }
-    ).catch((err) => {
+      },
+    ).catch(err => {
       this.$toasted.show(err.message);
       this.openCreateFarmDialog = false;
       this.loadingCreateFarm = false;
@@ -698,10 +592,7 @@ export default class FarmsView extends Vue {
       this.$api,
       this.expanded[0].id, //farm ID
       this.v2_address,
-      (res: {
-        events?: never[] | undefined;
-        status: { type: string; asFinalized: string; isFinalized: string };
-      }) => {
+      (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         console.log(res);
         if (res instanceof Error) {
           console.log(res);
@@ -715,9 +606,7 @@ export default class FarmsView extends Vue {
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
-          console.log(
-            `Transaction included at blockHash ${status.asFinalized}`
-          );
+          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           if (!events.length) {
             this.$toasted.show("Adding a V2 address failed!");
             this.openV2AddressDialog = false;
@@ -725,12 +614,9 @@ export default class FarmsView extends Vue {
             // Loop through Vec<EventRecord> to display all events
             events.forEach(({ phase, event: { data, method, section } }) => {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-              if (
-                section === "tfgridModule" &&
-                method === "FarmPayoutV2AddressRegistered"
-              ) {
+              if (section === "tfgridModule" && method === "FarmPayoutV2AddressRegistered") {
                 this.$toasted.show("Address added!");
-                getFarm(this.$api, this.id).then((farms) => {
+                getFarm(this.$api, this.id).then(farms => {
                   this.farms = farms;
                 });
                 this.openV2AddressDialog = false;
@@ -745,8 +631,8 @@ export default class FarmsView extends Vue {
             });
           }
         }
-      }
-    ).catch((err) => {
+      },
+    ).catch(err => {
       this.$toasted.show(err.message);
       this.openV2AddressDialog = false;
       this.loadingAddStellar = false;

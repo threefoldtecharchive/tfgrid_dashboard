@@ -1,7 +1,6 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import config from "../config";
 
-
 export async function connect() {
   const wsProvider = new WsProvider(config.wsUrl);
   const api = await ApiPromise.create({ provider: wsProvider });
@@ -10,8 +9,6 @@ export async function connect() {
     api.rpc.system.name(),
     api.rpc.system.version(),
   ]);
-  console.log(
-    `You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`
-  );
+  console.log(`You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`);
   return api;
 }

@@ -1,75 +1,45 @@
-<template >
-
+<template>
   <v-container>
     <v-row class="fill-height">
       <v-col>
         <v-sheet height="64">
           <v-toolbar flat>
-
-            <v-btn
-              outlined
-              @click="setToday"
-            >Today</v-btn>
-            <v-btn
-              fab
-              text
-              small
-              @click="prev"
-            >
-              <v-icon small>
-                mdi-chevron-left
-              </v-icon>
+            <v-btn outlined @click="setToday">Today</v-btn>
+            <v-btn fab text small @click="prev">
+              <v-icon small> mdi-chevron-left </v-icon>
             </v-btn>
 
             <v-toolbar-title v-if="$refs.calendar">
               {{ $refs.calendar.title }}
             </v-toolbar-title>
-            <v-btn
-              fab
-              text
-              small
-              color="grey darken-2"
-              @click="next"
-            >
-              <v-icon small>
-                mdi-chevron-right
-              </v-icon>
+            <v-btn fab text small color="grey darken-2" @click="next">
+              <v-icon small> mdi-chevron-right </v-icon>
             </v-btn>
-            <v-btn
-              class="ml-auto"
-              @click="downloadReceipts()"
-            >Download Receipts</v-btn>
-
+            <v-btn class="ml-auto" @click="downloadReceipts()">Download Receipts</v-btn>
           </v-toolbar>
         </v-sheet>
         <v-sheet height="600">
           <v-calendar
             ref="calendar"
             v-model="focus"
-            :type='type'
+            :type="type"
             :events="getEvents()"
             @click:event="showEvent"
           ></v-calendar>
         </v-sheet>
       </v-col>
     </v-row>
-    <v-dialog
-      v-model="selectedOpen"
-      max-width="600"
-    >
+    <v-dialog v-model="selectedOpen" max-width="600">
       <v-card>
         <v-card-title>
-          {{selectedEvent.name}}
-
+          {{ selectedEvent.name }}
         </v-card-title>
-        <v-card-subtitle> {{selectedEvent.hash}}</v-card-subtitle>
+        <v-card-subtitle> {{ selectedEvent.hash }}</v-card-subtitle>
         <v-card-text>
-          <p> <b>Start:</b>
-            {{selectedEvent.start}}</p>
-          <p> <b> End:</b>
-            {{selectedEvent.end}}</p>
+          <p><b>Start:</b> {{ selectedEvent.start }}</p>
+          <p><b> End:</b> {{ selectedEvent.end }}</p>
 
-          <p v-if="selectedEvent.tft"><b>TFT:</b>{{selectedEvent.tft.toFixed(2)}}</p>
+          <p v-if="selectedEvent.tft"><b>TFT:</b>{{ selectedEvent.tft.toFixed(2) }}</p>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -97,12 +67,7 @@ export default class ReceiptsCalendar extends Vue {
   $refs!: {
     calendar: any;
   };
-  @Ref() calendar!:
-    | Vue
-    | VueConstructor<Vue>
-    | Element
-    | (Vue | Element)[]
-    | undefined;
+  @Ref() calendar!: Vue | VueConstructor<Vue> | Element | (Vue | Element)[] | undefined;
 
   @Prop({ required: true }) node!: nodeInterface;
 

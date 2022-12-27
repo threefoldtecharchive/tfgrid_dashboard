@@ -3,19 +3,9 @@
     <h1>Add Text Proposal</h1>
 
     <form @submit.prevent="onSubmitProposal()">
-      <v-text-field
-        label="Title"
-        placeholder="Title"
-        v-model="title"
-        :rules="[nonemptyTitle]"
-      />
+      <v-text-field label="Title" placeholder="Title" v-model="title" :rules="[nonemptyTitle]" />
 
-      <v-text-field
-        label="Initial Deposit"
-        placeholder="Initial Deposit"
-        v-model="initialDeposit"
-        :rules="[money]"
-      />
+      <v-text-field label="Initial Deposit" placeholder="Initial Deposit" v-model="initialDeposit" :rules="[money]" />
 
       <v-textarea
         label="Description"
@@ -26,22 +16,11 @@
       />
 
       <v-row justify="center">
-        <v-btn
-          color="primary"
-          type="submit"
-          :disabled="loading"
-          :loading="loading"
-        >
-          Submit
-        </v-btn>
+        <v-btn color="primary" type="submit" :disabled="loading" :loading="loading"> Submit </v-btn>
       </v-row>
     </form>
 
-    <CustomAlert
-      :loading="loading"
-      :result="result"
-      :error="error"
-    />
+    <CustomAlert :loading="loading" :result="result" :error="error" />
   </v-container>
 </template>
 
@@ -113,12 +92,12 @@ export default class TextProposal extends Vue {
         this.$store.state.hub.config.chain_id,
         { title, description },
         parseUnits(initialDeposit, this.$store.state.hub.config.tft_decimals),
-        this.$store.state.hub.config.proposal_denom
+        this.$store.state.hub.config.proposal_denom,
       )
         .then(() => {
           this.result = "Proposal added succefully!";
         })
-        .catch((err) => {
+        .catch(err => {
           this.error = err.message;
         })
         .finally(() => {

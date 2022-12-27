@@ -31,13 +31,13 @@ export default class Hub extends Vue {
 
   created() {
     this.$store.dispatch(Actions.CHECK_KEPLR);
-    checkKeplr().then((_) => {
+    checkKeplr().then(_ => {
       ensureChain(
         this.$store.state.hub.config.chain_id,
         "tf",
         this.$store.state.hub.config.tendermint_rpc,
-        this.$store.state.hub.config.cosmos_rest
-      ).catch((e) => {
+        this.$store.state.hub.config.cosmos_rest,
+      ).catch(e => {
         console.log(e.message);
         // this.error =
         //   "Couldn't check whether keplr installed or not (refresh to try again): " +

@@ -36,9 +36,7 @@ async function validateConfig(config: { [key: string]: any }) {
   }
   for (const prop of numbers) {
     if (isNaN(+config[prop])) {
-      throw new Error(
-        ((prop + "=" + config[prop]) as string) + " is not a valid number"
-      );
+      throw new Error(((prop + "=" + config[prop]) as string) + " is not a valid number");
     }
   }
 }

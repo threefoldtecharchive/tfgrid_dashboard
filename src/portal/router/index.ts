@@ -1,6 +1,6 @@
 import { RouteConfig } from "vue-router";
-import AccountsView from '@/portal/views/Accounts.vue';
-import AccountView from '@/portal/views/Account.vue'
+import AccountsView from "@/portal/views/Accounts.vue";
+import AccountView from "@/portal/views/Account.vue";
 import TwinView from "@/portal/views/Twin.vue";
 import TransferView from "@/portal/views/Transfer.vue";
 import SwapView from "@/portal/views/Swap.vue";
@@ -11,42 +11,41 @@ export const portalRouter: RouteConfig[] = [
   {
     path: "/",
     name: "accounts",
-    component: AccountsView
+    component: AccountsView,
   },
   {
     path: "/:accountID",
     name: "account",
-    component: AccountView
+    component: AccountView,
   },
   {
     path: "/:accountID/account-twin",
     name: "account-twin",
-    component: TwinView
+    component: TwinView,
   },
   {
     path: "/:accountID/account-swap",
     name: "account-swap",
-    component: SwapView
+    component: SwapView,
   },
   {
     path: "/:accountID/account-transfer",
     name: "account-transfer",
-    component: TransferView
+    component: TransferView,
   },
   {
     path: "/:accountID/account-farms",
     name: "account-farms",
-    component: () => import("../views/Farms.vue")
+    component: () => import("../views/Farms.vue"),
   },
   {
     path: "/:accountID/account-dao",
     name: "account-dao",
-    component: DaoView
+    component: DaoView,
   },
   {
     path: "/:accountID/account-nodes",
     name: "account-nodes",
-    component: NodesView
+    component: NodesView,
   },
-
 ];

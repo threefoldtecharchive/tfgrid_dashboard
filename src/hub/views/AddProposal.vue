@@ -9,11 +9,7 @@
         Text
       </v-btn>
       <v-btn
-        :color="
-          $route.fullPath === '/hub/add-proposal/software'
-            ? 'primary'
-            : undefined
-        "
+        :color="$route.fullPath === '/hub/add-proposal/software' ? 'primary' : undefined"
         @click="$router.push('/hub/add-proposal/software')"
       >
         Software

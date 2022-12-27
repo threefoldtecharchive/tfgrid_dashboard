@@ -20,5 +20,5 @@ new Vue({
   store,
   vuetify,
   ...explorerConfigs,
-  render: (h) => h(Dashboard),
+  render: h => h(Dashboard),
 }).$mount("#app");

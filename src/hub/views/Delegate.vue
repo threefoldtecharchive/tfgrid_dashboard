@@ -6,38 +6,16 @@
       </h1>
 
       <form @submit.prevent="onDelegate()">
-        <v-text-field
-          label="Amount"
-          placeholder="Amount"
-          :rules="[money]"
-          v-model="amount"
-        />
+        <v-text-field label="Amount" placeholder="Amount" :rules="[money]" v-model="amount" />
 
-        <v-btn
-          color="primary"
-          type="submit"
-          :disabled="inValid || loading"
-          :loading="loading"
-        >
-          Submit
-        </v-btn>
+        <v-btn color="primary" type="submit" :disabled="inValid || loading" :loading="loading"> Submit </v-btn>
       </form>
     </div>
 
-    <CustomAlert
-      :loading="loading"
-      :result="result"
-      :error="error"
-    />
+    <CustomAlert :loading="loading" :result="result" :error="error" />
 
-    <v-row
-      justify="center"
-      v-if="loading"
-    >
-      <v-progress-circular
-        indeterminate
-        color="primary"
-      />
+    <v-row justify="center" v-if="loading">
+      <v-progress-circular indeterminate color="primary" />
     </v-row>
   </v-container>
 </template>
@@ -101,12 +79,12 @@ export default class GovDeposit extends Vue {
       this.$store.state.hub.config.chain_id,
       this.address,
       parseUnits(this.amount, this.$store.state.hub.config.tft_decimals),
-      this.$store.state.hub.config.tft_denom
+      this.$store.state.hub.config.tft_denom,
     )
       .then(() => {
         this.result = `Successfully delegated ${this.amount} to validator #${this.address}`;
       })
-      .catch((err) => {
+      .catch(err => {
         this.error = err.message;
       })
       .finally(() => {

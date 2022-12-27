@@ -5,9 +5,7 @@
         <v-icon size="40" class="mr-2">mdi-cog</v-icon>
       </v-list-item-icon>
       <v-list-item-content>
-        <v-list-item-title style="font-size: 30px">
-          Public Configs
-        </v-list-item-title>
+        <v-list-item-title style="font-size: 30px"> Public Configs </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
     <v-list>

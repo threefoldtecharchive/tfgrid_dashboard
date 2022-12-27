@@ -15,7 +15,7 @@
       @input.native="validated($event.srcElement.value, options.key)"
     />
     <v-alert dense type="error" v-if="errorMsg">
-        {{ errorMsg }}
+      {{ errorMsg }}
     </v-alert>
   </v-card>
 </template>
@@ -23,7 +23,7 @@
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import IFilterOptions from "../types/FilterOptions";
 import { debounce } from "lodash";
-import { inputValidation } from "../utils/validations"
+import { inputValidation } from "../utils/validations";
 type TContent = string | number | Array<string | number>;
 @Component({
   name: "InFilterV2",
@@ -37,7 +37,7 @@ export default class InFilterV2 extends Vue {
   get content(): TContent { return this._content; } // prettier-ignore
   set content(value: TContent) {
     if (this.options.type === "number") {
-      value = Array.isArray(value) ? value.map((x) => +x) : +value;
+      value = Array.isArray(value) ? value.map(x => +x) : +value;
     }
     this._content = value;
     this.$emit("input", this._content);
@@ -60,12 +60,12 @@ export default class InFilterV2 extends Vue {
       this._search({ target: { value: null } } as any);
     }
   }
-  @Watch("errorMsg", {immediate: true}) onErrorMsg(value: string) {
-    this.$emit("invalid", {invalid: value != "", symbol: this.options.symbol})
+  @Watch("errorMsg", { immediate: true }) onErrorMsg(value: string) {
+    this.$emit("invalid", { invalid: value != "", symbol: this.options.symbol });
   }
-  errorMsg:any = ''
-  validated(value: string, key: string): string{
-    this.errorMsg = inputValidation(value, key);    
+  errorMsg: any = "";
+  validated(value: string, key: string): string {
+    this.errorMsg = inputValidation(value, key);
     return this.errorMsg;
   }
 }

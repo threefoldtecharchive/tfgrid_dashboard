@@ -28,12 +28,7 @@ export function inputValidation(value: string, key: string): string {
   let errorMsg = "";
 
   if (numericFields.includes(key)) {
-    if (
-      isNaN(+value) ||
-      specialChars.test(value) ||
-      +value < 0 ||
-      value.includes("e")
-    ) {
+    if (isNaN(+value) || specialChars.test(value) || +value < 0 || value.includes("e")) {
       errorMsg = "This field must be a number.";
       return errorMsg;
     }

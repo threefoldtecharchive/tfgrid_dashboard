@@ -2,17 +2,13 @@ import { IState } from "../store/state";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ActionContext } from "vuex";
 
-export default async function getChainData({
-  state,
-}: ActionContext<IState, IState>) {
+export default async function getChainData({ state }: ActionContext<IState, IState>) {
   const URL = window.configs.APP_API_URL;
   const provider = new WsProvider(URL);
   const pricingPolicies = await getPricingPolicies(provider);
   const { specName, specVersion } = await getSpecData(provider);
-  const proxyVersion = await fetch(
-    window.configs.APP_GRIDPROXY_URL + "/version"
-  )
-    .then<{ version: string }>((res) => res.json())
+  const proxyVersion = await fetch(window.configs.APP_GRIDPROXY_URL + "/version")
+    .then<{ version: string }>(res => res.json())
     .then(({ version: value }) => ({ name: "Grid Proxy", value }));
 
   state.pricingPolicies = pricingPolicies;
@@ -28,11 +24,9 @@ export default async function getChainData({
   provider.disconnect();
 }
 
-function getPricingPolicies(
-  provider: WsProvider
-): Promise<Map<number, string>> {
+function getPricingPolicies(provider: WsProvider): Promise<Map<number, string>> {
   return ApiPromise.create({ provider })
-    .then((api) => {
+    .then(api => {
       return api.query.tfgridModule.pricingPolicies.entries();
     })
     .then(([[_, res]]) => res.toHuman())
@@ -47,7 +41,7 @@ function getPricingPolicies(
 }
 
 function getSpecData(wsProvider: WsProvider) {
-  return ApiPromise.create({ provider: wsProvider }).then((api) => {
+  return ApiPromise.create({ provider: wsProvider }).then(api => {
     return api.query.system.lastRuntimeUpgrade().then((result: any) => {
       const { specName, specVersion } = result?.toJSON() as {
         specName: string;

@@ -5,17 +5,10 @@
       {{ error }}
     </v-alert>
     <v-data-table :headers="headers" :items="validators" :loading="loading">
-      <template v-slot:[`item.commission`]="{ item }">
-        {{ +item.commission.commissionRates.rate * 100 }}%
-      </template>
+      <template v-slot:[`item.commission`]="{ item }"> {{ +item.commission.commissionRates.rate * 100 }}% </template>
 
       <template v-slot:[`item.details`]="{ item }">
-        <v-btn
-          color="primary"
-          @click="$router.push('/hub/delegate/' + item.operatorAddress)"
-        >
-          Delegate
-        </v-btn>
+        <v-btn color="primary" @click="$router.push('/hub/delegate/' + item.operatorAddress)"> Delegate </v-btn>
       </template>
     </v-data-table>
   </v-container>
@@ -50,10 +43,7 @@ export default class ListGov extends Vue {
     let validators = this.validators || [];
     for (const validator of validators) {
       validator.tokens =
-        formatUnits(
-          validator.tokens || "0",
-          this.$store.state.hub.config.tft_decimals
-        ) +
+        formatUnits(validator.tokens || "0", this.$store.state.hub.config.tft_decimals) +
         " " +
         this.$store.state.hub.config.tft_denom;
     }
@@ -66,9 +56,8 @@ export default class ListGov extends Vue {
         this.validators = res.validators;
         this.normalizeStakedTokens();
       })
-      .catch((err) => {
-        this.error =
-          "Failed to list validators (refresh to try again): " + err.message;
+      .catch(err => {
+        this.error = "Failed to list validators (refresh to try again): " + err.message;
       })
       .finally(() => {
         this.loading = false;

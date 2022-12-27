@@ -13,13 +13,7 @@
       @input.native="validated($event.srcElement.value, filterKey)"
     >
       <template v-slot:selection="{ attrs, item, select, selected, index }">
-        <v-chip
-          v-bind="attrs"
-          :input-value="selected"
-          :close="multiple"
-          @click="select"
-          @click:close="remove(index)"
-        >
+        <v-chip v-bind="attrs" :input-value="selected" :close="multiple" @click="select" @click:close="remove(index)">
           <strong>{{ item }}</strong>
         </v-chip>
       </template>
@@ -30,7 +24,6 @@
   </v-card>
 </template>
 
-
 <script lang="ts">
 import { MutationTypes } from "../store/mutations";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
@@ -40,10 +33,10 @@ import { ActionTypes } from "../store/actions";
 @Component({})
 export default class InFilter extends Vue {
   @Prop({ required: true }) label!: string;
-  @Prop({ required: true}) placeholder!: string;
+  @Prop({ required: true }) placeholder!: string;
   @Prop({ required: true }) filterKey!: string;
   @Prop() value?: string[];
-  
+
   invalid = false;
 
   get multiple() {
@@ -60,39 +53,30 @@ export default class InFilter extends Vue {
   }
 
   set items(value: string[]) {
-    if(!this.invalid){
-    // add the current filter key to the query.
-    this.$store.commit("explorer/" + MutationTypes.SET_NODES_FILTER, {
-      key: this.filterKey,
-      value,
-    });
-    // reset to the first page
-    this.$store.commit(
-      "explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER,
-      1
-    );
-    // load nodes with the changes
-    this.$store.dispatch(ActionTypes.REQUEST_NODES);
+    if (!this.invalid) {
+      // add the current filter key to the query.
+      this.$store.commit("explorer/" + MutationTypes.SET_NODES_FILTER, {
+        key: this.filterKey,
+        value,
+      });
+      // reset to the first page
+      this.$store.commit("explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER, 1);
+      // load nodes with the changes
+      this.$store.dispatch(ActionTypes.REQUEST_NODES);
     }
   }
 
   remove(index: number): void {
-    this.$store.getters["explorer/getNodesFilter"][this.filterKey].splice(
-      index,
-      1
-    );
+    this.$store.getters["explorer/getNodesFilter"][this.filterKey].splice(index, 1);
 
-    this.$store.commit(
-      "explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER,
-      1
-    );
+    this.$store.commit("explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER, 1);
     this.$store.dispatch(ActionTypes.REQUEST_NODES);
   }
 
-  @Watch("errorMsg", {immediate: true}) onErrorMsg(value: string) {
-    if(value != ""){
+  @Watch("errorMsg", { immediate: true }) onErrorMsg(value: string) {
+    if (value != "") {
       this.invalid = true;
-    }else{
+    } else {
       this.invalid = false;
     }
   }
@@ -116,14 +100,8 @@ export default class InFilter extends Vue {
       key2: this.filterKey,
       value: false,
     });
-    this.$store.commit(
-      "explorer/" + MutationTypes.CLEAR_NODES_FILTER_KEY,
-      this.filterKey
-    );
-    this.$store.commit(
-      "explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER,
-      1
-    );
+    this.$store.commit("explorer/" + MutationTypes.CLEAR_NODES_FILTER_KEY, this.filterKey);
+    this.$store.commit("explorer/" + MutationTypes.SET_NODES_TABLE_PAGE_NUMBER, 1);
     this.$store.dispatch(ActionTypes.REQUEST_NODES);
   }
 }

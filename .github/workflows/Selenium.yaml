@@ -14,7 +14,7 @@ jobs:
       - name: Setting up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: "3.10"
       - name: Installing all necessary packages
         run: pip install -r tests/frontend_selenium/requirements.txt
       - name: Node install
@@ -23,7 +23,7 @@ jobs:
           node-version: 16
       - name: Yarn install
         run: yarn install
-      - name: Yarn serve 
+      - name: Yarn serve
         run: yarn serve &
       - name: Wait on localhost
         uses: iFaxity/wait-on-action@v1

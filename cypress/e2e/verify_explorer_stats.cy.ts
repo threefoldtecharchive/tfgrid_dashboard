@@ -20,7 +20,7 @@ describe("TF Grid Dashboard", function () {
     cy.request({
       method: "GET",
       url: "https://gridproxy.dev.grid.tf/stats?status=up",
-    }).should((res) => {
+    }).should(res => {
       //Get the stats from the grid_proxy
       const nodesOnline = JSON.stringify(res.body.nodes);
       const farms = JSON.stringify(res.body.farms);
@@ -48,7 +48,7 @@ describe("TF Grid Dashboard", function () {
         gateways,
         twins,
         publicIps,
-        contracts
+        contracts,
       );
     });
   });

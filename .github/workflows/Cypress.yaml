@@ -16,6 +16,6 @@ jobs:
         with:
           build: yarn add -D cypress
           start: yarn serve
-          wait-on: 'http://localhost:8080'
+          wait-on: "http://localhost:8080"
           wait-on-timeout: 60
           browser: chrome

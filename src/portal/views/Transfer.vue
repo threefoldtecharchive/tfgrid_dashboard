@@ -1,13 +1,7 @@
 <template>
   <v-container>
-
-    <v-card
-      color="primary"
-      class="white--text pa-5 my-5"
-    >
-      <h3 class="text-center">
-        Transfer TFTs on the TFChain
-      </h3>
+    <v-card color="primary" class="white--text pa-5 my-5">
+      <h3 class="text-center">Transfer TFTs on the TFChain</h3>
     </v-card>
     <v-card class="pa-5 my-5">
       <v-form v-model="isTransferValid">
@@ -19,38 +13,34 @@
           @keydown="setValue"
           label="Recipient:"
           :rules="[
-          () => !!receipientAddress || 'This field is required',
-          () => transferAddressCheck() || 'invalid address',
-        ]"
+            () => !!receipientAddress || 'This field is required',
+            () => transferAddressCheck() || 'invalid address',
+          ]"
         ></v-combobox>
         <v-text-field
-         @paste.prevent
+          @paste.prevent
           v-model="amount"
           label="Amount (TFT)"
           type="number"
-          onkeydown="javascript: return event.keyCode == 69 || /^\+$/.test(event.key) ? false : true" 
+          onkeydown="javascript: return event.keyCode == 69 || /^\+$/.test(event.key) ? false : true"
           :rules="[
-          () => !!amount || 'This field is required',
-          () => (amount.toString().split('.').length > 1 ? amount.toString().split('.')[1].length <= 3 : true) || 'Amount must have 3 decimals only',
-          () => amount > 0 || 'Amount cannot be negative or 0',
-          () => amount < parseFloat(balance) || 'Amount cannot exceed balance',
-        ]"
+            () => !!amount || 'This field is required',
+            () =>
+              (amount.toString().split('.').length > 1 ? amount.toString().split('.')[1].length <= 3 : true) ||
+              'Amount must have 3 decimals only',
+            () => amount > 0 || 'Amount cannot be negative or 0',
+            () => amount < parseFloat(balance) || 'Amount cannot exceed balance',
+          ]"
         >
         </v-text-field>
         <span class="fee">0.01 transaction fee will be deducted</span>
       </v-form>
       <v-card-actions>
         <v-spacer> </v-spacer>
-        <v-btn
-          @click="clearInput"
-          color="grey lighten-2 black--text"
-        >Clear</v-btn>
-        <v-btn
-          class="primary white--text"
-          @click="transferTFT"
-          :loading="loadingTransfer"
-          :disabled="!isTransferValid"
-        >Submit</v-btn>
+        <v-btn @click="clearInput" color="grey lighten-2 black--text">Clear</v-btn>
+        <v-btn class="primary white--text" @click="transferTFT" :loading="loadingTransfer" :disabled="!isTransferValid"
+          >Submit</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-container>
@@ -110,11 +100,7 @@ export default class TransferView extends Vue {
   }
   transferAddressCheck() {
     const isValid = checkAddress(this.receipientAddress);
-    if (
-      isValid &&
-      this.receipientAddress.length &&
-      !this.receipientAddress.match(/\W/)
-    ) {
+    if (isValid && this.receipientAddress.length && !this.receipientAddress.match(/\W/)) {
       return true;
     } else {
       return false;
@@ -130,10 +116,7 @@ export default class TransferView extends Vue {
       this.$api,
       this.receipientAddress,
       this.amount,
-      (res: {
-        events?: never[] | undefined;
-        status: { type: string; asFinalized: string; isFinalized: string };
-      }) => {
+      (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         this.loadingTransfer = true;
         if (res instanceof Error) {
           console.log(res);
@@ -146,9 +129,7 @@ export default class TransferView extends Vue {
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
-          console.log(
-            `Transaction included at blockHash ${status.asFinalized}`
-          );
+          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           if (!events.length) {
             this.$toasted.show("Transfer failed!");
             this.loadingTransfer = false;
@@ -159,12 +140,10 @@ export default class TransferView extends Vue {
               if (section === "balances" && method === "Transfer") {
                 this.$toasted.show("Transfer succeeded!");
                 this.loadingTransfer = false;
-                getBalance(this.$api, this.address).then(
-                  (balance: balanceInterface) => {
-                    this.balance = balance.free;
-                    this.$root.$emit('updateBalance', this.balance);
-                  }
-                );
+                getBalance(this.$api, this.address).then((balance: balanceInterface) => {
+                  this.balance = balance.free;
+                  this.$root.$emit("updateBalance", this.balance);
+                });
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Transfer failed!");
                 this.loadingTransfer = false;
@@ -172,17 +151,17 @@ export default class TransferView extends Vue {
             });
           }
         }
-      }
-    ).catch((err) => {
+      },
+    ).catch(err => {
       this.$toasted.show(err.message);
       this.loadingTransfer = false;
     });
   }
 
-  setValue($event: { target: { value: string }}) {
+  setValue($event: { target: { value: string } }) {
     requestAnimationFrame(() => {
-      this.receipientAddress = $event.target.value
-    })
+      this.receipientAddress = $event.target.value;
+    });
   }
 }
 </script>
@@ -191,8 +170,8 @@ export default class TransferView extends Vue {
 .theme--dark.v-application a {
   color: white;
 }
-.fee{
-  font-size: .7rem;
+.fee {
+  font-size: 0.7rem;
   color: grey;
 }
 </style>

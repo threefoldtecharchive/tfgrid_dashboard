@@ -13,14 +13,12 @@ export enum ActionTypes {
 
 export default {
   initPolicies({ commit }: ActionContext<IState, IState>) {
-    fetch(
-      "https://raw.githubusercontent.com/threefoldtech/tfchain/development/farming_policies.json"
-    )
-      .then<{ id: number; name: string }[]>((res) => res.json())
-      .then((items) => {
+    fetch("https://raw.githubusercontent.com/threefoldtech/tfchain/development/farming_policies.json")
+      .then<{ id: number; name: string }[]>(res => res.json())
+      .then(items => {
         return items.map(({ name }) => name);
       })
-      .then((data) => {
+      .then(data => {
         commit(MutationTypes.SET_POLICIES, data);
       });
   },
@@ -66,13 +64,11 @@ export default {
     const farms: IGridProxyFarm[] = [];
 
     for (let i = 0; i < nodes.length; i++) {
-      if (!farms.some((farm) => farm.farmId == nodes[i].farmId)) {
+      if (!farms.some(farm => farm.farmId == nodes[i].farmId)) {
         farms.push(
-          await fetch(
-            `${window.configs.APP_GRIDPROXY_URL}/farms?farm_id=${nodes[i].farmId}`
-          )
-            .then((res) => res.json())
-            .then((res) => res[0])
+          await fetch(`${window.configs.APP_GRIDPROXY_URL}/farms?farm_id=${nodes[i].farmId}`)
+            .then(res => res.json())
+            .then(res => res[0]),
         );
       }
     }
@@ -84,8 +80,8 @@ export default {
   loadData({ state, commit }: ActionContext<IState, IState>) {
     commit(MutationTypes.SET_LOAD, true);
     fetch(`${window.configs.APP_GRIDPROXY_URL}/stats?status=up`)
-      .then((data) => data.json())
-      .then((data) => {
+      .then(data => data.json())
+      .then(data => {
         const {
           nodes,
           farms,
@@ -121,10 +117,10 @@ export default {
         };
       })
       // .then(createDataRequests)
-      .then((data) => {
+      .then(data => {
         commit(MutationTypes.SET_DATA, data);
       })
-      .catch((err) => {
+      .catch(err => {
         /**
          * @todo Should handle this error nicely. :"(
          */

@@ -7,12 +7,7 @@
     </v-list-item>
     <v-divider />
     <v-list>
-      <v-list-item
-        link
-        v-for="item in items"
-        :key="item.title"
-        :to="item.route"
-      >
+      <v-list-item link v-for="item in items" :key="item.title" :to="item.route">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-list-item-icon>
@@ -28,11 +23,7 @@
     </v-list>
     <v-divider class="mt-10 mb-10" />
     <v-list v-if="!mini">
-      <v-list-item
-        v-for="version in $store.state.explorer.versions"
-        :key="version.name"
-        style="min-height: 30px"
-      >
+      <v-list-item v-for="version in $store.state.explorer.versions" :key="version.name" style="min-height: 30px">
         <strong class="mr-2">{{ version.name }}</strong> {{ version.value }}
       </v-list-item>
     </v-list>
