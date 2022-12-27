@@ -1,4 +1,4 @@
-import { Api, CosmosBankV1Beta1QueryBalanceResponse, CosmosStakingV1Beta1Pool } from "../rest/cosmos";
+import { Api, CosmosBankV1Beta1QueryBalanceResponse } from "../rest/cosmos";
 import { EncodeObject } from "@cosmjs/proto-signing";
 import { DeliverTxResponse, GasPrice, SigningStargateClient, StdFee, calculateFee } from "@cosmjs/stargate";
 import { BigNumber } from "ethers";

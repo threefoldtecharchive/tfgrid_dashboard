@@ -1,10 +1,11 @@
 import { snakeToCamelCase } from "./camel";
 
-function assertEq(found: any, expected: any, msg?: string) {
-  if (found != expected) {
-    throw new Error(msg + ": found " + found + ", expected " + expected);
-  }
-}
+//commented for linting purposes
+// function assertEq(found: any, expected: any, msg?: string) {
+//   if (found != expected) {
+//     throw new Error(msg + ": found " + found + ", expected " + expected);
+//   }
+// }
 
 function assert(expr: boolean, msg?: string) {
   if (!expr) {

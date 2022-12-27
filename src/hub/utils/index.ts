@@ -3,7 +3,6 @@ import { MsgCancelSendToEth, MsgSendToEth } from "../types/gravity/v1/msgs"; // 
 import { BigNumber, ethers } from "ethers";
 import bepapi from "../json/bepabi.json";
 import gravityabi from "../json/gravityabi.json";
-import { loadConfig } from "./config";
 import { Api, GravityV1QueryPendingSendToEthResponse } from "../rest/cosmos";
 import Long from "long";
 import { snakeToCamelCase } from "./camel";
@@ -13,8 +12,6 @@ import { waitBscTransaction } from "./eth";
 const UINT256_MAX_INT = ethers.BigNumber.from(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935",
 );
-
-const config = loadConfig();
 
 export async function sendToCosmos(
   token_contract_address: string,

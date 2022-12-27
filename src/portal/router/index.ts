@@ -4,7 +4,6 @@ import AccountView from "@/portal/views/Account.vue";
 import TwinView from "@/portal/views/Twin.vue";
 import TransferView from "@/portal/views/Transfer.vue";
 import SwapView from "@/portal/views/Swap.vue";
-import FarmsView from "@/portal/views/Farms.vue";
 import DaoView from "@/portal/views/Dao.vue";
 import NodesView from "@/portal/views/Nodes.vue";
 export const portalRouter: RouteConfig[] = [
