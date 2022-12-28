@@ -71,7 +71,7 @@ def test_create_twin_IP(browser):
     assert twin_page.wait_for('Twin created!')
     assert twin_page.get_twin_ip() == 'IP: ::1'
     twin_page.Check_Balance()
-    assert twin_page.wait_for('Free: 0.0979738 TFT')
+    assert twin_page.wait_for('Free: 0.0979706 TFT')
     assert twin_page.wait_for('Reserved (Locked): 0 TFT')
 
 

@@ -1,4 +1,4 @@
-from utils.utils import generate_gateway, generate_inavalid_gateway, generate_inavalid_ip, generate_ip, generate_string, get_seed
+from utils.utils import generate_gateway, generate_inavalid_gateway, generate_inavalid_ip, generate_ip, generate_string, get_seed, randomize_public_ipv4
 from pages.farm import FarmPage
 from pages.polka import PolkaPage
 from utils.grid_proxy import GridProxy
@@ -263,8 +263,9 @@ def test_valid_ip(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
-    farm_page.setup_gateway(generate_gateway(), farm_name)
-    cases = ['2.0.0.1/32',  '3.0.0.0/16', '139.255.255.255/17', '59.15.35.78/25']
+    ip, gateway = randomize_public_ipv4()
+    farm_page.setup_gateway(gateway, farm_name)
+    cases = [ip, '2.0.0.1/32',  '3.0.0.0/16', '139.255.255.255/17', '59.15.35.78/25']
     for case in cases:
         assert farm_page.add_ip(case).is_enabled()==True
         assert farm_page.wait_for('IP address in CIDR format xxx.xxx.xxx.xxx/xx')
@@ -315,8 +316,9 @@ def test_valid_gateway(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
-    farm_page.setup_ip(generate_ip(), farm_name)
-    cases = [generate_gateway(), '1.0.0.1',  '1.0.0.0', '255.255.255.255', '239.15.35.78', '1.1.1.1']
+    ip, gateway = randomize_public_ipv4()
+    farm_page.setup_ip(ip, farm_name)
+    cases = [gateway, '1.0.0.1',  '1.0.0.0', '255.255.255.255', '239.15.35.78', '1.1.1.1']
     for case in cases:
         assert farm_page.add_gateway(case).is_enabled()==True
         assert farm_page.wait_for('Gateway for the IP in ipv4 format')
@@ -366,8 +368,7 @@ def test_add_ip(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
-    ip = generate_ip()
-    gateway = generate_gateway()
+    ip, gateway = randomize_public_ipv4()
     farm_page.setup_ip(ip, farm_name)
     farm_page.add_gateway(gateway).click()
     polka_page.authenticate_with_pass(password)
@@ -480,8 +481,7 @@ def test_delete_ip(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
     assert farm_page.wait_for(farm_name)
-    ip = generate_ip()
-    gateway = generate_gateway()
+    ip, gateway = randomize_public_ipv4()
     farm_page.setup_ip(ip, farm_name)
     farm_page.add_gateway(gateway).click()
     polka_page.authenticate_with_pass(password)
@@ -514,8 +514,9 @@ def test_farm_details(browser):
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Address added!')
     browser.find_element(*farm_page.details_arrow).click()
-    farm_page.setup_ip(generate_ip(), farm_name)
-    farm_page.add_gateway(generate_gateway()).click()
+    ip, gateway = randomize_public_ipv4()
+    farm_page.setup_ip(ip, farm_name)
+    farm_page.add_gateway(gateway).click()
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('IP created!')
     assert farm_page.wait_for('Edit')  
