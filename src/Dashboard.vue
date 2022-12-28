@@ -99,6 +99,7 @@
             :key="route.label"
             v-model="route.active"
             class="white--text"
+            @click="onPortalActivateAccount(route)"
             :style="mini ? '' : 'margin: 10px !important;'"
           >
             <template v-slot:activator>
@@ -117,8 +118,8 @@
             <div v-if="route.prefix === '/'">
               <template v-if="!filteredAccounts().length">
                 <div class="mt-4">
-                  <v-alert dense type="info">
-                    You should select an account to display the portal functionalities.
+                  <v-alert color="rgb(25, 130, 177)" dense type="info">
+                    You should select an account to enable the portal functionalities.
                   </v-alert>
                 </div>
               </template>
@@ -288,6 +289,12 @@ export default class Dashboard extends Vue {
 
   openLink(url: string): void {
     window.open(url, "_blank");
+  }
+
+  onPortalActivateAccount(route: SidenavItem): void | undefined {
+    if (this.$route.name !== "accounts" && !this.filteredAccounts().length && route.label === "Portal") {
+      return this.redirectToHomePage();
+    }
   }
 
   updated() {
