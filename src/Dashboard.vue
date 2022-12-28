@@ -99,6 +99,7 @@
             :key="route.label"
             v-model="route.active"
             class="white--text"
+            @click="onPortalActivateAccount(route)"
             :style="mini ? '' : 'margin: 10px !important;'"
           >
             <template v-slot:activator>
@@ -115,23 +116,33 @@
             </template>
 
             <div v-if="route.prefix === '/'">
-              <div v-for="account in filteredAccounts()" :key="account.address">
-                <v-list-item
-                  :active="account.active"
-                  v-for="subchild in route.children"
-                  :key="subchild.label"
-                  :to="subchild.path"
-                  @click="redirectToSubchild(subchild.label, subchild.path || '', account.address, account.meta.name)"
-                  class="white--text pl-16"
-                >
-                  <v-list-item-icon>
-                    <v-icon class="white--text" v-text="'mdi-' + subchild.icon" />
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title class="white--text text-capitalize" v-text="subchild.label"> </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </div>
+              <template v-if="!filteredAccounts().length">
+                <div class="mt-4">
+                  <v-alert color="rgb(25, 130, 177)" dense type="info">
+                    You should select an account to enable the portal functionalities.
+                  </v-alert>
+                </div>
+              </template>
+              <template v-else>
+                <div v-for="account in filteredAccounts()" :key="account.address">
+                  <v-list-item
+                    :active="account.active"
+                    v-for="subchild in route.children"
+                    :key="subchild.label"
+                    :to="subchild.path"
+                    @click="redirectToSubchild(subchild.label, subchild.path || '', account.address, account.meta.name)"
+                    class="white--text pl-16"
+                  >
+                    <v-list-item-icon>
+                      <v-icon class="white--text" v-text="'mdi-' + subchild.icon" />
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title class="white--text text-capitalize" v-text="subchild.label">
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </div>
+              </template>
             </div>
             <div v-else>
               <v-list-item
@@ -278,6 +289,12 @@ export default class Dashboard extends Vue {
 
   openLink(url: string): void {
     window.open(url, "_blank");
+  }
+
+  onPortalActivateAccount(route: SidenavItem): void | undefined {
+    if (this.$route.name !== "accounts" && !this.filteredAccounts().length && route.label === "Portal") {
+      return this.redirectToHomePage();
+    }
   }
 
   updated() {
