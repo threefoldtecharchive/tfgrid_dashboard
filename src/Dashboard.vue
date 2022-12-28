@@ -76,9 +76,9 @@
         <v-divider></v-divider>
         <template v-for="route in routes">
           <v-list-item
+            v-if="!route.children.length"
             :class="{ 'mr-2 ml-2': !mini }"
             :key="route.label"
-            v-if="!route.children.length"
             :to="route.hyperlink ? undefined : route.prefix"
             @click="route.hyperlink ? openLink(route.prefix) : undefined"
           >
@@ -120,6 +120,7 @@
                   :active="account.active"
                   v-for="subchild in route.children"
                   :key="subchild.label"
+                  :to="subchild.path"
                   @click="redirectToSubchild(subchild.label, subchild.path || '', account.address, account.meta.name)"
                   class="white--text pl-16"
                 >
