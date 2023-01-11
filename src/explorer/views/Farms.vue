@@ -118,8 +118,8 @@ export default class Farms extends Vue {
     { text: "ID", value: "id" },
     { text: "NAME", value: "name" },
     { text: "Total Public IPs", value: "totalPublicIp", align: "center", sortable: false },
-    { text: "Free Public IPs", value: "freePublicIp", align: "center", sortable: false },
-    { text: "Used Public IPs", value: "usedPublicIp", align: "center", sortable: false },
+    { text: "Free Public IPs", value: "freePublicIp", align: "center"},
+    { text: "Used Public IPs", value: "usedPublicIp", align: "center"},
     { text: "CERTIFICATION TYPE", value: "certificationType", align: "center", sortable: false },
     { text: "PRICING POLICY", value: "pricingPolicyId", align: "center", sortable: false },
   ];
