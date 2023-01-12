@@ -13,6 +13,11 @@ then
     exit 64
 fi
 
+if [ -z ${VERSION+x} ]
+then
+    echo 'Error! $VERSION is required.'
+    exit 64
+fi
 
 NETWORK="main"
 POLKADOT_URL="wss://tfchain.grid.tf/ws"
