@@ -10,9 +10,14 @@ fi
 if [ -z ${GQL_URL+x} ]
 then
     echo 'Error! $GQL_URL is required.'
-    exit 64
+    exit 1
 fi
 
+if [ -z ${VERSION+x} ]
+then
+    echo 'Error! $VERSION is required.'
+    exit 1
+fi
 
 NETWORK="main"
 POLKADOT_URL="wss://tfchain.grid.tf/ws"
