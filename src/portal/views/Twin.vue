@@ -44,7 +44,7 @@
         </v-list>
         <v-card-actions class="justify-end">
           <v-btn @click="editTwin" color="primary">Edit</v-btn>
-          <v-btn @click="openDeleteTwin" :loading="loadingDeleteTwin" color="red" class="white--text">Delete</v-btn>
+          <!-- <v-btn @click="openDeleteTwin" :loading="loadingDeleteTwin" color="red" class="white--text">Delete</v-btn> -->
         </v-card-actions>
       </v-card>
     </v-container>
