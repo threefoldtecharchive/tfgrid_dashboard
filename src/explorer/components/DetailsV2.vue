@@ -83,10 +83,6 @@ export default class Details extends Vue {
 
   data: any = {};
 
-  mounted() {
-    console.log("this.data", this.data);
-  }
-
   get node(): INode {
     return this.data.node;
   }
