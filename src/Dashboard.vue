@@ -96,7 +96,7 @@
           <v-list-group
             v-else
             :active="route.active"
-            :key="route.label"
+            :key="'v-' + route.label"
             v-model="route.active"
             class="white--text"
             @click="onPortalActivateAccount(route)"
@@ -126,12 +126,11 @@
               <template v-else>
                 <div v-for="account in filteredAccounts()" :key="account.address">
                   <v-list-item
-                    :active="account.active"
                     v-for="subchild in route.children"
+                    :active="subchild.active"
                     :key="subchild.label"
-                    :to="subchild.path"
-                    @click="redirectToSubchild(subchild.label, subchild.path || '', account.address, account.meta.name)"
-                    class="white--text pl-16"
+                    @click="redirectToSubchild(subchild, account, route)"
+                    :class="subchild.active ? 'white--text pl-16 v-list-item--active' : 'white--text pl-16'"
                   >
                     <v-list-item-icon>
                       <v-icon class="white--text" v-text="'mdi-' + subchild.icon" />
@@ -205,26 +204,22 @@ import WelcomeWindow from "./portal/components/WelcomeWindow.vue";
 import FundsCard from "./portal/components/FundsCard.vue";
 import config from "@/portal/config";
 
+declare type SidebarChildItem = {
+  label?: string;
+  path?: string;
+  icon?: string;
+  active?: boolean;
+  showBeforeLogIn?: boolean;
+  children?: SidebarChildItem[];
+};
+
 interface SidenavItem {
   label: string;
   icon: string;
   prefix: string;
   active?: boolean;
   hyperlink?: boolean;
-  children: Array<{
-    label?: string;
-    path?: string;
-    icon: string;
-    active?: boolean;
-    showBeforeLogIn: boolean; //i.e loginto the polkadot.js
-    children?:
-      | Array<{
-          label: string;
-          path?: string;
-          icon: string;
-        }>
-      | [];
-  }>;
+  children: Array<SidebarChildItem>; //i.e loginto the polkadot.js
 }
 @Component({
   name: "Dashboard",
@@ -340,29 +335,41 @@ export default class Dashboard extends Vue {
       });
     }
   }
-  public async redirectToSubchild(label: string, path: string, address: string, name: string) {
+  public removeActiveClass(route: SidenavItem) {
+    for (const child of route.children) {
+      child.active = false;
+    }
+  }
+  public async redirectToSubchild(subchild: SidebarChildItem, account: accountInterface, route: SidenavItem) {
     //
-    this.twinID = await getTwinID(this.$api, address);
-    this.balance = await getBalance(this.$api, address);
+    this.twinID = await getTwinID(this.$api, account.address);
+    this.balance = await getBalance(this.$api, account.address);
     if (this.twinID) {
       this.twin = await getTwin(this.$api, this.twinID);
-      this.$router.push({
-        name: `${path}`,
-        params: { accountID: `${address}` },
-        query: {
-          accountName: `${name}`,
-          twinID: this.twin.id,
-          twinIP: this.twin.ip,
-          balanceFree: `${this.balance.free}`,
-          balanceReserved: `${this.balance.reserved}`,
-        },
-      });
+      if (
+        (subchild.path && !this.$route.path.includes(subchild.path)) ||
+        this.$route.params.accountID !== account.address
+      ) {
+        this.$router.push({
+          name: `${subchild.path}`,
+          params: { accountID: `${account.address}` },
+          query: {
+            accountName: `${name}`,
+            twinID: this.twin.id,
+            twinIP: this.twin.ip,
+            balanceFree: `${this.balance.free}`,
+            balanceReserved: `${this.balance.reserved}`,
+          },
+        });
+      }
+      this.removeActiveClass(route);
+      subchild.active = true;
     } else {
-      if (!this.$route.path.includes(address)) {
+      if (!this.$route.path.includes(account.address)) {
         this.$router.push({
           name: "account",
           path: "account",
-          params: { accountID: `${address}` },
+          params: { accountID: `${account.address}` },
           query: { accountName: `${name}` },
         });
       }
@@ -385,27 +392,31 @@ export default class Dashboard extends Vue {
           path: "account-twin",
           icon: "account-supervisor-outline",
           showBeforeLogIn: false,
+          active: true,
         },
         {
           label: "swap",
           path: "account-swap",
           icon: "swap-horizontal",
           showBeforeLogIn: false,
+          active: false,
         },
         {
           label: "transfer",
           path: "account-transfer",
           icon: "account-arrow-right-outline",
           showBeforeLogIn: false,
+          active: false,
         },
-        { label: "farms", path: "account-farms", icon: "silo", showBeforeLogIn: false },
+        { label: "farms", path: "account-farms", icon: "silo", showBeforeLogIn: false, active: false },
         {
           label: "dedicated nodes",
           path: "account-nodes",
           icon: "resistor-nodes",
           showBeforeLogIn: false,
+          active: false,
         },
-        { label: "dao", path: "account-dao", icon: "note-check-outline", showBeforeLogIn: false },
+        { label: "dao", path: "account-dao", icon: "note-check-outline", showBeforeLogIn: false, active: false },
       ],
     },
     {
@@ -419,18 +430,21 @@ export default class Dashboard extends Vue {
           path: "statistics",
           icon: "chart-scatter-plot",
           showBeforeLogIn: true,
+          active: true,
         },
         {
           label: "Nodes",
           path: "nodes",
           icon: "access-point",
           showBeforeLogIn: true,
+          active: false,
         },
         {
           label: "Farms",
           path: "farms",
           icon: "lan-connect",
           showBeforeLogIn: true,
+          active: false,
         },
       ],
     },
@@ -445,12 +459,14 @@ export default class Dashboard extends Vue {
           path: "calculator",
           icon: "currency-usd",
           showBeforeLogIn: true,
+          active: true,
         },
         {
           label: "Simulator",
           path: "simulator/",
           icon: "chart-line",
           showBeforeLogIn: false,
+          active: false,
           children: [
             {
               label: "Farming",
