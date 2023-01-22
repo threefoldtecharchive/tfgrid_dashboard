@@ -16,21 +16,22 @@ export function inputValidation(value: string, key: string): string {
     "free_sru",
     "free_hru",
   ];
-  const textualFields: string[] = [
-    "countryFullName",
-    "farmingPolicyName",
-    "certificationType",
-    "farmName",
-    "pricingPolicyId",
-    "country",
-  ];
-  const specialChars = /[`!@#$%^&*()+\-=[\]{};':"\\|,.<>/?~]/;
+  const textualFields: string[] = ["farmingPolicyName", "certificationType", "farmName", "pricingPolicyId"];
+
+  const countryFields: string[] = ["countryFullName", "country"];
+  const specialChars = /[ `!@#$%^&*()+\-=[\]{};':"\\|,.<>/?~]/;
+  const countryRegex = /^[a-zA-Z\s]*$/;
+
   let errorMsg = "";
 
   if (numericFields.includes(key)) {
     if (isNaN(+value) || specialChars.test(value) || +value < 0 || value.includes("e")) {
       errorMsg = "This field must be a number.";
       return errorMsg;
+    }
+  } else if (countryFields.includes(key)) {
+    if (!countryRegex.test(value)) {
+      return (errorMsg = "Country name should not contain special characters or numbers.");
     }
   } else if (textualFields.includes(key)) {
     if (specialChars.test(value)) {
