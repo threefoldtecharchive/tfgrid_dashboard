@@ -346,19 +346,17 @@ export default class Dashboard extends Vue {
     this.balance = await getBalance(this.$api, address);
     if (this.twinID) {
       this.twin = await getTwin(this.$api, this.twinID);
-      if (!this.$route.path.includes(path) || this.$route.params.accountID !== address) {
-        this.$router.push({
-          name: `${path}`,
-          params: { accountID: `${address}` },
-          query: {
-            accountName: `${name}`,
-            twinID: this.twin.id,
-            twinIP: this.twin.ip,
-            balanceFree: `${this.balance.free}`,
-            balanceReserved: `${this.balance.reserved}`,
-          },
-        });
-      }
+      this.$router.push({
+        name: `${path}`,
+        params: { accountID: `${address}` },
+        query: {
+          accountName: `${name}`,
+          twinID: this.twin.id,
+          twinIP: this.twin.ip,
+          balanceFree: `${this.balance.free}`,
+          balanceReserved: `${this.balance.reserved}`,
+        },
+      });
     } else {
       if (!this.$route.path.includes(address)) {
         this.$router.push({
