@@ -24,7 +24,7 @@ export function inputValidation(value: string, key: string): string {
     "pricingPolicyId",
     "country",
   ];
-  const specialChars = /[ `!@#$%^&*()+\-=[\]{};':"\\|,.<>/?~]/;
+  const specialChars = /[`!@#$%^&*()+\-=[\]{};':"\\|,.<>/?~]/;
   let errorMsg = "";
 
   if (numericFields.includes(key)) {
