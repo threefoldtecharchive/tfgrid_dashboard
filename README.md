@@ -1,76 +1,61 @@
-## THREEFOLD GRID DASHBOARD
+# TFGrid_Dashboard
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/threefoldtech/tfgrid_dashboard)
+[![Build](https://github.com/threefoldtech/tfgrid_dashboard/actions/workflows/build.yml/badge.svg)](https://github.com/threefoldtech/tfgrid_dashboard/actions/workflows/build.yml)
+[![Lint](https://github.com/threefoldtech/tfgrid_dashboard/actions/workflows/lint.yaml/badge.svg)](https://github.com/threefoldtech/tfgrid_dashboard/actions/workflows/lint.yaml)
 [![Selenium _Tests](https://github.com/threefoldtech/tfgrid_dashboard/actions/workflows/Selenium.yaml/badge.svg)](https://github.com/threefoldtech/tfgrid_dashboard/actions/workflows/Selenium.yaml)
 [![Cypress Tests](https://github.com/threefoldtech/tfgrid_dashboard/actions/workflows/Cypress.yaml/badge.svg)](https://github.com/threefoldtech/tfgrid_dashboard/actions/workflows/Cypress.yaml)
 
-A unified application where users can do the following and so much more !
+## Introduction
 
-- View and search their connected polkadot.js accounts
-- Connect/Disconnect from polkadot.js
-- View balances on the TF Chain
-- Buy TFT
-- Transfer TFT within the TFChain
-- Swap TFT to and from Cosmos and Stellar
-- Create/delete/edit/view/search twins, farms, farm public IPs, farm nodes and farm nodes public configuration.
-- Add Stellar payout to farms
-- Reserve/Unreserve dedicated nodes.
-- Explore the grid capacity (i.e view the TF Grid statistics, nodes and farms across the world).
+The Dashboard is a unified admin interface for everything related to Threefold Grid such as Portal, Explorer, Calculators, Zero-OS Bootstrap & Playground. For more details, check [Dashboard Manual](https://library.threefold.me/info/manual/#/manual__dashboard_readme)
 
-If you don't know where to start, you can also review the TF Chain manual before even connecting to polkadot.js.
+- **Clone the repository**
 
-### Built With
+  ```bash
+  git clone https://github.com/threefoldtech/tfgrid_dashboard.git
+  ```
 
-- Vue 2
-- Typescript
-- Veutify
-- GraphQl
+## Getting Started
 
-### Getting Started
+> For detailed information you can read the [Getting Started](./docs/getting_started.md) documentation.
 
-To get a local copy up and running follow these simple example steps:
-
-- Open Terminal.
-- Change the current working directory to the location you want the cloned directory.
-- Enter the following:
-
-```
-git clone https://github.com/threefoldtech/tfgrid_dashboard.git
-```
-
-- Press Enter to create your local clone.
-
-- Navigate to the cloned repository by running:
-
-```
-cd tfgrid_dashboard
-```
-
-Adjust your config.js file as per your environment:
+Before running the Dashboard, in your terminal move to the project directory, make sure to adjust config.js file as per your environment, then install the required dependencies.
 
 ```bash
+cd tfgrid_dashboard
 export GQL_URL="https://graphql.test.grid.tf/graphql"
 cd public
 source ../scripts/build-env.sh
-```
-
-To Try the project locally you can easy clone the repo and run the following commands:
-
-```bash
 yarn install
 yarn serve
 ```
 
-### Prerequisites:
+- **Run Dashboard in Development mode**
 
-- GitHub
-- Git
-- Node.js
-- Yarn
-- Vue CLI
+```bash
+yarn serve
+```
 
-### Contributors
+- **Run Dashboard in Production mode**
 
-Contributions, issues, and feature requests are welcome!
+```bash
+yarn build
+```
 
-Feel free to check the [issues page](https://github.com/threefoldtech/tfgrid_dashboard/issues).
+This will generate the production build in the `dist` directory, which can be served using [Caddy](https://caddyserver.com/) or [NGINX](https://www.nginx.com/)
+
+## Testing
+
+The main testing tool that is used in Dashboard is [Cypress](https://www.cypress.io/).
+
+- [How to run tests](./docs/cypress.md)
+- [How to write new tests](https://docs.cypress.io/guides/end-to-end-testing/writing-your-first-end-to-end-test)
+
+## Related Documentations
+
+- [Configure the editor/IDE](./docs/editor_config.md)
+- [Contribution Guide](./docs/Contribution.md)
+- [Dashboard documentation](https://library.threefold.me/info/manual/#/manual__dashboard_readme)
+- [Pipelines documentation](./docs/workflows.md)
+- [Releasing process](./docs/releasing.md)
