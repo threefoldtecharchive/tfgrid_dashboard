@@ -50,6 +50,7 @@ Adjust your config.js file as per your environment:
 
 ```bash
 export GQL_URL="https://graphql.test.grid.tf/graphql"
+export VERSION="v1.3.0-rc4"
 cd public
 source ../scripts/build-env.sh
 ```
