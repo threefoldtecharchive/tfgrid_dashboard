@@ -233,6 +233,7 @@ import {
   setFarmPayoutV2Address,
 } from "../lib/farms";
 import { StrKey } from "stellar-sdk";
+import { UserCredentials } from "../store/state";
 
 @Component({
   name: "FarmsView",
@@ -251,6 +252,7 @@ export default class FarmsView extends Vue {
   singleExpand = true;
   expanded: any = [];
   $api: any;
+  $credentials!: UserCredentials;
   openV2AddressDialog = false;
   openCreateFarmDialog = false;
   v2_address = "";
@@ -282,9 +284,9 @@ export default class FarmsView extends Vue {
   // Life hooks
   async mounted() {
     // not logged in? login: get farms, nodes
-    this.address = this.$route.params.accountID;
-    this.id = this.$route.query.twinID;
-    if (this.$api) {
+    if (this.$api && this.$credentials) {
+      this.address = this.$credentials.accountAddress;
+      this.id = this.$credentials.twinID;
       this.farms = await getFarm(this.$api, this.id);
       this.loadingFarms = false;
 
@@ -300,8 +302,8 @@ export default class FarmsView extends Vue {
   }
 
   async updated() {
-    this.address = this.$route.params.accountID;
-    this.id = this.$route.query.twinID;
+    this.address = this.$credentials.accountAddress;
+    this.id = this.$credentials.twinID;
     if (this.$api) {
       this.farms = await getFarm(this.$api, this.id);
       this.loadingFarms = false;
@@ -316,7 +318,7 @@ export default class FarmsView extends Vue {
   }
 
   // Watchers
-  @Watch("$route.query.twinID") async onPropertyChanged(value: number, oldValue: number) {
+  @Watch("$credentials.twinID") async onPropertyChanged(value: number, oldValue: number) {
     console.log(`switching from account ${oldValue} farms to account ${value} farms`);
     this.farms = await getFarm(this.$api, value);
 

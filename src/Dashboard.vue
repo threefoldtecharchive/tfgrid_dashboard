@@ -11,11 +11,11 @@
         <v-spacer></v-spacer>
         <div class="d-flex">
           <FundsCard
-            v-if="$route.path != '/' && $route.query.balanceFree"
+            v-if="filteredAccounts().length"
             :balanceFree.sync="balanceFree"
             :balanceReserved.sync="balanceReserved"
-            @update:balanceFree="$route.query.balanceFree = $event"
-            @update:balanceReserved="$route.query.balanceReserved = $event"
+            @update:balanceFree="$credentials.balanceFree = $event"
+            @update:balanceReserved="$credentials.balanceReserved = $event"
           />
           <div class="d-flex" style="align-items: center">
             <v-btn icon @click="toggle_dark_mode">
@@ -29,7 +29,7 @@
             <v-btn v-else @click="disconnectWallet" color="red"> Disconnect </v-btn>
 
             <v-theme-provider root>
-              <v-card v-if="isAccountSelected()" style="width: max-content">
+              <v-card v-if="filteredAccounts().length" style="width: max-content">
                 <v-card-text
                   style="padding: 10px 0px 10px 30px"
                   v-for="account in filteredAccounts()"
@@ -96,7 +96,7 @@
           <v-list-group
             v-else
             :active="route.active"
-            :key="route.label"
+            :key="'V-' + route.label"
             v-model="route.active"
             class="white--text"
             @click="onPortalActivateAccount(route)"
@@ -130,7 +130,6 @@
                     v-for="subchild in route.children"
                     :key="subchild.label"
                     :to="subchild.path"
-                    @click="redirectToSubchild(subchild.label, subchild.path || '', account.address, account.meta.name)"
                     class="white--text pl-16"
                   >
                     <v-list-item-icon>
@@ -200,7 +199,7 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 import { balanceInterface, getBalance } from "./portal/lib/balance";
 import { connect } from "./portal/lib/connect";
 import { getTwin, getTwinID } from "./portal/lib/twin";
-import { accountInterface } from "./portal/store/state";
+import { accountInterface, UserCredentials } from "./portal/store/state";
 import WelcomeWindow from "./portal/components/WelcomeWindow.vue";
 import FundsCard from "./portal/components/FundsCard.vue";
 import config from "@/portal/config";
@@ -231,11 +230,15 @@ interface SidenavItem {
   components: { WelcomeWindow, FundsCard },
 })
 export default class Dashboard extends Vue {
+  vText(vText: any) {
+    throw new Error("Method not implemented.");
+  }
   collapseOnScroll = true;
   mini = true;
   drawer = true;
   twinID = 0;
   $api: any;
+  $credentials!: UserCredentials;
   twin: { id: string; ip: string } = { id: "", ip: "" };
   balance: balanceInterface = { free: 0, reserved: 0 };
   accounts: accountInterface[] = [];
@@ -245,18 +248,30 @@ export default class Dashboard extends Vue {
   balanceFree: string | (string | null)[] = "";
   balanceReserved: string | (string | null)[] = "";
 
-  @Watch("this.$route.query.balance") async onBalanceUpdate(value: number, oldValue: number) {
-    this.balanceFree = this.$route.query.balanceFree;
-    this.balanceReserved = this.$route.query.balanceReserved;
-    console.log(`balance went from ${oldValue}, to ${value}`);
+  @Watch("this.$credentials.balance") async onBalanceUpdate(value: number, oldValue: number) {
+    if (this.$credentials) {
+      this.balanceFree = String(this.$credentials.balanceFree);
+      this.balanceReserved = String(this.$credentials.balanceReserved);
+      console.log(`balance went from ${oldValue}, to ${value}`);
+    }
   }
   async mounted() {
     this.$store.dispatch("portal/subscribeAccounts");
-    this.balanceFree = this.$route.query.balanceFree;
-    this.balanceReserved = this.$route.query.balanceReserved;
+    if (this.$credentials) {
+      this.balanceFree = String(this.$credentials.balanceFree);
+      this.balanceReserved = String(this.$credentials.balanceReserved);
+    }
     this.accounts = this.$store.state.portal.accounts;
     if (this.$route.path === "/" && !this.$api) {
       Vue.prototype.$api = await connect(); //declare global variable api
+      Vue.prototype.$credentials = {
+        accountAddress: "",
+        accountName: "",
+        twinID: 0,
+        twinIP: "",
+        balanceFree: 0,
+        balanceReserved: 0,
+      };
       console.log(`connecting to api`);
       this.loadingAPI = false;
     }
@@ -271,7 +286,9 @@ export default class Dashboard extends Vue {
       this.$vuetify.theme.dark = true;
       localStorage.setItem("dark_theme", this.$vuetify.theme.dark.toString());
     }
-    this.$root.$on("selectAccount", () => {
+    this.$root.$on("selectAccount", async () => {
+      const activatedAccount: accountInterface = this.filteredAccounts()[0]; // returns array of activated account.
+      Vue.prototype.$credentials = await this.setCredentials(activatedAccount);
       this.routes[0].active = true;
       this.mini = false;
     });
@@ -304,8 +321,10 @@ export default class Dashboard extends Vue {
     } else if (this.$route.path !== "/") {
       this.loadingAPI = false;
     }
-    this.balanceFree = this.$route.query.balanceFree;
-    this.balanceReserved = this.$route.query.balanceReserved;
+    if (this.$credentials) {
+      this.balanceFree = String(this.$credentials.balanceFree);
+      this.balanceReserved = String(this.$credentials.balanceReserved);
+    }
   }
   async unmounted() {
     console.log(`disconnecting from api`);
@@ -316,20 +335,36 @@ export default class Dashboard extends Vue {
     return this.accounts.filter(account => account.active);
   }
   public isAccountSelected() {
-    if (this.$route.query.accountName) {
+    if (this.$credentials && this.$credentials.accountName) {
       return true;
     }
     return false;
   }
   public disconnectWallet() {
     this.$store.dispatch("portal/unsubscribeAccounts");
-    if (this.$route.query.twinID) {
+    if (this.$credentials.twinID) {
       this.$router.push({
         name: "accounts",
         path: `/`,
       });
     }
   }
+
+  // UserCredentials
+  public async setCredentials(account: accountInterface) {
+    this.twinID = await getTwinID(this.$api, account.address);
+    this.balance = await getBalance(this.$api, account.address);
+    if (this.twinID) {
+      this.twin = await getTwin(this.$api, this.twinID);
+      this.$credentials.accountAddress = account.address;
+      this.$credentials.twinID = this.twinID;
+      this.$credentials.twinIP = this.twin.ip;
+      this.$credentials.balanceFree = this.balance.free;
+      this.$credentials.balanceReserved = this.balance.reserved;
+    }
+    return this.$credentials;
+  }
+
   public redirectToHomePage() {
     this.accounts.map(account => (account.active = false));
     this.routes[0].active = false;
@@ -338,36 +373,6 @@ export default class Dashboard extends Vue {
         name: "accounts",
         path: "/",
       });
-    }
-  }
-  public async redirectToSubchild(label: string, path: string, address: string, name: string) {
-    //
-    this.twinID = await getTwinID(this.$api, address);
-    this.balance = await getBalance(this.$api, address);
-    if (this.twinID) {
-      this.twin = await getTwin(this.$api, this.twinID);
-      if (!this.$route.path.includes(path) || this.$route.params.accountID !== address) {
-        this.$router.push({
-          name: `${path}`,
-          params: { accountID: `${address}` },
-          query: {
-            accountName: `${name}`,
-            twinID: this.twin.id,
-            twinIP: this.twin.ip,
-            balanceFree: `${this.balance.free}`,
-            balanceReserved: `${this.balance.reserved}`,
-          },
-        });
-      }
-    } else {
-      if (!this.$route.path.includes(address)) {
-        this.$router.push({
-          name: "account",
-          path: "account",
-          params: { accountID: `${address}` },
-          query: { accountName: `${name}` },
-        });
-      }
     }
   }
   public toggle_dark_mode() {
@@ -499,21 +504,26 @@ export default class Dashboard extends Vue {
 
 <style>
 @import "./assets/css/styles.css";
+
 #app {
   background-color: var(--v-background-base);
 }
+
 .v-navigation-drawer {
   background-color: #333;
 }
+
 .loadingDialog {
   overflow: hidden;
 }
+
 .v-list-item__icon .theme--light.fa-chevron-down,
 .v-list-item__icon .theme--light.fa-caret-down,
 .v-list-item__icon .theme--light.fa-chevron-up,
 .v-list-item__icon .theme--light.fa-caret-up {
   color: white !important;
 }
+
 .v-list .v-list-item--link:hover,
 .v-list-item--link:before {
   background-color: #1982b1 !important;
@@ -524,14 +534,17 @@ export default class Dashboard extends Vue {
 .v-list .v-list-item--active {
   border-radius: 20px;
 }
+
 .theme--dark.v-card > .v-card__text,
 .theme--dark.v-card > .v-card__subtitle {
   color: rgb(255, 255, 255);
 }
+
 .theme--light.v-card > .v-card__text,
 .theme--light.v-card > .v-card__subtitle {
   color: rgb(0, 0, 0);
 }
+
 .theme--light.v-btn.v-btn--icon {
   color: rgba(0, 0, 0);
 }

@@ -11,3 +11,12 @@ export interface PortalState {
 export default {
   accounts: [],
 };
+
+export declare type UserCredentials = {
+  accountAddress: string;
+  accountName: string;
+  twinID: number;
+  twinIP: string;
+  balanceFree: number;
+  balanceReserved: number;
+};
