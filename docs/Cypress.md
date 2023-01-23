@@ -1,6 +1,6 @@
-## Cypress
+# Cypress
 
-### Prerequisites
+## Prerequisites
 
 - Check the System Requirements first from the [Cypress Docs](https://docs.cypress.io/guides/getting-started/installing-cypress#System-requirements).
 

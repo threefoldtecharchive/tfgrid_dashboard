@@ -1,24 +1,6 @@
-# How to get started
+# Architecture
 
-## To Run The Project follow these steps :
-
-- clone the Repository : `git clone https://github.com/threefoldtech/tfgrid_dashboard.git`
-- navigate to the Repository : `cd tfgrid_dashboard`
-- make your on branch : `git checkout -b development_<FEATURE_NAME>`
-- install the dependencies : `yarn install`
-- run the project : `yarn serve`
-- open your browser and navigate to http://localhost:8080/
-- Adjust your config.js file as per your environment::
-
-  ```
-  export GQL_URL="https://graphql.test.grid.tf/graphql"
-  cd public
-  source ../scripts/build-env.sh
-  ```
-
-## Architecture
-
-### src
+## src
 
 ```
 .
