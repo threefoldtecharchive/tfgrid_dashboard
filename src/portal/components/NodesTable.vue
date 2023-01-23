@@ -38,16 +38,26 @@
           <span
             >Discounts: <br />
             <ul>
-              <li>{{ item.applyedDiscount.first }}% for the dedicated node</li>
-              <li>{{ item.applyedDiscount.second }}% for the twin balance</li>
+              <li>
+                You receive {{ item.applyedDiscount.first }}% discount if you reserve an entire
+                <a
+                  target="_blank"
+                  href="https://library.threefold.me/info/threefold#/cloud/threefold__pricing?id=dedicated-servers"
+                  style="color: blue"
+                  >node</a
+                >
+              </li>
+              <li>
+                You receive up to {{ item.applyedDiscount.second }}% discount if you keep enough TFT in your wallet to
+                pay for the deployment for an extended amount of time -
+                <a
+                  target="_blank"
+                  href="https://library.threefold.me/info/threefold/#/tfgrid/grid/pricing?id=discount-levels"
+                >
+                  <p style="color: blue; display: inline">discount levels</p>
+                </a>
+              </li>
             </ul>
-            See
-            <a
-              target="_blank"
-              href="https://library.threefold.me/info/threefold/#/tfgrid/grid/pricing?id=discount-levels"
-            >
-              <p style="color: blue; display: inline">discount levels</p>
-            </a>
           </span>
         </v-tooltip>
       </template>
