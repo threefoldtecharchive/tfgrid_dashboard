@@ -20,7 +20,7 @@ export function inputValidation(value: string, key: string): string {
 
   const countryFields: string[] = ["countryFullName", "country"];
   const specialChars = /[ `!@#$%^&*()+\-=[\]{};':"\\|,.<>/?~]/;
-  const countryRegex = /^[a-zA-Z\s]*$/;
+  const countryRegex = /[a-zA-Z]+[a-zA-Z\s]*/;
 
   let errorMsg = "";
 
@@ -30,7 +30,7 @@ export function inputValidation(value: string, key: string): string {
       return errorMsg;
     }
   } else if (countryFields.includes(key)) {
-    if (!countryRegex.test(value) || value.trim() === "") {
+    if (!countryRegex.test(value)) {
       return (errorMsg = "Country name should not contain special characters or numbers.");
     }
   } else if (textualFields.includes(key)) {
