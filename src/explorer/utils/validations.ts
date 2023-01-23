@@ -30,7 +30,7 @@ export function inputValidation(value: string, key: string): string {
       return errorMsg;
     }
   } else if (countryFields.includes(key)) {
-    if (!countryRegex.test(value)) {
+    if (!countryRegex.test(value) || value.trim() === "") {
       return (errorMsg = "Country name should not contain special characters or numbers.");
     }
   } else if (textualFields.includes(key)) {
