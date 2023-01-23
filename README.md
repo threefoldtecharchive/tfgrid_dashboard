@@ -1,4 +1,4 @@
-# TFGrid_Dashboard
+# TFGrid Dashboard
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/threefoldtech/tfgrid_dashboard)
 [![Build](https://github.com/threefoldtech/tfgrid_dashboard/actions/workflows/build.yml/badge.svg)](https://github.com/threefoldtech/tfgrid_dashboard/actions/workflows/build.yml)
@@ -10,26 +10,9 @@
 
 The Dashboard is a unified admin interface for everything related to Threefold Grid such as Portal, Explorer, Calculators, Zero-OS Bootstrap & Playground. For more details, check [Dashboard Manual](https://library.threefold.me/info/manual/#/manual__dashboard_readme)
 
-- **Clone the repository**
-
-  ```bash
-  git clone https://github.com/threefoldtech/tfgrid_dashboard.git
-  ```
-
 ## Getting Started
 
 > For detailed information you can read the [Getting Started](./docs/getting_started.md) documentation.
-
-Before running the Dashboard, in your terminal move to the project directory, make sure to adjust config.js file as per your environment, then install the required dependencies.
-
-```bash
-cd tfgrid_dashboard
-export GQL_URL="https://graphql.test.grid.tf/graphql"
-cd public
-source ../scripts/build-env.sh
-yarn install
-yarn serve
-```
 
 - **Run Dashboard in Development mode**
 
@@ -58,4 +41,4 @@ The main testing tool that is used in Dashboard is [Cypress](https://www.cypress
 - [Contribution Guide](./docs/Contribution.md)
 - [Dashboard documentation](https://library.threefold.me/info/manual/#/manual__dashboard_readme)
 - [Pipelines documentation](./docs/workflows.md)
-- [Releasing process](./docs/releasing.md)
+- [Release process](./docs/release.md)

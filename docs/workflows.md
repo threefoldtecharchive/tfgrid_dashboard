@@ -21,12 +21,12 @@ VERSION = "release tag or the first 7 chars of commit hash";
 
 ## [Lint](/.github/workflows/lint.yaml)
 
-On **Pull Request**, and **Push** to development branch: It will check if the code formatted well using Eslint and Prettier
+On **Pull Request**, and **Push** to development branch: It will check if the code formatted well using Eslint and Prettier.
 
 ## [Cypress](/.github/workflows/Cypress.yaml)
 
-On **Workflow Dispath** to development branch: It will check if the code passed the test cases using Cypress
+On **Workflow Dispath** to development branch: Runs daily for the last release and it will check if the code in Explorer passed the test cases using Cypress.
 
 ## [Selenium](/.github/workflows/Selenium.yaml)
 
-On **Workflow Dispath** to development branch: It will check if the code passed the test cases using Selenium
+On **Workflow Dispath** to development branch: Runs daily for the last release and it will check if the code in Portal passed the test cases using Selenium.
