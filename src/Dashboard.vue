@@ -29,7 +29,7 @@
             <v-btn v-else @click="disconnectWallet" color="red"> Disconnect </v-btn>
 
             <v-theme-provider root>
-              <v-card v-if="isAccountSelected()" style="width: max-content">
+              <v-card v-if="filteredAccounts().length" style="width: max-content">
                 <v-card-text
                   style="padding: 10px 0px 10px 30px"
                   v-for="account in filteredAccounts()"
