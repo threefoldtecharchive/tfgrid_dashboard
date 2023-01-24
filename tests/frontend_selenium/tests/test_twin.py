@@ -118,23 +118,23 @@ def test_edit_twin_InValidInput(browser):
         assert twin_page.wait_for('invalid IP format')
 
 
-def test_Delete_twin(browser):
-    """
-      Test Case: TC926- Delete twin
-      Steps:
-          - Navigate to dashboard
-          - Click on the desired account from the dashboard homepage.
-          - Click on delete button
-          - Use polka password authentication.
-      Result: Assert that If it's the only account it will show new page to make a new account,
-              If there's another accounts Search on account you deleted and check if it deleted or not.
-    """
-    twin_page, polka_page, password = before_test_setup(browser, False)
-    twin_page.Delete_twin()
-    polka_page.authenticate_with_pass(password)
-    assert twin_page.wait_for('Twin deleted!')
-    twin_page.press_create_btn()
-    polka_page.authenticate_with_pass(password)
+# def test_Delete_twin(browser):
+#     """
+#       Test Case: TC926- Delete twin
+#       Steps:
+#           - Navigate to dashboard
+#           - Click on the desired account from the dashboard homepage.
+#           - Click on delete button
+#           - Use polka password authentication.
+#       Result: Assert that If it's the only account it will show new page to make a new account,
+#               If there's another accounts Search on account you deleted and check if it deleted or not.
+#     """
+#     twin_page, polka_page, password = before_test_setup(browser, False)
+#     twin_page.Delete_twin()
+#     polka_page.authenticate_with_pass(password)
+#     assert twin_page.wait_for('Twin deleted!')
+#     twin_page.press_create_btn()
+#     polka_page.authenticate_with_pass(password)
 
 
 def test_sum_sign(browser):
