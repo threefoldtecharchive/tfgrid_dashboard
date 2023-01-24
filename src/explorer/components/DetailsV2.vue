@@ -32,7 +32,7 @@
           </v-col>
 
           <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="data.twin">
-            <TwinDetails :twin="data.twin" />
+            <TwinDetails :twin="data.twin" :title="node ? 'Node Twin Details' : 'Farm Twin Details'" />
           </v-col>
 
           <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="node && node.interfaces">

@@ -50,7 +50,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import { checkAddress, transfer } from "../lib/transfer";
 import QrcodeVue from "qrcode.vue";
-import { accountInterface } from "../store/state";
+import { accountInterface, UserCredentials } from "../store/state";
 import { balanceInterface, getBalance } from "../lib/balance";
 @Component({
   name: "TransferView",
@@ -61,6 +61,7 @@ export default class TransferView extends Vue {
   accountsAddresses: any = [];
   balance: any = 0;
   $api: any;
+  $credentials!: UserCredentials;
   address = "";
   ip: any = [];
   accountName: any = "";
@@ -69,14 +70,12 @@ export default class TransferView extends Vue {
   loadingTransfer = false;
   isTransferValid = false;
   mounted() {
-    if (this.$api) {
-      this.address = this.$route.params.accountID;
-      if (this.$route !== undefined) {
-        this.ip = this.$route.query.twinIP;
-        this.id = this.$route.query.twinID;
-        this.accountName = this.$route.query.accountName;
-      }
-      this.balance = +this.$route.query.balanceFree;
+    if (this.$api && this.$credentials) {
+      this.address = this.$credentials.accountAddress;
+      this.ip = this.$credentials.twinIP;
+      this.id = this.$credentials.twinID;
+      this.accountName = this.$credentials.accountName;
+      this.balance = +this.$credentials.balanceFree;
       this.accountsAddresses = this.$store.state.portal.accounts
         .filter((account: accountInterface) => account.address !== this.address)
         .map((account: accountInterface) => `${account.address}`);
@@ -88,10 +87,10 @@ export default class TransferView extends Vue {
     }
   }
   async updated() {
-    this.id = this.$route.query.twinID;
-    this.ip = this.$route.query.twinIP;
-    if (this.$route.query.balanceFree !== this.balance) {
-      this.balance = +this.$route.query.balanceFree;
+    this.id = this.$credentials.twinID;
+    this.ip = this.$credentials.twinIP;
+    if (this.$credentials.balanceFree !== this.balance) {
+      this.balance = +this.$credentials.balanceFree;
     }
   }
   unmounted() {

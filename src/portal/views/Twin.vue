@@ -68,12 +68,14 @@ import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { deleteTwin, getTwin, getTwinID, updateTwinIP } from "../lib/twin";
 import { hex2a } from "@/portal/lib/util";
+import { UserCredentials } from "../store/state";
 @Component({
   name: "Twin",
   components: { WelcomeWindow },
 })
 export default class TwinView extends Vue {
   $api: any;
+  $credentials!: UserCredentials;
   editingTwin = false;
   ipFetched: string | (string | null)[] = "";
   ipEntered = "";
@@ -86,20 +88,16 @@ export default class TwinView extends Vue {
   openDeleteTwinDialog = false;
   loadingEditTwin = false;
   updated() {
-    this.address = this.$route.params.accountID;
-    if (this.$route.query.twinIP && this.$route.query.twinID) {
-      this.id = this.$route.query.twinID;
-      this.accountName = this.$route.query.accountName;
-    }
+    this.address = this.$credentials.accountAddress;
+    this.id = String(this.$credentials.twinID);
+    this.accountName = this.$credentials.accountName;
   }
   mounted() {
-    if (this.$api) {
-      this.address = this.$route.params.accountID;
-      if (this.$route.query.twinIP && this.$route.query.twinID) {
-        this.ipFetched = this.$route.query.twinIP;
-        this.id = this.$route.query.twinID;
-        this.accountName = this.$route.query.accountName;
-      }
+    if (this.$api && this.$credentials) {
+      this.address = this.$credentials.accountAddress;
+      this.ipFetched = this.$credentials.twinIP;
+      this.id = String(this.$credentials.twinID);
+      this.accountName = this.$credentials.accountName;
     } else {
       this.$router.push({
         name: "accounts",

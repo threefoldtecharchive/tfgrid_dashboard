@@ -128,6 +128,7 @@ import { getDepositFee, getWithdrawFee, withdraw } from "../lib/swap";
 import QrcodeVue from "qrcode.vue";
 import { balanceInterface, getBalance } from "../lib/balance";
 import { default as StellarSdk, StrKey } from "stellar-sdk";
+import { UserCredentials } from "../store/state";
 
 @Component({
   name: "TransferView",
@@ -143,6 +144,7 @@ export default class TransferView extends Vue {
   isValidSwap = false;
   items = [{ id: 1, name: "stellar" }];
   balance: any;
+  $credentials!: UserCredentials;
   $api: any;
   address = "";
   ip: any = [];
@@ -158,14 +160,12 @@ export default class TransferView extends Vue {
   targetError = "";
   server = new StellarSdk.Server(config.horizonUrl);
   mounted() {
-    if (this.$api) {
-      this.address = this.$route.params.accountID;
-      if (this.$route !== undefined) {
-        this.ip = this.$route.query.twinIP;
-        this.id = this.$route.query.twinID;
-        this.accountName = this.$route.query.accountName;
-      }
-      this.balance = this.$route.query.balanceFree;
+    if (this.$api && this.$credentials) {
+      this.address = this.$credentials.accountAddress;
+      this.ip = this.$credentials.twinIP;
+      this.id = this.$credentials.twinID;
+      this.accountName = this.$credentials.accountName;
+      this.balance = this.$credentials.balanceFree;
       if (config.bridgeTftAddress) {
         this.depositWallet = config.bridgeTftAddress;
       }
@@ -179,11 +179,9 @@ export default class TransferView extends Vue {
     }
   }
   async updated() {
-    this.id = this.$route.query.twinID;
-    this.ip = this.$route.query.twinIP;
-    if (this.$route.query.balanceFree !== this.balance) {
-      this.balance = this.$route.query.balanceFree;
-    }
+    this.id = this.$credentials.twinID;
+    this.ip = this.$credentials.twinIP;
+    this.balance = this.$credentials.balanceFree;
     this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
     this.target;
     this.amount;

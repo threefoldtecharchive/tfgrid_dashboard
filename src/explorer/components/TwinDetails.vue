@@ -5,7 +5,7 @@
         <v-icon size="40" class="mr-2">mdi-account</v-icon>
       </v-list-item-icon>
       <v-list-item-content>
-        <v-list-item-title style="font-size: 30px"> Twin Details </v-list-item-title>
+        <v-list-item-title style="font-size: 30px"> {{ title }}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
     <v-list>
@@ -44,5 +44,6 @@ import { ITwin } from "../graphql/api";
 })
 export default class TwinDetails extends Vue {
   @Prop({ required: true }) twin!: ITwin;
+  @Prop({ required: true }) title!: string;
 }
 </script>

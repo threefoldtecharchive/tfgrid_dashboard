@@ -123,6 +123,7 @@ export default class Farms extends Vue {
     { text: "CERTIFICATION TYPE", value: "certificationType", align: "center", sortable: false },
     { text: "PRICING POLICY", value: "pricingPolicyId", align: "center", sortable: false },
   ];
+  date: any;
   get farms(): IPaginationData<IFarm> {
     return this.$store.state.explorer.farms;
   }
