@@ -31,7 +31,7 @@
         <NodeActionBtn :nodeId="item.nodeId" :status="item.rentStatus" @node-status-changed="onStatusUpdate()" />
       </template>
       <template v-slot:[`item.discount`]="{ item }">
-        <v-tooltip bottom color="primary" close-delay="700">
+        <v-tooltip bottom color="primary" close-delay="1000">
           <template v-slot:activator="{ on, attrs }">
             <span v-bind="attrs" v-on="on">{{ item.discount }} *</span>
           </template>
