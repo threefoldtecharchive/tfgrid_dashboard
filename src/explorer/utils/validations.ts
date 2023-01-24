@@ -20,7 +20,7 @@ export function inputValidation(value: string, key: string): string {
 
   const countryFields: string[] = ["countryFullName", "country"];
   const specialChars = /[ `!@#$%^&*()+\-=[\]{};':"\\|,.<>/?~]/;
-  const countryRegex = /^[A-Za-z\s]*$/;
+  const countryRegex = /^[A-Za-z][A-Za-z\s]*$/;
 
   let errorMsg = "";
 
