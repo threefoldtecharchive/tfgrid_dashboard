@@ -48,8 +48,7 @@
                 >
               </li>
               <li>
-                You receive up to 60% discount if you keep enough TFT in your wallet to pay for the deployment for an
-                extended amount of time -
+                You're recieving {{ item.applyedDiscount.second }}% discount as per the
                 <a
                   target="_blank"
                   href="https://library.threefold.me/info/threefold/#/tfgrid/grid/pricing?id=discount-levels"
