@@ -93,7 +93,7 @@ export default class TwinView extends Vue {
     this.accountName = this.$credentials.accountName;
   }
   mounted() {
-    if (this.$api && this.$credentials.twinIP !== "" && this.$credentials.twinID != 0) {
+    if (this.$api && this.$credentials && this.$credentials.twinIP !== "" && this.$credentials.twinID != 0) {
       this.address = this.$credentials.accountAddress;
       this.ipFetched = this.$credentials.twinIP;
       this.id = String(this.$credentials.twinID);
