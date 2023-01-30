@@ -9,7 +9,7 @@
 
       <v-tabs-items v-model="activeTab">
         <v-tab-item v-for="tab in tabs" :key="tab.index" :value="tab.query">
-          <NodesTable :tab="tab" :twinId="$route.query.twinID" :trigger="trigger" />
+          <NodesTable :tab="tab" :twinId="twinID" :trigger="trigger" />
         </v-tab-item>
       </v-tabs-items>
     </v-card>
@@ -20,6 +20,7 @@
 import NodesTable from "../components/NodesTable.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { ITab } from "../lib/nodes";
+import { UserCredentials } from "../store/state";
 
 @Component({
   name: "NodesView",
@@ -30,7 +31,8 @@ export default class NodesView extends Vue {
   address = "";
   activeTab = "";
   trigger = "";
-
+  twinID = 0;
+  $credentials!: UserCredentials;
   tabs: ITab[] = [
     {
       label: "Rentable",
@@ -54,8 +56,9 @@ export default class NodesView extends Vue {
 
   async mounted() {
     this.address = this.$route.params.accountID;
-
-    if (!this.$api) {
+    if (this.$api && this.$credentials && this.$credentials.twinID) {
+      this.twinID = this.$credentials.twinID;
+    } else {
       this.$router.push({ name: "accounts", path: "/" });
     }
   }
