@@ -30,10 +30,14 @@ This will generate the production build in the `dist` directory, which can be se
 
 ## Testing
 
-The main testing tool that is used in Dashboard is [Cypress](https://www.cypress.io/).
+The main testing tool that is used in Dashboard is [Selenium](https://www.selenium.dev/) and [Cypress](https://www.cypress.io/).
 
-- [How to run tests](./docs/cypress.md)
-- [How to write new tests](https://docs.cypress.io/guides/end-to-end-testing/writing-your-first-end-to-end-test)
+- How to run tests with:
+  - [Selenium](./docs/selenium.md)
+  - [Cypress](./docs/cypress.md) 
+- How to write new tests with:
+  - [Selenium](https://www.selenium.dev/documentation/webdriver/getting_started/first_script/)
+  - [Cypress(https://docs.cypress.io/guides/end-to-end-testing/writing-your-first-end-to-end-test)
 
 ## Related Documentations
 
