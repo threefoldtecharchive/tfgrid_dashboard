@@ -37,7 +37,7 @@ The main testing tool that is used in Dashboard is [Selenium](https://www.seleni
   - [Cypress](./docs/cypress.md) 
 - How to write new tests with:
   - [Selenium](https://www.selenium.dev/documentation/webdriver/getting_started/first_script/)
-  - [Cypress(https://docs.cypress.io/guides/end-to-end-testing/writing-your-first-end-to-end-test)
+  - [Cypress](https://docs.cypress.io/guides/end-to-end-testing/writing-your-first-end-to-end-test)
 
 ## Related Documentations
 
