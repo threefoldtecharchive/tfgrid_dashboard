@@ -30,12 +30,16 @@ This will generate the production build in the `dist` directory, which can be se
 
 ## Testing
 
-The main testing tool that is used in Dashboard is [Selenium](https://www.selenium.dev/) and [Cypress](https://www.cypress.io/).
+- The main testing tools used in Dashboard are 
+  - [Selenium](https://www.selenium.dev/) which is responsible for testing the functionality of the portal pages.
+  - [Cypress](https://www.cypress.io/) which is responsible for testing the functionality of the explorer pages.
 
-- How to run tests with:
+- How to run tests
   - [Selenium](./docs/selenium.md)
-  - [Cypress](./docs/cypress.md) 
-- How to write new tests with:
+  - [Cypress](./docs/Cypress.md) 
+- How to write new tests
+
+  Since all necessary files, such as configuration, base and utils files have already been created, creating additional tests is simple. All you need to do is create a new file with the same naming convention as the others and follow the instructions listed below, depending on the tool you plan to use. 
   - [Selenium](https://www.selenium.dev/documentation/webdriver/getting_started/first_script/)
   - [Cypress](https://docs.cypress.io/guides/end-to-end-testing/writing-your-first-end-to-end-test)
 
