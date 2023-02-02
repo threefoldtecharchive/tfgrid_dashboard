@@ -6,15 +6,7 @@ To create a new release there are some steps is required:
 
 In [charts.yaml](../charts/tfgrid-dashboard/Chart.yaml) replace the value of `appVersion` with the new release tag.
 
-> NOTE: We use prereleases for Qanet and Testnet and releases for Mainnet.
-
-### Tags type based on network
-
-| tag | network | e.g       |
-| --- | ------- | --------- |
-| --  | mainnet | 1.0.0     |
-| qa  | qanet   | 1.0.0-qa1 |
-| rc  | testnet | 1.0.0-rc1 |
+> NOTE: You can release or prerelease on ANY network. No tags are needed for releases & use x.x.x-rcx for prereleases.
 
 ```yaml
 appVersion: "x.x.x"
