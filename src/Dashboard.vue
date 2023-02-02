@@ -11,7 +11,7 @@
         <v-spacer></v-spacer>
         <div class="d-flex">
           <FundsCard
-            v-if="filteredAccounts().length"
+            v-if="getCredentials() && getCredentials().twinID != 0"
             :balanceFree.sync="balanceFree"
             :balanceReserved.sync="balanceReserved"
             @update:balanceFree="$credentials.balanceFree = $event"
@@ -116,10 +116,10 @@
             </template>
 
             <div v-if="route.prefix === '/'">
-              <template v-if="!filteredAccounts().length">
+              <template v-if="!(getCredentials() && getCredentials().twinID != 0)">
                 <div class="mt-4">
                   <v-alert color="rgb(25, 130, 177)" dense type="info">
-                    You should select an account to enable the portal functionalities.
+                    You should <strong>select/create</strong> an account to enable the portal functionalities.
                   </v-alert>
                 </div>
               </template>
@@ -361,12 +361,28 @@ export default class Dashboard extends Vue {
       this.$credentials.twinIP = this.twin.ip;
       this.$credentials.balanceFree = this.balance.free;
       this.$credentials.balanceReserved = this.balance.reserved;
+    } else {
+      account.active = false;
+      this.$credentials.accountAddress = "";
+      this.$credentials.twinID = 0;
+      this.$credentials.twinIP = "";
+      this.$credentials.balanceFree = 0;
+      this.$credentials.balanceReserved = 0;
     }
+    return this.$credentials;
+  }
+
+  public getCredentials() {
     return this.$credentials;
   }
 
   public redirectToHomePage() {
     this.accounts.map(account => (account.active = false));
+    this.$credentials.accountAddress = "";
+    this.$credentials.twinID = 0;
+    this.$credentials.twinIP = "";
+    this.$credentials.balanceFree = 0;
+    this.$credentials.balanceReserved = 0;
     this.routes[0].active = false;
     if (this.$route.path !== "/") {
       this.$router.push({
