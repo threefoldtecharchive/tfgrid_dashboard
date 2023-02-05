@@ -64,16 +64,17 @@ export default class TransferView extends Vue {
   $credentials!: UserCredentials;
   address = "";
   ip: any = [];
+  relay: any = [];
   accountName: any = "";
   id: any = [];
   amount = 0;
   loadingTransfer = false;
   isTransferValid = false;
   mounted() {
-    if (this.$api && this.$credentials) {
+    if (this.$api && this.$credentials && this.$credentials.relayAddress) {
       this.address = this.$credentials.accountAddress;
-      this.ip = this.$credentials.twinIP;
       this.id = this.$credentials.twinID;
+      this.relay = this.$credentials.relayAddress;
       this.accountName = this.$credentials.accountName;
       this.balance = +this.$credentials.balanceFree;
       this.accountsAddresses = this.$store.state.portal.accounts
@@ -88,7 +89,6 @@ export default class TransferView extends Vue {
   }
   async updated() {
     this.id = this.$credentials.twinID;
-    this.ip = this.$credentials.twinIP;
     if (this.$credentials.balanceFree !== this.balance) {
       this.balance = +this.$credentials.balanceFree;
     }

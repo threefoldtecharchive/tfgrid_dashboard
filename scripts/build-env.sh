@@ -28,6 +28,7 @@ TFT_ASSET_ISSUER=GBOVQKJYHXRR3DX6NOX2RRYFRCUMSADGDESTDNBDS6CDVLGVESRTAC47
 BRIDGE_TFT_ADDRESS=GBNOTAYUMXVO5QDYWYO2SOCOYIJ3XFIP65GKOQN7H65ZZSO6BK4SLWSC
 STELLAR_HORIZON_URL="https://horizon.stellar.org"
 PLAYGROUND_URL="https://play.grid.tf"
+RELAY=" relay.grid.tf"
 
 GRAVITY_CONTRACT_ADDRESS="0xBF8C35Ad93366E159C0F0B75F1a4f4ad6Ff80811"
 TFT_TOKEN_CONTRACT_ADDRESS="0xDC5a9199e2604A6BF4A99A583034506AE53F4B34"
@@ -52,6 +53,7 @@ case $GQL_URL in
     EXPLORER_URL="https://explorer.dev.grid.tf/"
     STELLAR_HORIZON_URL="https://horizon-testnet.stellar.org"
     PLAYGROUND_URL="https://play.dev.grid.tf"
+    RELAY=" relay.dev.grid.tf"
     ;;
   *"test"*)
     NETWORK="test"
@@ -64,6 +66,7 @@ case $GQL_URL in
     EXPLORER_URL="https://explorer.test.grid.tf/"
     STELLAR_HORIZON_URL="https://horizon.stellar.org"
     PLAYGROUND_URL="https://play.test.grid.tf"
+    RELAY=" relay.test.grid.tf"
     ;;
   *"qa"*)
     NETWORK="qa"
@@ -76,6 +79,7 @@ case $GQL_URL in
     EXPLORER_URL="https://explorer.qa.grid.tf/"
     STELLAR_HORIZON_URL="https://horizon-testnet.stellar.org"
     PLAYGROUND_URL="https://play.qa.grid.tf"
+    RELAY=" relay.qa.grid.tf"
     ;;
 esac
 
@@ -102,6 +106,7 @@ window.configs = {
   APP_GAS_PRICE: '$GAS_PRICE',
   APP_CHAIN_ID: '$CHAIN_ID',
   PLAYGROUND_URL: '$PLAYGROUND_URL',
+  RELAY: '$RELAY',
 };
 "
 

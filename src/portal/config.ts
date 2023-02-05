@@ -9,5 +9,6 @@ const config = {
   gridproxyUrl: process.env.APP_GRIDPROXY_URL || window.configs.APP_GRIDPROXY_URL,
   network: process.env.APP_NETWORK || window.configs.APP_NETWORK,
   version: process.env.APP_VERSION || window.configs.APP_VERSION,
+  relay: window.configs.RELAY,
 };
 export default config;

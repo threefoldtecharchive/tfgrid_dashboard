@@ -27,9 +27,9 @@
 
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title> IP </v-list-item-title>
+          <v-list-item-title> RELAY </v-list-item-title>
         </v-list-item-content>
-        {{ twin.ip }}
+        {{ twin.relay }}
       </v-list-item>
       <v-divider />
     </v-list>

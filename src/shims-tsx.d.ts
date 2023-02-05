@@ -11,7 +11,7 @@ interface AppConfigs {
   APP_GRIDPROXY_URL: string;
   APP_NETWORK: string;
   APP_VERSION: string;
-
+  RELAY: string;
   APP_GRAVITY_CONTRACT_ADDRESS: string;
   APP_TFT_TOKEN_CONTRACT_ADDRESS: string;
   APP_BRIDGE_FEES: string;

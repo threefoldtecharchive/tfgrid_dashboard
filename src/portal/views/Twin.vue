@@ -14,9 +14,9 @@
             <div class="text-h2 pa-12">
               <v-form v-model="isValidTwinIP">
                 <v-text-field
-                  v-model="ipEntered"
-                  label="Twin IP"
-                  :rules="[() => !!ipEntered || 'This field is required', () => ipcheck() || 'invalid IP format']"
+                  v-model="relay"
+                  label="Twin Relay"
+                  :rules="[() => !!relay || 'This field is required']"
                 ></v-text-field>
               </v-form>
             </div>
@@ -38,9 +38,9 @@
         <v-list>
           <v-list-item> ID: {{ id }} </v-list-item>
 
-          <v-list-item> IP: {{ decodeHex(`${ipFetched}`) }} </v-list-item>
-
           <v-list-item> ADDRESS: {{ address }} </v-list-item>
+
+          <v-list-item> RELAY: {{ relay }} </v-list-item>
         </v-list>
         <v-card-actions class="justify-end">
           <v-btn @click="editTwin" color="primary">Edit</v-btn>
@@ -77,8 +77,7 @@ export default class TwinView extends Vue {
   $api: any;
   $credentials!: UserCredentials;
   editingTwin = false;
-  ipFetched: string | (string | null)[] = "";
-  ipEntered = "";
+  relay = "";
   id: string | (string | null)[] = "";
   address = "";
   twin: { ip: string } = { ip: "" };
@@ -93,9 +92,9 @@ export default class TwinView extends Vue {
     this.accountName = this.$credentials.accountName;
   }
   mounted() {
-    if (this.$api && this.$credentials && this.$credentials.twinIP !== "" && this.$credentials.twinID != 0) {
+    if (this.$api && this.$credentials && this.$credentials.relayAddress !== "" && this.$credentials.twinID != 0) {
       this.address = this.$credentials.accountAddress;
-      this.ipFetched = this.$credentials.twinIP;
+      this.relay = this.$credentials.relayAddress;
       this.id = String(this.$credentials.twinID);
       this.accountName = this.$credentials.accountName;
     } else {
@@ -107,28 +106,6 @@ export default class TwinView extends Vue {
   }
   unmounted() {
     this.address = "";
-  }
-  ipcheck() {
-    const IPv4SegmentFormat = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
-    const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
-    const IPv6SegmentFormat = "(?:[0-9a-fA-F]{1,4})";
-
-    const ip6Regex = new RegExp(
-      "^(" +
-        `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
-        `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
-        `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
-        `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
-        `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
-        `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
-        `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
-        `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
-        ")([0-9a-fA-F]{1})?$",
-    );
-    if (ip6Regex.test(this.ipEntered)) {
-      return true;
-    }
-    return false;
   }
   decodeHex(input: string) {
     return hex2a(input);
@@ -142,7 +119,7 @@ export default class TwinView extends Vue {
     updateTwinIP(
       this.$route.params.accountID,
       this.$api,
-      `${this.ipEntered}`,
+      `${this.relay}`,
       (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         if (res instanceof Error) {
           console.log(res);
@@ -168,13 +145,12 @@ export default class TwinView extends Vue {
                 this.$toasted.show("Twin updated!");
                 this.id = await getTwinID(this.$api, this.$route.params.accountID);
                 this.twin = await getTwin(this.$api, parseFloat(`${this.id}`));
-                this.ipFetched = this.twin.ip;
                 this.editingTwin = false;
-                this.ipEntered = "";
+                this.relay = this.$credentials.relayAddress;
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Twin creation/update failed!");
                 this.loadingEditTwin = false;
-                this.ipEntered = "";
+                this.relay = this.$credentials.relayAddress;
               }
             });
           }
@@ -184,7 +160,7 @@ export default class TwinView extends Vue {
       console.log(err.message);
       this.$toasted.show("Twin creation/update failed!");
       this.loadingEditTwin = false;
-      this.ipEntered = "";
+      this.relay = this.$credentials.relayAddress;
     });
   }
   openDeleteTwin() {

@@ -239,7 +239,7 @@ export default class Dashboard extends Vue {
   twinID = 0;
   $api: any;
   $credentials!: UserCredentials;
-  twin: { id: string; ip: string } = { id: "", ip: "" };
+  twin: { id: string; relay: string; pk: string } = { id: "", relay: "", pk: "" };
   balance: balanceInterface = { free: 0, reserved: 0 };
   accounts: accountInterface[] = [];
   loadingAPI = true;
@@ -257,6 +257,8 @@ export default class Dashboard extends Vue {
   }
   async mounted() {
     this.$store.dispatch("portal/subscribeAccounts");
+    console.log("relay", config.relay);
+
     if (this.$credentials) {
       this.balanceFree = String(this.$credentials.balanceFree);
       this.balanceReserved = String(this.$credentials.balanceReserved);
@@ -268,9 +270,9 @@ export default class Dashboard extends Vue {
         accountAddress: "",
         accountName: "",
         twinID: 0,
-        twinIP: "",
         balanceFree: 0,
         balanceReserved: 0,
+        relay: config.relay,
       };
       console.log(`connecting to api`);
       this.loadingAPI = false;
@@ -358,14 +360,17 @@ export default class Dashboard extends Vue {
       this.twin = await getTwin(this.$api, this.twinID);
       this.$credentials.accountAddress = account.address;
       this.$credentials.twinID = this.twinID;
-      this.$credentials.twinIP = this.twin.ip;
+      this.$credentials.relayAddress = config.relay;
+      this.$credentials.publicKey = this.twin.pk;
       this.$credentials.balanceFree = this.balance.free;
       this.$credentials.balanceReserved = this.balance.reserved;
+      console.log("this.twin", this.twin);
     } else {
       account.active = false;
       this.$credentials.accountAddress = "";
       this.$credentials.twinID = 0;
-      this.$credentials.twinIP = "";
+      this.$credentials.relayAddress = "";
+      this.$credentials.publicKey = "";
       this.$credentials.balanceFree = 0;
       this.$credentials.balanceReserved = 0;
     }
@@ -380,7 +385,7 @@ export default class Dashboard extends Vue {
     this.accounts.map(account => (account.active = false));
     this.$credentials.accountAddress = "";
     this.$credentials.twinID = 0;
-    this.$credentials.twinIP = "";
+    this.$credentials.relayAddress = "";
     this.$credentials.balanceFree = 0;
     this.$credentials.balanceReserved = 0;
     this.routes[0].active = false;

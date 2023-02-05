@@ -150,6 +150,8 @@ export interface ITwin {
   twinId: number;
   accountId: string;
   ip: string;
+  relay: string;
+  pk: string;
 }
 
 export interface IPublicConfig {
