@@ -6,7 +6,10 @@ export async function createTwin(
   api: {
     tx: {
       tfgridModule: {
-        createTwin: (arg0: string) => {
+        createTwin: (
+          arg0: string,
+          arg1: string,
+        ) => {
           (): any;
           new (): any;
           signAndSend: { (arg0: string, arg1: { signer: Signer }, arg2: any): any; new (): any };
@@ -14,11 +17,12 @@ export async function createTwin(
       };
     };
   },
-  ip: string,
+  relay: string,
+  pk: string,
   callback: any,
 ) {
   const injector = await web3FromAddress(address);
-  return api.tx.tfgridModule.createTwin(ip).signAndSend(address, { signer: injector.signer }, callback);
+  return api.tx.tfgridModule.createTwin(relay, pk).signAndSend(address, { signer: injector.signer }, callback);
 }
 export async function getTwin(api: { query: { tfgridModule: { twins: (arg0: number) => any } } }, id: number) {
   const twin = await api.query.tfgridModule.twins(id);
@@ -32,12 +36,15 @@ export async function getTwinID(
   console.log;
   return twin.toJSON();
 }
-export async function updateTwinIP(
+export async function updateRelay(
   address: string,
   api: {
     tx: {
       tfgridModule: {
-        updateTwin: (arg0: string) => {
+        updateTwin: (
+          arg0: string,
+          arg1: string,
+        ) => {
           (): any;
           new (): any;
           signAndSend: { (arg0: string, arg1: { signer: Signer }, arg2: any, arg3: any): any; new (): any };
@@ -45,12 +52,13 @@ export async function updateTwinIP(
       };
     };
   },
-  ip: string,
+  relay: string,
+  pk: string,
   callback: any,
   errc?: any,
 ) {
   const injector = await web3FromAddress(address);
-  return api.tx.tfgridModule.updateTwin(ip).signAndSend(address, { signer: injector.signer }, callback, errc);
+  return api.tx.tfgridModule.updateTwin(relay, pk).signAndSend(address, { signer: injector.signer }, callback, errc);
 }
 export async function deleteTwin(
   address: string,

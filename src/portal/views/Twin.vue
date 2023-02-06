@@ -1,3 +1,4 @@
+<!-- eslint-disable no-dupe-class-members -->
 <template>
   <v-container v-if="$store.state.portal.accounts.length === 0">
     <v-card>
@@ -10,22 +11,21 @@
       <v-dialog transition="dialog-bottom-transition" max-width="600" v-model="editingTwin">
         <v-card>
           <v-toolbar color="primary" dark>Edit Twin</v-toolbar>
-          <v-card-text>
-            <div class="text-h2 pa-12">
-              <v-form v-model="isValidTwinIP">
-                <v-text-field
-                  v-model="relay"
-                  label="Twin Relay"
-                  :rules="[() => !!relay || 'This field is required']"
-                ></v-text-field>
-              </v-form>
-            </div>
-          </v-card-text>
-          <v-card-actions class="justify-end">
+          <div class="text-h2 pa-10">
+            <v-form>
+              <v-select
+                :items="items"
+                label="Please select a relay:"
+                v-model="selectedItem.item_id"
+                item-text="name"
+                item-value="id"
+              >
+              </v-select>
+            </v-form>
+          </div>
+          <v-card-actions class="justify-end pa-5">
             <v-btn @click="editingTwin = false" class="grey lighten-2 black--text">Close</v-btn>
-            <v-btn class="primary white--text" @click="updateTwin" :loading="loadingEditTwin" :disabled="!isValidTwinIP"
-              >Submit</v-btn
-            >
+            <v-btn class="primary white--text" @click="updateTwin" :loading="loadingEditTwin">Submit</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -66,8 +66,7 @@
 <script lang="ts">
 import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { Component, Vue } from "vue-property-decorator";
-import { deleteTwin, getTwin, getTwinID, updateTwinIP } from "../lib/twin";
-import { hex2a } from "@/portal/lib/util";
+import { deleteTwin, getTwin, getTwinID, updateRelay } from "../lib/twin";
 import { UserCredentials } from "../store/state";
 @Component({
   name: "Twin",
@@ -78,18 +77,31 @@ export default class TwinView extends Vue {
   $credentials!: UserCredentials;
   editingTwin = false;
   relay = "";
+  pk = "";
   id: string | (string | null)[] = "";
   address = "";
-  twin: { ip: string } = { ip: "" };
+  twin: { relay: string } = { relay: "" };
   accountName: string | (string | null)[] = "";
   isValidTwinIP = false;
   loadingDeleteTwin = false;
   openDeleteTwinDialog = false;
   loadingEditTwin = false;
+  items = [
+    { id: 1, name: "relay.dev.grid.tf" },
+    { id: 2, name: "relay.qa.grid.tf" },
+    { id: 3, name: "relay.test.grid.tf" },
+    { id: 4, name: "relay.grid.tf" },
+  ];
+  selectedItem = {
+    item_id: 1,
+  };
+  selectedName = "";
   updated() {
     this.address = this.$credentials.accountAddress;
     this.id = String(this.$credentials.twinID);
     this.accountName = this.$credentials.accountName;
+    this.relay = this.$credentials.relayAddress;
+    this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
   }
   mounted() {
     if (this.$api && this.$credentials && this.$credentials.relayAddress !== "" && this.$credentials.twinID != 0) {
@@ -97,6 +109,7 @@ export default class TwinView extends Vue {
       this.relay = this.$credentials.relayAddress;
       this.id = String(this.$credentials.twinID);
       this.accountName = this.$credentials.accountName;
+      this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
     } else {
       this.$router.push({
         name: "accounts",
@@ -107,19 +120,17 @@ export default class TwinView extends Vue {
   unmounted() {
     this.address = "";
   }
-  decodeHex(input: string) {
-    return hex2a(input);
-  }
   public editTwin() {
     console.log("editing a twin");
     this.editingTwin = true;
   }
   public updateTwin() {
     this.loadingEditTwin = true;
-    updateTwinIP(
+    updateRelay(
       this.$route.params.accountID,
       this.$api,
-      `${this.relay}`,
+      this.selectedName,
+      this.pk,
       (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         if (res instanceof Error) {
           console.log(res);
@@ -146,7 +157,7 @@ export default class TwinView extends Vue {
                 this.id = await getTwinID(this.$api, this.$route.params.accountID);
                 this.twin = await getTwin(this.$api, parseFloat(`${this.id}`));
                 this.editingTwin = false;
-                this.relay = this.$credentials.relayAddress;
+                this.$credentials.relayAddress = this.selectedName;
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Twin creation/update failed!");
                 this.loadingEditTwin = false;
