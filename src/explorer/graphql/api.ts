@@ -149,7 +149,6 @@ export interface ITwin {
   gridVersion: number;
   twinId: number;
   accountId: string;
-  ip: string;
   relay: string;
   pk: string;
 }

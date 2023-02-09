@@ -258,8 +258,6 @@ export default class Dashboard extends Vue {
   }
   async mounted() {
     this.$store.dispatch("portal/subscribeAccounts");
-    console.log("relay", config.relay);
-
     if (this.$credentials) {
       this.balanceFree = String(this.$credentials.balanceFree);
       this.balanceReserved = String(this.$credentials.balanceReserved);
