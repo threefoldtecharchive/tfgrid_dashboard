@@ -32,7 +32,7 @@
     <v-card class="text-center primary white--text py-5 my-3">
       <h2>
         Welcome aboard {{ $route.query.accountName }}, <br />
-        Let’s get you connected to the TF Grid!
+        Let’s get you connected to the TF Grid by creating a twin!
       </h2>
     </v-card>
 
@@ -79,6 +79,8 @@ import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { activateThroughActivationService } from "../lib/activation";
 import Twin from "./Twin.vue";
 import { UserCredentials } from "../store/state";
+import config from "@/portal/config";
+
 @Component({
   name: "AccountView",
   components: { WelcomeWindow, Twin },
@@ -97,12 +99,7 @@ export default class AccountView extends Vue {
   loadingTC = true;
   loadingTwinCreate = false;
   loadingAcceptedTC = false;
-  items = [
-    { id: 1, name: "relay.dev.grid.tf" },
-    { id: 2, name: "relay.qa.grid.tf" },
-    { id: 3, name: "relay.test.grid.tf" },
-    { id: 4, name: "relay.grid.tf" },
-  ];
+  items = [{ id: 1, name: config.network == "main" ? `relay.grid.tf` : `relay.${config.network}.grid.tf` }];
   selectedItem = {
     item_id: 1,
   };
@@ -115,7 +112,6 @@ export default class AccountView extends Vue {
       this.address = this.$route.params.accountID;
       this.balance = await getBalance(this.$api, this.address);
       this.twinID = await getTwinID(this.$api, this.address);
-      // this.$credentials.relayAddress = this.selectedName;
       if (this.twinID) {
         this.twinCreated = true;
         this.twin = await getTwin(this.$api, this.twinID);

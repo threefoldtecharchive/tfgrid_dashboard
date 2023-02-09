@@ -33,7 +33,6 @@ export async function getTwinID(
   accountID: string,
 ) {
   const twin = await api.query.tfgridModule.twinIdByAccountID(accountID);
-  console.log;
   return twin.toJSON();
 }
 export async function updateRelay(

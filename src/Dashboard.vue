@@ -203,6 +203,7 @@ import { accountInterface, UserCredentials } from "./portal/store/state";
 import WelcomeWindow from "./portal/components/WelcomeWindow.vue";
 import FundsCard from "./portal/components/FundsCard.vue";
 import config from "@/portal/config";
+import { hex2a } from "@/portal/lib/util";
 
 interface SidenavItem {
   label: string;
@@ -272,7 +273,7 @@ export default class Dashboard extends Vue {
         twinID: 0,
         balanceFree: 0,
         balanceReserved: 0,
-        relay: config.relay,
+        relay: "",
       };
       console.log(`connecting to api`);
       this.loadingAPI = false;
@@ -352,6 +353,9 @@ export default class Dashboard extends Vue {
     }
   }
 
+  decodeHex(input: string) {
+    return hex2a(input);
+  }
   // UserCredentials
   public async setCredentials(account: accountInterface) {
     this.twinID = await getTwinID(this.$api, account.address);
@@ -360,7 +364,7 @@ export default class Dashboard extends Vue {
       this.twin = await getTwin(this.$api, this.twinID);
       this.$credentials.accountAddress = account.address;
       this.$credentials.twinID = this.twinID;
-      this.$credentials.relayAddress = config.relay;
+      this.$credentials.relayAddress = this.twin.relay ? this.decodeHex(this.twin.relay) : "null";
       this.$credentials.publicKey = this.twin.pk;
       this.$credentials.balanceFree = this.balance.free;
       this.$credentials.balanceReserved = this.balance.reserved;
