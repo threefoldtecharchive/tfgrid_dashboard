@@ -20,4 +20,5 @@ window.configs = {
   APP_GAS_PRICE: "80TFT",
   APP_CHAIN_ID: "threefold-hub-testnet",
   PLAYGROUND_URL: "https://play.dev.grid.tf",
+  RELAY: "relay.dev.grid.tf",
 };

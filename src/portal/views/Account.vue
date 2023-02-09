@@ -32,39 +32,38 @@
     <v-card class="text-center primary white--text py-5 my-3">
       <h2>
         Welcome aboard {{ $route.query.accountName }}, <br />
-        Let’s get you connected to the TF Grid !
+        Let’s get you connected to the TF Grid by creating a twin!
       </h2>
     </v-card>
 
     <v-container fluid class="px-0">
       <v-card class="pa-5 text-center" height="175">
-        <h3>Planetary using Yggdrasil IPV6</h3>
-        <v-form v-model="isValidIPV6">
-          <v-text-field
-            label="Twin IP"
-            v-model="ip"
-            :error-messages="ipErrorMessage"
-            :rules="[() => !!ip || 'This field is required', () => ipcheck() || 'invalid IP']"
+        <h3>Choose a Relay Address</h3>
+        <v-form>
+          <v-select
+            :items="items"
+            label="Please select a relay:"
+            v-model="selectedItem.item_id"
+            item-text="name"
+            item-value="id"
           >
-          </v-text-field>
+          </v-select>
         </v-form>
-        <v-btn class="primary" :loading="loadingTwinCreate" @click="createTwinFunc(ip)" :disabled="!isValidIPV6"
-          >create</v-btn
-        >
+        <v-btn class="primary" :loading="loadingTwinCreate" @click="createTwinFunc(selectedName, pk)">create</v-btn>
       </v-card>
 
-      <v-row>
+      <!-- <v-row>
         <v-col>
           <v-card class="pa-5 text-center d-flex align-center justify-center">
             <v-btn
               class="primary"
               :target="'blank'"
               :href="'https://library.threefold.me/info/manual/#/manual__yggdrasil_client'"
-              >why do i even need a twin?</v-btn
+              >Why do I even need a twin?</v-btn
             >
           </v-card>
         </v-col>
-      </v-row>
+      </v-row> -->
     </v-container>
   </v-container>
 </template>
@@ -79,6 +78,9 @@ import { acceptTermsAndCondition, userAcceptedTermsAndConditions } from "../lib/
 import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { activateThroughActivationService } from "../lib/activation";
 import Twin from "./Twin.vue";
+import { UserCredentials } from "../store/state";
+import config from "@/portal/config";
+
 @Component({
   name: "AccountView",
   components: { WelcomeWindow, Twin },
@@ -90,17 +92,23 @@ export default class AccountView extends Vue {
   twinCreated = false;
   address = "";
   $api: any;
+  $credentials!: UserCredentials;
   balance: balanceInterface = { free: 0, reserved: 0 };
   twinID = 0;
-  ip = "::1";
-  twin!: { id: any; ip: any };
+  twin!: { id: any; relay: any };
   loadingTC = true;
   loadingTwinCreate = false;
-  ipErrorMessage = "";
   loadingAcceptedTC = false;
-  isValidIPV6 = false;
+  items = [{ id: 1, name: config.network == "main" ? `relay.grid.tf` : `relay.${config.network}.grid.tf` }];
+  selectedItem = {
+    item_id: 1,
+  };
+  selectedName = "";
+  pk = "";
+
   async updated() {
-    if (this.$api) {
+    if (this.$api && this.$credentials) {
+      this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
       this.address = this.$route.params.accountID;
       this.balance = await getBalance(this.$api, this.address);
       this.twinID = await getTwinID(this.$api, this.address);
@@ -114,7 +122,6 @@ export default class AccountView extends Vue {
           query: {
             accountName: `${this.$route.query.accountName}`,
             twinID: this.twin.id,
-            twinIP: this.twin.ip,
             balanceFree: `${this.balance.free}`,
             balanceReserved: `${this.balance.reserved}`,
           },
@@ -134,6 +141,7 @@ export default class AccountView extends Vue {
       this.openDialog = !(await userAcceptedTermsAndConditions(this.$api, this.address));
       let document = await axios.get(this.documentLink);
       this.documentHash = md5(document.data);
+      this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
     } else {
       this.$toasted.show(`Can't connect to Polkadot API right now, please refresh the page or try again later`);
       this.$router.push({
@@ -147,37 +155,14 @@ export default class AccountView extends Vue {
     this.balance = { free: 0, reserved: 0 };
     this.twinID = 0;
   }
-  ipcheck() {
-    const IPv4SegmentFormat = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
-    const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
-    const IPv6SegmentFormat = "(?:[0-9a-fA-F]{1,4})";
 
-    const ip6Regex = new RegExp(
-      "^(" +
-        `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
-        `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
-        `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
-        `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
-        `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
-        `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
-        `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
-        `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
-        ")([0-9a-fA-F]{1})?$",
-    );
-    if (ip6Regex.test(this.ip)) {
-      this.ipErrorMessage = "";
-      return true;
-    } else {
-      this.ipErrorMessage = "IP address is not formatted correctly";
-      return false;
-    }
-  }
-  public async createTwinFunc(ip: string) {
+  public async createTwinFunc(relay: string, pk: string) {
     this.loadingTwinCreate = true;
     await createTwin(
       this.address,
       this.$api,
-      ip,
+      relay,
+      pk,
       (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         console.log(res);
         if (res instanceof Error) {
@@ -201,6 +186,7 @@ export default class AccountView extends Vue {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
               if (section === "tfgridModule" && method === "TwinStored") {
                 this.loadingTwinCreate = false;
+                this.$credentials.relayAddress = relay;
                 this.$toasted.show("Twin created!");
                 this.twinCreated = true;
               } else if (section === "system" && method === "ExtrinsicFailed") {

@@ -147,7 +147,7 @@ export default class TransferView extends Vue {
   $credentials!: UserCredentials;
   $api: any;
   address = "";
-  ip: any = [];
+  relay: any = [];
   accountName: any;
   id: any = [];
   depositWallet = "";
@@ -162,7 +162,7 @@ export default class TransferView extends Vue {
   mounted() {
     if (this.$api && this.$credentials) {
       this.address = this.$credentials.accountAddress;
-      this.ip = this.$credentials.twinIP;
+      this.relay = this.$credentials.relayAddress;
       this.id = this.$credentials.twinID;
       this.accountName = this.$credentials.accountName;
       this.balance = this.$credentials.balanceFree;
@@ -180,7 +180,7 @@ export default class TransferView extends Vue {
   }
   async updated() {
     this.id = this.$credentials.twinID;
-    this.ip = this.$credentials.twinIP;
+    this.relay = this.$credentials.relayAddress;
     this.balance = this.$credentials.balanceFree;
     this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
     this.target;

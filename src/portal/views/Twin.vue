@@ -1,3 +1,4 @@
+<!-- eslint-disable no-dupe-class-members -->
 <template>
   <v-container v-if="$store.state.portal.accounts.length === 0">
     <v-card>
@@ -10,37 +11,45 @@
       <v-dialog transition="dialog-bottom-transition" max-width="600" v-model="editingTwin">
         <v-card>
           <v-toolbar color="primary" dark>Edit Twin</v-toolbar>
-          <v-card-text>
-            <div class="text-h2 pa-12">
-              <v-form v-model="isValidTwinIP">
-                <v-text-field
-                  v-model="ipEntered"
-                  label="Twin IP"
-                  :rules="[() => !!ipEntered || 'This field is required', () => ipcheck() || 'invalid IP format']"
-                ></v-text-field>
-              </v-form>
-            </div>
-          </v-card-text>
-          <v-card-actions class="justify-end">
-            <v-btn @click="editingTwin = false" class="grey lighten-2 black--text">Close</v-btn>
-            <v-btn class="primary white--text" @click="updateTwin" :loading="loadingEditTwin" :disabled="!isValidTwinIP"
-              >Submit</v-btn
+          <div class="text-h2 pa-10">
+            <v-form>
+              <v-select
+                :items="items"
+                label="Please select a relay:"
+                v-model="selectedItem.item_id"
+                item-text="name"
+                item-value="id"
+              >
+              </v-select>
+            </v-form>
+          </div>
+          <v-card-actions class="justify-end pa-5">
+            <v-btn @click="editingTwin = false" :disabled="loadingEditTwin" class="grey lighten-2 black--text"
+              >Close</v-btn
             >
+            <v-btn class="primary white--text" @click="updateTwin" :loading="loadingEditTwin">Submit</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </v-container>
     <v-container>
+      <template v-if="twin.relay == 'null'">
+        <div class="mt-4">
+          <v-alert color="rgb(25, 130, 177)" dense type="info">
+            You should <strong>edit</strong> your twin details to change your relay
+          </v-alert>
+        </div>
+      </template>
       <v-card color="primary white--text" class="my-3 pa-3 text-center">
         <h2>Twin Details</h2>
       </v-card>
       <v-card class="my-3 pa-3 text-center">
         <v-list>
-          <v-list-item> ID: {{ id }} </v-list-item>
+          <v-list-item> ID: {{ twin.id }} </v-list-item>
 
-          <v-list-item> IP: {{ decodeHex(`${ipFetched}`) }} </v-list-item>
+          <v-list-item> Address: {{ twin.address }} </v-list-item>
 
-          <v-list-item> ADDRESS: {{ address }} </v-list-item>
+          <v-list-item> Relay: {{ twin.relay }} </v-list-item>
         </v-list>
         <v-card-actions class="justify-end">
           <v-btn @click="editTwin" color="primary">Edit</v-btn>
@@ -66,9 +75,10 @@
 <script lang="ts">
 import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { Component, Vue } from "vue-property-decorator";
-import { deleteTwin, getTwin, getTwinID, updateTwinIP } from "../lib/twin";
-import { hex2a } from "@/portal/lib/util";
+import { deleteTwin, getTwin, getTwinID, updateRelay } from "../lib/twin";
 import { UserCredentials } from "../store/state";
+import config from "@/portal/config";
+
 @Component({
   name: "Twin",
   components: { WelcomeWindow },
@@ -77,27 +87,36 @@ export default class TwinView extends Vue {
   $api: any;
   $credentials!: UserCredentials;
   editingTwin = false;
-  ipFetched: string | (string | null)[] = "";
-  ipEntered = "";
-  id: string | (string | null)[] = "";
-  address = "";
-  twin: { ip: string } = { ip: "" };
+  twin: { relay: string | (string | null)[]; pk: string; address: string; id: string | (string | null)[] } = {
+    relay: "",
+    pk: "",
+    id: "",
+    address: "",
+  };
   accountName: string | (string | null)[] = "";
   isValidTwinIP = false;
   loadingDeleteTwin = false;
   openDeleteTwinDialog = false;
   loadingEditTwin = false;
+  items = [{ id: 1, name: config.network == "main" ? `relay.grid.tf` : `relay.${config.network}.grid.tf` }];
+  selectedItem = {
+    item_id: 1,
+  };
+  selectedName = "";
   updated() {
-    this.address = this.$credentials.accountAddress;
-    this.id = String(this.$credentials.twinID);
+    this.twin.address = this.$credentials.accountAddress;
+    this.twin.id = String(this.$credentials.twinID);
     this.accountName = this.$credentials.accountName;
+    this.twin.relay = this.$credentials.relayAddress;
+    this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
   }
   mounted() {
-    if (this.$api && this.$credentials && this.$credentials.twinIP !== "" && this.$credentials.twinID != 0) {
-      this.address = this.$credentials.accountAddress;
-      this.ipFetched = this.$credentials.twinIP;
-      this.id = String(this.$credentials.twinID);
+    if (this.$api && this.$credentials && this.$credentials.relayAddress !== "" && this.$credentials.twinID != 0) {
+      this.twin.address = this.$credentials.accountAddress;
+      this.twin.relay = this.$credentials.relayAddress;
+      this.twin.id = String(this.$credentials.twinID);
       this.accountName = this.$credentials.accountName;
+      this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
     } else {
       this.$router.push({
         name: "accounts",
@@ -106,32 +125,7 @@ export default class TwinView extends Vue {
     }
   }
   unmounted() {
-    this.address = "";
-  }
-  ipcheck() {
-    const IPv4SegmentFormat = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
-    const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
-    const IPv6SegmentFormat = "(?:[0-9a-fA-F]{1,4})";
-
-    const ip6Regex = new RegExp(
-      "^(" +
-        `(?:${IPv6SegmentFormat}:){7}(?:${IPv6SegmentFormat}|:)|` +
-        `(?:${IPv6SegmentFormat}:){6}(?:${IPv4AddressFormat}|:${IPv6SegmentFormat}|:)|` +
-        `(?:${IPv6SegmentFormat}:){5}(?::${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,2}|:)|` +
-        `(?:${IPv6SegmentFormat}:){4}(?:(:${IPv6SegmentFormat}){0,1}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,3}|:)|` +
-        `(?:${IPv6SegmentFormat}:){3}(?:(:${IPv6SegmentFormat}){0,2}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,4}|:)|` +
-        `(?:${IPv6SegmentFormat}:){2}(?:(:${IPv6SegmentFormat}){0,3}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,5}|:)|` +
-        `(?:${IPv6SegmentFormat}:){1}(?:(:${IPv6SegmentFormat}){0,4}:${IPv4AddressFormat}|(:${IPv6SegmentFormat}){1,6}|:)|` +
-        `(?::((?::${IPv6SegmentFormat}){0,5}:${IPv4AddressFormat}|(?::${IPv6SegmentFormat}){1,7}|:))` +
-        ")([0-9a-fA-F]{1})?$",
-    );
-    if (ip6Regex.test(this.ipEntered)) {
-      return true;
-    }
-    return false;
-  }
-  decodeHex(input: string) {
-    return hex2a(input);
+    this.twin.address = "";
   }
   public editTwin() {
     console.log("editing a twin");
@@ -139,10 +133,11 @@ export default class TwinView extends Vue {
   }
   public updateTwin() {
     this.loadingEditTwin = true;
-    updateTwinIP(
+    updateRelay(
       this.$route.params.accountID,
       this.$api,
-      `${this.ipEntered}`,
+      this.selectedName,
+      this.twin.pk,
       (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         if (res instanceof Error) {
           console.log(res);
@@ -166,15 +161,14 @@ export default class TwinView extends Vue {
               if (section === "tfgridModule" && method === "TwinUpdated") {
                 this.loadingEditTwin = false;
                 this.$toasted.show("Twin updated!");
-                this.id = await getTwinID(this.$api, this.$route.params.accountID);
-                this.twin = await getTwin(this.$api, parseFloat(`${this.id}`));
-                this.ipFetched = this.twin.ip;
+                this.twin.id = await getTwinID(this.$api, this.$route.params.accountID);
+                this.twin = await getTwin(this.$api, parseFloat(`${this.twin.id}`));
                 this.editingTwin = false;
-                this.ipEntered = "";
+                this.$credentials.relayAddress = this.selectedName;
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Twin creation/update failed!");
                 this.loadingEditTwin = false;
-                this.ipEntered = "";
+                this.twin.relay = this.$credentials.relayAddress;
               }
             });
           }
@@ -184,7 +178,7 @@ export default class TwinView extends Vue {
       console.log(err.message);
       this.$toasted.show("Twin creation/update failed!");
       this.loadingEditTwin = false;
-      this.ipEntered = "";
+      this.twin.relay = this.$credentials.relayAddress;
     });
   }
   openDeleteTwin() {
@@ -194,9 +188,9 @@ export default class TwinView extends Vue {
     this.loadingDeleteTwin = true;
     this.openDeleteTwinDialog = false;
     deleteTwin(
-      this.address,
+      this.twin.address,
       this.$api,
-      `${this.id}`,
+      `${this.twin.id}`,
       (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
         console.log(res);
         if (res instanceof Error) {
@@ -225,7 +219,7 @@ export default class TwinView extends Vue {
                 this.$router.push({
                   name: "account",
                   path: "account",
-                  params: { accountID: `${this.address}` },
+                  params: { accountID: `${this.twin.address}` },
                   query: { accountName: `${this.accountName}` },
                 });
               } else if (section === "system" && method === "ExtrinsicFailed") {

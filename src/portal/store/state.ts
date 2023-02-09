@@ -16,7 +16,8 @@ export declare type UserCredentials = {
   accountAddress: string;
   accountName: string;
   twinID: number;
-  twinIP: string;
   balanceFree: number;
   balanceReserved: number;
+  relayAddress: string;
+  publicKey: string;
 };
