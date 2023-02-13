@@ -303,6 +303,7 @@ export default class Farms extends Vue {
         twinId: twinID
         accountId: accountID
         gridVersion
+        relay
       }
     }
   `;
