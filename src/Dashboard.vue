@@ -417,7 +417,7 @@ export default class Dashboard extends Vue {
           showBeforeLogIn: false,
         },
         {
-          label: "swap",
+          label: "bridge",
           path: "account-swap",
           icon: "swap-horizontal",
           showBeforeLogIn: false,
