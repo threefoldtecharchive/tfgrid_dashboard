@@ -317,7 +317,6 @@ export default class Nodes extends Vue {
         twinId: twinID
         accountId: accountID
         gridVersion
-        ip
       }
 
       country: countries(where: { name_eq: $country, OR: { code_eq: $country } }) {
