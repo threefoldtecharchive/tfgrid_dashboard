@@ -99,7 +99,7 @@ export default class AccountView extends Vue {
   loadingTC = true;
   loadingTwinCreate = false;
   loadingAcceptedTC = false;
-  items = [{ id: 1, name: config.network == "main" ? `relay.grid.tf` : `relay.${config.network}.grid.tf` }];
+  items = [{ id: 1, name: config.relay }];
   selectedItem = {
     item_id: 1,
   };
