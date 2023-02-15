@@ -10,6 +10,7 @@ This module contains Farm page elements.
 class FarmPage:
 
     farm=(By.XPATH, "//*[contains(text(), 'farms')]" )
+    twin_details = (By.XPATH, "//*[contains(text(), 'Twin Details')]")
     create_button=(By.XPATH, "//*[contains(text(), 'Create farm')]")
     farm_name_text_field=(By.XPATH,'/html/body/div[1]/div[4]/div/div/div[1]/form/div/div/div[1]/div/input')
     submit_farm_button=(By.XPATH, "//*[contains(text(), 'Submit')]") 
@@ -48,6 +49,8 @@ class FarmPage:
 
     def navigetor(self,user):
         self.browser.find_element(By.XPATH, "//*[contains(text(), '"+ user +"')]").click()
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.twin_details))
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.farm))
         self.browser.find_element(*self.farm).click()
 
     def create_farm(self, farm_name):

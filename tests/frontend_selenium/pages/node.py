@@ -11,7 +11,7 @@ class NodePage:
 
     farm_page = (By.XPATH , "//*[contains(text(), 'farms')]")
     node_page = (By.XPATH , "//*[contains(text(), 'Your Farm Nodes')]")
-    twin_id_label = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[1]/div[2]/div[1]/div[1]')
+    twin_id_label = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[1]/div[3]/div[1]/div[1]')
     search_node_input = (By.XPATH, '/html/body/div[1]/div[1]/div[3]/div/div/div[5]/div/div[1]/div/div[1]/div/input')
     node_table = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[5]/div[2]/div[1]/div[1]/table/tbody/tr')
     node_id = (By.XPATH , "//*[contains(text(), 'Node ID')]")
@@ -38,6 +38,7 @@ class NodePage:
     def navigate(self, user):
         self.browser.find_element(By.XPATH, "//*[contains(text(), '"+ user +"')]").click()
         self.twin_id = int(self.browser.find_element(*self.twin_id_label).text[4:])
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.farm_page))
         self.browser.find_element(*self.farm_page).click()
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.node_page))
     
