@@ -34,26 +34,54 @@ To get a local copy up and running follow these simple example steps:
 - Change the current working directory to the location you want the cloned directory.
 - Enter the following:
 
-```bash
-git clone https://github.com/threefoldtech/tfgrid_dashboard.git
-```
+  ```bash
+  git clone https://github.com/threefoldtech/tfgrid_dashboard.git
+  ```
 
 - Press Enter to create your local clone.
 
 - Navigate to the cloned repository by running:
 
-```bash
-cd tfgrid_dashboard
-```
+  ```bash
+  cd tfgrid_dashboard
+  ```
 
-Adjust your config.js file as per your environment:
+- Adjust your config.js file as per your environment:
 
-```bash
-export GQL_URL="https://graphql.test.grid.tf/graphql"
-export VERSION="v1.3.0-rc4"
-cd public
-source ../scripts/build-env.sh
-```
+  ```bash
+  export VERSION="v1.3.0-rc4"
+  cd public
+  source ../scripts/build-env.sh
+  # these commands will generate a config file for you against `devnet`
+  ```
+
+- available `nets/modes` supported are
+  - `dev`, `qa`, `test`, `main`, `custom`
+- in case you selected a `custom` mode
+
+  ```bash
+  export VERSION="v1.3.0-rc4"
+  export TFCHAIN_NETWORK="custom"
+  cd public
+  source ../scripts/build-env.sh
+
+  # The terminal will ask you about the required env vars, see below.
+  HINT: The default selected STELLAR_NETWORK is `main` and default selected TFCHAIN_NETWORK is `custom`.
+
+  GRAPHQL_URL is required!
+  Please set it by executing the following command.
+  export GRAPHQL_URL='Your Value Here'
+  ```
+
+- all required env vars when using `custom` mood are.
+  - GRAPHQL_URL
+  - BRIDGE_TFT_ADDRESS
+  - GRIDPROXY_URL
+  - VERSION
+  - SUBSTRATE_URL
+  - ACTIVATION_SERVICE_URL
+  - PLAYGROUND_URL
+  - RELAY_DOMAIN
 
 To try the project locally you can easy clone the repo and run the following commands:
 
