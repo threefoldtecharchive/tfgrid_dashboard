@@ -73,7 +73,7 @@ To get a local copy up and running follow these simple example steps:
   export GRAPHQL_URL='Your Value Here'
   ```
 
-- all required env vars when using `custom` mood are.
+- all required env vars when using `custom` mode are.
   - GRAPHQL_URL
   - BRIDGE_TFT_ADDRESS
   - GRIDPROXY_URL
