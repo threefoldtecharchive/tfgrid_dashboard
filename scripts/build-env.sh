@@ -7,7 +7,7 @@ TFCHAIN_NETWORK="${TFCHAIN_NETWORK:=dev}"
 echo -e "\nHINT:\e[1;10m The default selected STELLAR_NETWORK is\e[0m \e[1;32m$STELLAR_NETWORK\e[0m\e[1;38m and default selected TFCHAIN_NETWORK is\e[0m \e[1;32m$TFCHAIN_NETWORK\e[0m\e[1;38m."
 
 # Check the current selected tf-chain network, there are 5 modes dev, qa, test, main and custom
-# the user should select one of them, otherwise will be testnet.
+# the user should select one of them, otherwise will be devnet.
 
 if [ -d dist ]
 then
@@ -63,11 +63,14 @@ case $TFCHAIN_NETWORK in
   *"custom"*)
     for i in "${REQUIRED_ENV_VARS[@]}"
     do
-        if ! [[ -v $i ]]; then
-            echo -e "\n\e[1;50m \e[1;31m$i is required!\e[0m\n \e[1;3mPlease set it by executing the following command."
-            echo -e "\e[1;31m export\e[0m \e[1;32m$i\e[0m=\e[1;38m'Your Value Here'\n"
-            return
-        fi
+      unset $i
+      if ! [[ -v $i ]]; then
+        echo -e "\n\e[1;50m \e[1;31m$i is required!\e[0m\n \e[1;3mPlease set it by executing the following command."
+        echo -e "\e[1;31m export\e[0m \e[1;32m$i\e[0m=\e[1;38m'Your Value Here'\n"
+        return
+      else
+        echo $i
+      fi
     done
   ;;
   *)

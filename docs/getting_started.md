@@ -66,12 +66,11 @@ To get a local copy up and running follow these simple example steps:
   source ../scripts/build-env.sh
 
   # The terminal will ask you about the required env vars, see below.
-  HINT: The default selected STELLAR_NETWORK is `main` and default selected TFCHAIN_NETWORK is `custom`.
-
-  GRAPHQL_URL is required!
-  Please set it by executing the following command.
-  export GRAPHQL_URL='Your Value Here'
   ```
+
+  This is an example of the output you'll see in case you missed setting a required environment variable.
+
+  ![image](https://user-images.githubusercontent.com/57001890/219054454-f5d74a79-0083-4442-a95e-4bd4fd3bcf73.png)
 
 - all required env vars when using `custom` mode are.
   - GRAPHQL_URL
