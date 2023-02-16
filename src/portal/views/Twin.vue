@@ -133,6 +133,11 @@ export default class TwinView extends Vue {
   }
   public updateTwin() {
     this.loadingEditTwin = true;
+    if (this.selectedName === this.$credentials.relayAddress) {
+      this.$toasted.show(`Chosen relay is the current relay!`);
+      this.loadingEditTwin = false;
+      return;
+    }
     updateRelay(
       this.$route.params.accountID,
       this.$api,
