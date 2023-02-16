@@ -9,7 +9,8 @@ interface AppConfigs {
   APP_EXPLORER_URL: string;
   APP_GRAPHQL_URL: string;
   APP_GRIDPROXY_URL: string;
-  APP_NETWORK: string;
+  STELLAR_NETWORK: string;
+  TFCHAIN_NETWORK: string;
   APP_VERSION: string;
   RELAY: string;
   APP_GRAVITY_CONTRACT_ADDRESS: string;
@@ -34,7 +35,7 @@ declare let process: {
     APP_EXPLORER_URL: string;
     APP_GRAPHQL_URL: string;
     APP_GRIDPROXY_URL: string;
-    APP_NETWORK: string;
+    STELLAR_NETWORK: string;
     APP_VERSION: string;
   };
 };

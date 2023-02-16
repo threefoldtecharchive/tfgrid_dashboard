@@ -98,7 +98,7 @@ export default class TwinView extends Vue {
   loadingDeleteTwin = false;
   openDeleteTwinDialog = false;
   loadingEditTwin = false;
-  items = [{ id: 1, name: config.network == "main" ? `relay.grid.tf` : `relay.${config.network}.grid.tf` }];
+  items = [{ id: 1, name: config.relay }];
   selectedItem = {
     item_id: 1,
   };
