@@ -63,15 +63,13 @@ case $TFCHAIN_NETWORK in
   *"custom"*)
     for i in "${REQUIRED_ENV_VARS[@]}"
     do
-      unset $i
       if ! [[ -v $i ]]; then
         echo -e "\n\e[1;50m \e[1;31m$i is required!\e[0m\n \e[1;3mPlease set it by executing the following command."
         echo -e "\e[1;31m export\e[0m \e[1;32m$i\e[0m=\e[1;38m'Your Value Here'\n"
         return
-      else
-        echo $i
       fi
     done
+    echo -e "\e[1;33mEnvironment variables were exported before, if you want to change any of them maybe you have to re-export them or close the terminal window and start from scratch."
   ;;
   *)
     echo "Unknown 'TFCHAIN_NETWORK' selected!, Acceptable networks are [dev | qa | test | main | custom]\n"
