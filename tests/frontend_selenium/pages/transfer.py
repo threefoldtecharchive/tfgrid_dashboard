@@ -29,7 +29,7 @@ class TransferPage:
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.twin_details))
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.transfer_page))
         self.browser.find_element(*self.transfer_page).click()
-        WebDriverWait(self.browser, 5).until(EC.visibility_of_element_located(self.transfer_tft_title))
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.transfer_tft_title))
 
     def recipient_list(self):
         self.browser.find_element(*self.receipient_textfield).click()
