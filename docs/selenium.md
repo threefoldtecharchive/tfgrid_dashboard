@@ -18,6 +18,7 @@ Install the recommended version of the pip package listed below for a stable run
 - In the root directory run `yarn install & yarn serve`
 - If the port in serve changes from `8080` for any reason, you should change the variable `port` in `tests/frontend selenium/Config.ini` to the new value.
 - Add account `Twin Mnemonic`, `Twin With A Node Mnemonic` and `Stellar Address` either in `tests/frontend selenium/Config.ini` or by exporting `TFCHAIN_MNEMONICS`, `TFCHAIN_NODE_MNEMONICS` and `STELLAR_ADDRESS`.
+- Xvfb might also need to be installed using `sudo apt install xvfb`.
 
 ## Second
 

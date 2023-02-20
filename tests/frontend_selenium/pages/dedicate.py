@@ -30,7 +30,8 @@ class DedicatePage:
       
     def navigate(self, user):
         self.browser.find_element(By.XPATH, "//*[contains(text(), '"+ user +"')]").click()
-        self.twin_id = int(self.browser.find_element(*self.twin_address).text[4:])
+        id = self.browser.find_element(*self.twin_address).text
+        self.twin_id = int(id[id.find(':')+2:])
         self.browser.find_element(*self.dedicate_node).click()
         WebDriverWait(self.browser, 30).until(EC.visibility_of_any_elements_located((By.XPATH, "//*[contains(text(), 'Rows per page:')]")))
     
