@@ -8,7 +8,7 @@ export async function createTwin(
       tfgridModule: {
         createTwin: (
           arg0: string,
-          arg1: string,
+          arg1: string | null,
         ) => {
           (): any;
           new (): any;
@@ -18,7 +18,7 @@ export async function createTwin(
     };
   },
   relay: string,
-  pk: string,
+  pk: string | null,
   callback: any,
 ) {
   const injector = await web3FromAddress(address);
@@ -42,7 +42,7 @@ export async function updateRelay(
       tfgridModule: {
         updateTwin: (
           arg0: string,
-          arg1: string,
+          arg1: string | null,
         ) => {
           (): any;
           new (): any;
@@ -52,7 +52,7 @@ export async function updateRelay(
     };
   },
   relay: string,
-  pk: string,
+  pk: string | null,
   callback: any,
   errc?: any,
 ) {
