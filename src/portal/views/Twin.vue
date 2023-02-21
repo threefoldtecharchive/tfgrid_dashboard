@@ -87,9 +87,9 @@ export default class TwinView extends Vue {
   $api: any;
   $credentials!: UserCredentials;
   editingTwin = false;
-  twin: { relay: string | (string | null)[]; pk: string; address: string; id: string | (string | null)[] } = {
+  twin: { relay: string | null; pk: string | null; address: string; id: string | null } = {
     relay: "",
-    pk: "",
+    pk: null,
     id: "",
     address: "",
   };
@@ -108,6 +108,7 @@ export default class TwinView extends Vue {
     this.twin.id = String(this.$credentials.twinID);
     this.accountName = this.$credentials.accountName;
     this.twin.relay = this.$credentials.relayAddress;
+    this.twin.pk = this.$credentials.publicKey;
     this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
   }
   mounted() {
@@ -165,10 +166,12 @@ export default class TwinView extends Vue {
                 this.twin = await getTwin(this.$api, parseFloat(`${this.twin.id}`));
                 this.editingTwin = false;
                 this.$credentials.relayAddress = this.selectedName;
+                this.$credentials.publicKey = this.twin.pk;
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Twin creation/update failed!");
                 this.loadingEditTwin = false;
                 this.twin.relay = this.$credentials.relayAddress;
+                this.twin.pk = this.$credentials.publicKey;
               }
             });
           }
@@ -179,6 +182,7 @@ export default class TwinView extends Vue {
       this.$toasted.show("Twin creation/update failed!");
       this.loadingEditTwin = false;
       this.twin.relay = this.$credentials.relayAddress;
+      this.twin.pk = this.$credentials.publicKey;
     });
   }
   openDeleteTwin() {

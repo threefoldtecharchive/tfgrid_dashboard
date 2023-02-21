@@ -18,6 +18,6 @@ export declare type UserCredentials = {
   twinID: number;
   balanceFree: number;
   balanceReserved: number;
-  relayAddress: string;
-  publicKey: string;
+  relayAddress: string | null;
+  publicKey: string | null;
 };
