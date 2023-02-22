@@ -19,7 +19,7 @@
         <v-card
           v-for="account in filteredAccounts()"
           :key="account.address"
-          @click="addAccountRoute(account)"
+          @click="_setCredentials(account)"
           class="my-4 primary white--text"
         >
           <div class="d-flex justify-space-between">
@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { accountInterface } from "../store/state";
+import { accountInterface, setCredentials, UserCredentials } from "../store/state";
 import WelcomeWindow from "../components/WelcomeWindow.vue";
 import Account from "./Account.vue";
 import FundsCard from "../components/FundsCard.vue";
@@ -51,6 +51,13 @@ import FundsCard from "../components/FundsCard.vue";
 export default class AccountsView extends Vue {
   searchTerm = "";
   accounts: accountInterface[] = [];
+  $api: any;
+  $credentials!: UserCredentials;
+  twin!: {
+    pk: string;
+    id: string;
+    relay: string;
+  };
 
   mounted() {
     this.accounts = this.$store.state.portal.accounts;
@@ -68,15 +75,17 @@ export default class AccountsView extends Vue {
     }
     return this.accounts;
   }
-  async addAccountRoute(account: accountInterface) {
+  public async _setCredentials(account: accountInterface) {
     this.accounts.map(account => (account.active = false));
     account.active = true;
+    this.$credentials = await setCredentials(this.$api, account);
+    this.twin = this.$credentials.twin;
     this.$root.$emit("selectAccount");
     this.$router.push({
       name: "account",
       path: "account",
       params: { accountID: `${account.address}` },
-      query: { accountName: `${account.meta.name}` },
+      // query: { accountName: `${account.meta.name}` },
     });
   }
 }

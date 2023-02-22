@@ -78,7 +78,7 @@ import { acceptTermsAndCondition, userAcceptedTermsAndConditions } from "../lib/
 import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { activateThroughActivationService } from "../lib/activation";
 import Twin from "./Twin.vue";
-import { UserCredentials } from "../store/state";
+import { accountInterface, setCredentials, UserCredentials } from "../store/state";
 import config from "@/portal/config";
 
 @Component({
@@ -118,13 +118,6 @@ export default class AccountView extends Vue {
         this.$router.push({
           name: "account-twin",
           path: "/:accountID/account-twin",
-          params: { accountID: `${this.$route.params.accountID}` },
-          query: {
-            accountName: `${this.$route.query.accountName}`,
-            twinID: this.twin.id,
-            balanceFree: `${this.balance.free}`,
-            balanceReserved: `${this.balance.reserved}`,
-          },
         });
       }
     }
@@ -182,13 +175,20 @@ export default class AccountView extends Vue {
             this.loadingTwinCreate = false;
           } else {
             // Loop through Vec<EventRecord> to display all events
-            events.forEach(({ phase, event: { data, method, section } }) => {
+            events.forEach(async ({ phase, event: { data, method, section } }) => {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
               if (section === "tfgridModule" && method === "TwinStored") {
-                this.loadingTwinCreate = false;
+                const selectedAccount: accountInterface = this.$store.state.portal.accounts.filter(
+                  (account: accountInterface) => account.address == this.address,
+                )[0];
+                selectedAccount.active = true;
+                this.$credentials = await setCredentials(this.$api, selectedAccount);
                 this.$credentials.relayAddress = relay;
+                console.log(this.$credentials, selectedAccount.active);
+                console.log(selectedAccount);
                 this.$toasted.show("Twin created!");
                 this.twinCreated = true;
+                this.loadingTwinCreate = false;
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Twin creation failed!");
                 this.loadingTwinCreate = false;

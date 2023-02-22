@@ -33,7 +33,7 @@
       </v-dialog>
     </v-container>
     <v-container>
-      <template v-if="twin.relay == 'null'">
+      <template v-if="$credentials.twin.relay == 'null'">
         <div class="mt-4">
           <v-alert color="rgb(25, 130, 177)" dense type="info">
             You should <strong>edit</strong> your twin details to change your relay
@@ -45,11 +45,11 @@
       </v-card>
       <v-card class="my-3 pa-3 text-center">
         <v-list>
-          <v-list-item> ID: {{ twin.id }} </v-list-item>
+          <v-list-item> ID: {{ $credentials.twin.id }} </v-list-item>
 
-          <v-list-item> Address: {{ twin.address }} </v-list-item>
+          <v-list-item> Address: {{ $credentials.accountAddress }} </v-list-item>
 
-          <v-list-item> Relay: {{ twin.relay }} </v-list-item>
+          <v-list-item> Relay: {{ $credentials.twin.relay }} </v-list-item>
         </v-list>
         <v-card-actions class="justify-end">
           <v-btn @click="editTwin" color="primary">Edit</v-btn>

@@ -11,7 +11,7 @@
         <v-spacer></v-spacer>
         <div class="d-flex">
           <FundsCard
-            v-if="getCredentials() && getCredentials().twinID != 0"
+            v-if="getCredentials() && getCredentials().accountAddress.length > 0"
             :balanceFree.sync="balanceFree"
             :balanceReserved.sync="balanceReserved"
             @update:balanceFree="$credentials.balanceFree = $event"
@@ -116,7 +116,7 @@
             </template>
 
             <div v-if="route.prefix === '/'">
-              <template v-if="!(getCredentials() && getCredentials().twinID != 0)">
+              <template v-if="!(getCredentials() && getCredentials().accountAddress.length > 0)">
                 <div class="mt-4">
                   <v-alert color="rgb(25, 130, 177)" dense type="info">
                     You should <strong>select/create</strong> an account to enable the portal functionalities.
@@ -196,10 +196,9 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { balanceInterface, getBalance } from "./portal/lib/balance";
+import { balanceInterface } from "./portal/lib/balance";
 import { connect } from "./portal/lib/connect";
-import { getTwin, getTwinID } from "./portal/lib/twin";
-import { accountInterface, UserCredentials } from "./portal/store/state";
+import { accountInterface, deleteCredentials, setCredentials, UserCredentials } from "./portal/store/state";
 import WelcomeWindow from "./portal/components/WelcomeWindow.vue";
 import FundsCard from "./portal/components/FundsCard.vue";
 import config from "@/portal/config";
@@ -265,14 +264,7 @@ export default class Dashboard extends Vue {
     this.accounts = this.$store.state.portal.accounts;
     if (this.$route.path === "/" && !this.$api) {
       Vue.prototype.$api = await connect(); //declare global variable api
-      Vue.prototype.$credentials = {
-        accountAddress: "",
-        accountName: "",
-        twinID: 0,
-        balanceFree: 0,
-        balanceReserved: 0,
-        relay: "",
-      };
+      Vue.prototype.$credentials = deleteCredentials();
       console.log(`connecting to api`);
       this.loadingAPI = false;
     }
@@ -289,7 +281,8 @@ export default class Dashboard extends Vue {
     }
     this.$root.$on("selectAccount", async () => {
       const activatedAccount: accountInterface = this.filteredAccounts()[0]; // returns array of activated account.
-      Vue.prototype.$credentials = await this.setCredentials(activatedAccount);
+      const cerds = (Vue.prototype.$credentials = await setCredentials(this.$api, activatedAccount));
+      this.$credentials = cerds;
       this.routes[0].active = true;
       this.mini = false;
     });
@@ -315,14 +308,22 @@ export default class Dashboard extends Vue {
     }
   }
 
-  updated() {
+  async updated() {
     this.accounts = this.$store.state.portal.accounts;
+    console.log("Im hereeeeee");
+
     if (this.$api && this.$route.path == "/") {
       this.loadingAPI = false;
     } else if (this.$route.path !== "/") {
       this.loadingAPI = false;
     }
     if (this.$credentials) {
+      const activatedAccount: accountInterface = this.filteredAccounts()[0];
+      if (activatedAccount) {
+        this.$credentials = await setCredentials(this.$api, activatedAccount);
+      }
+      console.log(this.$credentials);
+      console.log(activatedAccount);
       this.balanceFree = String(this.$credentials.balanceFree);
       this.balanceReserved = String(this.$credentials.balanceReserved);
     }
@@ -354,30 +355,6 @@ export default class Dashboard extends Vue {
   decodeHex(input: string) {
     return hex2a(input);
   }
-  // UserCredentials
-  public async setCredentials(account: accountInterface) {
-    this.twinID = await getTwinID(this.$api, account.address);
-    this.balance = await getBalance(this.$api, account.address);
-    if (this.twinID) {
-      this.twin = await getTwin(this.$api, this.twinID);
-      this.$credentials.accountAddress = account.address;
-      this.$credentials.twinID = this.twinID;
-      this.$credentials.relayAddress = this.twin.relay ? this.decodeHex(this.twin.relay) : "null";
-      this.$credentials.publicKey = this.twin.pk;
-      this.$credentials.balanceFree = this.balance.free;
-      this.$credentials.balanceReserved = this.balance.reserved;
-      console.log("this.twin", this.twin);
-    } else {
-      account.active = false;
-      this.$credentials.accountAddress = "";
-      this.$credentials.twinID = 0;
-      this.$credentials.relayAddress = "";
-      this.$credentials.publicKey = "";
-      this.$credentials.balanceFree = 0;
-      this.$credentials.balanceReserved = 0;
-    }
-    return this.$credentials;
-  }
 
   public getCredentials() {
     return this.$credentials;
@@ -385,11 +362,7 @@ export default class Dashboard extends Vue {
 
   public redirectToHomePage() {
     this.accounts.map(account => (account.active = false));
-    this.$credentials.accountAddress = "";
-    this.$credentials.twinID = 0;
-    this.$credentials.relayAddress = "";
-    this.$credentials.balanceFree = 0;
-    this.$credentials.balanceReserved = 0;
+    this.$credentials = deleteCredentials();
     this.routes[0].active = false;
     if (this.$route.path !== "/") {
       this.$router.push({
