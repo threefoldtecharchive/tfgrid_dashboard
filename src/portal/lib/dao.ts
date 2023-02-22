@@ -56,34 +56,36 @@ export async function getProposals(api: any) {
     const nowBlock = await api.query.system.number();
     const timeUntilEnd = (proposalVotes.end - nowBlock.toJSON()) * 6;
 
-    if (proposalVotes.end < nowBlock.toJSON()) {
-      inactiveProposals.push({
-        threshold: proposalVotes.threshold,
-        ayes: proposalVotes.ayes, //[{farmId: number, weight: number}]
-        nayes: proposalVotes.nays,
-        vetos: proposalVotes.vetos,
-        end: moment().add(timeUntilEnd, "second"),
-        hash: hash,
-        action: hex2a(proposal.args.remark),
-        description: hex2a(daoProposal.description),
-        link: hex2a(daoProposal.link),
-        ayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, true),
-        nayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, false),
-      });
-    } else {
-      activeProposals.push({
-        threshold: proposalVotes.threshold,
-        ayes: proposalVotes.ayes, //[{farmId: number, weight: number}]
-        nayes: proposalVotes.nays,
-        vetos: proposalVotes.vetos,
-        end: moment().add(timeUntilEnd, "second"),
-        hash: hash,
-        action: hex2a(proposal.args.remark),
-        description: hex2a(daoProposal.description),
-        link: hex2a(daoProposal.link),
-        ayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, true),
-        nayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, false),
-      });
+    if (proposal) {
+      if (proposalVotes.end < nowBlock.toJSON()) {
+        inactiveProposals.push({
+          threshold: proposalVotes.threshold,
+          ayes: proposalVotes.ayes, //[{farmId: number, weight: number}]
+          nayes: proposalVotes.nays,
+          vetos: proposalVotes.vetos,
+          end: moment().add(timeUntilEnd, "second"),
+          hash: hash,
+          action: hex2a(proposal.args.remark),
+          description: hex2a(daoProposal.description),
+          link: hex2a(daoProposal.link),
+          ayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, true),
+          nayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, false),
+        });
+      } else {
+        activeProposals.push({
+          threshold: proposalVotes.threshold,
+          ayes: proposalVotes.ayes, //[{farmId: number, weight: number}]
+          nayes: proposalVotes.nays,
+          vetos: proposalVotes.vetos,
+          end: moment().add(timeUntilEnd, "second"),
+          hash: hash,
+          action: hex2a(proposal.args.remark),
+          description: hex2a(daoProposal.description),
+          link: hex2a(daoProposal.link),
+          ayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, true),
+          nayesProgress: getProgress(proposalVotes.ayes, proposalVotes.nays, false),
+        });
+      }
     }
   }
   return { active: activeProposals, inactive: inactiveProposals };
@@ -110,8 +112,13 @@ export async function getDaoProposal(api: { query: any }, hash: { toJSON: () => 
   return proposal.toJSON();
 }
 export async function getProposal(api: { query: any }, hash: { toJSON: () => any }) {
-  const proposal = await api.query.dao.proposalOf(hash);
-  return proposal.toJSON();
+  try {
+    const proposal = await api.query.dao.proposalOf(hash);
+    const res = proposal.toJSON();
+    return res;
+  } catch (error) {
+    console.warn("Couldn't decode a proposal");
+  }
 }
 export async function getProposalVotes(api: any, hash: any) {
   const voting = await api.query.dao.voting(hash);
