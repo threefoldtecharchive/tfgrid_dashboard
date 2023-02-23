@@ -103,7 +103,7 @@ export default class AccountView extends Vue {
     item_id: 1,
   };
   selectedName = "";
-  pk = "";
+  pk = null;
 
   async updated() {
     if (this.$api) {
@@ -149,7 +149,7 @@ export default class AccountView extends Vue {
     this.$store.commit("UNSET_CREDENTIALS");
   }
 
-  public async createTwinFunc(relay: string, pk: string) {
+  public async createTwinFunc(relay: string, pk: string | null) {
     this.loadingTwinCreate = true;
     await createTwin(
       this.address,

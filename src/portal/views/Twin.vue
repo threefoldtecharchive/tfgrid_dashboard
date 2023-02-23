@@ -83,9 +83,9 @@ import config from "@/portal/config";
 export default class TwinView extends Vue {
   $api: any;
   editingTwin = false;
-  twin: { relay: string | (string | null)[]; pk: string; address: string; id: string | (string | null)[] } = {
+  twin: { relay: string | null; pk: string | null; address: string; id: string | null } = {
     relay: "",
-    pk: "",
+    pk: null,
     id: "",
     address: "",
   };
@@ -131,6 +131,11 @@ export default class TwinView extends Vue {
   }
   public updateTwin() {
     this.loadingEditTwin = true;
+    if (this.selectedName === this.$store.state.credentials.relayAddress) {
+      this.$toasted.show(`Chosen relay is the current relay!`);
+      this.loadingEditTwin = false;
+      return;
+    }
     updateRelay(
       this.$route.params.accountID,
       this.$api,
