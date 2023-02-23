@@ -7,7 +7,7 @@ const config = {
   explorerUrl: process.env.APP_EXPLORER_URL || window.configs.APP_EXPLORER_URL,
   graphqlUrl: process.env.APP_GRAPHQL_URL || window.configs.APP_GRAPHQL_URL,
   gridproxyUrl: process.env.APP_GRIDPROXY_URL || window.configs.APP_GRIDPROXY_URL,
-  network: process.env.TFCHAIN_NETWORK || window.configs.TFCHAIN_NETWORK,
+  network: process.env.APP_NETWORK || window.configs.APP_NETWORK,
   stellarNetwork: process.env.STELLAR_NETWORK || window.configs.STELLAR_NETWORK,
   version: process.env.APP_VERSION || window.configs.APP_VERSION,
   relay: window.configs.RELAY,

@@ -50,8 +50,9 @@
 import { Component, Vue } from "vue-property-decorator";
 import { checkAddress, transfer } from "../lib/transfer";
 import QrcodeVue from "qrcode.vue";
-import { accountInterface, UserCredentials } from "../store/state";
+import { accountInterface } from "../store/state";
 import { balanceInterface, getBalance } from "../lib/balance";
+
 @Component({
   name: "TransferView",
   components: { QrcodeVue },
@@ -61,7 +62,6 @@ export default class TransferView extends Vue {
   accountsAddresses: any = [];
   balance: any = 0;
   $api: any;
-  $credentials!: UserCredentials;
   address = "";
   ip: any = [];
   relay: any = [];
@@ -71,12 +71,12 @@ export default class TransferView extends Vue {
   loadingTransfer = false;
   isTransferValid = false;
   mounted() {
-    if (this.$api && this.$credentials && this.$credentials.relayAddress) {
-      this.address = this.$credentials.accountAddress;
-      this.id = this.$credentials.twinID;
-      this.relay = this.$credentials.relayAddress;
-      this.accountName = this.$credentials.accountName;
-      this.balance = +this.$credentials.balanceFree;
+    if (this.$api && this.$store.state.credentials.initialized) {
+      this.address = this.$store.state.credentials.accountAddress;
+      this.id = this.$store.state.credentials.twinID;
+      this.relay = this.$store.state.credentials.relayAddress;
+      this.accountName = this.$store.state.credentials.accountName;
+      this.balance = +this.$store.state.credentials.balanceFree;
       this.accountsAddresses = this.$store.state.portal.accounts
         .filter((account: accountInterface) => account.address !== this.address)
         .map((account: accountInterface) => `${account.address}`);
@@ -88,9 +88,9 @@ export default class TransferView extends Vue {
     }
   }
   async updated() {
-    this.id = this.$credentials.twinID;
-    if (this.$credentials.balanceFree !== this.balance) {
-      this.balance = +this.$credentials.balanceFree;
+    this.id = this.$store.state.credentials.twinID;
+    if (this.$store.state.credentials.balanceFree !== this.balance) {
+      this.balance = +this.$store.state.credentials.balanceFree;
     }
   }
   unmounted() {
@@ -140,8 +140,8 @@ export default class TransferView extends Vue {
                 this.$toasted.show("Transfer succeeded!");
                 this.loadingTransfer = false;
                 getBalance(this.$api, this.address).then((balance: balanceInterface) => {
-                  this.balance = balance.free;
-                  this.$root.$emit("updateBalance", this.balance);
+                  this.$store.state.credentials.balanceFree = balance.free;
+                  this.$store.state.credentials.balanceReserved = balance.reserved;
                 });
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Transfer failed!");

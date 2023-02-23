@@ -128,7 +128,6 @@ import { getDepositFee, getWithdrawFee, withdraw } from "../lib/swap";
 import QrcodeVue from "qrcode.vue";
 import { balanceInterface, getBalance } from "../lib/balance";
 import { default as StellarSdk, StrKey } from "stellar-sdk";
-import { UserCredentials } from "../store/state";
 
 @Component({
   name: "TransferView",
@@ -144,7 +143,6 @@ export default class TransferView extends Vue {
   isValidSwap = false;
   items = [{ id: 1, name: "stellar" }];
   balance: any;
-  $credentials!: UserCredentials;
   $api: any;
   address = "";
   relay: any = [];
@@ -160,12 +158,12 @@ export default class TransferView extends Vue {
   targetError = "";
   server = new StellarSdk.Server(config.horizonUrl);
   mounted() {
-    if (this.$api && this.$credentials) {
-      this.address = this.$credentials.accountAddress;
-      this.relay = this.$credentials.relayAddress;
-      this.id = this.$credentials.twinID;
-      this.accountName = this.$credentials.accountName;
-      this.balance = this.$credentials.balanceFree;
+    if (this.$api && this.$store.state.credentials) {
+      this.address = this.$store.state.credentials.accountAddress;
+      this.relay = this.$store.state.credentials.relayAddress;
+      this.id = this.$store.state.credentials.twinID;
+      this.accountName = this.$store.state.credentials.accountName;
+      this.balance = this.$store.state.credentials.balanceFree;
       if (config.bridgeTftAddress) {
         this.depositWallet = config.bridgeTftAddress;
       }
@@ -179,9 +177,9 @@ export default class TransferView extends Vue {
     }
   }
   async updated() {
-    this.id = this.$credentials.twinID;
-    this.relay = this.$credentials.relayAddress;
-    this.balance = this.$credentials.balanceFree;
+    this.id = this.$store.state.credentials.twinID;
+    this.relay = this.$store.state.credentials.relayAddress;
+    this.balance = this.$store.state.credentials.balanceFree;
     this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
     this.target;
     this.amount;

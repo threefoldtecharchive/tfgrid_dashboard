@@ -20,7 +20,6 @@
 import NodesTable from "../components/NodesTable.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { ITab } from "../lib/nodes";
-import { UserCredentials } from "../store/state";
 
 @Component({
   name: "NodesView",
@@ -32,7 +31,6 @@ export default class NodesView extends Vue {
   activeTab = "";
   trigger = "";
   twinID = 0;
-  $credentials!: UserCredentials;
   tabs: ITab[] = [
     {
       label: "Rentable",
@@ -56,8 +54,8 @@ export default class NodesView extends Vue {
 
   async mounted() {
     this.address = this.$route.params.accountID;
-    if (this.$api && this.$credentials && this.$credentials.twinID) {
-      this.twinID = this.$credentials.twinID;
+    if (this.$api && this.$store.state.credentials.initialized) {
+      this.twinID = this.$store.state.credentials.twinID;
     } else {
       this.$router.push({ name: "accounts", path: "/" });
     }

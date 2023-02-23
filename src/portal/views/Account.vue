@@ -31,7 +31,7 @@
   <v-container v-else-if="!twinCreated">
     <v-card class="text-center primary white--text py-5 my-3">
       <h2>
-        Welcome aboard {{ $route.query.accountName }}, <br />
+        Welcome aboard {{ $store.state.credentials.accountName }}, <br />
         Let’s get you connected to the TF Grid by creating a twin!
       </h2>
     </v-card>
@@ -78,7 +78,7 @@ import { acceptTermsAndCondition, userAcceptedTermsAndConditions } from "../lib/
 import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { activateThroughActivationService } from "../lib/activation";
 import Twin from "./Twin.vue";
-import { accountInterface, setCredentials, UserCredentials } from "../store/state";
+import { accountInterface } from "../store/state";
 import config from "@/portal/config";
 
 @Component({
@@ -92,7 +92,6 @@ export default class AccountView extends Vue {
   twinCreated = false;
   address = "";
   $api: any;
-  $credentials!: UserCredentials;
   balance: balanceInterface = { free: 0, reserved: 0 };
   twinID = 0;
   twin!: { id: any; relay: any };
@@ -107,7 +106,7 @@ export default class AccountView extends Vue {
   pk = "";
 
   async updated() {
-    if (this.$api && this.$credentials) {
+    if (this.$api) {
       this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
       this.address = this.$route.params.accountID;
       this.balance = await getBalance(this.$api, this.address);
@@ -147,6 +146,7 @@ export default class AccountView extends Vue {
     this.address = "";
     this.balance = { free: 0, reserved: 0 };
     this.twinID = 0;
+    this.$store.commit("UNSET_CREDENTIALS");
   }
 
   public async createTwinFunc(relay: string, pk: string) {
@@ -182,17 +182,14 @@ export default class AccountView extends Vue {
                   (account: accountInterface) => account.address == this.address,
                 )[0];
                 selectedAccount.active = true;
-                this.$credentials = await setCredentials(this.$api, selectedAccount);
-                this.$credentials.relayAddress = relay;
-                console.log(this.$credentials, selectedAccount.active);
-                console.log(selectedAccount);
+                this.$store.commit("SET_CREDENTIALS", { api: this.$api, account: selectedAccount });
+                this.$store.state.credentials.relayAddress = relay;
                 this.$toasted.show("Twin created!");
                 this.twinCreated = true;
-                this.loadingTwinCreate = false;
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Twin creation failed!");
-                this.loadingTwinCreate = false;
               }
+              this.loadingTwinCreate = false;
             });
           }
         }
