@@ -87,7 +87,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import DetailsV2 from "../components/DetailsV2.vue";
-import { getFarmsQuery, IFarm, IFetchPaginatedData } from "../graphql/api";
+import { getFarmsQuery, getPricingPolicies, IFarm, IFetchPaginatedData } from "../graphql/api";
 import Layout from "../components/Layout.vue";
 import { IPaginationData } from "../store/state";
 import { PAGE_LIMIT } from "../json/constants";
@@ -181,6 +181,14 @@ export default class Farms extends Vue {
       })
       .finally(() => {
         this.loading = false;
+      });
+    this.$apollo
+      .query({
+        query: getPricingPolicies,
+      })
+      .then(({ data }) => {
+        const ids = data.pricingPolicies.map((policy: any) => policy.pricingPolicyID);
+        this.$store.state.explorer.pricingPoliciesIds = ids;
       });
   }
   public getKeyByValue(value: string): number | null {
@@ -277,7 +285,7 @@ export default class Farms extends Vue {
       component: InFilterV2,
       chip_label: "Pricing Policy",
       label: "Filter By Pricing policy",
-      items: _ => Promise.resolve([...this._pricingPolicy.values()]),
+      items: _ => Promise.resolve(this.$store.state.explorer.pricingPoliciesIds),
       value: [],
       init: true,
       multiple: true,
