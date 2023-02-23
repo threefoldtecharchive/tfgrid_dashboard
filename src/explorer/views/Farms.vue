@@ -277,9 +277,6 @@ export default class Farms extends Vue {
       multiple: false,
       symbol: "certificationType_in",
       key: "certificationType",
-      getValue: f => {
-        return +f.value;
-      },
     },
     {
       component: InFilterV2,
