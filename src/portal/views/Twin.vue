@@ -88,8 +88,6 @@ export default class TwinView extends Vue {
     relay: "",
     pk: "",
     id: "",
-    address: "",
-    name: "",
   };
   isValidTwinIP = false;
   loadingDeleteTwin = false;
@@ -189,7 +187,7 @@ export default class TwinView extends Vue {
     this.loadingDeleteTwin = true;
     this.openDeleteTwinDialog = false;
     deleteTwin(
-      this.twin.address,
+      this.$store.state.credentials.account.address,
       this.$api,
       `${this.twin.id}`,
       (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
