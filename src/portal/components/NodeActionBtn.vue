@@ -53,13 +53,6 @@ export default class NodeActionBtn extends Vue {
   openUnreserveDialog = false;
   nodeIDToUnreserve = "";
   loadingUnreserveNode = false;
-  currentTwinID: any;
-
-  created() {
-    if (this.$store.state.credentials.initialized) {
-      this.currentTwinID = this.$store.state.credentials.twinID;
-    }
-  }
 
   reserveNode(nodeId: string) {
     this.loadingReserveNode = true;

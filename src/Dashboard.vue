@@ -10,13 +10,7 @@
 
         <v-spacer></v-spacer>
         <div class="d-flex">
-          <FundsCard
-            v-if="$store.state.credentials.initialized"
-            :balanceFree.sync="balanceFree"
-            :balanceReserved.sync="balanceReserved"
-            @update:balanceFree="$store.state.credentials.balanceFree = $event"
-            @update:balanceReserved="$store.state.credentials.balanceReserved = $event"
-          />
+          <FundsCard v-if="$store.state.credentials.initialized" />
           <div class="d-flex" style="align-items: center">
             <v-btn icon @click="toggle_dark_mode">
               <v-icon>mdi-theme-light-dark</v-icon>
@@ -195,14 +189,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { balanceInterface } from "./portal/lib/balance";
+import { Component, Vue } from "vue-property-decorator";
 import { connect } from "./portal/lib/connect";
 import { accountInterface } from "./portal/store/state";
 import WelcomeWindow from "./portal/components/WelcomeWindow.vue";
 import FundsCard from "./portal/components/FundsCard.vue";
 import config from "@/portal/config";
-import { hex2a } from "@/portal/lib/util";
 
 interface SidenavItem {
   label: string;
@@ -225,6 +217,7 @@ interface SidenavItem {
       | [];
   }>;
 }
+
 @Component({
   name: "Dashboard",
   components: { WelcomeWindow, FundsCard },
@@ -233,33 +226,17 @@ export default class Dashboard extends Vue {
   vText(vText: any) {
     throw new Error("Method not implemented.");
   }
+
   collapseOnScroll = true;
   mini = true;
   drawer = true;
-  twinID = 0;
   $api: any;
-  twin: { id: string; relay: string; pk: string } = { id: "", relay: "", pk: "" };
-  balance: balanceInterface = { free: 0, reserved: 0 };
   accounts: accountInterface[] = [];
   loadingAPI = true;
   version = config.version;
 
-  balanceFree: string | (string | null)[] = "";
-  balanceReserved: string | (string | null)[] = "";
-
-  @Watch("this.$store.state.credentials.balance") async onBalanceUpdate(value: number, oldValue: number) {
-    if (this.$store.state.credentials.twinID) {
-      this.balanceFree = String(this.$store.state.credentials.balanceFree);
-      this.balanceReserved = String(this.$store.state.credentials.balanceReserved);
-      console.log(`balance went from ${oldValue}, to ${value}`);
-    }
-  }
   async mounted() {
     this.$store.dispatch("portal/subscribeAccounts");
-    if (this.$store.state.credentials.initialized) {
-      this.balanceFree = String(this.$store.state.credentials.balanceFree);
-      this.balanceReserved = String(this.$store.state.credentials.balanceReserved);
-    }
     this.accounts = this.$store.state.portal.accounts;
     if (this.$route.path === "/" && !this.$api) {
       Vue.prototype.$api = await connect();
@@ -310,22 +287,25 @@ export default class Dashboard extends Vue {
     } else if (this.$route.path !== "/") {
       this.loadingAPI = false;
     }
-    if (this.$store.state.credentials.initialized) {
-      this.balanceFree = String(this.$store.state.credentials.balanceFree);
-      this.balanceReserved = String(this.$store.state.credentials.balanceReserved);
-    }
   }
+
   async unmounted() {
     console.log(`disconnecting from api`);
     await this.$api.disconnect();
     this.$store.dispatch("portal/unsubscribeAccounts");
     this.$store.commit("UNSET_CREDENTIALS");
+    this.$router.push({
+      name: "accounts",
+      path: `/`,
+    });
   }
+
   public filteredAccounts() {
     return this.accounts.filter(account => account.active);
   }
+
   public isAccountSelected() {
-    if (this.$store.state.credentials.accountName) {
+    if (this.$store.state.credentials.initialized) {
       return true;
     }
     return false;
@@ -333,16 +313,13 @@ export default class Dashboard extends Vue {
 
   public disconnectWallet() {
     this.$store.dispatch("portal/unsubscribeAccounts");
-    if (this.$store.state.credentials.twinID) {
+    if (this.$store.state.credentials.initialized) {
+      this.$store.commit("UNSET_CREDENTIALS");
       this.$router.push({
         name: "accounts",
         path: `/`,
       });
     }
-  }
-
-  decodeHex(input: string) {
-    return hex2a(input);
   }
 
   public redirectToHomePage() {

@@ -27,11 +27,17 @@
       <WelcomeWindow />
     </v-card>
   </v-container>
-
-  <v-container v-else-if="!twinCreated">
+  <v-container v-else-if="$store.state.credentials.loading">
+    <div class="d-flex justify-center" style="display: block; padding: 10%">
+      <v-progress-circular indeterminate color="blue" :size="335" :width="7">
+        <span style="font-size: large; color: white">Loading Twin Details</span>
+      </v-progress-circular>
+    </div>
+  </v-container>
+  <v-container v-else-if="!$store.state.credentials.twin.id">
     <v-card class="text-center primary white--text py-5 my-3">
       <h2>
-        Welcome aboard {{ $store.state.credentials.accountName }}, <br />
+        Welcome aboard {{ $store.state.credentials.twin.name }}, <br />
         Let’s get you connected to the TF Grid by creating a twin!
       </h2>
     </v-card>
@@ -49,7 +55,13 @@
           >
           </v-select>
         </v-form>
-        <v-btn class="primary" :loading="loadingTwinCreate" @click="createTwinFunc(selectedName, pk)">create</v-btn>
+        <v-btn
+          class="primary"
+          :loading="loadingTwinCreate"
+          @click="createTwinFunc(selectedName, $store.state.credentials.twin.pk)"
+        >
+          create
+        </v-btn>
       </v-card>
 
       <!-- <v-row>
@@ -71,8 +83,7 @@
 <script lang="ts">
 import axios from "axios";
 import { Component, Vue } from "vue-property-decorator";
-import { balanceInterface, getBalance } from "../lib/balance";
-import { createTwin, getTwin, getTwinID } from "../lib/twin";
+import { createTwin } from "../lib/twin";
 import md5 from "md5";
 import { acceptTermsAndCondition, userAcceptedTermsAndConditions } from "../lib/accepttc";
 import WelcomeWindow from "../components/WelcomeWindow.vue";
@@ -88,13 +99,8 @@ import config from "@/portal/config";
 export default class AccountView extends Vue {
   documentLink = "https://library.threefold.me/info/legal/#/";
   documentHash = "";
-  openDialog = true;
-  twinCreated = false;
-  address = "";
+  openDialog = false;
   $api: any;
-  balance: balanceInterface = { free: 0, reserved: 0 };
-  twinID = 0;
-  twin!: { id: any; relay: any };
   loadingTC = true;
   loadingTwinCreate = false;
   loadingAcceptedTC = false;
@@ -103,34 +109,22 @@ export default class AccountView extends Vue {
     item_id: 1,
   };
   selectedName = "";
-  pk = null;
 
   async updated() {
     if (this.$api) {
       this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
-      this.address = this.$route.params.accountID;
-      this.balance = await getBalance(this.$api, this.address);
-      this.twinID = await getTwinID(this.$api, this.address);
-      if (this.twinID) {
-        this.twinCreated = true;
-        this.twin = await getTwin(this.$api, this.twinID);
+      if (this.$store.state.credentials.twin.id) {
         this.$router.push({
           name: "account-twin",
           path: "/:accountID/account-twin",
         });
       }
     }
-    this.openDialog = !(await userAcceptedTermsAndConditions(this.$api, this.address));
+    this.openDialog = !(await userAcceptedTermsAndConditions(this.$api, this.$route.params.accountID));
   }
   async mounted() {
     if (this.$api) {
-      this.address = this.$route.params.accountID;
-      this.balance = await getBalance(this.$api, this.address);
-      this.twinID = await getTwinID(this.$api, this.address);
-      if (this.twinID) {
-        this.twinCreated = true;
-      }
-      this.openDialog = !(await userAcceptedTermsAndConditions(this.$api, this.address));
+      this.openDialog = !(await userAcceptedTermsAndConditions(this.$api, this.$route.params.accountID));
       let document = await axios.get(this.documentLink);
       this.documentHash = md5(document.data);
       this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
@@ -143,16 +137,14 @@ export default class AccountView extends Vue {
     }
   }
   unmounted() {
-    this.address = "";
-    this.balance = { free: 0, reserved: 0 };
-    this.twinID = 0;
+    this.$route.params.accountID = "";
     this.$store.commit("UNSET_CREDENTIALS");
   }
 
   public async createTwinFunc(relay: string, pk: string | null) {
     this.loadingTwinCreate = true;
     await createTwin(
-      this.address,
+      this.$route.params.accountID,
       this.$api,
       relay,
       pk,
@@ -179,13 +171,14 @@ export default class AccountView extends Vue {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
               if (section === "tfgridModule" && method === "TwinStored") {
                 const selectedAccount: accountInterface = this.$store.state.portal.accounts.filter(
-                  (account: accountInterface) => account.address == this.address,
+                  (account: accountInterface) => account.address == this.$route.params.accountID,
                 )[0];
                 selectedAccount.active = true;
                 this.$store.commit("SET_CREDENTIALS", { api: this.$api, account: selectedAccount });
-                this.$store.state.credentials.relayAddress = relay;
+                this.$store.state.credentials.twin.relay = relay;
                 this.$toasted.show("Twin created!");
-                this.twinCreated = true;
+                // this.$store.state.credentials.initialized = true;
+                // this.$store.state.credentials.loading = false;
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Twin creation failed!");
               }
@@ -201,10 +194,10 @@ export default class AccountView extends Vue {
   }
   public acceptTC() {
     this.loadingAcceptedTC = true;
-    activateThroughActivationService(this.address);
+    activateThroughActivationService(this.$route.params.accountID);
     acceptTermsAndCondition(
       this.$api,
-      this.address,
+      this.$route.params.accountID,
       this.documentLink,
       this.documentHash,
       (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {

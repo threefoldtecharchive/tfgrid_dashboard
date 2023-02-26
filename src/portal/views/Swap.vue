@@ -14,7 +14,7 @@
                       Destination: <b>{{ depositWallet }}</b>
                     </li>
                     <li>
-                      Memo Text: <b>twin_{{ id }}</b>
+                      Memo Text: <b>twin_{{ $store.state.credentials.twin.id }}</b>
                     </li>
                   </ul>
                 </v-col>
@@ -72,7 +72,7 @@
                     (amount.toString().split('.').length > 1 ? amount.toString().split('.')[1].length <= 3 : true) ||
                     'Amount must have 3 decimals only',
                   () => amount > 0 || 'Amount cannot be negative or 0',
-                  () => amount < parseFloat(balance) || 'Amount cannot exceed balance',
+                  () => amount < parseFloat($store.state.credentials.balance.free) || 'Amount cannot exceed balance',
                 ]"
               ></v-text-field>
             </v-form>
@@ -142,12 +142,7 @@ export default class TransferView extends Vue {
   selectedName = "";
   isValidSwap = false;
   items = [{ id: 1, name: "stellar" }];
-  balance: any;
   $api: any;
-  address = "";
-  relay: any = [];
-  accountName: any;
-  id: any = [];
   depositWallet = "";
   depositFee = 0;
   qrCodeText = "";
@@ -157,17 +152,13 @@ export default class TransferView extends Vue {
   loadingWithdraw = false;
   targetError = "";
   server = new StellarSdk.Server(config.horizonUrl);
+
   mounted() {
-    if (this.$api && this.$store.state.credentials) {
-      this.address = this.$store.state.credentials.accountAddress;
-      this.relay = this.$store.state.credentials.relayAddress;
-      this.id = this.$store.state.credentials.twinID;
-      this.accountName = this.$store.state.credentials.accountName;
-      this.balance = this.$store.state.credentials.balanceFree;
+    if (this.$api && this.$store.state.credentials.initialized) {
       if (config.bridgeTftAddress) {
         this.depositWallet = config.bridgeTftAddress;
       }
-      this.qrCodeText = `TFT:${this.depositWallet}?message=twin_${this.id}&sender=me`;
+      this.qrCodeText = `TFT:${this.depositWallet}?message=twin_${this.$store.state.credentials.twin.id}&sender=me`;
       this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
     } else {
       this.$router.push({
@@ -176,20 +167,19 @@ export default class TransferView extends Vue {
       });
     }
   }
+
   async updated() {
-    this.id = this.$store.state.credentials.twinID;
-    this.relay = this.$store.state.credentials.relayAddress;
-    this.balance = this.$store.state.credentials.balanceFree;
     this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
     this.target;
     this.amount;
     this.depositFee = await getDepositFee(this.$api);
     this.withdrawFee = await getWithdrawFee(this.$api);
   }
+
   unmounted() {
-    this.balance = 0;
-    this.address = "";
+    this.$store.commit("UNSET_CREDENTIALS");
   }
+
   async swapAddressCheck() {
     if (this.target.length > 0) {
       const isValid = StrKey.isValidEd25519PublicKey(this.target);
@@ -231,49 +221,54 @@ export default class TransferView extends Vue {
   }
   public async withdrawTFT(target: string, amount: number) {
     this.loadingWithdraw = true;
-    withdraw(this.address, this.$api, target, amount, (res: { events?: never[] | undefined; status: any }) => {
-      console.log(res);
-      if (res instanceof Error) {
+    withdraw(
+      this.$store.state.credentials.twin.address,
+      this.$api,
+      target,
+      amount,
+      (res: { events?: never[] | undefined; status: any }) => {
         console.log(res);
-        this.loadingWithdraw = false;
-        return;
-      }
-      const { events = [], status } = res;
-      console.log(`Current status is ${status.type}`);
-      switch (status.type) {
-        case "Ready":
-          this.$toasted.show(`Transaction submitted`);
-      }
-      if (status.isFinalized) {
-        console.log(`Transaction included at blockHash ${status.asFinalized}`);
-        if (!events.length) {
-          this.$toasted.show("Withdraw failed!");
-          this.openWithdrawDialog = false;
-        } else {
-          // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-            if (section === "tftBridgeModule" && method === "BurnTransactionCreated") {
-              this.$toasted.show("Withdraw submitted!");
-              this.openWithdrawDialog = false;
-              getBalance(this.$api, this.address).then((balance: balanceInterface) => {
-                this.balance = balance.free;
-                this.$root.$emit("updateBalance", this.balance);
-              });
-              this.target = "";
-              this.amount = 0;
-              this.loadingWithdraw = false;
-            } else if (section === "system" && method === "ExtrinsicFailed") {
-              this.$toasted.show("Withdraw failed!");
-              this.openWithdrawDialog = false;
-              this.target = "";
-              this.amount = 0;
-              this.loadingWithdraw = false;
-            }
-          });
+        if (res instanceof Error) {
+          console.log(res);
+          this.loadingWithdraw = false;
+          return;
         }
-      }
-    }).catch(err => {
+        const { events = [], status } = res;
+        console.log(`Current status is ${status.type}`);
+        switch (status.type) {
+          case "Ready":
+            this.$toasted.show(`Transaction submitted`);
+        }
+        if (status.isFinalized) {
+          console.log(`Transaction included at blockHash ${status.asFinalized}`);
+          if (!events.length) {
+            this.$toasted.show("Withdraw failed!");
+            this.openWithdrawDialog = false;
+          } else {
+            // Loop through Vec<EventRecord> to display all events
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+              if (section === "tftBridgeModule" && method === "BurnTransactionCreated") {
+                this.$toasted.show("Withdraw submitted!");
+                this.openWithdrawDialog = false;
+                getBalance(this.$api, this.$store.state.credentials.twin.address).then((balance: balanceInterface) => {
+                  this.$store.state.credentials.balance.free = balance.free;
+                });
+                this.target = "";
+                this.amount = 0;
+                this.loadingWithdraw = false;
+              } else if (section === "system" && method === "ExtrinsicFailed") {
+                this.$toasted.show("Withdraw failed!");
+                this.openWithdrawDialog = false;
+                this.target = "";
+                this.amount = 0;
+                this.loadingWithdraw = false;
+              }
+            });
+          }
+        }
+      },
+    ).catch(err => {
       console.log(err.message);
       this.$toasted.show("Withdraw failed!");
       this.openWithdrawDialog = false;

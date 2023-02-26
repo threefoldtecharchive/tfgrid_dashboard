@@ -16,16 +16,16 @@ export const credentialsStore = {
   state() {
     return {
       initialized: false,
-      accountAddress: "",
-      accountName: "",
-      twinID: 0,
-      balanceFree: 0,
-      balanceReserved: 0,
-      relayAddress: "",
-      publicKey: "",
+      loading: true,
+      balance: {
+        free: 0,
+        reserved: 0,
+      },
       twin: {
-        id: "",
+        address: "",
         relay: "",
+        name: "",
+        id: "",
         pk: "",
       },
     };
@@ -35,33 +35,25 @@ export const credentialsStore = {
       const twinID: number = await getTwinID(payload.api, payload.account.address);
       const balance: balanceInterface = await getBalance(payload.api, payload.account.address);
       const twin = await getTwin(payload.api, twinID);
+
       if (twinID) {
         payload.account.active = true;
         state.initialized = true;
-        state.accountAddress = payload.account.address;
-        state.accountName = payload.account.meta.name;
-        state.balanceFree = balance.free;
-        state.balanceReserved = balance.reserved;
-        state.publicKey = twin.pk;
-        state.relayAddress = twin.relay ? decodeHex(twin.relay) : "null";
-        state.twinID = twinID;
+        state.loading = true;
         state.twin = twin;
-      } else {
-        state.accountAddress = payload.account.address;
-        state.accountName = payload.account.meta.name;
+        state.balance = balance;
+        state.twin.relay = twin.relay ? decodeHex(twin.relay) : "null";
       }
+      state.twin.address = payload.account.address;
+      state.twin.name = payload.account.meta.name;
+      state.loading = false;
       return state;
     },
     UNSET_CREDENTIALS(state: UserCredentials) {
       state.initialized = false;
-      state.accountAddress = "";
-      state.accountName = "";
-      state.twinID = 0;
-      state.balanceFree = 0;
-      state.balanceReserved = 0;
-      state.relayAddress = "";
-      state.publicKey = "";
-      state.twin = { id: "", relay: "", pk: "" };
+      state.loading = true;
+      state.twin = { id: "", relay: "", pk: "", name: "", address: "" };
+      state.balance = { free: 0, reserved: 0 };
       return state;
     },
   },

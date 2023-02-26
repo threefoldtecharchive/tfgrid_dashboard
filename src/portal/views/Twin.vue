@@ -46,7 +46,7 @@
       <v-card class="my-3 pa-3 text-center">
         <v-list v-if="$store.state.credentials.initialized">
           <v-list-item> ID: {{ $store.state.credentials.twin.id }} </v-list-item>
-          <v-list-item> Address: {{ $store.state.credentials.accountAddress }} </v-list-item>
+          <v-list-item> Address: {{ $store.state.credentials.twin.address }} </v-list-item>
           <v-list-item> Relay: {{ $store.state.credentials.twin.relay }} </v-list-item>
         </v-list>
         <v-card-actions class="justify-end">
@@ -75,6 +75,7 @@ import WelcomeWindow from "../components/WelcomeWindow.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { deleteTwin, updateRelay } from "../lib/twin";
 import config from "@/portal/config";
+import { TwinType } from "../store/types";
 
 @Component({
   name: "Twin",
@@ -83,13 +84,13 @@ import config from "@/portal/config";
 export default class TwinView extends Vue {
   $api: any;
   editingTwin = false;
-  twin: { relay: string | null; pk: string | null; address: string; id: string | null } = {
+  twin: TwinType = {
     relay: "",
-    pk: null,
+    pk: "",
     id: "",
     address: "",
+    name: "",
   };
-  accountName: string | (string | null)[] = "";
   isValidTwinIP = false;
   loadingDeleteTwin = false;
   openDeleteTwinDialog = false;
@@ -99,21 +100,17 @@ export default class TwinView extends Vue {
     item_id: 1,
   };
   selectedName = "";
+
   updated() {
     if (this.$store.state.credentials.initialized) {
-      this.twin.address = this.$store.state.credentials.accountAddress;
-      this.twin.id = String(this.$store.state.credentials.twinID);
-      this.accountName = this.$store.state.credentials.accountName;
-      this.twin.relay = this.$store.state.credentials.relayAddress;
+      this.twin = this.$store.state.credentials.twin;
       this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
     }
   }
+
   mounted() {
     if (this.$api && this.$store.state.credentials.initialized) {
-      this.twin.address = this.$store.state.credentials.accountAddress;
-      this.twin.relay = this.$store.state.credentials.relayAddress;
-      this.twin.id = String(this.$store.state.credentials.twinID);
-      this.accountName = this.$store.state.credentials.accountName;
+      this.twin = this.$store.state.credentials.twin;
       this.selectedName = this.items.filter(item => item.id === this.selectedItem.item_id)[0].name;
     } else {
       this.$router.push({
@@ -122,13 +119,16 @@ export default class TwinView extends Vue {
       });
     }
   }
+
   unmounted() {
-    this.twin.address = "";
+    this.$store.commit("UNSET_CREDENTIALS");
   }
+
   public editTwin() {
     console.log("editing a twin");
     this.editingTwin = true;
   }
+
   public updateTwin() {
     this.loadingEditTwin = true;
     if (this.selectedName === this.$store.state.credentials.relayAddress) {
@@ -165,11 +165,11 @@ export default class TwinView extends Vue {
                 this.loadingEditTwin = false;
                 this.$toasted.show("Twin updated!");
                 this.editingTwin = false;
-                this.$store.state.credentials.relayAddress = this.selectedName;
+                this.$store.state.credentials.twin.relay = this.selectedName;
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Twin creation/update failed!");
                 this.loadingEditTwin = false;
-                this.twin.relay = this.$store.state.credentials.relayAddress;
+                this.twin.relay = this.$store.state.credentials.twin.relay;
               }
             });
           }
@@ -179,7 +179,7 @@ export default class TwinView extends Vue {
       console.log(err.message);
       this.$toasted.show("Twin creation/update failed!");
       this.loadingEditTwin = false;
-      this.twin.relay = this.$store.state.credentials.relayAddress;
+      this.twin.relay = this.$store.state.credentials.twin.relay;
     });
   }
   openDeleteTwin() {

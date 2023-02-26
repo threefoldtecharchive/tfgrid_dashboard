@@ -1,17 +1,16 @@
+import { balanceInterface } from "./../lib/balance";
+
 export declare type TwinType = {
+  address: string;
+  name: string;
   id: string;
   relay: string;
   pk: string;
 };
 
 export declare type UserCredentials = {
-  accountAddress: string;
-  accountName: string;
-  twinID: number;
-  balanceFree: number;
-  balanceReserved: number;
-  relayAddress: string;
-  publicKey: string;
+  loading: boolean;
   twin: TwinType;
+  balance: balanceInterface;
   initialized: boolean;
 };

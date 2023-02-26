@@ -88,7 +88,6 @@ export default class NodesTable extends Vue {
   expanded: any = [];
   loading = true;
   address = "";
-  accountName: any = "";
 
   nodes: any[] = [];
   count = 0;

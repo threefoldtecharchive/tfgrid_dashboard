@@ -5,7 +5,7 @@
         <v-tooltip>
           <template v-slot:activator="{ on, attrs }">
             <v-btn @click="openBalance = true" v-bind="attrs" v-on="on" class="d-flex align-center">
-              <p class="mr-1">{{ $store.state.credentials.balanceFree }}</p>
+              <p class="mr-1">{{ $store.state.credentials.balance.free }}</p>
               <p class="font-weight-black">TFT</p>
             </v-btn>
           </template>
@@ -21,8 +21,8 @@
         <v-toolbar color="primary"> Balance Summary </v-toolbar>
         <v-card-text class="pa-5">
           <v-container>
-            <v-row> Free: {{ $store.state.credentials.balanceFree }} TFT </v-row>
-            <v-row> Reserved (Locked): {{ $store.state.credentials.balanceReserved }} TFT </v-row>
+            <v-row> Free: {{ $store.state.credentials.balance.free }} TFT </v-row>
+            <v-row> Reserved (Locked): {{ $store.state.credentials.balance.reserved }} TFT </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions class="justify-end">
@@ -51,7 +51,7 @@ export default class FundsCard extends Vue {
     } else {
       this.loadingAddTFT = true;
       getMoreFunds(
-        this.$store.state.credentials.accountAddress,
+        this.$store.state.credentials.twin.address,
         this.$api,
         (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
           console.log(res);
@@ -77,9 +77,9 @@ export default class FundsCard extends Vue {
                 if (section === "balances" && method === "Transfer") {
                   this.$toasted.show("Success!");
                   this.loadingAddTFT = false;
-                  getBalance(this.$api, this.$store.state.credentials.accountAddress).then(balance => {
-                    this.$store.state.credentials.balanceFree = balance.free;
-                    this.$store.state.credentials.balanceReserved = balance.reserved;
+                  getBalance(this.$api, this.$store.state.credentials.twin.address).then(balance => {
+                    this.$store.state.credentials.balance.free = balance.free;
+                    this.$store.state.credentials.balance.reserved = balance.reserved;
                   });
                 } else if (section === "system" && method === "ExtrinsicFailed") {
                   this.$toasted.show("Get more TFT failed!");

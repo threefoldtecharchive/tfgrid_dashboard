@@ -52,18 +52,19 @@ export default class AccountsView extends Vue {
   searchTerm = "";
   accounts: accountInterface[] = [];
   $api: any;
-  twin!: {
-    pk: string;
-    id: string;
-    relay: string;
-  };
 
   mounted() {
     this.accounts = this.$store.state.portal.accounts;
   }
+
   updated() {
     this.accounts = this.$store.state.portal.accounts;
   }
+
+  unmounted() {
+    this.$store.commit("UNSET_CREDENTIALS");
+  }
+
   public filteredAccounts() {
     if (this.searchTerm.length !== 0) {
       return this.accounts.filter(
@@ -74,6 +75,7 @@ export default class AccountsView extends Vue {
     }
     return this.accounts;
   }
+
   public async onSelectAccount(account: accountInterface) {
     this.accounts.map(account => (account.active = false));
     account.active = true;

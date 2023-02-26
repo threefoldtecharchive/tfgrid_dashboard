@@ -29,7 +29,7 @@
               (amount.toString().split('.').length > 1 ? amount.toString().split('.')[1].length <= 3 : true) ||
               'Amount must have 3 decimals only',
             () => amount > 0 || 'Amount cannot be negative or 0',
-            () => amount < parseFloat(balance) || 'Amount cannot exceed balance',
+            () => amount < parseFloat($store.state.credentials.balance.free) || 'Amount cannot exceed balance',
           ]"
         >
         </v-text-field>
@@ -60,25 +60,15 @@ import { balanceInterface, getBalance } from "../lib/balance";
 export default class TransferView extends Vue {
   receipientAddress = "";
   accountsAddresses: any = [];
-  balance: any = 0;
   $api: any;
-  address = "";
-  ip: any = [];
-  relay: any = [];
-  accountName: any = "";
-  id: any = [];
   amount = 0;
   loadingTransfer = false;
   isTransferValid = false;
+
   mounted() {
     if (this.$api && this.$store.state.credentials.initialized) {
-      this.address = this.$store.state.credentials.accountAddress;
-      this.id = this.$store.state.credentials.twinID;
-      this.relay = this.$store.state.credentials.relayAddress;
-      this.accountName = this.$store.state.credentials.accountName;
-      this.balance = +this.$store.state.credentials.balanceFree;
       this.accountsAddresses = this.$store.state.portal.accounts
-        .filter((account: accountInterface) => account.address !== this.address)
+        .filter((account: accountInterface) => account.address !== this.$store.state.credentials.twin.address)
         .map((account: accountInterface) => `${account.address}`);
     } else {
       this.$router.push({
@@ -87,16 +77,11 @@ export default class TransferView extends Vue {
       });
     }
   }
-  async updated() {
-    this.id = this.$store.state.credentials.twinID;
-    if (this.$store.state.credentials.balanceFree !== this.balance) {
-      this.balance = +this.$store.state.credentials.balanceFree;
-    }
-  }
+
   unmounted() {
-    this.balance = 0;
-    this.address = "";
+    this.$store.commit("UNSET_CREDENTIALS");
   }
+
   transferAddressCheck() {
     const isValid = checkAddress(this.receipientAddress);
     if (isValid && this.receipientAddress.length && !this.receipientAddress.match(/\W/)) {
@@ -105,13 +90,15 @@ export default class TransferView extends Vue {
       return false;
     }
   }
+
   clearInput() {
     this.receipientAddress = "";
     this.amount = 0;
   }
+
   transferTFT() {
     transfer(
-      this.address,
+      this.$store.state.credentials.twin.address,
       this.$api,
       this.receipientAddress,
       this.amount,
@@ -139,9 +126,9 @@ export default class TransferView extends Vue {
               if (section === "balances" && method === "Transfer") {
                 this.$toasted.show("Transfer succeeded!");
                 this.loadingTransfer = false;
-                getBalance(this.$api, this.address).then((balance: balanceInterface) => {
-                  this.$store.state.credentials.balanceFree = balance.free;
-                  this.$store.state.credentials.balanceReserved = balance.reserved;
+                getBalance(this.$api, this.$store.state.credentials.twin.address).then((balance: balanceInterface) => {
+                  this.$store.state.credentials.balance.free = balance.free;
+                  this.$store.state.credentials.balance.reserved = balance.reserved;
                 });
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Transfer failed!");
