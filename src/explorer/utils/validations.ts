@@ -15,14 +15,9 @@ export function inputValidation(value: string, key: string): string {
     "free_mru",
     "free_sru",
     "free_hru",
-  ];
-  const textualFields: string[] = [
-    "farmingPolicyName",
-    "certificationType",
-    "farmName",
-    "farm_name",
     "pricingPolicyId",
   ];
+  const textualFields: string[] = ["farmingPolicyName", "certificationType", "farmName", "farm_name"];
 
   const countryFields: string[] = ["countryFullName", "country"];
   const specialChars = /[ `!@#$%^&*()+\-=[\]{};':"\\|,.<>/?~]/;

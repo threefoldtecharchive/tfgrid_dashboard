@@ -199,6 +199,14 @@ export interface IFetchPaginatedData<T> {
   items: T[];
 }
 
+export const getPricingPolicies = gql`
+  query getPricingPolicies {
+    pricingPolicies {
+      pricingPolicyID
+    }
+  }
+`;
+
 export const getFarmsQuery = gql`
   query getFarms(
     $limit: Int!
