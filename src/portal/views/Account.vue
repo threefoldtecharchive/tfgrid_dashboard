@@ -167,7 +167,7 @@ export default class AccountView extends Vue {
             this.loadingTwinCreate = false;
           } else {
             // Loop through Vec<EventRecord> to display all events
-            events.forEach(async ({ phase, event: { data, method, section } }) => {
+            events.forEach(({ phase, event: { data, method, section } }) => {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
               if (section === "tfgridModule" && method === "TwinStored") {
                 const selectedAccount: accountInterface = this.$store.state.portal.accounts.filter(

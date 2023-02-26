@@ -54,7 +54,7 @@ export const credentialsStore = {
     UNSET_CREDENTIALS(state: UserCredentials) {
       state.initialized = false;
       state.loading = true;
-      state.twin = { id: "", relay: "", pk: "", name: "", address: "" };
+      state.twin = { id: "", relay: "", pk: "" };
       state.balance = { free: 0, reserved: 0 };
       state.account = {
         address: "",
