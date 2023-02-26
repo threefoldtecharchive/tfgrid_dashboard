@@ -37,7 +37,6 @@ export const credentialsStore = {
       const twin = await getTwin(payload.api, twinID);
 
       if (twinID) {
-        payload.account.active = true;
         state.initialized = true;
         state.loading = true;
         state.twin = twin;
