@@ -29,7 +29,7 @@
               (amount.toString().split('.').length > 1 ? amount.toString().split('.')[1].length <= 3 : true) ||
               'Amount must have 3 decimals only',
             () => amount > 0 || 'Amount cannot be negative or 0',
-            () => amount < parseFloat(balance) || 'Amount cannot exceed balance',
+            () => amount < parseFloat($store.state.credentials.balance.free) || 'Amount cannot exceed balance',
           ]"
         >
         </v-text-field>
@@ -50,8 +50,9 @@
 import { Component, Vue } from "vue-property-decorator";
 import { checkAddress, transfer } from "../lib/transfer";
 import QrcodeVue from "qrcode.vue";
-import { accountInterface, UserCredentials } from "../store/state";
+import { accountInterface } from "../store/state";
 import { balanceInterface, getBalance } from "../lib/balance";
+
 @Component({
   name: "TransferView",
   components: { QrcodeVue },
@@ -59,26 +60,15 @@ import { balanceInterface, getBalance } from "../lib/balance";
 export default class TransferView extends Vue {
   receipientAddress = "";
   accountsAddresses: any = [];
-  balance: any = 0;
   $api: any;
-  $credentials!: UserCredentials;
-  address = "";
-  ip: any = [];
-  relay: any = [];
-  accountName: any = "";
-  id: any = [];
   amount = 0;
   loadingTransfer = false;
   isTransferValid = false;
+
   mounted() {
-    if (this.$api && this.$credentials && this.$credentials.relayAddress) {
-      this.address = this.$credentials.accountAddress;
-      this.id = this.$credentials.twinID;
-      this.relay = this.$credentials.relayAddress;
-      this.accountName = this.$credentials.accountName;
-      this.balance = +this.$credentials.balanceFree;
+    if (this.$api && this.$store.state.credentials.initialized) {
       this.accountsAddresses = this.$store.state.portal.accounts
-        .filter((account: accountInterface) => account.address !== this.address)
+        .filter((account: accountInterface) => account.address !== this.$store.state.credentials.account.address)
         .map((account: accountInterface) => `${account.address}`);
     } else {
       this.$router.push({
@@ -87,16 +77,11 @@ export default class TransferView extends Vue {
       });
     }
   }
-  async updated() {
-    this.id = this.$credentials.twinID;
-    if (this.$credentials.balanceFree !== this.balance) {
-      this.balance = +this.$credentials.balanceFree;
-    }
-  }
+
   unmounted() {
-    this.balance = 0;
-    this.address = "";
+    this.$store.commit("UNSET_CREDENTIALS");
   }
+
   transferAddressCheck() {
     const isValid = checkAddress(this.receipientAddress);
     if (isValid && this.receipientAddress.length && !this.receipientAddress.match(/\W/)) {
@@ -105,13 +90,15 @@ export default class TransferView extends Vue {
       return false;
     }
   }
+
   clearInput() {
     this.receipientAddress = "";
     this.amount = 0;
   }
+
   transferTFT() {
     transfer(
-      this.address,
+      this.$store.state.credentials.account.address,
       this.$api,
       this.receipientAddress,
       this.amount,
@@ -139,10 +126,12 @@ export default class TransferView extends Vue {
               if (section === "balances" && method === "Transfer") {
                 this.$toasted.show("Transfer succeeded!");
                 this.loadingTransfer = false;
-                getBalance(this.$api, this.address).then((balance: balanceInterface) => {
-                  this.balance = balance.free;
-                  this.$root.$emit("updateBalance", this.balance);
-                });
+                getBalance(this.$api, this.$store.state.credentials.account.address).then(
+                  (balance: balanceInterface) => {
+                    this.$store.state.credentials.balance.free = balance.free;
+                    this.$store.state.credentials.balance.reserved = balance.reserved;
+                  },
+                );
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Transfer failed!");
                 this.loadingTransfer = false;
@@ -169,6 +158,7 @@ export default class TransferView extends Vue {
 .theme--dark.v-application a {
   color: white;
 }
+
 .fee {
   font-size: 0.7rem;
   color: grey;

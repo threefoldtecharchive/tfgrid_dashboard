@@ -9,7 +9,7 @@
 
       <v-tabs-items v-model="activeTab">
         <v-tab-item v-for="tab in tabs" :key="tab.index" :value="tab.query">
-          <NodesTable :tab="tab" :twinId="twinID" :trigger="trigger" />
+          <NodesTable :tab="tab" :twinId="$store.state.credentials.twin.id" :trigger="trigger" />
         </v-tab-item>
       </v-tabs-items>
     </v-card>
@@ -20,7 +20,6 @@
 import NodesTable from "../components/NodesTable.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { ITab } from "../lib/nodes";
-import { UserCredentials } from "../store/state";
 
 @Component({
   name: "NodesView",
@@ -28,11 +27,8 @@ import { UserCredentials } from "../store/state";
 })
 export default class NodesView extends Vue {
   $api = "";
-  address = "";
   activeTab = "";
   trigger = "";
-  twinID = 0;
-  $credentials!: UserCredentials;
   tabs: ITab[] = [
     {
       label: "Rentable",
@@ -54,19 +50,18 @@ export default class NodesView extends Vue {
     },
   ];
 
-  async mounted() {
-    this.address = this.$route.params.accountID;
-    if (this.$api && this.$credentials && this.$credentials.twinID) {
-      this.twinID = this.$credentials.twinID;
-    } else {
+  mounted() {
+    if (!(this.$api && this.$store.state.credentials.initialized)) {
       this.$router.push({ name: "accounts", path: "/" });
     }
   }
-  updated() {
-    this.address;
-  }
+
   onTabChange() {
     this.trigger = Math.random().toString(36).slice(2);
+  }
+
+  unmounted() {
+    this.$store.commit("UNSET_CREDENTIALS");
   }
 }
 </script>

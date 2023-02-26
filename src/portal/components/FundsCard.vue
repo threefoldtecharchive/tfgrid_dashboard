@@ -5,7 +5,7 @@
         <v-tooltip>
           <template v-slot:activator="{ on, attrs }">
             <v-btn @click="openBalance = true" v-bind="attrs" v-on="on" class="d-flex align-center">
-              <p class="mr-1">{{ balanceFree }}</p>
+              <p class="mr-1">{{ $store.state.credentials.balance.free }}</p>
               <p class="font-weight-black">TFT</p>
             </v-btn>
           </template>
@@ -21,8 +21,8 @@
         <v-toolbar color="primary"> Balance Summary </v-toolbar>
         <v-card-text class="pa-5">
           <v-container>
-            <v-row> Free: {{ balanceFree }} TFT </v-row>
-            <v-row> Reserved (Locked): {{ balanceReserved }} TFT </v-row>
+            <v-row> Free: {{ $store.state.credentials.balance.free }} TFT </v-row>
+            <v-row> Reserved (Locked): {{ $store.state.credentials.balance.reserved }} TFT </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions class="justify-end">
@@ -36,27 +36,22 @@
 import config from "@/portal/config";
 import { getBalance, getMoreFunds } from "@/portal/lib/balance";
 import { Component, Prop, Vue } from "vue-property-decorator";
+
 @Component({
   name: "FundsCard",
 })
 export default class FundsCard extends Vue {
   loadingAddTFT = false;
   $api: any;
-  @Prop({ required: true }) balanceFree!: number;
-  @Prop({ required: true }) balanceReserved!: number;
   openBalance = false;
-  mounted() {
-    this.$root.$on("updateBalance", (balance: number) => {
-      this.balanceFree = balance;
-    });
-  }
+
   async addTFT() {
     if (config.network !== "dev" && config.network !== "qa") {
       window.open("https://gettft.com/gettft/", "_blank");
     } else {
       this.loadingAddTFT = true;
       getMoreFunds(
-        this.$route.params.accountID,
+        this.$store.state.credentials.account.address,
         this.$api,
         (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
           console.log(res);
@@ -82,9 +77,9 @@ export default class FundsCard extends Vue {
                 if (section === "balances" && method === "Transfer") {
                   this.$toasted.show("Success!");
                   this.loadingAddTFT = false;
-                  getBalance(this.$api, this.$route.params.accountID).then(balance => {
-                    this.$emit("update:balanceFree", balance.free);
-                    this.$emit("update:balanceReserved", balance.reserved);
+                  getBalance(this.$api, this.$store.state.credentials.account.address).then(balance => {
+                    this.$store.state.credentials.balance.free = balance.free;
+                    this.$store.state.credentials.balance.reserved = balance.reserved;
                   });
                 } else if (section === "system" && method === "ExtrinsicFailed") {
                   this.$toasted.show("Get more TFT failed!");

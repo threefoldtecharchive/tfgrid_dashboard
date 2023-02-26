@@ -195,6 +195,7 @@
 
     <!-- Nodes table -->
     <FarmNodesTable
+      v-if="nodes.length"
       :nodes="nodes"
       :loadingNodes="loadingNodes"
       :initLoading="initLoading"
@@ -233,7 +234,6 @@ import {
   setFarmPayoutV2Address,
 } from "../lib/farms";
 import { StrKey } from "stellar-sdk";
-import { UserCredentials } from "../store/state";
 
 @Component({
   name: "FarmsView",
@@ -248,16 +248,13 @@ export default class FarmsView extends Vue {
     { text: "Pricing Policy ID", value: "pricingPolicyId", align: "center" },
   ];
   farms: any = [];
-  id: any = [];
   singleExpand = true;
   expanded: any = [];
   $api: any;
-  $credentials!: UserCredentials;
   openV2AddressDialog = false;
   openCreateFarmDialog = false;
   v2_address = "";
   farmName = "";
-  address = "";
   farmNameErrorMessage = "";
   loadingCreateIP = false;
   loadingDeleteIP = false;
@@ -284,10 +281,8 @@ export default class FarmsView extends Vue {
   // Life hooks
   async mounted() {
     // not logged in? login: get farms, nodes
-    if (this.$api && this.$credentials) {
-      this.address = this.$credentials.accountAddress;
-      this.id = this.$credentials.twinID;
-      this.farms = await getFarm(this.$api, this.id);
+    if (this.$api && this.$store.state.credentials) {
+      this.farms = await getFarm(this.$api, this.$store.state.credentials.twin.id);
       this.loadingFarms = false;
 
       this.initLoading = true;
@@ -302,10 +297,8 @@ export default class FarmsView extends Vue {
   }
 
   async updated() {
-    this.address = this.$credentials.accountAddress;
-    this.id = this.$credentials.twinID;
     if (this.$api) {
-      this.farms = await getFarm(this.$api, this.id);
+      this.farms = await getFarm(this.$api, this.$store.state.credentials.twin.id);
       this.loadingFarms = false;
     } else {
       this.$router.push({
@@ -317,8 +310,12 @@ export default class FarmsView extends Vue {
     this.farmName;
   }
 
+  unmounted() {
+    this.$store.commit("UNSET_CREDENTIALS");
+  }
+
   // Watchers
-  @Watch("$credentials.twinID") async onPropertyChanged(value: number, oldValue: number) {
+  @Watch("$store.state.credentials.twin.id") async onPropertyChanged(value: number, oldValue: number) {
     console.log(`switching from account ${oldValue} farms to account ${value} farms`);
     this.farms = await getFarm(this.$api, value);
 
@@ -372,7 +369,7 @@ export default class FarmsView extends Vue {
   callDeleteFarm() {
     this.loadingDeleteFarm = true;
     deleteFarm(
-      this.address,
+      this.$route.params.accountID,
       this.$api,
       this.farmToDelete.id,
       (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
@@ -400,7 +397,7 @@ export default class FarmsView extends Vue {
                 this.$toasted.show("Farm deleted!");
                 this.loadingDeleteFarm = false;
                 this.openDeleteFarmDialog = false;
-                this.farms = getFarm(this.$api, this.id);
+                this.farms = getFarm(this.$api, this.$store.state.credentials.twin.id);
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Deleting a farm failed");
                 this.loadingDeleteFarm = false;
@@ -445,7 +442,7 @@ export default class FarmsView extends Vue {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
               if (section === "tfgridModule" && method === "FarmUpdated") {
                 this.$toasted.show("IP deleted!");
-                getFarm(this.$api, this.id).then(farms => {
+                getFarm(this.$api, this.$store.state.credentials.twin.id).then(farms => {
                   this.farms = farms;
                   this.loadingDeleteIP = false;
                 });
@@ -485,7 +482,7 @@ export default class FarmsView extends Vue {
             console.log(`phase: ${phase}, section: ${section}, method: ${method}`);
             if (section === "utility" && method === "BatchCompleted") {
               this.$toasted.show("IP created!");
-              getFarm(this.$api, this.id).then(farms => {
+              getFarm(this.$api, this.$store.state.credentials.twin.id).then(farms => {
                 this.farms = farms;
               });
               resolve("IP created!");
@@ -528,7 +525,7 @@ export default class FarmsView extends Vue {
     this.loadingCreateFarm = true;
 
     createFarm(
-      this.address,
+      this.$route.params.accountID,
       this.$api,
       this.farmName,
       (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
@@ -558,7 +555,7 @@ export default class FarmsView extends Vue {
                 this.$toasted.show("Farm created!");
                 this.loadingCreateFarm = false;
                 this.farmName = "";
-                getFarm(this.$api, this.id).then(farms => {
+                getFarm(this.$api, this.$store.state.credentials.twin.id).then(farms => {
                   this.farms = farms;
                 });
                 this.openCreateFarmDialog = false;
@@ -618,7 +615,7 @@ export default class FarmsView extends Vue {
               console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
               if (section === "tfgridModule" && method === "FarmPayoutV2AddressRegistered") {
                 this.$toasted.show("Address added!");
-                getFarm(this.$api, this.id).then(farms => {
+                getFarm(this.$api, this.$store.state.credentials.twin.id).then(farms => {
                   this.farms = farms;
                 });
                 this.openV2AddressDialog = false;

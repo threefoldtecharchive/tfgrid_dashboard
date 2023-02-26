@@ -38,7 +38,7 @@
 <script lang="ts">
 import { cancelRentContract, createRentContract, getActiveContracts, getNodeByID } from "@/portal/lib/nodes";
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { UserCredentials } from "../store/state";
+
 @Component({
   name: "NodeActionBtn",
 })
@@ -50,15 +50,9 @@ export default class NodeActionBtn extends Vue {
   nodeId!: string;
   solutionProviderID = null;
   $api: any;
-  $credentials!: UserCredentials;
   openUnreserveDialog = false;
   nodeIDToUnreserve = "";
   loadingUnreserveNode = false;
-  currentTwinID: any;
-
-  created() {
-    this.currentTwinID = this.$credentials.twinID;
-  }
 
   reserveNode(nodeId: string) {
     this.loadingReserveNode = true;

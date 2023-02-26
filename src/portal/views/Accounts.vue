@@ -19,7 +19,7 @@
         <v-card
           v-for="account in filteredAccounts()"
           :key="account.address"
-          @click="addAccountRoute(account)"
+          @click="onSelectAccount(account)"
           class="my-4 primary white--text"
         >
           <div class="d-flex justify-space-between">
@@ -51,13 +51,20 @@ import FundsCard from "../components/FundsCard.vue";
 export default class AccountsView extends Vue {
   searchTerm = "";
   accounts: accountInterface[] = [];
+  $api: any;
 
   mounted() {
     this.accounts = this.$store.state.portal.accounts;
   }
+
   updated() {
     this.accounts = this.$store.state.portal.accounts;
   }
+
+  unmounted() {
+    this.$store.commit("UNSET_CREDENTIALS");
+  }
+
   public filteredAccounts() {
     if (this.searchTerm.length !== 0) {
       return this.accounts.filter(
@@ -68,15 +75,16 @@ export default class AccountsView extends Vue {
     }
     return this.accounts;
   }
-  async addAccountRoute(account: accountInterface) {
+
+  public async onSelectAccount(account: accountInterface) {
     this.accounts.map(account => (account.active = false));
     account.active = true;
+    this.$store.commit("SET_CREDENTIALS", { api: this.$api, account: account });
     this.$root.$emit("selectAccount");
     this.$router.push({
       name: "account",
       path: "account",
       params: { accountID: `${account.address}` },
-      query: { accountName: `${account.meta.name}` },
     });
   }
 }

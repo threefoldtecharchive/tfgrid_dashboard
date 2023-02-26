@@ -10,7 +10,7 @@ interface AppConfigs {
   APP_GRAPHQL_URL: string;
   APP_GRIDPROXY_URL: string;
   STELLAR_NETWORK: string;
-  TFCHAIN_NETWORK: string;
+  APP_NETWORK: string;
   APP_VERSION: string;
   RELAY: string;
   APP_GRAVITY_CONTRACT_ADDRESS: string;

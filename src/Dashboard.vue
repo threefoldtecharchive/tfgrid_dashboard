@@ -10,13 +10,7 @@
 
         <v-spacer></v-spacer>
         <div class="d-flex">
-          <FundsCard
-            v-if="getCredentials() && getCredentials().twinID != 0"
-            :balanceFree.sync="balanceFree"
-            :balanceReserved.sync="balanceReserved"
-            @update:balanceFree="$credentials.balanceFree = $event"
-            @update:balanceReserved="$credentials.balanceReserved = $event"
-          />
+          <FundsCard v-if="$store.state.credentials.initialized" />
           <div class="d-flex" style="align-items: center">
             <v-btn icon @click="toggle_dark_mode">
               <v-icon>mdi-theme-light-dark</v-icon>
@@ -116,7 +110,7 @@
             </template>
 
             <div v-if="route.prefix === '/'">
-              <template v-if="!(getCredentials() && getCredentials().twinID != 0)">
+              <template v-if="!$store.state.credentials.initialized">
                 <div class="mt-4">
                   <v-alert color="rgb(25, 130, 177)" dense type="info">
                     You should <strong>select/create</strong> an account to enable the portal functionalities.
@@ -195,15 +189,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { balanceInterface, getBalance } from "./portal/lib/balance";
+import { Component, Vue } from "vue-property-decorator";
 import { connect } from "./portal/lib/connect";
-import { getTwin, getTwinID } from "./portal/lib/twin";
-import { accountInterface, UserCredentials } from "./portal/store/state";
+import { accountInterface } from "./portal/store/state";
 import WelcomeWindow from "./portal/components/WelcomeWindow.vue";
 import FundsCard from "./portal/components/FundsCard.vue";
 import config from "@/portal/config";
-import { hex2a } from "@/portal/lib/util";
 
 interface SidenavItem {
   label: string;
@@ -226,6 +217,7 @@ interface SidenavItem {
       | [];
   }>;
 }
+
 @Component({
   name: "Dashboard",
   components: { WelcomeWindow, FundsCard },
@@ -234,45 +226,20 @@ export default class Dashboard extends Vue {
   vText(vText: any) {
     throw new Error("Method not implemented.");
   }
+
   collapseOnScroll = true;
   mini = true;
   drawer = true;
-  twinID = 0;
   $api: any;
-  $credentials!: UserCredentials;
-  twin: { id: string; relay: string; pk: string } = { id: "", relay: "", pk: "" };
-  balance: balanceInterface = { free: 0, reserved: 0 };
   accounts: accountInterface[] = [];
   loadingAPI = true;
   version = config.version;
 
-  balanceFree: string | (string | null)[] = "";
-  balanceReserved: string | (string | null)[] = "";
-
-  @Watch("this.$credentials.balance") async onBalanceUpdate(value: number, oldValue: number) {
-    if (this.$credentials) {
-      this.balanceFree = String(this.$credentials.balanceFree);
-      this.balanceReserved = String(this.$credentials.balanceReserved);
-      console.log(`balance went from ${oldValue}, to ${value}`);
-    }
-  }
   async mounted() {
     this.$store.dispatch("portal/subscribeAccounts");
-    if (this.$credentials) {
-      this.balanceFree = String(this.$credentials.balanceFree);
-      this.balanceReserved = String(this.$credentials.balanceReserved);
-    }
     this.accounts = this.$store.state.portal.accounts;
     if (this.$route.path === "/" && !this.$api) {
-      Vue.prototype.$api = await connect(); //declare global variable api
-      Vue.prototype.$credentials = {
-        accountAddress: "",
-        accountName: "",
-        twinID: 0,
-        balanceFree: 0,
-        balanceReserved: 0,
-        relay: "",
-      };
+      Vue.prototype.$api = await connect();
       console.log(`connecting to api`);
       this.loadingAPI = false;
     }
@@ -288,8 +255,6 @@ export default class Dashboard extends Vue {
       localStorage.setItem("dark_theme", this.$vuetify.theme.dark.toString());
     }
     this.$root.$on("selectAccount", async () => {
-      const activatedAccount: accountInterface = this.filteredAccounts()[0]; // returns array of activated account.
-      Vue.prototype.$credentials = await this.setCredentials(activatedAccount);
       this.routes[0].active = true;
       this.mini = false;
     });
@@ -315,35 +280,41 @@ export default class Dashboard extends Vue {
     }
   }
 
-  updated() {
+  async updated() {
     this.accounts = this.$store.state.portal.accounts;
     if (this.$api && this.$route.path == "/") {
       this.loadingAPI = false;
     } else if (this.$route.path !== "/") {
       this.loadingAPI = false;
     }
-    if (this.$credentials) {
-      this.balanceFree = String(this.$credentials.balanceFree);
-      this.balanceReserved = String(this.$credentials.balanceReserved);
-    }
   }
+
   async unmounted() {
     console.log(`disconnecting from api`);
     await this.$api.disconnect();
     this.$store.dispatch("portal/unsubscribeAccounts");
+    this.$store.commit("UNSET_CREDENTIALS");
+    this.$router.push({
+      name: "accounts",
+      path: `/`,
+    });
   }
+
   public filteredAccounts() {
     return this.accounts.filter(account => account.active);
   }
+
   public isAccountSelected() {
-    if (this.$credentials && this.$credentials.accountName) {
+    if (this.$store.state.credentials.initialized) {
       return true;
     }
     return false;
   }
+
   public disconnectWallet() {
     this.$store.dispatch("portal/unsubscribeAccounts");
-    if (this.$credentials.twinID) {
+    if (this.$store.state.credentials.initialized) {
+      this.$store.commit("UNSET_CREDENTIALS");
       this.$router.push({
         name: "accounts",
         path: `/`,
@@ -351,45 +322,9 @@ export default class Dashboard extends Vue {
     }
   }
 
-  decodeHex(input: string) {
-    return hex2a(input);
-  }
-  // UserCredentials
-  public async setCredentials(account: accountInterface) {
-    this.twinID = await getTwinID(this.$api, account.address);
-    this.balance = await getBalance(this.$api, account.address);
-    if (this.twinID) {
-      this.twin = await getTwin(this.$api, this.twinID);
-      this.$credentials.accountAddress = account.address;
-      this.$credentials.twinID = this.twinID;
-      this.$credentials.relayAddress = this.twin.relay ? this.decodeHex(this.twin.relay) : "null";
-      this.$credentials.publicKey = this.twin.pk;
-      this.$credentials.balanceFree = this.balance.free;
-      this.$credentials.balanceReserved = this.balance.reserved;
-      console.log("this.twin", this.twin);
-    } else {
-      account.active = false;
-      this.$credentials.accountAddress = "";
-      this.$credentials.twinID = 0;
-      this.$credentials.relayAddress = "";
-      this.$credentials.publicKey = "";
-      this.$credentials.balanceFree = 0;
-      this.$credentials.balanceReserved = 0;
-    }
-    return this.$credentials;
-  }
-
-  public getCredentials() {
-    return this.$credentials;
-  }
-
   public redirectToHomePage() {
     this.accounts.map(account => (account.active = false));
-    this.$credentials.accountAddress = "";
-    this.$credentials.twinID = 0;
-    this.$credentials.relayAddress = "";
-    this.$credentials.balanceFree = 0;
-    this.$credentials.balanceReserved = 0;
+    this.$store.commit("UNSET_CREDENTIALS");
     this.routes[0].active = false;
     if (this.$route.path !== "/") {
       this.$router.push({
@@ -398,10 +333,12 @@ export default class Dashboard extends Vue {
       });
     }
   }
+
   public toggle_dark_mode() {
     this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
     localStorage.setItem("dark_theme", this.$vuetify.theme.dark.toString());
   }
+
   routes: SidenavItem[] = [
     {
       //label and path will be retrieved from accounts fetched from store (polkadot)

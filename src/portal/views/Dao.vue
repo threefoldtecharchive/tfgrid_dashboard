@@ -12,7 +12,7 @@
           <v-container>
             <v-row class="d-flex justify-center">
               <h2 v-if="!proposals.active.length">No Active proposals at this time</h2>
-              <h2 v-else>{{ $route.query.accountName }}, you can now vote on proposals!</h2>
+              <h2 v-else>{{ $store.state.credentials.account.meta.name }}, you can now vote on proposals!</h2>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <v-icon dark right v-bind="attrs" v-on="on" @click="openInfoModal = true">
@@ -210,7 +210,6 @@ export default class DaoView extends Vue {
   };
   percentageVoted = 0;
   openVDialog = false;
-  id: string | (string | null)[] = "";
   selectedFarm = "";
   farms: any[] = [];
   vote = false;
@@ -230,7 +229,6 @@ export default class DaoView extends Vue {
 
   async mounted() {
     if (this.$api) {
-      this.id = this.$route.query.twinID;
       this.loadingProposals = true;
       this.proposals = await getProposals(this.$api);
       this.activeProposals = this.proposals.active;
@@ -239,7 +237,7 @@ export default class DaoView extends Vue {
         { title: "Active", content: this.activeProposals },
         { title: "Executable", content: this.inactiveProposals },
       ];
-      this.farms = await getFarm(this.$api, parseFloat(`${this.id}`));
+      this.farms = await getFarm(this.$api, parseFloat(`${this.$store.state.credentials.twin.id}`));
       this.loadingProposals = false;
     } else {
       this.$router.push({
@@ -249,10 +247,8 @@ export default class DaoView extends Vue {
     }
   }
   async updated() {
-    this.id = this.$route.query.twinID;
     if (this.$api) {
-      this.id = this.$route.query.twinID;
-      this.farms = await getFarm(this.$api, parseFloat(`${this.id}`));
+      this.farms = await getFarm(this.$api, parseFloat(`${this.$store.state.credentials.twin.id}`));
     } else {
       this.$router.push({
         name: "accounts",
@@ -260,6 +256,11 @@ export default class DaoView extends Vue {
       });
     }
   }
+
+  unmounted() {
+    this.$store.commit("UNSET_CREDENTIALS");
+  }
+
   filteredProposals(selectedProposals: any) {
     if (this.searchTerm.length) {
       return selectedProposals.filter(
@@ -342,6 +343,7 @@ export default class DaoView extends Vue {
 .chart {
   width: 50%;
 }
+
 .threshold {
   position: absolute;
   left: 46%;
