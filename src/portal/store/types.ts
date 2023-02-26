@@ -2,8 +2,6 @@ import { accountInterface } from "./state";
 import { balanceInterface } from "./../lib/balance";
 
 export declare type TwinType = {
-  address: string;
-  name: string;
   id: string;
   relay: string;
   pk: string;
