@@ -1,3 +1,4 @@
+import { accountInterface } from "./state";
 import { balanceInterface } from "./../lib/balance";
 
 export declare type TwinType = {
@@ -13,4 +14,5 @@ export declare type UserCredentials = {
   twin: TwinType;
   balance: balanceInterface;
   initialized: boolean;
+  account: accountInterface;
 };

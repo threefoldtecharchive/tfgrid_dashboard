@@ -17,14 +17,18 @@ export const credentialsStore = {
     return {
       initialized: false,
       loading: true,
+      account: {
+        address: "",
+        meta: { genesisHash: "", name: "", source: "" },
+        type: "",
+        active: false,
+      },
       balance: {
         free: 0,
         reserved: 0,
       },
       twin: {
-        address: "",
         relay: "",
-        name: "",
         id: "",
         pk: "",
       },
@@ -43,8 +47,7 @@ export const credentialsStore = {
         state.balance = balance;
         state.twin.relay = twin.relay ? decodeHex(twin.relay) : "null";
       }
-      state.twin.address = payload.account.address;
-      state.twin.name = payload.account.meta.name;
+      state.account = payload.account;
       state.loading = false;
       return state;
     },
@@ -53,6 +56,12 @@ export const credentialsStore = {
       state.loading = true;
       state.twin = { id: "", relay: "", pk: "", name: "", address: "" };
       state.balance = { free: 0, reserved: 0 };
+      state.account = {
+        address: "",
+        meta: { genesisHash: "", name: "", source: "" },
+        type: "",
+        active: false,
+      };
       return state;
     },
   },

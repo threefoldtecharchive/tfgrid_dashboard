@@ -12,7 +12,7 @@
           <v-container>
             <v-row class="d-flex justify-center">
               <h2 v-if="!proposals.active.length">No Active proposals at this time</h2>
-              <h2 v-else>{{ $store.state.credentials.twin.name }}, you can now vote on proposals!</h2>
+              <h2 v-else>{{ $store.state.credentials.account.meta.name }}, you can now vote on proposals!</h2>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <v-icon dark right v-bind="attrs" v-on="on" @click="openInfoModal = true">
@@ -343,6 +343,7 @@ export default class DaoView extends Vue {
 .chart {
   width: 50%;
 }
+
 .threshold {
   position: absolute;
   left: 46%;

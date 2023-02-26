@@ -51,7 +51,7 @@ export default class FundsCard extends Vue {
     } else {
       this.loadingAddTFT = true;
       getMoreFunds(
-        this.$store.state.credentials.twin.address,
+        this.$store.state.credentials.account.address,
         this.$api,
         (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
           console.log(res);
@@ -77,7 +77,7 @@ export default class FundsCard extends Vue {
                 if (section === "balances" && method === "Transfer") {
                   this.$toasted.show("Success!");
                   this.loadingAddTFT = false;
-                  getBalance(this.$api, this.$store.state.credentials.twin.address).then(balance => {
+                  getBalance(this.$api, this.$store.state.credentials.account.address).then(balance => {
                     this.$store.state.credentials.balance.free = balance.free;
                     this.$store.state.credentials.balance.reserved = balance.reserved;
                   });

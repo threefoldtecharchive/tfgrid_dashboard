@@ -46,7 +46,7 @@
       <v-card class="my-3 pa-3 text-center">
         <v-list v-if="$store.state.credentials.initialized">
           <v-list-item> ID: {{ $store.state.credentials.twin.id }} </v-list-item>
-          <v-list-item> Address: {{ $store.state.credentials.twin.address }} </v-list-item>
+          <v-list-item> Address: {{ $store.state.credentials.account.address }} </v-list-item>
           <v-list-item> Relay: {{ $store.state.credentials.twin.relay }} </v-list-item>
         </v-list>
         <v-card-actions class="justify-end">

@@ -68,7 +68,7 @@ export default class TransferView extends Vue {
   mounted() {
     if (this.$api && this.$store.state.credentials.initialized) {
       this.accountsAddresses = this.$store.state.portal.accounts
-        .filter((account: accountInterface) => account.address !== this.$store.state.credentials.twin.address)
+        .filter((account: accountInterface) => account.address !== this.$store.state.credentials.account.address)
         .map((account: accountInterface) => `${account.address}`);
     } else {
       this.$router.push({
@@ -98,7 +98,7 @@ export default class TransferView extends Vue {
 
   transferTFT() {
     transfer(
-      this.$store.state.credentials.twin.address,
+      this.$store.state.credentials.account.address,
       this.$api,
       this.receipientAddress,
       this.amount,
@@ -126,10 +126,12 @@ export default class TransferView extends Vue {
               if (section === "balances" && method === "Transfer") {
                 this.$toasted.show("Transfer succeeded!");
                 this.loadingTransfer = false;
-                getBalance(this.$api, this.$store.state.credentials.twin.address).then((balance: balanceInterface) => {
-                  this.$store.state.credentials.balance.free = balance.free;
-                  this.$store.state.credentials.balance.reserved = balance.reserved;
-                });
+                getBalance(this.$api, this.$store.state.credentials.account.address).then(
+                  (balance: balanceInterface) => {
+                    this.$store.state.credentials.balance.free = balance.free;
+                    this.$store.state.credentials.balance.reserved = balance.reserved;
+                  },
+                );
               } else if (section === "system" && method === "ExtrinsicFailed") {
                 this.$toasted.show("Transfer failed!");
                 this.loadingTransfer = false;
@@ -156,6 +158,7 @@ export default class TransferView extends Vue {
 .theme--dark.v-application a {
   color: white;
 }
+
 .fee {
   font-size: 0.7rem;
   color: grey;

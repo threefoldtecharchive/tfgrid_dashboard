@@ -37,7 +37,7 @@
   <v-container v-else-if="!$store.state.credentials.twin.id">
     <v-card class="text-center primary white--text py-5 my-3">
       <h2>
-        Welcome aboard {{ $store.state.credentials.twin.name }}, <br />
+        Welcome aboard {{ $store.state.credentials.account.meta.name }}, <br />
         Let’s get you connected to the TF Grid by creating a twin!
       </h2>
     </v-card>

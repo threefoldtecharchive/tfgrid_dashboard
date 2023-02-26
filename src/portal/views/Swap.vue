@@ -222,7 +222,7 @@ export default class TransferView extends Vue {
   public async withdrawTFT(target: string, amount: number) {
     this.loadingWithdraw = true;
     withdraw(
-      this.$store.state.credentials.twin.address,
+      this.$store.state.credentials.account.address,
       this.$api,
       target,
       amount,
@@ -251,9 +251,11 @@ export default class TransferView extends Vue {
               if (section === "tftBridgeModule" && method === "BurnTransactionCreated") {
                 this.$toasted.show("Withdraw submitted!");
                 this.openWithdrawDialog = false;
-                getBalance(this.$api, this.$store.state.credentials.twin.address).then((balance: balanceInterface) => {
-                  this.$store.state.credentials.balance.free = balance.free;
-                });
+                getBalance(this.$api, this.$store.state.credentials.account.address).then(
+                  (balance: balanceInterface) => {
+                    this.$store.state.credentials.balance.free = balance.free;
+                  },
+                );
                 this.target = "";
                 this.amount = 0;
                 this.loadingWithdraw = false;
