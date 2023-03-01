@@ -44,6 +44,7 @@ function fillNodesFields(state: IState, node: any, farms: any): INode {
     farmId: node.farmId,
     twinId: node.twinId,
     cityId: 0,
+    capacity: node.capacity,
 
     totalPublicIPs: farms.find((farm: any) => farm.farmId === node.farmId)?.publicIps.length,
     freePublicIPs: farms
