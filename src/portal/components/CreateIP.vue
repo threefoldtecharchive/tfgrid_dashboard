@@ -109,9 +109,10 @@
 </template>
 <script lang="ts">
 /* eslint-disable */
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { getIPRange } from "get-ip-range";
 import { default as PrivateIp } from "private-ip";
+import { contains } from "cidr-tools";
 
 const IPv4SegmentFormat = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
 const IPv4AddressFormat = `(${IPv4SegmentFormat}[.]){3}${IPv4SegmentFormat}`;
@@ -130,7 +131,20 @@ export default class CreateIP extends Vue {
   gatewayErrorMessage = "";
   open = false;
   showIPs = false;
+  inRange: boolean = true;
+
   @Prop({ required: true }) loadingCreate!: boolean;
+
+  @Watch("gateway", { immediate: true })
+  onChangeGateway() {
+    try {
+      this.inRange = contains(this.publicIP, this.gateway);
+    } catch (e) {
+      this.inRange = false;
+    }
+    this.gatewayCheck();
+  }
+
   addIPs() {
     this.showIPs = true;
     let sub = this.publicIP.split("/")[1];
@@ -220,6 +234,10 @@ export default class CreateIP extends Vue {
     if (this.gateway === "") {
       this.ipErrorMessage = "";
       return true;
+    }
+    if (!this.inRange) {
+      this.gatewayErrorMessage = "Gateway IP not in the provided IP range";
+      return false;
     }
     if (gatewayRegex.test(this.gateway)) {
       this.gatewayErrorMessage = "";
