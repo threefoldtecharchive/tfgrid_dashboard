@@ -43,6 +43,24 @@ export interface Interfaces {
   ips: string;
   id: string;
 }
+export interface Capacity {
+  total_resources: {
+    // index signature
+    [key: string]: number;
+    cru: number;
+    sru: number;
+    hru: number;
+    mru: number;
+  };
+  used_resources: {
+    // index signature
+    [key: string]: number;
+    cru: number;
+    sru: number;
+    hru: number;
+    mru: number;
+  };
+}
 export interface INode {
   id: string;
   createdAt: string;
@@ -63,6 +81,7 @@ export interface INode {
   sru?: string;
   cru?: string;
   mru?: string;
+  capacity: Capacity;
   publicConfig?: IPublicConfig;
   uptime?: number;
   created: number;
