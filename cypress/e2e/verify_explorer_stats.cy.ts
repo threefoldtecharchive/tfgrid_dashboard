@@ -20,7 +20,7 @@ describe("TF Grid Dashboard", function () {
     cy.request({
       method: "GET",
       url: "https://gridproxy.dev.grid.tf/stats?status=up",
-    }).should(res => {
+    }).then(res => {
       //Get the stats from the grid_proxy
       const nodesOnline = JSON.stringify(res.body.nodes);
       const farms = JSON.stringify(res.body.farms);
@@ -36,20 +36,18 @@ describe("TF Grid Dashboard", function () {
       const contracts = JSON.stringify(res.body.contracts);
 
       //Verify the values appearing in the statisticspage from the grid proxy
-      statsPage.VerifyStats(
-        nodesOnline,
-        farms,
-        countries,
-        totalCru,
-        totalSru,
-        totalHru,
-        totalMru,
-        accessNodes,
-        gateways,
-        twins,
-        publicIps,
-        contracts,
-      );
+      statsPage.VerifyStats(1, nodesOnline);
+      statsPage.VerifyStats(3, farms);
+      statsPage.VerifyStats(6, countries);
+      statsPage.VerifyStats(9, totalCru);
+      statsPage.VerifyStats(12, totalSru);
+      statsPage.VerifyStats(15, totalHru);
+      statsPage.VerifyStats(18, totalMru);
+      statsPage.VerifyStats(21, accessNodes);
+      statsPage.VerifyStats(24, gateways);
+      statsPage.VerifyStats(27, twins);
+      statsPage.VerifyStats(30, publicIps);
+      statsPage.VerifyStats(33, contracts);
     });
   });
 });
