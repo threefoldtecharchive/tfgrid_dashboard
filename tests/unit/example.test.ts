@@ -1,7 +1,7 @@
-function sum(a: number, b: number): number {
-  return a + b;
+function starter(): number {
+  return window.config.network;
 }
 
-test("adds 1 + 2 to equal 3", () => {
-  expect(sum(1, 2)).toBe(3);
+test("Check the selected network", () => {
+  expect(starter()).toBe("dev");
 });
