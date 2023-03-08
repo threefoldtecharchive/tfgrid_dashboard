@@ -9,6 +9,7 @@ import { nodeInterface } from "./farms";
 import moment from "moment";
 import "jspdf-autotable";
 import { apiInterface } from "./util";
+import { Any } from "@/hub/types/google/protobuf/any";
 export interface receiptInterface {
   hash: string;
   mintingStart?: number;
@@ -18,44 +19,78 @@ export interface receiptInterface {
   fixupEnd?: number;
   tft?: number;
 }
-export async function getNodeDowntime(nodeId: number) {
-  const today = new Date();
+interface UptimeEvent {
+  uptime: number;
+  timestamp: number;
+}
 
-  const periodStart = new Date(today.getFullYear(), today.getMonth(), 1).getTime();
+export interface NodeAvailability {
+  downtime: number;
+  currentPeriod: number;
+}
+
+export async function getNodeAvailability(nodeId: number) {
+  /**
+   * Return Node availability over the current minting period
+   *
+   * @param nodeId - The node id
+   * @returns node downtime and uptime in current minting period
+   * */
+
+  // The duration of a standard period, as used by the minting payouts, in seconds
+  // https://github.com/threefoldtech/minting_v3/blob/master/src/period.rs
+  const STANDARD_PERIOD_DURATION = (24 * 60 * 60 * (365 * 3 + 366 * 2)) / 60;
+  // Timestamp of the start of the first period in seconds
+  const FIRST_PERIOD_START_TIMESTAMP = 1522501000;
+  const secondsSinceEpoch = Math.round(Date.now() / 1000);
+  const offset = (secondsSinceEpoch - FIRST_PERIOD_START_TIMESTAMP) / STANDARD_PERIOD_DURATION;
+  const periodStart = FIRST_PERIOD_START_TIMESTAMP + STANDARD_PERIOD_DURATION * offset;
+  const elapsedSincePeriodStart = secondsSinceEpoch - periodStart;
 
   const res = await axios.post(config.graphqlUrl, {
     query: `{
-			uptimeEvents(where: {nodeID_eq: ${nodeId}, timestamp_gt: ${periodStart / 1000}}, orderBy: timestamp_ASC) {
+			uptimeEvents(where: {nodeID_eq: ${nodeId}, timestamp_gt: ${periodStart}}, orderBy: timestamp_ASC) {
 			  timestamp
 			  nodeID
 			  uptime
 			}
 		  }`,
   });
-  const uptimeEvents = res.data.data.uptimeEvents;
+  const uptimeEvents: Array<UptimeEvent> = res.data.data.uptimeEvents;
+
+  // if there are no uptimeEvents (i.e node was never up in the current period), return the time elapsed since the period start as downtime
+  if (uptimeEvents.length == 0) {
+    return { downtime: elapsedSincePeriodStart, currentPeriod: elapsedSincePeriodStart };
+  }
+
+  const fakeDataPoint = { timestamp: periodStart, uptime: 0 };
+  uptimeEvents.unshift(fakeDataPoint);
 
   let downtime = 0;
-  // if there are no uptimeEvents (i.e node was never up in the current period), return a very large downtime number to achieve 0% uptime percentage
-  if (uptimeEvents.length == 0) {
-    return 10e100;
-  }
   for (let i = 0; i < uptimeEvents.length - 1; i++) {
     // if uptime decreases with time, then node was down in that time period, so add time period to node downtime
-    if (uptimeEvents[i].uptime > uptimeEvents[i + 1].uptime) {
-      downtime += uptimeEvents[i + 1].timestamp - uptimeEvents[i].timestamp;
+    if (
+      uptimeEvents[i].uptime > uptimeEvents[i + 1].uptime ||
+      uptimeEvents[i + 1].uptime < uptimeEvents[i + 1].timestamp - uptimeEvents[i].timestamp
+    ) {
+      downtime += uptimeEvents[i + 1].timestamp - uptimeEvents[i].timestamp - uptimeEvents[i + 1].uptime;
     }
   }
 
-  return downtime;
+  const elapsedSinceLastUptimeEvent = secondsSinceEpoch - uptimeEvents[-1].timestamp;
+  if (elapsedSinceLastUptimeEvent >= 60) {
+    downtime += elapsedSinceLastUptimeEvent;
+  }
+  return { downtime: downtime, currentPeriod: elapsedSincePeriodStart };
 }
+
 export function getNodeUptimePercentage(node: nodeInterface) {
-  return ((node.uptime / (node.uptime + node.downtime)) * 100).toFixed(2);
+  return (
+    ((node.availability.currentPeriod - node.availability.downtime) / node.availability.currentPeriod) *
+    100
+  ).toFixed(2);
 }
-interface uptimeEventInterface {
-  timestamp: number;
-  nodeID: string;
-  uptime: number;
-}
+
 export function getTime(num: number | undefined) {
   if (num) {
     return new Date(num);

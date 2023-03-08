@@ -421,7 +421,7 @@ export default class FarmNodesTable extends Vue {
     rentedByTwinId: 0,
     receipts: [],
     serialNumber: "",
-    downtime: 0,
+    availability: { downtime: 0, currentPeriod: 0 },
   };
   nodeToDelete: { id: string } = {
     id: "",
