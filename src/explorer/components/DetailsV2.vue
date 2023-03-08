@@ -110,14 +110,10 @@ export default class Details extends Vue {
 
         // update with the data from grid proxy
         if (this.nodeId) {
-          const gproxyData = await fetch(`${window.configs.APP_GRIDPROXY_URL}/nodes/${this.nodeId}`).then(res =>
+          this.data.node = await fetch(`${window.configs.APP_GRIDPROXY_URL}/nodes/${this.nodeId}`).then(res =>
             res.json(),
           );
-          this.data.node.status = gproxyData.status === "up";
-          this.data.node.cru = gproxyData.capacity.total_resources.cru;
-          this.data.node.mru = gproxyData.capacity.total_resources.mru;
-          this.data.node.hru = gproxyData.capacity.total_resources.hru;
-          this.data.node.sru = gproxyData.capacity.total_resources.sru;
+          this.data.node.status = this.data.node.status === "up";
         }
       })
       .catch(err => {

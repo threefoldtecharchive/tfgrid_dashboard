@@ -66,33 +66,25 @@ export default class NodeUsedResources extends Vue {
   getNodeUsedResources(nodeId: number) {
     this.loader = true;
 
-    return fetch(`${window.configs.APP_GRIDPROXY_URL}/nodes/${nodeId}`)
-      .then(res => res.json())
-      .then<any[]>(res => {
-        if ("Error" in res) return [];
-
-        return ["cru", "sru", "hru", "mru"].map((i, idx) => {
-          const value =
-            res.capacity.total_resources[i] != 0
-              ? (res.capacity.used_resources[i] / res.capacity.total_resources[i]) * 100
-              : NaN; // prettier-ignore, validate if the total is zero so the usage is set to NaN else do the division
-          return {
-            id: idx + 1,
-            value: value.toFixed(2),
-            name: i.toUpperCase(),
-          };
-        });
-      })
-      .catch(err => console.log("something went wrong", err))
-      .finally(() => (this.loader = false));
+    return ["cru", "sru", "hru", "mru"].map((i, idx) => {
+      const value =
+        this.node.capacity.total_resources[i] != 0
+          ? (this.node.capacity.used_resources[i] / this.node.capacity.total_resources[i]) * 100
+          : NaN; // prettier-ignore, validate if the total is zero so the usage is set to NaN else do the division
+      this.loader = false;
+      return {
+        id: idx + 1,
+        value: value.toFixed(2),
+        name: i.toUpperCase(),
+      };
+    });
   }
   created() {
     if (this.nodeStatus) {
-      this.getNodeUsedResources(this.node.nodeId).then(resources => {
-        if (resources) {
-          this.resources = resources;
-        }
-      });
+      const resources = this.getNodeUsedResources(this.node.nodeId);
+      if (resources) {
+        this.resources = resources;
+      }
     } else {
       this.resources = ["cru", "sru", "hru", "mru"].map((i, idx) => {
         return { id: idx + 1, value: 0, name: i.toLocaleUpperCase() };

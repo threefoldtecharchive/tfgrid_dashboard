@@ -34,6 +34,7 @@
     "bech32": "^2.0.0",
     "blakejs": "^1.2.1",
     "chart.js": "^3.8.0",
+    "cidr-tools": "^5.1.4",
     "core-js": "^3.8.3",
     "country-code-lookup": "^0.0.20",
     "crypto-browserify": "^3.12.0",
