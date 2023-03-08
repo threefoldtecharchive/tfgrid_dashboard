@@ -4268,6 +4268,23 @@ ci-info@^3.2.0:
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-3.3.2.tgz#6d2967ffa407466481c6c90b6e16b3098f080128"
   integrity sha512-xmDt/QIAdeZ9+nfdPsaBCpMvHNLFiLdjj59qjqn+6iPe6YmHGQ35sBnQ8uslRBXFmXkiZQOJRjvQeoGppoTjjg==
 
+cidr-regex@4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/cidr-regex/-/cidr-regex-4.0.2.tgz#ca8216d1761eed0bd9c4f5e8740f2d7363dd05bb"
+  integrity sha512-xvqVyyE8emYjipWVxsA+Vcsbt8TbJJsTHbOeMMA5qsmXUu5VZJzNBGwI4rr1IZ0FQI2z7bfry4NNACP5Cf67CA==
+  dependencies:
+    ip-regex "^5.0.0"
+
+cidr-tools@^5.1.4:
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/cidr-tools/-/cidr-tools-5.1.4.tgz#db06f75e074c14ac3c9debb8fe25450fde77722d"
+  integrity sha512-B/bAEkLqIKjPq24m4htyDClMd+SODEOPEbqiA5mC3HoJsq+QAJfPJCd7ajhecE3fGY26dxj8AxAvNyFFZlPa/Q==
+  dependencies:
+    cidr-regex "4.0.2"
+    ip-bigint "6.0.0"
+    ip-regex "5.0.0"
+    string-natural-compare "3.0.1"
+
 cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/cipher-base/-/cipher-base-1.0.4.tgz#8760e4ecc272f4c363532f926d874aae2c1397de"
@@ -6474,6 +6491,16 @@ ip-address@^6.1.0:
     lodash.padstart "4.6.1"
     lodash.repeat "4.1.0"
     sprintf-js "1.1.2"
+
+ip-bigint@6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/ip-bigint/-/ip-bigint-6.0.0.tgz#e0d673f8b460b9a21ff1f29d3bfe4a1743aad7ce"
+  integrity sha512-68+9IteBghKVV49Aqw9Q5qnz4nF4wy1y63iN+DQSeJU75nO/NASEBFEg+mgfEK96p2m8yNWaFod4jP01pHObiw==
+
+ip-regex@5.0.0, ip-regex@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/ip-regex/-/ip-regex-5.0.0.tgz#cd313b2ae9c80c07bd3851e12bf4fa4dc5480632"
+  integrity sha512-fOCG6lhoKKakwv+C6KdsOnGvgXnmgfmp0myi3bcNwj3qfwPAxRKWEuFhvEFF7ceYIz6+1jRZ+yguLFAmUNPEfw==
 
 ip-regex@^4.0.0, ip-regex@^4.3.0:
   version "4.3.0"
@@ -9853,6 +9880,11 @@ string-length@^5.0.1:
   dependencies:
     char-regex "^2.0.0"
     strip-ansi "^7.0.1"
+
+string-natural-compare@3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/string-natural-compare/-/string-natural-compare-3.0.1.tgz#7a42d58474454963759e8e8b7ae63d71c1e7fdf4"
+  integrity sha512-n3sPwynL1nwKi3WJ6AIsClwBMa0zTi54fn2oLU6ndfTSIO05xaznjSf15PcBZU6FNWbmN5Q6cxT4V5hGvB4taw==
 
 string-width@^2.1.1:
   version "2.1.1"
