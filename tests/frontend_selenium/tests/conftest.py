@@ -21,8 +21,8 @@ def browser():
     driver = webdriver.Chrome(options=options, service=Service(ChromeDriverManager().install()))
     driver.set_window_size(1200, 1100)
 
-    # Make its calls wait up to 20 seconds for elements to appear
-    driver.implicitly_wait(25)
+    # Make its calls wait up to 60 seconds for elements to appear
+    driver.implicitly_wait(60)
 
     # Return the WebDriver instance for the setup
     yield driver

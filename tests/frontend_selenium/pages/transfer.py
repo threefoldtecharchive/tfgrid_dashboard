@@ -9,7 +9,7 @@ This module contains Transfer page elements.
 
 class TransferPage:
     
-    transfer_page = (By.XPATH, '//*[@id="app"]/div[1]/nav/div[1]/div/div[2]/div[2]/div/div/div[3]')
+    transfer_page = (By.XPATH, '//*[@id="app"]/div[1]/nav/div[1]/div[1]/div[2]/div[2]/div/div/a[3]/div[2]')
     amount_textfield=(By.XPATH, '/html/body/div[1]/div[1]/div[3]/div/div/div[2]/form/div[2]/div/div[1]/div/input')
     receipient_textfield=(By.XPATH, '/html/body/div[1]/div[1]/div[3]/div/div/div[2]/form/div[1]/div/div[1]/div[1]/input[1]')
     submit_button=(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div/button[2]')
@@ -27,8 +27,9 @@ class TransferPage:
     def navigate(self, user):
         self.browser.find_element(By.XPATH, "//*[contains(text(), '"+ user +"')]").click()
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.twin_details))
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.transfer_page))
         self.browser.find_element(*self.transfer_page).click()
-        WebDriverWait(self.browser, 5).until(EC.visibility_of_element_located(self.transfer_tft_title))
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.transfer_tft_title))
 
     def recipient_list(self):
         self.browser.find_element(*self.receipient_textfield).click()
