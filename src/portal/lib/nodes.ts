@@ -327,19 +327,10 @@ export async function getTFTPrice(api: apiInterface) {
   return pricing.words[0] / 1000;
 }
 
-export async function calDiscount(
-  api: apiInterface,
-  address: string,
-  pricing: { discountForDedicationNodes: any },
-  price: any,
-) {
+export async function calDiscount(TFTbalance: number, pricing: { discountForDedicationNodes: any }, price: any) {
   // discount for Dedicated Nodes
   const discount = pricing.discountForDedicationNodes;
   let totalPrice = price - price * (discount / 100);
-  const TFTprice = await getTFTPrice(api);
-  // discount for Twin Balance
-  const balance = await getBalance(api, address);
-  const TFTbalance = TFTprice * balance.free;
 
   const discountPackages: any = {
     none: {
@@ -407,6 +398,12 @@ export async function getDNodes(
   let { nodes, count } = await getDedicatedNodes(currentTwinID, query, page, size);
 
   const pricing = await getPrices(api);
+
+  // discount for Twin Balance
+  const TFTprice = await getTFTPrice(api);
+  const balance = await getBalance(api, address);
+  const TFTbalance = TFTprice * balance.free;
+
   let dNodes: {
     nodeId: string;
     price: string;
@@ -422,7 +419,7 @@ export async function getDNodes(
   }[] = [];
   for (const node of nodes) {
     const price = countPrice(pricing, node);
-    const [discount, discountLevel] = await calDiscount(api, address, pricing, price);
+    const [discount, discountLevel] = await calDiscount(TFTbalance, pricing, price);
     const ips = await getIpsForFarm(node.farmId);
     dNodes.push({
       nodeId: node.nodeId,
