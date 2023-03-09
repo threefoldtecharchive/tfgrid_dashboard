@@ -17,6 +17,7 @@
         'items-per-page-options': [5, 10, 15, 50],
       }"
       @update:options="onUpdateOptions($event.page, $event.itemsPerPage)"
+      @item-expanded="getDNodeDetails"
     >
       <template v-slot:[`item.resources.mru`]="{ item }">
         {{ byteToGB(item.resources.mru) }}
@@ -123,6 +124,10 @@ export default class NodesTable extends Vue {
     this.pageNumber = pageNumber;
     this.pageSize = pageSize;
     await this.getNodes();
+  }
+
+  async getDNodeDetails(item: any) {
+    console.log("sdsdsd", item.nodeId);
   }
 
   async onStatusUpdate() {
