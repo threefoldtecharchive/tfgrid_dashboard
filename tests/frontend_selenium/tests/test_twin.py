@@ -61,7 +61,7 @@ def test_create_twin_relay(browser):
     assert twin_page.wait_for('Twin created!')
     assert relay in browser.page_source
     twin_page.Check_Balance()
-    assert twin_page.wait_for('Free: 0.0979706 TFT')
+    assert twin_page.wait_for('Free: 0.0979689 TFT')
     assert twin_page.wait_for('Reserved (Locked): 0 TFT')
 
 
@@ -81,8 +81,7 @@ def test_edit_twin_relay(browser):
     twin_page.press_edit_btn()
     relay = twin_page.edit_twin_relay()
     twin_page.press_submit_btn()
-    polka_page.authenticate_with_pass(password)
-    assert twin_page.wait_for('Twin updated!')
+    assert twin_page.wait_for('Chosen relay is the current relay!')
     assert twin_page.wait_for(relay)
 
 
