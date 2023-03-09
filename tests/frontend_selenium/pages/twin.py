@@ -13,6 +13,7 @@ class TwinPage:
     relay_list = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div/form/div/div/div[1]/div[1]/div[1]/div')
     relay_list_imput = (By.XPATH, '/html/body/div[1]/div[3]/div/div/div/div')
     relay_edit_list = (By.XPATH, '//*[@id="app"]/div[4]/div/div/div[1]/form/div/div/div[1]/div[1]/div[1]/div')
+    relay_edit_option = (By.XPATH, '/html/body/div[1]/div[5]/div/div/div/div')
     EditButton=(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[1]/div[2]/div[2]/button')
     SubmitButton=(By.XPATH, '//*[@id="app"]/div[4]/div/div/div[2]/button[2]')
     CreateButton=(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[2]/div/button')
@@ -48,8 +49,12 @@ class TwinPage:
         return self.browser.find_element(*self.relay_list).text
 
     def edit_twin_relay(self):
+        self.wait_for('Edit Twin')
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.relay_edit_list))
+        self.wait_for('relay')
         self.browser.find_element(*self.relay_edit_list).click()
-        self.browser.find_element(*self.relay_edit_list).click()
+        WebDriverWait(self.browser, 30).until(EC.element_to_be_clickable(self.relay_edit_option))
+        self.browser.find_element(*self.relay_edit_option).click()
         return self.browser.find_element(*self.relay_edit_list).text
     
     def Check_Balance(self):        
