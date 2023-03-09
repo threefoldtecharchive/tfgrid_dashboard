@@ -62,8 +62,13 @@
         </v-tooltip>
       </template>
       <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length">
-          <NodeDetails :node="item" :byteToGB="byteToGB" />
+        <td :colspan="headers.length" v-if="dNodeLoading">
+          <div class="justify-center">
+            <v-progress-circular indeterminate model-value="20" :size="38"></v-progress-circular>
+          </div>
+        </td>
+        <td :colspan="headers.length" v-else>
+          <NodeDetails :node="item" :byteToGB="byteToGB" :loading="dloading" />
         </td>
       </template>
     </v-data-table>
@@ -74,7 +79,7 @@
 import NodeActionBtn from "../components/NodeActionBtn.vue";
 import NodeDetails from "../components/NodeDetails.vue";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { getDNodes, ITab, getIpsForFarm } from "../lib/nodes";
+import { getDNodes, ITab, getFarmDetails } from "../lib/nodes";
 import { byteToGB } from "../lib/nodes";
 
 @Component({
@@ -88,6 +93,7 @@ export default class NodesTable extends Vue {
   $api: any;
   expanded: any = [];
   loading = true;
+  dNodeLoading = true;
   address = "";
 
   nodes: any[] = [];
@@ -108,10 +114,12 @@ export default class NodesTable extends Vue {
 
   @Watch("$route.params.accountID") async onPropertyChanged(value: string, oldValue: string) {
     console.log(`removing nodes of ${oldValue}, putting in nodes of ${value}`);
+    console.log("watched");
     await this.getNodes();
   }
 
   @Watch("trigger", { immediate: true }) onTab() {
+    console.log("triggered");
     this.getNodes();
   }
 
@@ -123,18 +131,25 @@ export default class NodesTable extends Vue {
   async onUpdateOptions(pageNumber: number, pageSize: number) {
     this.pageNumber = pageNumber;
     this.pageSize = pageSize;
+    console.log("updated");
     await this.getNodes();
   }
 
   async getDNodeDetails(item: any) {
     try {
-      item.item.pubIps = await getIpsForFarm(item.item.farmId);
+      let res = await getFarmDetails(item.item.farm.id);
+      (item.item.farm.name = res[0].name),
+        (item.item.farm.farmCertType = res[0].certificationType),
+        (item.item.farm.pubIps = res[0].publicIps.length);
+      console.log(item.item.farm);
+      this.dNodeLoading = false;
     } catch (e) {
-      item.item.pubIps = "Failed to load";
+      //TODO show error
     }
   }
 
   async onStatusUpdate() {
+    console.log("status update");
     this.loading = true;
     this.$toasted.show(`Table may take some time to update the changes.`);
     setTimeout(async () => {
