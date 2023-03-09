@@ -272,7 +272,7 @@ export async function getIpsForFarm(farmID: string) {
         `,
       operation: "getNodes",
     },
-    { timeout: 1000 },
+    { timeout: 3000 },
   );
   return res.data.data.farms[0].publicIPs.length;
 }
@@ -405,6 +405,7 @@ export async function getDNodes(
   const TFTbalance = TFTprice * balance.free;
 
   let dNodes: {
+    farmId: string;
     nodeId: string;
     price: string;
     discount: any;
@@ -420,8 +421,9 @@ export async function getDNodes(
   for (const node of nodes) {
     const price = countPrice(pricing, node);
     const [discount, discountLevel] = await calDiscount(TFTbalance, pricing, price);
-    const ips = await getIpsForFarm(node.farmId);
+    const ips = "";
     dNodes.push({
+      farmId: node.farmId,
       nodeId: node.nodeId,
       price: price,
       discount: discount,

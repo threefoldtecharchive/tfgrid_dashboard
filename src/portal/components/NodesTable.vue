@@ -74,7 +74,7 @@
 import NodeActionBtn from "../components/NodeActionBtn.vue";
 import NodeDetails from "../components/NodeDetails.vue";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { getDNodes, ITab } from "../lib/nodes";
+import { getDNodes, ITab, getIpsForFarm } from "../lib/nodes";
 import { byteToGB } from "../lib/nodes";
 
 @Component({
@@ -127,7 +127,11 @@ export default class NodesTable extends Vue {
   }
 
   async getDNodeDetails(item: any) {
-    console.log("sdsdsd", item.nodeId);
+    try {
+      item.item.pubIps = await getIpsForFarm(item.item.farmId);
+    } catch (e) {
+      item.item.pubIps = "Failed to load";
+    }
   }
 
   async onStatusUpdate() {
