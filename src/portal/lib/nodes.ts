@@ -258,6 +258,15 @@ export async function getNodeUsedResources(nodeId: string) {
   }
 }
 
+export async function getFarmDetails(farmID: string) {
+  const res = await axios.get(`${config.gridproxyUrl}/farms?farm_id=${farmID}`, {
+    timeout: 1000,
+  });
+
+  if (res.status === 200) {
+    return res.data;
+  } else throw new Error("Unexpected error while fetching farm data: " + res.data);
+}
 export async function getIpsForFarm(farmID: string) {
   const res = await axios.post(
     config.graphqlUrl,
@@ -405,13 +414,13 @@ export async function getDNodes(
   const TFTbalance = TFTprice * balance.free;
 
   let dNodes: {
-    farmId: string;
     nodeId: string;
     price: string;
     discount: any;
     applyedDiscount: { first: any; second: any };
     location: { country: any; city: any; long: any; lat: any };
     resources: { cru: any; mru: any; hru: any; sru: any };
+    farm: { id: string; name: string; farmCertType: string; pubIps: string };
     pubIps: any;
     rentContractId: any;
     rentedByTwinId: any;
@@ -423,7 +432,12 @@ export async function getDNodes(
     const [discount, discountLevel] = await calDiscount(TFTbalance, pricing, price);
     const ips = "";
     dNodes.push({
-      farmId: node.farmId,
+      farm: {
+        id: node.farmId,
+        pubIps: "",
+        name: "",
+        farmCertType: "",
+      },
       nodeId: node.nodeId,
       price: price,
       discount: discount,
