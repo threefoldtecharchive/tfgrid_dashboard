@@ -34,7 +34,7 @@ export async function getNodeAvailability(nodeId: number) {
    * Return Node availability over the current minting period
    *
    * @param nodeId - The node id
-   * @returns node downtime and uptime in current minting period
+   * @returns node downtime and elapsed time in seconds since current minting period started (which the downtime was calculated over)
    * */
 
   // The duration of a standard period, as used by the minting payouts, in seconds
@@ -42,6 +42,9 @@ export async function getNodeAvailability(nodeId: number) {
   const STANDARD_PERIOD_DURATION = (24 * 60 * 60 * (365 * 3 + 366 * 2)) / 60;
   // Timestamp of the start of the first period in seconds
   const FIRST_PERIOD_START_TIMESTAMP = 1522501000;
+  // uptime events are supposed to happen every 40 minutes.
+  // here we set this to one hour (3600 sec) to allow some room.
+  const UPTIME_EVENTS_INTERVAL = 3600;
   const secondsSinceEpoch = Math.round(Date.now() / 1000);
   const offset = (secondsSinceEpoch - FIRST_PERIOD_START_TIMESTAMP) / STANDARD_PERIOD_DURATION;
   const periodStart = FIRST_PERIOD_START_TIMESTAMP + STANDARD_PERIOD_DURATION * offset;
@@ -78,7 +81,7 @@ export async function getNodeAvailability(nodeId: number) {
   }
 
   const elapsedSinceLastUptimeEvent = secondsSinceEpoch - uptimeEvents[-1].timestamp;
-  if (elapsedSinceLastUptimeEvent >= 60) {
+  if (elapsedSinceLastUptimeEvent >= UPTIME_EVENTS_INTERVAL) {
     downtime += elapsedSinceLastUptimeEvent;
   }
   return { downtime: downtime, currentPeriod: elapsedSincePeriodStart };
