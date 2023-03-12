@@ -118,12 +118,10 @@ export default class NodesTable extends Vue {
 
   @Watch("$route.params.accountID") async onPropertyChanged(value: string, oldValue: string) {
     console.log(`removing nodes of ${oldValue}, putting in nodes of ${value}`);
-    console.log("watched");
     await this.getNodes();
   }
 
   @Watch("trigger", { immediate: true }) onTab() {
-    console.log("triggered");
     this.getNodes();
   }
 
@@ -135,7 +133,6 @@ export default class NodesTable extends Vue {
   async onUpdateOptions(pageNumber: number, pageSize: number) {
     this.pageNumber = pageNumber;
     this.pageSize = pageSize;
-    console.log("updated");
     await this.getNodes();
   }
 
@@ -156,7 +153,6 @@ export default class NodesTable extends Vue {
   }
 
   async onStatusUpdate() {
-    console.log("status update");
     this.loading = true;
     this.$toasted.show(`Table may take some time to update the changes.`);
     setTimeout(async () => {
