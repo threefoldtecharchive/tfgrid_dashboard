@@ -139,14 +139,16 @@ export default class NodesTable extends Vue {
     await this.getNodes();
   }
 
-  async getDNodeDetails(item: any) {
+  async getDNodeDetails(event: any) {
+    // value is whether or not the row is expanded now.
+    if (!event.value) return;
     try {
       this.dNodeError = false;
       this.dNodeLoading = true;
-      let res = await getFarmDetails(item.item.farm.id);
-      (item.item.farm.name = res[0].name),
-        (item.item.farm.farmCertType = res[0].certificationType),
-        (item.item.farm.pubIps = res[0].publicIps.length);
+      let res = await getFarmDetails(event.item.farm.id);
+      event.item.farm.name = res[0].name;
+      event.item.farm.farmCertType = res[0].certificationType;
+      event.item.farm.pubIps = res[0].publicIps.length;
     } catch (e) {
       this.dNodeError = true;
     }
