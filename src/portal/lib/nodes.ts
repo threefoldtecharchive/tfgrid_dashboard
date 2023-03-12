@@ -46,13 +46,12 @@ export async function getNodeAvailability(nodeId: number) {
   // here we set this to one hour (3600 sec) to allow some room.
   const UPTIME_EVENTS_INTERVAL = 3600;
   const secondsSinceEpoch = Math.round(Date.now() / 1000);
-  const elapsedSincePeriodStart = (secondsSinceEpoch - FIRST_PERIOD_START_TIMESTAMP) % STANDARD_PERIOD_DURATION;
-  // const periodStart = FIRST_PERIOD_START_TIMESTAMP + STANDARD_PERIOD_DURATION * offset;
-  const periodStart = secondsSinceEpoch - elapsedSincePeriodStart;
+  const secondsSinceCurrentPeriodStart = (secondsSinceEpoch - FIRST_PERIOD_START_TIMESTAMP) % STANDARD_PERIOD_DURATION;
+  const currentPeriodStartTimestamp = secondsSinceEpoch - secondsSinceCurrentPeriodStart;
 
   const res = await axios.post(config.graphqlUrl, {
     query: `{
-			uptimeEvents(where: {nodeID_eq: ${nodeId}, timestamp_gt: ${periodStart}}, orderBy: timestamp_ASC) {
+			uptimeEvents(where: {nodeID_eq: ${nodeId}, timestamp_gt: ${currentPeriodStartTimestamp}}, orderBy: timestamp_ASC) {
 			  timestamp
 			  nodeID
 			  uptime
@@ -63,10 +62,10 @@ export async function getNodeAvailability(nodeId: number) {
 
   // if there are no uptimeEvents (i.e node was never up in the current period), return the time elapsed since the period start as downtime
   if (uptimeEvents.length == 0) {
-    return { downtime: elapsedSincePeriodStart, currentPeriod: elapsedSincePeriodStart };
+    return { downtime: secondsSinceCurrentPeriodStart, currentPeriod: secondsSinceCurrentPeriodStart };
   }
 
-  const fakeDataPoint = { timestamp: periodStart, uptime: 0 };
+  const fakeDataPoint = { timestamp: currentPeriodStartTimestamp, uptime: 0 };
   uptimeEvents.unshift(fakeDataPoint);
 
   let downtime = 0;
@@ -84,7 +83,7 @@ export async function getNodeAvailability(nodeId: number) {
   if (elapsedSinceLastUptimeEvent >= UPTIME_EVENTS_INTERVAL) {
     downtime += elapsedSinceLastUptimeEvent;
   }
-  return { downtime: downtime, currentPeriod: elapsedSincePeriodStart };
+  return { downtime: downtime, currentPeriod: secondsSinceCurrentPeriodStart };
 }
 
 export function getNodeUptimePercentage(node: nodeInterface) {
