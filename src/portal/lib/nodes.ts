@@ -46,9 +46,9 @@ export async function getNodeAvailability(nodeId: number) {
   // here we set this to one hour (3600 sec) to allow some room.
   const UPTIME_EVENTS_INTERVAL = 3600;
   const secondsSinceEpoch = Math.round(Date.now() / 1000);
-  const offset = (secondsSinceEpoch - FIRST_PERIOD_START_TIMESTAMP) / STANDARD_PERIOD_DURATION;
-  const periodStart = FIRST_PERIOD_START_TIMESTAMP + STANDARD_PERIOD_DURATION * offset;
-  const elapsedSincePeriodStart = secondsSinceEpoch - periodStart;
+  const elapsedSincePeriodStart = (secondsSinceEpoch - FIRST_PERIOD_START_TIMESTAMP) % STANDARD_PERIOD_DURATION;
+  // const periodStart = FIRST_PERIOD_START_TIMESTAMP + STANDARD_PERIOD_DURATION * offset;
+  const periodStart = secondsSinceEpoch - elapsedSincePeriodStart;
 
   const res = await axios.post(config.graphqlUrl, {
     query: `{
