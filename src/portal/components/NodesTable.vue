@@ -49,7 +49,7 @@
                 >
               </li>
               <li>
-                You're recieving {{ item.applyedDiscount.second }}% discount as per the
+                You're receiving {{ item.applyedDiscount.second }}% discount as per the
                 <a
                   target="_blank"
                   href="https://library.threefold.me/info/threefold/#/tfgrid/grid/pricing?id=discount-levels"
@@ -66,6 +66,9 @@
           <div class="pa-1">
             <v-progress-circular indeterminate model-value="20" :width="3"></v-progress-circular>
           </div>
+        </td>
+        <td :colspan="headers.length" v-else-if="dNodeError" style="text-align: center">
+          <strong style="color: #f44336">Failed to retrieve Node details</strong>
         </td>
         <td :colspan="headers.length" v-else>
           <NodeDetails :node="item" :byteToGB="byteToGB" />
@@ -94,6 +97,7 @@ export default class NodesTable extends Vue {
   expanded: any = [];
   loading = true;
   dNodeLoading = true;
+  dNodeError = false;
   address = "";
 
   nodes: any[] = [];
@@ -137,16 +141,16 @@ export default class NodesTable extends Vue {
 
   async getDNodeDetails(item: any) {
     try {
+      this.dNodeError = false;
       this.dNodeLoading = true;
       let res = await getFarmDetails(item.item.farm.id);
       (item.item.farm.name = res[0].name),
         (item.item.farm.farmCertType = res[0].certificationType),
         (item.item.farm.pubIps = res[0].publicIps.length);
-      console.log(item.item.farm);
-      this.dNodeLoading = false;
     } catch (e) {
-      //TODO show error
+      this.dNodeError = true;
     }
+    this.dNodeLoading = false;
   }
 
   async onStatusUpdate() {
