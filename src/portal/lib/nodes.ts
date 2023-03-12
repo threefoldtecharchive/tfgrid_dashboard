@@ -260,7 +260,7 @@ export async function getNodeUsedResources(nodeId: string) {
 
 export async function getFarmDetails(farmID: string) {
   const res = await axios.get(`${config.gridproxyUrl}/farms?farm_id=${farmID}`, {
-    timeout: 1000,
+    timeout: 3000,
   });
 
   if (res.status === 200) {
