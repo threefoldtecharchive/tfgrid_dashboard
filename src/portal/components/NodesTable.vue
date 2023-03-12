@@ -62,13 +62,13 @@
         </v-tooltip>
       </template>
       <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length" v-if="dNodeLoading">
-          <div class="justify-center">
-            <v-progress-circular indeterminate model-value="20" :size="38"></v-progress-circular>
+        <td :colspan="headers.length" v-if="dNodeLoading" style="text-align: center">
+          <div class="pa-1">
+            <v-progress-circular indeterminate model-value="20" :width="3"></v-progress-circular>
           </div>
         </td>
         <td :colspan="headers.length" v-else>
-          <NodeDetails :node="item" :byteToGB="byteToGB" :loading="dloading" />
+          <NodeDetails :node="item" :byteToGB="byteToGB" />
         </td>
       </template>
     </v-data-table>
@@ -137,6 +137,7 @@ export default class NodesTable extends Vue {
 
   async getDNodeDetails(item: any) {
     try {
+      this.dNodeLoading = true;
       let res = await getFarmDetails(item.item.farm.id);
       (item.item.farm.name = res[0].name),
         (item.item.farm.farmCertType = res[0].certificationType),
