@@ -9,7 +9,11 @@ image:
   pullPolicy: Always
   tag: "v1.4.0-rc4"
 
-  env:          
+  env:
+    - name: "STELLAR_NETWORK"
+      value: ""
+    - name: "TFCHAIN_NETWORK"
+      value: ""          
     - name: "GRAPHQL_URL"
       value: ""
     - name: "BRIDGE_TFT_ADDRESS"
