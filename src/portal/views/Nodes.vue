@@ -6,12 +6,11 @@
           {{ tab.label }}
         </v-tab>
       </v-tabs>
-
-      <v-tabs-items v-model="activeTab">
-        <v-tab-item v-for="tab in tabs" :key="tab.index" :value="tab.query">
-          <NodesTable :tab="tab" :twinId="$store.state.credentials.twin.id" :trigger="trigger" />
-        </v-tab-item>
-      </v-tabs-items>
+      <NodesTable
+        :tab="tabs.find(tab => tab.query === activeTab)"
+        :twinId="$store.state.credentials.twin.id"
+        :trigger="trigger"
+      />
     </v-card>
   </v-container>
 </template>
@@ -26,9 +25,6 @@ import { ITab } from "../lib/nodes";
   components: { NodesTable },
 })
 export default class NodesView extends Vue {
-  $api = "";
-  activeTab = "";
-  trigger = "";
   tabs: ITab[] = [
     {
       label: "Rentable",
@@ -49,6 +45,9 @@ export default class NodesView extends Vue {
       index: 3,
     },
   ];
+  $api = "";
+  activeTab = this.tabs[0].query;
+  trigger = "";
 
   mounted() {
     if (!(this.$api && this.$store.state.credentials.initialized)) {
