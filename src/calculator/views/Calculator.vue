@@ -28,7 +28,6 @@
                     suffix="vCores"
                     v-model="CRU"
                     outlined
-                    @input="calculate"
                     v-bind="attrs"
                     v-on="on"
                   ></v-text-field>
@@ -46,7 +45,6 @@
                     suffix="GB"
                     v-model="MRU"
                     outlined
-                    @input="calculate"
                     v-bind="attrs"
                     v-on="on"
                   ></v-text-field>
@@ -66,7 +64,6 @@
                     suffix="GB"
                     v-model="SRU"
                     outlined
-                    @input="calculate"
                     v-bind="attrs"
                     v-on="on"
                   ></v-text-field>
@@ -84,7 +81,6 @@
                     suffix="GB"
                     v-model="HRU"
                     outlined
-                    @input="calculate"
                     v-bind="attrs"
                     v-on="on"
                   ></v-text-field>
@@ -102,7 +98,6 @@
                 suffix="TFT"
                 v-model="balance"
                 outlined
-                @input="calculate"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -130,7 +125,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import Layout from "../components/Layout.vue";
 import { calCU, calSU, getPrices } from "../../portal/lib/nodes";
 
@@ -154,6 +149,15 @@ export default class Calculator extends Vue {
   MRU = "1";
   HRU = "100";
   balance = "0";
+  @Watch("CRU")
+  @Watch("SRU")
+  @Watch("MRU")
+  @Watch("HRU")
+  @Watch("balance")
+  @Watch("isValidInputs")
+  calcWatcher() {
+    this.calculate();
+  }
   prices: priceType[] | [] = [];
   $api: any;
   discountPackages: any = {};
@@ -206,23 +210,30 @@ export default class Calculator extends Vue {
     await this.calculate();
   }
 
+  isInvalidValues() {
+    return (
+      this.balance.length === 0 ||
+      this.CRU.length === 0 ||
+      this.HRU.length === 0 ||
+      this.SRU.length === 0 ||
+      this.MRU.length === 0 ||
+      isNaN(+this.balance) ||
+      isNaN(+this.CRU) ||
+      isNaN(+this.HRU) ||
+      isNaN(+this.SRU) ||
+      isNaN(+this.MRU) ||
+      +this.balance < 0 ||
+      +this.CRU < 0 ||
+      +this.HRU < 0 ||
+      +this.SRU < 0 ||
+      +this.MRU < 0
+    );
+  }
+
   async calculate() {
     if (!this.isValidInputs) return;
     else if (this.$api) {
-      if (
-        isNaN(+this.balance) ||
-        isNaN(+this.CRU) ||
-        isNaN(+this.HRU) ||
-        isNaN(+this.SRU) ||
-        isNaN(+this.MRU) ||
-        +this.balance < 0 ||
-        +this.CRU < 0 ||
-        +this.HRU < 0 ||
-        +this.SRU < 0 ||
-        +this.MRU < 0
-      ) {
-        return;
-      }
+      if (this.isInvalidValues()) return;
       this.TFTPrice = await this.getTFTPrice(this.$api);
       const price = await this.calcPrice();
       const CU = calCU(+this.CRU, +this.MRU);
@@ -267,7 +278,6 @@ export default class Calculator extends Vue {
     const discount = this.pricing.discountForDedicationNodes;
     let dedicatedPrice = price - price * (discount / 100);
     let sharedPrice = price;
-    console.log({ sharedPrice });
 
     // discount for Twin Balance in TFT
     const balance = (this.TFTPrice ? this.TFTPrice : 1) * +this.balance * 10000000;
