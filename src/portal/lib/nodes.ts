@@ -421,7 +421,6 @@ export async function getDNodes(
     location: { country: any; city: any; long: any; lat: any };
     resources: { cru: any; mru: any; hru: any; sru: any };
     farm: { id: string; name: string; farmCertType: string; pubIps: string };
-    pubIps: any;
     rentContractId: any;
     rentedByTwinId: any;
     usedResources: { cru: any; mru: any; hru: any; sru: any };
@@ -463,7 +462,6 @@ export async function getDNodes(
         hru: node.used_resources.hru,
         sru: node.used_resources.sru,
       },
-      pubIps: ips,
       rentContractId: node.rentContractId,
       rentedByTwinId: node.rentedByTwinId,
       rentStatus: node.rentContractId === 0 ? "free" : node.rentedByTwinId == currentTwinID ? "yours" : "taken",
