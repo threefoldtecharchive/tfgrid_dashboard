@@ -1,7 +1,7 @@
 import math
 import datetime
 import random
-from utils.utils import generate_inavalid_gateway, generate_inavalid_ip, generate_ip, generate_leters, generate_string, get_node_seed
+from utils.utils import generate_inavalid_gateway, generate_inavalid_ip, generate_ip, generate_leters, generate_string, get_node_seed, randomize_public_ipv4
 from pages.polka import PolkaPage
 from utils.grid_proxy import GridProxy
 from pages.node import NodePage
@@ -197,10 +197,11 @@ def test_add_config(browser):
     node_id = nodes[rand_node]['nodeId']
     old_ipv4 = nodes[rand_node]['publicConfig']['ipv4']
     node_page.setup_config(node_id)
-    new_ipv4 = generate_ip()
-    node_page.add_config_input( new_ipv4, '1.1.1.1', '::2/16', '::2', 'tf.grid').click()
+    new_ipv4, gateway = randomize_public_ipv4()
+    node_page.add_config_input( new_ipv4, gateway, '2600:1f13:0d15:95:00::/64', '2600:1f13:0d15:95:00::', 'tf.grid').click()
     node_page.submit_config()
     polka_page.authenticate_with_pass(password)
+    node_page.wait_for('Transaction submitted')
     node_page.wait_for('Node public config added!')
     counter = 0
     while(old_ipv4 != new_ipv4):

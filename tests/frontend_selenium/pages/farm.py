@@ -10,6 +10,7 @@ This module contains Farm page elements.
 class FarmPage:
 
     farm=(By.XPATH, "//*[contains(text(), 'farms')]" )
+    twin_details = (By.XPATH, "//*[contains(text(), 'Twin Details')]")
     create_button=(By.XPATH, "//*[contains(text(), 'Create farm')]")
     farm_name_text_field=(By.XPATH,'/html/body/div[1]/div[4]/div/div/div[1]/form/div/div/div[1]/div/input')
     submit_farm_button=(By.XPATH, "//*[contains(text(), 'Submit')]") 
@@ -29,6 +30,7 @@ class FarmPage:
     path=(By.XPATH,'/html/body/div[1]/div[5]/div/div/div[1]/form/div/div/div[1]/div/input')
     gateway_text_field=(By.XPATH ,'/html/body/div[1]/div[5]/div/div/div[2]/div[3]/div/div[1]/div/input')
     save_button=(By.XPATH ,'//*[@id="app"]/div[5]/div/div/div[3]/button[3]')
+    close_button=(By.XPATH ,'//*[@id="app"]/div[5]/div/div/div[3]/button[1]')
     delete_button=(By.XPATH, "//div[contains(@class, 'v-card__actions')]//button[contains(@class, 'red--text')]")
     zero=(By.XPATH,'//html/body/main/div[1]/div/h1')
     table_farm_name=(By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr[1]/td[3]')
@@ -48,7 +50,14 @@ class FarmPage:
 
     def navigetor(self,user):
         self.browser.find_element(By.XPATH, "//*[contains(text(), '"+ user +"')]").click()
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.twin_details))
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.farm))
         self.browser.find_element(*self.farm).click()
+    
+    def check_farm_counts(self):
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.table_farm_name))
+        table = self.browser.find_elements(*self.table)
+        return len(table)
 
     def create_farm(self, farm_name):
         self.browser.find_element(*self.create_button).click()
@@ -194,6 +203,9 @@ class FarmPage:
 
     def setup_farmpayout_address(self, farm_name):
         self.search_functionality(farm_name)
+        self.wait_for(farm_name)
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.details_arrow))
+        WebDriverWait(self.browser, 30).until(EC.element_to_be_clickable(self.details_arrow))
         self.browser.find_element(*self.details_arrow).click()
         self.browser.find_element(*self.add_v2_button).click()
 
@@ -290,6 +302,15 @@ class FarmPage:
         WebDriverWait(self.browser, 30).until(EC.number_of_windows_to_be(2))
         self.browser.switch_to.window(self.browser.window_handles[1])
         return self.browser.current_url
+        
+    def close_create(self):
+        self.browser.find_element(*self.create_button).click()
+
+    def close_ip(self):
+        self.browser.find_element(*self.close_button).click()
+        
+    def close_detail(self):
+        self.browser.find_element(*self.details_arrow).click()
 
     def wait_for(self, keyword):
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), '"+ keyword +"')]")))

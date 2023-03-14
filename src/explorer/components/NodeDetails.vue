@@ -52,7 +52,7 @@
             <v-list-item-content>
               <v-list-item-title> CPU Resource Unit </v-list-item-title>
             </v-list-item-content>
-            {{ node.cru }} CPU
+            {{ node.capacity.total_resources.cru }} CPU
           </v-list-item>
           <v-divider />
 
@@ -60,7 +60,7 @@
             <v-list-item-content>
               <v-list-item-title> Disk Resource Unit (HDD) </v-list-item-title>
             </v-list-item-content>
-            {{ node.hru | toTeraOrGigaOrPeta }}
+            {{ node.capacity.total_resources.hru | toTeraOrGigaOrPeta }}
           </v-list-item>
           <v-divider />
 
@@ -68,7 +68,7 @@
             <v-list-item-content>
               <v-list-item-title> Disk Resource Unit (SSD) </v-list-item-title>
             </v-list-item-content>
-            {{ node.sru | toTeraOrGigaOrPeta }}
+            {{ node.capacity.total_resources.sru | toTeraOrGigaOrPeta }}
           </v-list-item>
           <v-divider />
 
@@ -76,7 +76,7 @@
             <v-list-item-content>
               <v-list-item-title> Memory Resource Unit </v-list-item-title>
             </v-list-item-content>
-            {{ node.mru | toTeraOrGigaOrPeta }}
+            {{ node.capacity.total_resources.mru | toTeraOrGigaOrPeta }}
           </v-list-item>
           <v-divider />
 

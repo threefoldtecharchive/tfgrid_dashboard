@@ -7,7 +7,27 @@ replicaCount: 1
 image:
   repository: threefolddev/tfgrid_dashboard
   pullPolicy: Always
-  tag: "v1.4.0-rc4"
+  tag: "v1.4.0-rc5"
+
+  env:
+    - name: "STELLAR_NETWORK"
+      value: ""
+    - name: "TFCHAIN_NETWORK"
+      value: ""          
+    - name: "GRAPHQL_URL"
+      value: ""
+    - name: "BRIDGE_TFT_ADDRESS"
+      value: ""
+    - name: "GRIDPROXY_URL"
+      value: ""
+    - name: "SUBSTRATE_URL"
+      value: ""
+    - name: "ACTIVATION_SERVICE_URL"
+      value: ""
+    - name: "PLAYGROUND_URL"
+      value: ""
+    - name: "RELAY_DOMAIN"
+      value: ""
 
 imagePullSecrets: []
 nameOverride: ""

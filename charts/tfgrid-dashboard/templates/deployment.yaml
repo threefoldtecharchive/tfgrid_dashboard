@@ -33,8 +33,10 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           env:
-            - name: GQL_URL
-              value: {{ .Values.GQL_URL }}
+          {{- range .Values.image.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+          {{- end }}
             - name: VERSION
               value: {{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}

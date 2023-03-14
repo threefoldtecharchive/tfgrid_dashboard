@@ -9,7 +9,8 @@ This module contains Swap page elements.
 
 class SwapPage:
 
-    swap=(By.XPATH, "//*[contains(text(), 'swap')]")
+    swap=(By.XPATH, '//*[@id="app"]/div[1]/nav/div[1]/div[1]/div[2]/div[2]/div/div/a[2]/div[2]/div')
+    twin_details = (By.XPATH, "//*[contains(text(), 'Twin Details')]")
     stellar_choose=(By.XPATH, "//*[contains(text(), 'stellar')]") 
     stellar=(By.XPATH,'//*[@role="option"]')
     deposit=(By.XPATH, "//*[contains(text(), 'deposit')]")
@@ -31,6 +32,8 @@ class SwapPage:
 
     def navigate_to_swap(self, user):
         self.browser.find_element(By.XPATH, "//*[contains(text(), '"+ user +"')]").click()
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.twin_details))
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.swap))
         self.browser.find_element(*self.swap).click()
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.transfer_tft_title))
     

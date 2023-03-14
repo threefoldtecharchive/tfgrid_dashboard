@@ -39,7 +39,7 @@ class PolkaPage:
     def load_and_authenticate(self):
         self.browser.get(Base.base_url)
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.dashboard_load))
-        WebDriverWait(self.browser, 20).until(EC.number_of_windows_to_be(2))
+        WebDriverWait(self.browser, 30).until(EC.number_of_windows_to_be(2))
         self.browser.switch_to.window(self.browser.window_handles[1])
         self.browser.find_element(*self.polka_understand).click()
         self.browser.find_element(*self.polka_allow).click()
@@ -79,7 +79,7 @@ class PolkaPage:
         self.browser.switch_to.window(self.browser.window_handles[0])
 
     def authenticate_with_pass(self, password):
-        WebDriverWait(self.browser, 20).until(EC.number_of_windows_to_be(2))
+        WebDriverWait(self.browser, 30).until(EC.number_of_windows_to_be(2))
         self.browser.switch_to.window(self.browser.window_handles[1])
         self.browser.find_element(*self.polka_auth_pass).send_keys(password)
         self.browser.find_element(*self.polka_auth_submit).click()

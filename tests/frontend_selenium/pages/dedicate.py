@@ -30,7 +30,8 @@ class DedicatePage:
       
     def navigate(self, user):
         self.browser.find_element(By.XPATH, "//*[contains(text(), '"+ user +"')]").click()
-        self.twin_id = int(self.browser.find_element(*self.twin_address).text[4:])
+        id = self.browser.find_element(*self.twin_address).text
+        self.twin_id = int(id[id.find(':')+2:])
         self.browser.find_element(*self.dedicate_node).click()
         WebDriverWait(self.browser, 30).until(EC.visibility_of_any_elements_located((By.XPATH, "//*[contains(text(), 'Rows per page:')]")))
     
@@ -178,7 +179,7 @@ class DedicatePage:
         tables = ["rentable", "rented"]
         for table in tables:
             self.browser.find_element(By.XPATH, "//*[contains(text(), '"+table.capitalize()+"')]").click()
-            WebDriverWait(self.browser, 5).until(EC.invisibility_of_element_located((By.XPATH, "//*[contains(text(), 'loading nodes ...')]")))
+            WebDriverWait(self.browser, 30).until(EC.invisibility_of_element_located((By.XPATH, "//*[contains(text(), 'loading nodes ...')]")))
             if(self.browser.find_element(By.XPATH, f"//*[@id='{table}']/div/div/div[1]/table/tbody/tr").text == 'No data available'):
                 continue 
             for i in range(1, len(self.browser.find_elements(By.XPATH, f"//*[@id='{table}']{self.table_xpath}"))+1):
@@ -209,7 +210,8 @@ class DedicatePage:
 
     def unreserve_node(self, id):
         self.browser.find_element(By.XPATH, "//*[contains(text(), 'Rented')]").click()
-        WebDriverWait(self.browser, 5).until(EC.invisibility_of_element_located((By.XPATH, "//*[contains(text(), 'loading nodes ...')]")))
+        WebDriverWait(self.browser, 30).until(EC.invisibility_of_element_located((By.XPATH, "//*[contains(text(), 'loading nodes ...')]")))
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_any_elements_located((By.XPATH, "//*[contains(text(), ' Unreserve ')]")))
         for i in range(1, len(self.browser.find_elements(By.XPATH, f"//*[@id='rented']{self.table_xpath}"))+1):
             if(int(self.browser.find_element(By.XPATH, f"//*[@id='rented']{self.table_xpath}[{str(i)}]/td[2]").text) == id):
                 self.browser.find_element(By.XPATH, f"//*[@id='rented']{self.table_xpath}[{str(i)}]/td[9]/div/button").click()

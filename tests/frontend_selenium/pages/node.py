@@ -37,7 +37,9 @@ class NodePage:
       
     def navigate(self, user):
         self.browser.find_element(By.XPATH, "//*[contains(text(), '"+ user +"')]").click()
-        self.twin_id = int(self.browser.find_element(*self.twin_id_label).text[4:])
+        id = self.browser.find_element(*self.twin_id_label).text
+        self.twin_id = int(id[id.find(':')+2:])
+        WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.farm_page))
         self.browser.find_element(*self.farm_page).click()
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.node_page))
     
