@@ -23,7 +23,7 @@
             <LocationDetails :country="node.country" :location="node.location" />
           </v-col>
 
-          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="node && node.publicConfig">
+          <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="nodePublicConfig()">
             <PublicConfigDetails :config="node.publicConfig" />
           </v-col>
 
@@ -127,6 +127,18 @@ export default class Details extends Vue {
   destroyed() {
     this.screen_max_1200.destry();
     this.screen_max_700.destry();
+  }
+
+  nodePublicConfig() {
+    return this.node &&
+      this.node.publicConfig &&
+      this.node.publicConfig?.domain.length > 0 &&
+      this.node.publicConfig?.gw4.length > 0 &&
+      this.node.publicConfig?.gw6.length > 0 &&
+      this.node.publicConfig?.ipv4.length > 0 &&
+      this.node.publicConfig?.ipv6.length > 0
+      ? true
+      : false;
   }
 }
 </script>
