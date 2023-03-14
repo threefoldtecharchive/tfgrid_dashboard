@@ -130,6 +130,8 @@ export default class NodesTable extends Vue {
   }
 
   async onUpdateOptions(pageNumber: number, pageSize: number) {
+    if (this.pageNumber === pageNumber && this.pageSize === pageSize) return;
+
     this.pageNumber = pageNumber;
     this.pageSize = pageSize;
     await this.getNodes();
