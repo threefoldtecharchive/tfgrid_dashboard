@@ -420,7 +420,7 @@ export async function getDNodes(
     applyedDiscount: { first: any; second: any };
     location: { country: any; city: any; long: any; lat: any };
     resources: { cru: any; mru: any; hru: any; sru: any };
-    farm: { id: string; name: string; farmCertType: string; pubIps: string };
+    farm: { id: string; name?: string; farmCertType?: string; pubIps?: string };
     rentContractId: any;
     rentedByTwinId: any;
     usedResources: { cru: any; mru: any; hru: any; sru: any };
@@ -433,9 +433,6 @@ export async function getDNodes(
     dNodes.push({
       farm: {
         id: node.farmId,
-        pubIps: "",
-        name: "",
-        farmCertType: "",
       },
       nodeId: node.nodeId,
       price: price,
