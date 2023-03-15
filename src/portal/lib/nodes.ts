@@ -262,6 +262,9 @@ export async function getFarmDetails(farmID: string) {
   try {
     const res = await axios.get(`${config.gridproxyUrl}/farms?farm_id=${farmID}`, {
       timeout: 5000,
+      validateStatus: function (status) {
+        return status === 200;
+      },
     });
     return res.data;
   } catch (error: any) {
@@ -430,7 +433,6 @@ export async function getDNodes(
   for (const node of nodes) {
     const price = countPrice(pricing, node);
     const [discount, discountLevel] = await calDiscount(TFTbalance, pricing, price);
-    const ips = "";
     dNodes.push({
       farm: {
         id: node.farmId,
