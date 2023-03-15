@@ -72,6 +72,12 @@ To get a local copy up and running follow these simple example steps:
 
   ![image](https://user-images.githubusercontent.com/57001890/219054454-f5d74a79-0083-4442-a95e-4bd4fd3bcf73.png)
 
+- The default value of `stellar network` is `testnet`, in case you want to work against `mainnet` you have to change its value.
+
+```bash
+  export STELLAR_NETWORK="main"
+```
+
 - all required env vars when using `custom` mode are.
   - GRAPHQL_URL
   - BRIDGE_TFT_ADDRESS

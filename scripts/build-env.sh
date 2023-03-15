@@ -1,7 +1,7 @@
 #!/bin/bash
 
 REQUIRED_ENV_VARS=( GRAPHQL_URL BRIDGE_TFT_ADDRESS GRIDPROXY_URL VERSION SUBSTRATE_URL ACTIVATION_SERVICE_URL PLAYGROUND_URL RELAY_DOMAIN )
-STELLAR_NETWORK="${STELLAR_NETWORK:=main}"
+STELLAR_NETWORK="${STELLAR_NETWORK:=test}"
 TFCHAIN_NETWORK="${TFCHAIN_NETWORK:=dev}"
 
 echo -e "\nHINT:\e[1;10m The default selected STELLAR_NETWORK is\e[0m \e[1;32m$STELLAR_NETWORK\e[0m\e[1;38m and default selected TFCHAIN_NETWORK is\e[0m \e[1;32m$TFCHAIN_NETWORK\e[0m\e[1;38m."
@@ -32,6 +32,7 @@ case $TFCHAIN_NETWORK in
     PLAYGROUND_URL='https://play.dev.grid.tf'
     RELAY_DOMAIN='relay.dev.grid.tf'
     BRIDGE_TFT_ADDRESS=GDHJP6TF3UXYXTNEZ2P36J5FH7W4BJJQ4AYYAXC66I2Q2AH5B6O6BCFG
+    STELLAR_NETWORK=test
   ;;
   *"qa"*)
     GRAPHQL_URL='https://graphql.qa.grid.tf/graphql'
@@ -41,6 +42,7 @@ case $TFCHAIN_NETWORK in
     PLAYGROUND_URL='https://play.qa.grid.tf'
     RELAY_DOMAIN='relay.qa.grid.tf'
     BRIDGE_TFT_ADDRESS=GDHJP6TF3UXYXTNEZ2P36J5FH7W4BJJQ4AYYAXC66I2Q2AH5B6O6BCFG
+    STELLAR_NETWORK=test
   ;;
   "test")
     GRAPHQL_URL='https://graphql.test.grid.tf/graphql'
@@ -50,6 +52,7 @@ case $TFCHAIN_NETWORK in
     PLAYGROUND_URL='https://play.test.grid.tf'
     RELAY_DOMAIN='relay.test.grid.tf'
     BRIDGE_TFT_ADDRESS=GA2CWNBUHX7NZ3B5GR4I23FMU7VY5RPA77IUJTIXTTTGKYSKDSV6LUA4
+    STELLAR_NETWORK=test
   ;;
   *"main"*)
     GRAPHQL_URL='https://graphql.grid.tf/graphql'
@@ -59,6 +62,7 @@ case $TFCHAIN_NETWORK in
     PLAYGROUND_URL='https://play.grid.tf'
     RELAY_DOMAIN='relay.grid.tf'
     BRIDGE_TFT_ADDRESS=GBNOTAYUMXVO5QDYWYO2SOCOYIJ3XFIP65GKOQN7H65ZZSO6BK4SLWSC
+    STELLAR_NETWORK=test
   ;;
   *"custom"*)
     for i in "${REQUIRED_ENV_VARS[@]}"
