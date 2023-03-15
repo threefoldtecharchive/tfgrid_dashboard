@@ -144,7 +144,7 @@ export default class NodesTable extends Vue {
       this.dNodeError = false;
       this.dNodeLoading = true;
       let res = await getFarmDetails(event.item.farm.id);
-      if (!res.length) throw new Error("Can't resolve farm data");
+      if (Array.isArray(res) && !res.length) throw new Error("Can't resolve farm data");
       event.item.farm.name = res[0].name;
       event.item.farm.farmCertType = res[0].certificationType;
       event.item.farm.pubIps = res[0].publicIps.length;
