@@ -259,13 +259,14 @@ export async function getNodeUsedResources(nodeId: string) {
 }
 
 export async function getFarmDetails(farmID: string) {
-  const res = await axios.get(`${config.gridproxyUrl}/farms?farm_id=${farmID}`, {
-    timeout: 5000,
-  });
-
-  if (res.status === 200) {
+  try {
+    const res = await axios.get(`${config.gridproxyUrl}/farms?farm_id=${farmID}`, {
+      timeout: 5000,
+    });
     return res.data;
-  } else throw new Error("Unexpected error while fetching farm data: " + res.data);
+  } catch (error: any) {
+    throw new Error("Unexpected error while fetching farm data: " + error.response.data.error);
+  }
 }
 export async function getIpsForFarm(farmID: string) {
   const res = await axios.post(
