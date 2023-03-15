@@ -53,7 +53,6 @@ export async function getNodeAvailability(nodeId: number) {
     query: `{
 			uptimeEvents(where: {nodeID_eq: ${nodeId}, timestamp_gt: ${currentPeriodStartTimestamp}}, orderBy: timestamp_ASC) {
 			  timestamp
-			  nodeID
 			  uptime
 			}
 		  }`,
@@ -62,6 +61,9 @@ export async function getNodeAvailability(nodeId: number) {
 
   // if there are no uptimeEvents (i.e node was never up in the current period), return the time elapsed since the period start as downtime
   if (uptimeEvents.length == 0) {
+    console.log(
+      `getNodeAvailability: Node ${nodeId} didn't send uptime events for the last ${secondsSinceCurrentPeriodStart} seconds.`,
+    );
     return { downtime: secondsSinceCurrentPeriodStart, currentPeriod: secondsSinceCurrentPeriodStart };
   }
 
@@ -79,10 +81,13 @@ export async function getNodeAvailability(nodeId: number) {
     }
   }
 
-  const elapsedSinceLastUptimeEvent = secondsSinceEpoch - uptimeEvents[-1].timestamp;
+  const elapsedSinceLastUptimeEvent = secondsSinceEpoch - uptimeEvents[uptimeEvents.length - 1].timestamp;
   if (elapsedSinceLastUptimeEvent >= UPTIME_EVENTS_INTERVAL) {
     downtime += elapsedSinceLastUptimeEvent;
   }
+  console.log(
+    `getNodeAvailability: Node ${nodeId} was down for ${downtime} seconds in the last ${secondsSinceCurrentPeriodStart} seconds.`,
+  );
   return { downtime: downtime, currentPeriod: secondsSinceCurrentPeriodStart };
 }
 

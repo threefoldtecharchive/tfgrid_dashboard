@@ -130,7 +130,7 @@
                     <span>For more information visit the Capacity Explorer</span>
                   </v-row>
                 </v-col>
-                <v-col v-if="network == 'main'" cols="4" class="text-center" :align-self="'center'">
+                <v-col cols="4" class="text-center" :align-self="'center'">
                   <v-flex class="text-truncate font-weight-bold">
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
@@ -145,7 +145,7 @@
 
                         <span> Uptime: {{ getNodeUptimePercentage(item) }} % </span>
                       </template>
-                      <span>Current Node Uptime Percentage (since start of the month)</span>
+                      <span>Current Node Uptime Percentage (since start of the current minting period)</span>
                     </v-tooltip>
                   </v-flex>
                 </v-col>
