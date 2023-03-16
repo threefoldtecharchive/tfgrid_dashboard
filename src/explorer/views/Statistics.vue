@@ -90,7 +90,9 @@ export default class Statistics extends Vue {
     req
       .get("/stats?status=up")
       .then(({ data }) => (this.stats = data))
-      .catch(console.log)
+      .catch(() => {
+        /* Pass */
+      })
       .finally(() => (this.loading = false));
   }
 }

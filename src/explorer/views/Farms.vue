@@ -176,8 +176,8 @@ export default class Farms extends Vue {
           };
         },
       )
-      .catch(err => {
-        console.log("Error", err);
+      .catch(() => {
+        /* Pass */
       })
       .finally(() => {
         this.loading = false;
@@ -258,7 +258,7 @@ export default class Farms extends Vue {
       component: InFilterV2,
       chip_label: "Twin ID",
       label: "Filter By Twin ID",
-      items: _ => Promise.resolve([]),
+      items: () => Promise.resolve([]),
       value: [],
       multiple: false,
       symbol: "twinId_in",
@@ -271,7 +271,7 @@ export default class Farms extends Vue {
       component: InFilterV2,
       chip_label: "Certification Type",
       label: "Filter By Certification Type",
-      items: _ => Promise.resolve(["Gold", "NotCertified"]),
+      items: () => Promise.resolve(["Gold", "NotCertified"]),
       value: [],
       init: true,
       multiple: false,
@@ -282,7 +282,7 @@ export default class Farms extends Vue {
       component: InFilterV2,
       chip_label: "Pricing Policy",
       label: "Filter By Pricing policy",
-      items: _ => Promise.resolve(this.$store.state.explorer.pricingPoliciesIds),
+      items: () => Promise.resolve(this.$store.state.explorer.pricingPoliciesIds),
       value: [],
       init: true,
       multiple: true,

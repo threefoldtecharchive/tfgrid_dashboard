@@ -1,4 +1,4 @@
-import { GetDataQueryType, INode } from "../graphql/api";
+import { GetDataQueryType } from "../graphql/api";
 import { applyFilters, comparisonFilter, conditionFilter, inFilter, rangeFilter } from "../utils/filters";
 import { GetterTree } from "vuex";
 import { IState } from "./state";
@@ -38,15 +38,6 @@ export function fallbackDataExtractor<T = GetDataQueryType, K extends keyof T = 
 export function fallbackDataExtractor(key: any, state?: any) {
   if (state) return state.data?.[key] ?? [];
   return (state: any) => state.data?.[key] ?? [];
-}
-
-function isPrivateIP(ip: string) {
-  const parts = ip.split(".");
-  return (
-    parts[0] === "10" ||
-    (parts[0] === "172" && parseInt(parts[1], 10) >= 16 && parseInt(parts[1], 10) <= 31) ||
-    (parts[0] === "192" && parts[1] === "168")
-  );
 }
 
 export function getFarmPublicIPs(state: IState, farmId: number): [number, number, number] {

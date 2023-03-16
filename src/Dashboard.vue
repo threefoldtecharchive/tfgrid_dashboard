@@ -285,7 +285,6 @@ export default class Dashboard extends Vue {
   }
 
   async unmounted() {
-    console.log(`disconnecting from api`);
     await this.$api.disconnect();
     this.$store.dispatch("portal/unsubscribeAccounts");
     this.$store.commit("UNSET_CREDENTIALS");

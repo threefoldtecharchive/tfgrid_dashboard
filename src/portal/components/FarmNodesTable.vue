@@ -531,9 +531,7 @@ export default class FarmNodesTable extends Vue {
       this.nodeToEdit.nodeId,
       config,
       (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
-        console.log(res);
         if (res instanceof Error) {
-          console.log(res);
           this.ip4 = "";
           this.ip6 = "";
           this.gw4 = "";
@@ -542,13 +540,11 @@ export default class FarmNodesTable extends Vue {
           return;
         }
         const { events = [], status } = res;
-        console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
-          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           if (!events.length) {
             if (this.openWarningDialog) this.$toasted.show("Adding Node public config failed");
             else if (this.openRemoveConfigWarningDialog) this.$toasted.show("Removing Node public config failed");
@@ -558,8 +554,7 @@ export default class FarmNodesTable extends Vue {
             this.openRemoveConfigWarningDialog = false;
           } else {
             // Loop through Vec<EventRecord> to display all events
-            events.forEach(({ phase, event: { data, method, section } }) => {
-              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            events.forEach(({ event: { method, section } }) => {
               if (section === "tfgridModule" && method === "NodePublicConfigStored") {
                 if (this.openWarningDialog) this.$toasted.show("Node public config added!");
                 else if (this.openRemoveConfigWarningDialog) {
@@ -586,8 +581,7 @@ export default class FarmNodesTable extends Vue {
           }
         }
       },
-    ).catch((err: { message: string }) => {
-      console.log(err.message);
+    ).catch(() => {
       if (this.openWarningDialog) this.$toasted.show("Adding Node public config failed");
       else if (this.openRemoveConfigWarningDialog) this.$toasted.show("Removing Node public config failed");
       this.loadingPublicConfig = false;
@@ -736,22 +730,17 @@ export default class FarmNodesTable extends Vue {
       this.$api,
       parseInt(this.nodeToDelete.id.split("-")[1]),
       (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
-        console.log(res);
         if (res instanceof Error) {
-          console.log(res);
           return;
         }
         const { events = [], status } = res;
-        console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
-          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+          events.forEach(({ event: { method, section } }) => {
             if (section === "tfgridModule" && method === "NodeDeleted") {
               this.$toasted.show("Node deleted!");
               this.loadingDelete = false;
@@ -764,8 +753,7 @@ export default class FarmNodesTable extends Vue {
           });
         }
       },
-    ).catch((err: { message: string }) => {
-      console.log(err.message);
+    ).catch(() => {
       this.$toasted.show("Deleting a node failed");
       this.loadingDelete = false;
     });
