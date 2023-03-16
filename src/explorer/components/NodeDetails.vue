@@ -276,12 +276,14 @@ export default class NodeDetails_ extends Vue {
         if ("Error" in res) return;
         return res.zosVersion;
       })
-      .catch(err => console.log("something went wrong", err));
+      .catch(() => {
+        /* Pass */
+      });
   }
   created() {
     if (isNodeOnline(this.node)) {
       this.getZOSVersion(this.node.nodeId).then(zosVersion => {
-        if (zosVersion) this.zosVersion = zosVersion!;
+        if (zosVersion) this.zosVersion = zosVersion;
       });
     }
   }

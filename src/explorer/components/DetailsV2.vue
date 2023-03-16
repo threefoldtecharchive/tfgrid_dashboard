@@ -116,8 +116,8 @@ export default class Details extends Vue {
           this.data.node.status = this.data.node.status === "up";
         }
       })
-      .catch(err => {
-        console.log("Error", err);
+      .catch(() => {
+        /* pass */
       })
       .finally(() => {
         this.loading = false;

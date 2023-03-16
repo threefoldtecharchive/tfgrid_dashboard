@@ -223,10 +223,6 @@ interface SidenavItem {
   components: { WelcomeWindow, FundsCard },
 })
 export default class Dashboard extends Vue {
-  vText(vText: any) {
-    throw new Error("Method not implemented.");
-  }
-
   collapseOnScroll = true;
   mini = true;
   drawer = true;
@@ -240,7 +236,6 @@ export default class Dashboard extends Vue {
     this.accounts = this.$store.state.portal.accounts;
     if (this.$route.path === "/" && !this.$api) {
       Vue.prototype.$api = await connect();
-      console.log(`connecting to api`);
       this.loadingAPI = false;
     }
     const theme = localStorage.getItem("dark_theme");
