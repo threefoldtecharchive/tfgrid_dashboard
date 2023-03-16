@@ -18,7 +18,7 @@
             <v-list color="transparent">
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title> CPU Resource Unit </v-list-item-title>
+                  <v-list-item-title> CPU </v-list-item-title>
                 </v-list-item-content>
                 {{ node.resources.cru }} CPU
               </v-list-item>
@@ -26,7 +26,7 @@
 
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title> Disk Resource Unit (HDD) </v-list-item-title>
+                  <v-list-item-title> Disk (HDD) </v-list-item-title>
                 </v-list-item-content>
                 {{ node.resources.hru | toTeraOrGigaOrPeta }}
               </v-list-item>
@@ -34,7 +34,7 @@
 
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title> Disk Resource Unit (SSD) </v-list-item-title>
+                  <v-list-item-title> Disk (SSD) </v-list-item-title>
                 </v-list-item-content>
                 {{ node.resources.sru | toTeraOrGigaOrPeta }}
               </v-list-item>
@@ -42,7 +42,7 @@
 
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title> Memory Resource Unit </v-list-item-title>
+                  <v-list-item-title> Memory </v-list-item-title>
                 </v-list-item-content>
                 {{ node.resources.mru | toTeraOrGigaOrPeta }}
               </v-list-item>
@@ -108,10 +108,10 @@
         <!-- Title -->
         <v-list-item>
           <v-list-item-icon>
-            <v-icon size="30" class="mr-2">mdi-earth</v-icon>
+            <v-icon size="30" class="mr-2">mdi-silo</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title style="font-size: 20px"> Public IPs </v-list-item-title>
+            <v-list-item-title style="font-size: 20px"> Farm details </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -121,9 +121,33 @@
             <v-list color="transparent">
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title> Farm Public Ips </v-list-item-title>
+                  <v-list-item-title> ID </v-list-item-title>
                 </v-list-item-content>
-                {{ node.pubIps }}
+                {{ node.farm.id }}
+              </v-list-item>
+              <v-divider />
+
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title> Name </v-list-item-title>
+                </v-list-item-content>
+                {{ node.farm.name }}
+              </v-list-item>
+              <v-divider />
+
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title> Certification type </v-list-item-title>
+                </v-list-item-content>
+                {{ node.farm.farmCertType }}
+              </v-list-item>
+              <v-divider />
+
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title> Public Ips </v-list-item-title>
+                </v-list-item-content>
+                {{ node.farm.pubIps }}
               </v-list-item>
             </v-list>
           </v-col>
@@ -141,7 +165,7 @@ export default class NodeDetails extends Vue {
   @Prop({ required: true }) node!: {
     resources: { cru: string; hru: string; sru: string; mru: string };
     location: { country: string; city: string; long: string; lat: string };
-    pubIps: string;
+    farm: { id: string; name: string; farmCertType: string; pubIps: string };
   };
   @Prop({ required: true }) byteToGB!: any;
   loading = false;

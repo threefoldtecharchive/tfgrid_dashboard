@@ -258,6 +258,19 @@ export async function getNodeUsedResources(nodeId: string) {
   }
 }
 
+export async function getFarmDetails(farmID: string) {
+  try {
+    const res = await axios.get(`${config.gridproxyUrl}/farms?farm_id=${farmID}`, {
+      timeout: 5000,
+      validateStatus: function (status) {
+        return status === 200;
+      },
+    });
+    return res.data;
+  } catch (error: any) {
+    throw new Error("Unexpected error while fetching farm data: " + error.response.data.error);
+  }
+}
 export async function getIpsForFarm(farmID: string) {
   const res = await axios.post(
     config.graphqlUrl,
@@ -272,7 +285,7 @@ export async function getIpsForFarm(farmID: string) {
         `,
       operation: "getNodes",
     },
-    { timeout: 1000 },
+    { timeout: 3000 },
   );
   return res.data.data.farms[0].publicIPs.length;
 }
@@ -327,19 +340,10 @@ export async function getTFTPrice(api: apiInterface) {
   return pricing.words[0] / 1000;
 }
 
-export async function calDiscount(
-  api: apiInterface,
-  address: string,
-  pricing: { discountForDedicationNodes: any },
-  price: any,
-) {
+export async function calDiscount(TFTbalance: number, pricing: { discountForDedicationNodes: any }, price: any) {
   // discount for Dedicated Nodes
   const discount = pricing.discountForDedicationNodes;
   let totalPrice = price - price * (discount / 100);
-  const TFTprice = await getTFTPrice(api);
-  // discount for Twin Balance
-  const balance = await getBalance(api, address);
-  const TFTbalance = TFTprice * balance.free;
 
   const discountPackages: any = {
     none: {
@@ -407,6 +411,12 @@ export async function getDNodes(
   let { nodes, count } = await getDedicatedNodes(currentTwinID, query, page, size);
 
   const pricing = await getPrices(api);
+
+  // discount for Twin Balance
+  const TFTprice = await getTFTPrice(api);
+  const balance = await getBalance(api, address);
+  const TFTbalance = TFTprice * balance.free;
+
   let dNodes: {
     nodeId: string;
     price: string;
@@ -414,7 +424,7 @@ export async function getDNodes(
     applyedDiscount: { first: any; second: any };
     location: { country: any; city: any; long: any; lat: any };
     resources: { cru: any; mru: any; hru: any; sru: any };
-    pubIps: any;
+    farm: { id: string; name?: string; farmCertType?: string; pubIps?: string };
     rentContractId: any;
     rentedByTwinId: any;
     usedResources: { cru: any; mru: any; hru: any; sru: any };
@@ -422,9 +432,11 @@ export async function getDNodes(
   }[] = [];
   for (const node of nodes) {
     const price = countPrice(pricing, node);
-    const [discount, discountLevel] = await calDiscount(api, address, pricing, price);
-    const ips = await getIpsForFarm(node.farmId);
+    const [discount, discountLevel] = await calDiscount(TFTbalance, pricing, price);
     dNodes.push({
+      farm: {
+        id: node.farmId,
+      },
       nodeId: node.nodeId,
       price: price,
       discount: discount,
@@ -450,7 +462,6 @@ export async function getDNodes(
         hru: node.used_resources.hru,
         sru: node.used_resources.sru,
       },
-      pubIps: ips,
       rentContractId: node.rentContractId,
       rentedByTwinId: node.rentedByTwinId,
       rentStatus: node.rentContractId === 0 ? "free" : node.rentedByTwinId == currentTwinID ? "yours" : "taken",

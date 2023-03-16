@@ -17,6 +17,7 @@
         'items-per-page-options': [5, 10, 15, 50],
       }"
       @update:options="onUpdateOptions($event.page, $event.itemsPerPage)"
+      @item-expanded="getDNodeDetails"
     >
       <template v-slot:[`item.resources.mru`]="{ item }">
         {{ byteToGB(item.resources.mru) }}
@@ -48,7 +49,7 @@
                 >
               </li>
               <li>
-                You're recieving {{ item.applyedDiscount.second }}% discount as per the
+                You're receiving {{ item.applyedDiscount.second }}% discount as per the
                 <a
                   target="_blank"
                   href="https://library.threefold.me/info/threefold/#/tfgrid/grid/pricing?id=discount-levels"
@@ -61,7 +62,15 @@
         </v-tooltip>
       </template>
       <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length">
+        <td :colspan="headers.length" v-if="dNodeLoading" style="text-align: center">
+          <div class="pa-1">
+            <v-progress-circular indeterminate model-value="20" :width="3"></v-progress-circular>
+          </div>
+        </td>
+        <td :colspan="headers.length" v-else-if="dNodeError" style="text-align: center">
+          <strong style="color: #f44336">Failed to retrieve Node details</strong>
+        </td>
+        <td :colspan="headers.length" v-else>
           <NodeDetails :node="item" :byteToGB="byteToGB" />
         </td>
       </template>
@@ -73,7 +82,7 @@
 import NodeActionBtn from "../components/NodeActionBtn.vue";
 import NodeDetails from "../components/NodeDetails.vue";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { getDNodes, ITab } from "../lib/nodes";
+import { getDNodes, ITab, getFarmDetails } from "../lib/nodes";
 import { byteToGB } from "../lib/nodes";
 
 @Component({
@@ -87,6 +96,8 @@ export default class NodesTable extends Vue {
   $api: any;
   expanded: any = [];
   loading = true;
+  dNodeLoading = true;
+  dNodeError = false;
   address = "";
 
   nodes: any[] = [];
@@ -119,9 +130,28 @@ export default class NodesTable extends Vue {
   }
 
   async onUpdateOptions(pageNumber: number, pageSize: number) {
+    if (this.pageNumber === pageNumber && this.pageSize === pageSize) return;
+
     this.pageNumber = pageNumber;
     this.pageSize = pageSize;
     await this.getNodes();
+  }
+
+  async getDNodeDetails(event: any) {
+    // value is whether or not the row is expanded now.
+    if (!event.value) return;
+    try {
+      this.dNodeError = false;
+      this.dNodeLoading = true;
+      let res = await getFarmDetails(event.item.farm.id);
+      if (Array.isArray(res) && !res.length) throw new Error("Can't resolve farm data");
+      event.item.farm.name = res[0].name;
+      event.item.farm.farmCertType = res[0].certificationType;
+      event.item.farm.pubIps = res[0].publicIps.length;
+    } catch (e) {
+      this.dNodeError = true;
+    }
+    this.dNodeLoading = false;
   }
 
   async onStatusUpdate() {
