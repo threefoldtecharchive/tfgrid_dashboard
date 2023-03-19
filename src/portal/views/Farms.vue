@@ -642,25 +642,16 @@ export default class FarmsView extends Vue {
 
   async updatePubConfigs(nodeid: any, config: any) {
     this.loadingNodes = true;
-    console.log(nodeid, config);
+
     let current = this.nodes.findIndex((n: any) => n.nodeId == nodeid);
-    if (config != null) {
-      this.nodes[current].publicConfig = {
-        ipv4: config.ip4.ip,
-        gw4: config.ip4.gw,
-        ipv6: config.ip6.ip,
-        gw6: config.ip6.gw,
-        domain: config?.domain,
-      };
-    } else {
-      this.nodes[current].publicConfig = {
-        ipv4: "",
-        gw4: "",
-        ipv6: "",
-        gw6: "",
-        domain: "",
-      };
-    }
+    this.nodes[current].publicConfig = {
+      ipv4: config?.ip4.ip || "",
+      gw4: config?.ip4.gw || "",
+      ipv6: config?.ip6.ip || "",
+      gw6: config?.ip6.gw || "",
+      domain: config?.domain || "",
+    };
+
     this.loadingNodes = false;
   }
 }
