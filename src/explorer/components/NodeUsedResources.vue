@@ -63,7 +63,7 @@ export default class NodeUsedResources extends Vue {
     return this.node.status;
   }
 
-  getNodeUsedResources(nodeId: number) {
+  getNodeUsedResources() {
     this.loader = true;
 
     return ["cru", "sru", "hru", "mru"].map((i, idx) => {
@@ -81,7 +81,7 @@ export default class NodeUsedResources extends Vue {
   }
   created() {
     if (this.nodeStatus) {
-      const resources = this.getNodeUsedResources(this.node.nodeId);
+      const resources = this.getNodeUsedResources();
       if (resources) {
         this.resources = resources;
       }

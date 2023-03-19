@@ -32,12 +32,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { ApiPromise, WsProvider } from "@polkadot/api";
-
-interface IVersion {
-  name: string;
-  value: string;
-}
 
 @Component({})
 export default class Sidebar extends Vue {

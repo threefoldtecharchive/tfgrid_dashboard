@@ -29,7 +29,7 @@ function getPricingPolicies(provider: WsProvider): Promise<Map<number, string>> 
     .then(api => {
       return api.query.tfgridModule.pricingPolicies.entries();
     })
-    .then(([[_, res]]) => res.toHuman())
+    .then(([x]) => x[1].toHuman())
     .then((certs: any) => {
       const map = new Map();
       certs = Array.isArray(certs) ? certs : [certs];

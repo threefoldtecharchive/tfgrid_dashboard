@@ -13,8 +13,8 @@ export default function getPricingPolicies(): Promise<Map<number, string>> {
     .then((api: any) => {
       return api.query.tfgridModule.pricingPolicies.entries();
     })
-    .then(([[_, ...entries]]: any) => {
-      return entries.reduce(
+    .then(([x]: any) => {
+      return x.slice(1).reduce(
         (
           map: any,
           {
