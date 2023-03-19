@@ -603,9 +603,6 @@ export default class FarmNodesTable extends Vue {
     this.save(null);
   }
   async openPublicConfig(node: nodeInterface) {
-    // const _node = await getNodeByID(node.nodeId);
-    // console.log("done loading public config")
-    // this.nodeToEdit = _node
     this.nodeToEdit = node;
     if (this.nodeToEdit.publicConfig) {
       this.ip4 = this.nodeToEdit.publicConfig.ipv4;

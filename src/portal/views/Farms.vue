@@ -662,10 +662,6 @@ export default class FarmsView extends Vue {
       };
     }
     this.loadingNodes = false;
-
-    // setTimeout(async () => {
-    // await this.getNodes()
-    // }, 3000);
   }
 }
 </script>
