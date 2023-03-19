@@ -349,13 +349,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { default as PrivateIp } from "private-ip";
-import {
-  byteToGB,
-  generateNodeSummary,
-  generateReceipt,
-  getNodeUptimePercentage,
-  getNodeByID,
-} from "@/portal/lib/nodes";
+import { byteToGB, generateNodeSummary, generateReceipt, getNodeUptimePercentage } from "@/portal/lib/nodes";
 import { addNodePublicConfig, deleteNode, nodeInterface } from "@/portal/lib/farms";
 import { hex2a } from "@/portal/lib/util";
 import ReceiptsCalendar from "./ReceiptsCalendar.vue";
@@ -602,7 +596,7 @@ export default class FarmNodesTable extends Vue {
   removeConfig() {
     this.save(null);
   }
-  async openPublicConfig(node: nodeInterface) {
+  openPublicConfig(node: nodeInterface) {
     this.nodeToEdit = node;
     if (this.nodeToEdit.publicConfig) {
       this.ip4 = this.nodeToEdit.publicConfig.ipv4;
