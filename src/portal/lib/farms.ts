@@ -49,7 +49,17 @@ export interface nodeInterface {
   serialNumber: string;
   downtime: number;
 }
+export async function getFarmsByTwinID(page: number, size: number, twinID: number) {
+  const baseUrl = `${config.gridproxyUrl}/farms?twin_id=${twinID}&page=${page}&size=${size}`;
+  const twinFarms = await fetch(baseUrl);
+  console.log(await twinFarms.json());
+  return twinFarms;
+}
 export async function getFarm(api: { query: any }, twinID: number) {
+  // const ff =await getFarmsByTwinID(1,5,800)
+  const today = new Date();
+  const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  console.log("getting farms", time);
   const farms = await api.query.tfgridModule.farms.entries();
 
   const twinFarms = farms.filter((farm: { toJSON: () => { (): any; new (): any; twinId: number } }[]) => {
