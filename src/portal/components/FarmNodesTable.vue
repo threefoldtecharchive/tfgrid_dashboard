@@ -347,7 +347,13 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { default as PrivateIp } from "private-ip";
-import { byteToGB, generateNodeSummary, generateReceipt, getNodeUptimePercentage } from "@/portal/lib/nodes";
+import {
+  byteToGB,
+  generateNodeSummary,
+  generateReceipt,
+  getNodeUptimePercentage,
+  getNodeByID,
+} from "@/portal/lib/nodes";
 import { addNodePublicConfig, deleteNode, nodeInterface } from "@/portal/lib/farms";
 import { hex2a } from "@/portal/lib/util";
 import ReceiptsCalendar from "./ReceiptsCalendar.vue";
@@ -565,6 +571,7 @@ export default class FarmNodesTable extends Vue {
                   this.gw6 = "";
                   this.domain = "";
                 }
+                this.$emit("updatePubConfig", { nodeid: this.nodeToEdit.nodeId, config });
 
                 this.loadingPublicConfig = false;
                 this.openPublicConfigDialog = false;
@@ -593,7 +600,10 @@ export default class FarmNodesTable extends Vue {
   removeConfig() {
     this.save(null);
   }
-  openPublicConfig(node: nodeInterface) {
+  async openPublicConfig(node: nodeInterface) {
+    // const _node = await getNodeByID(node.nodeId);
+    // console.log("done loading public config")
+    // this.nodeToEdit = _node
     this.nodeToEdit = node;
     if (this.nodeToEdit.publicConfig) {
       this.ip4 = this.nodeToEdit.publicConfig.ipv4;
@@ -703,8 +713,9 @@ export default class FarmNodesTable extends Vue {
     }
   }
   domainCheck() {
-    if (this.domain == "") return null;
+    if (this.domain == "") return false;
     if (!this.validator.isURL(this.domain)) return "Invalid url format";
+    return true;
   }
 
   getTime(num: number | undefined) {
