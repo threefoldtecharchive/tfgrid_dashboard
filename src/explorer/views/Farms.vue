@@ -206,7 +206,10 @@ export default class Farms extends Vue {
       .filter(f => (Array.isArray(f.value) ? f.value.length > 0 : true))
       .reduce((res, f) => {
         const { symbol, value, getValue } = f;
-        res[symbol] = getValue?.(f) ?? value;
+        const symbolValue = getValue?.(f) ?? value;
+        if (symbolValue != null && symbolValue != 0) {
+          res[symbol] = symbolValue;
+        }
         return res;
       }, {} as { [key: string]: any });
     this._vars = _vars;
