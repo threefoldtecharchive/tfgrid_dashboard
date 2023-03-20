@@ -286,7 +286,7 @@
           <v-divider></v-divider>
 
           <v-card-actions>
-            <v-btn text color="error" @click="openRemoveConfigWarningDialog = true" :disabled="!isValidPublicConfig">
+            <v-btn text color="error" @click="openRemoveConfigWarningDialog = true" :disabled="!hasPublicConfig">
               Remove config
             </v-btn>
             <v-spacer></v-spacer>
@@ -442,6 +442,7 @@ export default class FarmNodesTable extends Vue {
   loadingPublicConfig = false;
   $api: any;
   isValidPublicConfig = false;
+  hasPublicConfig = false;
   openWarningDialog = false;
   openRemoveConfigWarningDialog = false;
   ip4ErrorMessage = "";
@@ -597,6 +598,11 @@ export default class FarmNodesTable extends Vue {
     this.save(null);
   }
   openPublicConfig(node: nodeInterface) {
+    // disable remove config btn
+    if (node.publicConfig.ipv4 && node.publicConfig.gw4 && node.publicConfig.ipv6 && node.publicConfig.gw6)
+      this.hasPublicConfig = true;
+    else this.hasPublicConfig = false;
+
     this.nodeToEdit = node;
     if (this.nodeToEdit.publicConfig) {
       this.ip4 = this.nodeToEdit.publicConfig.ipv4;
