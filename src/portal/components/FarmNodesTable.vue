@@ -329,7 +329,7 @@
           <v-card-text> This action is irreversible</v-card-text>
           <v-card-actions>
             <v-btn @click="removeConfig()" :loading="loadingPublicConfig">Submit</v-btn>
-            <v-btn @click="openRemoveConfigWarningDialog = false">Cancel</v-btn>
+            <v-btn @click="openRemoveConfigWarningDialog = false" :disabled="loadingPublicConfig">Cancel</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
