@@ -12,23 +12,6 @@ interface IFilter {
 }
 const createFilter = () => ({ enabled: false, value: [] });
 
-interface IRangeFilter {
-  enabled: boolean;
-  value: {
-    min: number;
-    max: number;
-  };
-}
-// prettier-ignore
-const createRangeFilter = () => ({ enabled: false, value: { min: 0, max: Number.MAX_SAFE_INTEGER } });
-
-interface IConditionFilter {
-  enabled: boolean;
-  value: boolean;
-}
-
-const createConditionFilter = () => ({ enabled: false, value: true });
-
 interface IComparisonFilter {
   enabled: boolean;
   value: number;

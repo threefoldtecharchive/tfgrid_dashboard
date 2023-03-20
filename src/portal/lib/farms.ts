@@ -2,7 +2,7 @@ import { Signer } from "@polkadot/api/types";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import axios from "axios";
 import config from "../config";
-import { getNodeDowntime } from "./nodes";
+import { getNodeAvailability, NodeAvailability } from "./nodes";
 import { getNodeMintingFixupReceipts, receiptInterface } from "./nodes";
 import { hex2a } from "./util";
 export interface nodeInterface {
@@ -47,7 +47,7 @@ export interface nodeInterface {
   rentedByTwinId: number;
   receipts: receiptInterface[];
   serialNumber: string;
-  downtime: number;
+  availability: NodeAvailability;
 }
 export async function getFarmsByTwinID(page: number, size: number, twinID: number) {
   const baseUrl = `${config.gridproxyUrl}/farms?twin_id=${twinID}&page=${page}&size=${size}`;
@@ -280,7 +280,7 @@ export async function getNodesByFarmID(farmIDs: any[], page: number, size: numbe
       const network = config.network;
       node.receipts = [];
       if (network == "main") node.receipts = await getNodeMintingFixupReceipts(node.nodeId);
-      node.downtime = await getNodeDowntime(node.nodeId);
+      node.availability = await getNodeAvailability(node.nodeId);
     } catch (error) {
       node.receipts = [];
       node.used_resources = {
@@ -289,7 +289,7 @@ export async function getNodesByFarmID(farmIDs: any[], page: number, size: numbe
         mru: 0,
         cru: 0,
       };
-      node.downtime = 0;
+      node.availability = { downtime: 0, currentPeriod: 0 };
     }
 
     return node;

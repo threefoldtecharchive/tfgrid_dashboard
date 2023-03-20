@@ -120,11 +120,10 @@ export default {
       .then(data => {
         commit(MutationTypes.SET_DATA, data);
       })
-      .catch(err => {
+      .catch(() => {
         /**
          * @todo Should handle this error nicely. :"(
          */
-        console.log("something went wrong", err);
       })
       .finally(() => {
         commit(MutationTypes.SET_LOAD, false);

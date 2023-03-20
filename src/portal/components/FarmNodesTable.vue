@@ -130,7 +130,7 @@
                     <span>For more information visit the Capacity Explorer</span>
                   </v-row>
                 </v-col>
-                <v-col v-if="network == 'main'" cols="4" class="text-center" :align-self="'center'">
+                <v-col cols="4" class="text-center" :align-self="'center'">
                   <v-flex class="text-truncate font-weight-bold">
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
@@ -145,7 +145,7 @@
 
                         <span> Uptime: {{ getNodeUptimePercentage(item) }} % </span>
                       </template>
-                      <span>Current Node Uptime Percentage (since start of the month)</span>
+                      <span>Current Node Uptime Percentage (since start of the current minting period)</span>
                     </v-tooltip>
                   </v-flex>
                 </v-col>
@@ -286,7 +286,9 @@
           <v-divider></v-divider>
 
           <v-card-actions>
-            <v-btn text color="error" @click="openRemoveConfigWarningDialog = true"> Remove config </v-btn>
+            <v-btn text color="error" @click="openRemoveConfigWarningDialog = true" :disabled="!hasPublicConfig">
+              Remove config
+            </v-btn>
             <v-spacer></v-spacer>
             <v-btn color="grey lighten-2 black--text" @click="openPublicConfigDialog = false"> Cancel </v-btn>
             <v-btn color="primary white--text" @click="openWarningDialog = true" :disabled="!isValidPublicConfig">
@@ -316,7 +318,7 @@
           <v-card-text> This action is irreversible</v-card-text>
           <v-card-actions>
             <v-btn @click="saveConfig()" :loading="loadingPublicConfig">Submit</v-btn>
-            <v-btn @click="openWarningDialog = false">Cancel</v-btn>
+            <v-btn @click="openWarningDialog = false" :disabled="loadingPublicConfig">Cancel</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -327,7 +329,7 @@
           <v-card-text> This action is irreversible</v-card-text>
           <v-card-actions>
             <v-btn @click="removeConfig()" :loading="loadingPublicConfig">Submit</v-btn>
-            <v-btn @click="openRemoveConfigWarningDialog = false">Cancel</v-btn>
+            <v-btn @click="openRemoveConfigWarningDialog = false" :disabled="loadingPublicConfig">Cancel</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -421,7 +423,7 @@ export default class FarmNodesTable extends Vue {
     rentedByTwinId: 0,
     receipts: [],
     serialNumber: "",
-    downtime: 0,
+    availability: { downtime: 0, currentPeriod: 0 },
   };
   nodeToDelete: { id: string } = {
     id: "",
@@ -440,6 +442,7 @@ export default class FarmNodesTable extends Vue {
   loadingPublicConfig = false;
   $api: any;
   isValidPublicConfig = false;
+  hasPublicConfig = false;
   openWarningDialog = false;
   openRemoveConfigWarningDialog = false;
   ip4ErrorMessage = "";
@@ -531,9 +534,7 @@ export default class FarmNodesTable extends Vue {
       this.nodeToEdit.nodeId,
       config,
       (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
-        console.log(res);
         if (res instanceof Error) {
-          console.log(res);
           this.ip4 = "";
           this.ip6 = "";
           this.gw4 = "";
@@ -542,13 +543,11 @@ export default class FarmNodesTable extends Vue {
           return;
         }
         const { events = [], status } = res;
-        console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
-          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           if (!events.length) {
             if (this.openWarningDialog) this.$toasted.show("Adding Node public config failed");
             else if (this.openRemoveConfigWarningDialog) this.$toasted.show("Removing Node public config failed");
@@ -558,8 +557,7 @@ export default class FarmNodesTable extends Vue {
             this.openRemoveConfigWarningDialog = false;
           } else {
             // Loop through Vec<EventRecord> to display all events
-            events.forEach(({ phase, event: { data, method, section } }) => {
-              console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+            events.forEach(({ event: { method, section } }) => {
               if (section === "tfgridModule" && method === "NodePublicConfigStored") {
                 if (this.openWarningDialog) this.$toasted.show("Node public config added!");
                 else if (this.openRemoveConfigWarningDialog) {
@@ -570,6 +568,7 @@ export default class FarmNodesTable extends Vue {
                   this.gw6 = "";
                   this.domain = "";
                 }
+                this.$emit("updatePubConfig", { nodeid: this.nodeToEdit.nodeId, config });
 
                 this.loadingPublicConfig = false;
                 this.openPublicConfigDialog = false;
@@ -586,8 +585,7 @@ export default class FarmNodesTable extends Vue {
           }
         }
       },
-    ).catch((err: { message: string }) => {
-      console.log(err.message);
+    ).catch(() => {
       if (this.openWarningDialog) this.$toasted.show("Adding Node public config failed");
       else if (this.openRemoveConfigWarningDialog) this.$toasted.show("Removing Node public config failed");
       this.loadingPublicConfig = false;
@@ -600,6 +598,11 @@ export default class FarmNodesTable extends Vue {
     this.save(null);
   }
   openPublicConfig(node: nodeInterface) {
+    // disable remove config btn
+    if (node.publicConfig.ipv4 && node.publicConfig.gw4 && node.publicConfig.ipv6 && node.publicConfig.gw6)
+      this.hasPublicConfig = true;
+    else this.hasPublicConfig = false;
+
     this.nodeToEdit = node;
     if (this.nodeToEdit.publicConfig) {
       this.ip4 = this.nodeToEdit.publicConfig.ipv4;
@@ -709,8 +712,9 @@ export default class FarmNodesTable extends Vue {
     }
   }
   domainCheck() {
-    if (this.domain == "") return null;
+    if (this.domain == "") return false;
     if (!this.validator.isURL(this.domain)) return "Invalid url format";
+    return true;
   }
 
   getTime(num: number | undefined) {
@@ -736,22 +740,17 @@ export default class FarmNodesTable extends Vue {
       this.$api,
       parseInt(this.nodeToDelete.id.split("-")[1]),
       (res: { events?: never[] | undefined; status: { type: string; asFinalized: string; isFinalized: string } }) => {
-        console.log(res);
         if (res instanceof Error) {
-          console.log(res);
           return;
         }
         const { events = [], status } = res;
-        console.log(`Current status is ${status.type}`);
         switch (status.type) {
           case "Ready":
             this.$toasted.show(`Transaction submitted`);
         }
         if (status.isFinalized) {
-          console.log(`Transaction included at blockHash ${status.asFinalized}`);
           // Loop through Vec<EventRecord> to display all events
-          events.forEach(({ phase, event: { data, method, section } }) => {
-            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+          events.forEach(({ event: { method, section } }) => {
             if (section === "tfgridModule" && method === "NodeDeleted") {
               this.$toasted.show("Node deleted!");
               this.loadingDelete = false;
@@ -764,8 +763,7 @@ export default class FarmNodesTable extends Vue {
           });
         }
       },
-    ).catch((err: { message: string }) => {
-      console.log(err.message);
+    ).catch(() => {
       this.$toasted.show("Deleting a node failed");
       this.loadingDelete = false;
     });
