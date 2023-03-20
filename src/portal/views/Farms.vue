@@ -202,6 +202,7 @@
       :count="count"
       @on:delete="getNodes()"
       @options-changed="onOptionChange($event.pageNumber, $event.pageSize)"
+      @updatePubConfig="updatePubConfigs($event.nodeid, $event.config)"
     />
 
     <!-- delete farm form -->
@@ -637,6 +638,21 @@ export default class FarmsView extends Vue {
       this.loadingAddStellar = false;
       this.v2_address = "";
     });
+  }
+
+  async updatePubConfigs(nodeid: any, config: any) {
+    this.loadingNodes = true;
+
+    let current = this.nodes.findIndex((n: any) => n.nodeId == nodeid);
+    this.nodes[current].publicConfig = {
+      ipv4: config?.ip4.ip || "",
+      gw4: config?.ip4.gw || "",
+      ipv6: config?.ip6.ip || "",
+      gw6: config?.ip6.gw || "",
+      domain: config?.domain || "",
+    };
+
+    this.loadingNodes = false;
   }
 }
 </script>
