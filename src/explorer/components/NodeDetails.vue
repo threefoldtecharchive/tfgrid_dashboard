@@ -96,6 +96,22 @@
           </v-list-item>
           <v-divider />
 
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title> Number of Workloads </v-list-item-title>
+            </v-list-item-content>
+            {{ nodeStatistics.users.workloads }}
+          </v-list-item>
+          <v-divider />
+
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title> Number of Deployments </v-list-item-title>
+            </v-list-item-content>
+            {{ nodeStatistics.users.deployments }}
+          </v-list-item>
+          <v-divider />
+
           <v-list-item v-if="zosVersion">
             <v-list-item-content>
               <v-list-item-title> ZOS Version </v-list-item-title>
@@ -218,7 +234,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { INode } from "../graphql/api";
+import { INode, INodeStatistics } from "../graphql/api";
 import DatesDetails from "./DatesDetails.vue";
 import mediaMatcher from "../utils/mediaMatcher";
 import isNodeOnline from "../utils/isNodeOnline";
@@ -235,6 +251,7 @@ function createItem(value: string, key?: keyof INode) {
 })
 export default class NodeDetails_ extends Vue {
   @Prop({ required: true }) node!: INode;
+  @Prop({ required: true }) nodeStatistics!: INodeStatistics;
   size = 210;
   width = 10;
   fontSize = 25;

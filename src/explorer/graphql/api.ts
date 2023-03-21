@@ -96,6 +96,15 @@ export interface INode {
   countryFullName: string;
 }
 
+export interface INodeStatisticsUser {
+  deployments: number;
+  workloads: number;
+}
+
+export interface INodeStatistics {
+  users: INodeStatisticsUser;
+}
+
 export const PublicConfigType = gql`
   fragment PublicConfigType on PublicConfig {
     domain
