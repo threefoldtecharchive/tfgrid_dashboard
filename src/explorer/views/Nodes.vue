@@ -261,8 +261,8 @@ export default class Nodes extends Vue {
   }
 
   getStatus(node: { status: string }) {
-    if (node.status === "up") return { color: "green", status: "up" };
-    else return { color: "red", status: "down" };
+    if (node.status === "up") return { color: "green", status: "Up" };
+    else return { color: "red", status: "Down" };
   }
 
   toggleActive(label: string): void {
