@@ -298,7 +298,6 @@ export default class FarmsView extends Vue {
 
   async updated() {
     if (this.$api) {
-      console.log("updated");
       this.farms = await getFarm(this.$api, this.$store.state.credentials.twin.id);
       this.loadingFarms = false;
     } else {
