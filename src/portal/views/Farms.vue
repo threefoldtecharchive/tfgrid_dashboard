@@ -54,7 +54,6 @@
       item-key="name"
       show-expand
       class="elevation-1"
-      disable-pagination
       :loading="loadingFarms"
       :loading-text="'loading farms ...'"
     >
@@ -343,6 +342,7 @@ export default class FarmsView extends Vue {
 
   // Node table listing
   async onOptionChange(pageNumber: number, pageSize: number) {
+    if (this.page === pageNumber && this.size === pageSize) return;
     this.page = pageNumber;
     this.size = pageSize;
     await this.getNodes();
