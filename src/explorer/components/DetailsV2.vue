@@ -9,7 +9,7 @@
         </v-row>
         <v-row>
           <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="node">
-            <NodeDetails :node="node" />
+            <NodeDetails :node="node" :nodeStatistics="nodeStatistics" />
           </v-col>
 
           <v-col :cols="screen_max_700.matches ? 12 : screen_max_1200.matches ? 6 : 4" v-if="data.farm">
@@ -59,7 +59,7 @@ import InterfacesDetails from "./InterfacesDetails.vue";
 import NodeUsedResources from "./NodeUsedResources.vue";
 import mediaMatcher from "../utils/mediaMatcher";
 import { DocumentNode } from "graphql";
-import { ICountry, INode } from "../graphql/api";
+import { ICountry, INode, INodeStatistics } from "../graphql/api";
 
 @Component({
   components: {
@@ -85,6 +85,10 @@ export default class Details extends Vue {
 
   get node(): INode {
     return this.data.node;
+  }
+
+  get nodeStatistics(): INodeStatistics {
+    return this.data.nodeStatistics;
   }
 
   get country(): ICountry {
@@ -113,6 +117,9 @@ export default class Details extends Vue {
           this.data.node = await fetch(`${window.configs.APP_GRIDPROXY_URL}/nodes/${this.nodeId}`).then(res =>
             res.json(),
           );
+          this.data.nodeStatistics = await fetch(
+            `${window.configs.APP_GRIDPROXY_URL}/nodes/${this.nodeId}/statistics`,
+          ).then(res => res.json());
           this.data.node.status = this.data.node.status === "up";
         }
       })
