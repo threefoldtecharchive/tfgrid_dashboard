@@ -57,8 +57,9 @@ export async function getNodeAvailability(nodeId: number) {
 			}
 		  }`,
   });
-  const uptimeEvents: Array<UptimeEvent> = res.data.data.uptimeEvents;
-
+  const uptimeEvents: Array<UptimeEvent> = res.data.data.uptimeEvents.map((item: UptimeEvent) => {
+    return { timestamp: +item.timestamp, uptime: +item.uptime };
+  });
   // if there are no uptimeEvents (i.e node was never up in the current period), return the time elapsed since the period start as downtime
   if (uptimeEvents.length == 0) {
     console.log(
