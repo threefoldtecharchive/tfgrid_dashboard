@@ -353,6 +353,7 @@ export default class Dashboard extends Vue {
   // UserCredentials
   public async setCredentials(account: accountInterface) {
     this.twinID = await getTwinID(this.$api, account.address);
+    this.$store.state.twinID = this.twinID;
     this.balance = await getBalance(this.$api, account.address);
     if (this.twinID) {
       this.twin = await getTwin(this.$api, this.twinID);

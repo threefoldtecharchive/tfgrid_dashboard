@@ -239,7 +239,7 @@ export default class DaoView extends Vue {
         { title: "Active", content: this.activeProposals },
         { title: "Executable", content: this.inactiveProposals },
       ];
-      this.farms = await getFarm(this.$api, parseFloat(`${this.id}`));
+      this.farms = await getFarm(this.$api, parseFloat(`${this.$store.state.twinID}`));
       this.loadingProposals = false;
     } else {
       this.$router.push({
@@ -252,7 +252,7 @@ export default class DaoView extends Vue {
     this.id = this.$route.query.twinID;
     if (this.$api) {
       this.id = this.$route.query.twinID;
-      this.farms = await getFarm(this.$api, parseFloat(`${this.id}`));
+      this.farms = await getFarm(this.$api, parseFloat(`${this.$store.state.twinID}`));
     } else {
       this.$router.push({
         name: "accounts",
