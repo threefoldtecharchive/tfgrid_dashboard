@@ -52,7 +52,7 @@ case $TFCHAIN_NETWORK in
     PLAYGROUND_URL='https://play.test.grid.tf'
     RELAY_DOMAIN='relay.test.grid.tf'
     BRIDGE_TFT_ADDRESS=GA2CWNBUHX7NZ3B5GR4I23FMU7VY5RPA77IUJTIXTTTGKYSKDSV6LUA4
-    STELLAR_NETWORK=test
+    STELLAR_NETWORK=main
   ;;
   *"main"*)
     GRAPHQL_URL='https://graphql.grid.tf/graphql'
