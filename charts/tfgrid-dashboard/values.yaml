@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: threefolddev/tfgrid_dashboard
   pullPolicy: Always
-  tag: "v1.4.0-rc9"
+  tag: "v1.4.0-rc10"
 
   env:
     - name: "STELLAR_NETWORK"
