@@ -180,7 +180,7 @@ class DedicatePage:
         for table in tables:
             self.browser.find_element(By.XPATH, "//*[contains(text(), '"+table.capitalize()+"')]").click()
             WebDriverWait(self.browser, 30).until(EC.invisibility_of_element_located((By.XPATH, "//*[contains(text(), 'loading nodes ...')]")))
-            if(self.browser.find_element(By.XPATH, f"//*[@id='{table}']/div/div/div[1]/table/tbody/tr").text == 'No data available'):
+            if(self.browser.find_element(By.XPATH, f"//*[@id='app']/div[1]/div[3]/div/div/div/div[2]/div/div[1]/table/tbody/tr").text == 'No data available'):
                 continue 
             for i in range(1, len(self.browser.find_elements(By.XPATH, f"//*[@id='{table}']{self.table_xpath}"))+1):
                 details = []
@@ -204,17 +204,17 @@ class DedicatePage:
         return 0
 
     def reserve_node(self, id):
-        for i in range(1, len(self.browser.find_elements(By.XPATH, f"//*[@id='rentable']{self.table_xpath}"))+1):
-            if(int(self.browser.find_element(By.XPATH, f"//*[@id='rentable']{self.table_xpath}[{str(i)}]/td[2]").text) == id):
-                self.browser.find_element(By.XPATH, f"//*[@id='rentable']{self.table_xpath}[{str(i)}]/td[9]/div/button").click()
+        for i in range(1, len(self.browser.find_elements(By.XPATH, f"//*[@id='app']{self.table_xpath}"))+1):
+            if(int(self.browser.find_element(By.XPATH, f"//*[@id='app']{self.table_xpath}[{str(i)}]/td[2]").text) == id):
+                self.browser.find_element(By.XPATH, f"//*[@id='app']{self.table_xpath}[{str(i)}]/td[9]/div/button").click()
 
     def unreserve_node(self, id):
         self.browser.find_element(By.XPATH, "//*[contains(text(), 'Rented')]").click()
         WebDriverWait(self.browser, 30).until(EC.invisibility_of_element_located((By.XPATH, "//*[contains(text(), 'loading nodes ...')]")))
         WebDriverWait(self.browser, 30).until(EC.visibility_of_any_elements_located((By.XPATH, "//*[contains(text(), ' Unreserve ')]")))
-        for i in range(1, len(self.browser.find_elements(By.XPATH, f"//*[@id='rented']{self.table_xpath}"))+1):
-            if(int(self.browser.find_element(By.XPATH, f"//*[@id='rented']{self.table_xpath}[{str(i)}]/td[2]").text) == id):
-                self.browser.find_element(By.XPATH, f"//*[@id='rented']{self.table_xpath}[{str(i)}]/td[9]/div/button").click()
+        for i in range(1, len(self.browser.find_elements(By.XPATH, f"//*[@id='app']{self.table_xpath}"))+1):
+            if(int(self.browser.find_element(By.XPATH, f"//*[@id='app']{self.table_xpath}[{str(i)}]/td[2]").text) == id):
+                self.browser.find_element(By.XPATH, f"//*[@id='app']{self.table_xpath}[{str(i)}]/td[9]/div/button").click()
                 WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Are you sure you want to unreserve this dedicated node?')]")))
                 self.browser.find_element(*self.ok_btn).click()
 
