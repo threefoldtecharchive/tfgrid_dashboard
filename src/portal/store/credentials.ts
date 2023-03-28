@@ -30,7 +30,7 @@ export const credentialsStore = {
       twin: {
         relay: "",
         id: "",
-        pk: "",
+        pk: null,
       },
     };
   },
