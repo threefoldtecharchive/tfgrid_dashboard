@@ -24,18 +24,19 @@
               </v-chip>
             </template>
           </v-combobox>
-
-          <v-text-field
-            :label="IPType === 'Range' ? 'From IP' : 'IP'"
-            v-model="publicIP"
-            required
-            outlined
-            dense
-            hint="IP address in CIDR format xxx.xxx.xxx.xxx/xx"
-            persistent-hint
-            :error-messages="ipErrorMessage"
-            :rules="[() => !!publicIP || 'This field is required', ipcheck]"
-          ></v-text-field>
+          <v-form v-model="isValidPublicIP">
+            <v-text-field
+              :label="IPType === 'Range' ? 'From IP' : 'IP'"
+              v-model="publicIP"
+              required
+              outlined
+              dense
+              hint="IP address in CIDR format xxx.xxx.xxx.xxx/xx"
+              persistent-hint
+              :error-messages="ipErrorMessage"
+              :rules="[() => !!publicIP || 'This field is required', ipcheck]"
+            ></v-text-field>
+          </v-form>
           <v-text-field
             v-if="IPType === 'Range'"
             label="To IP"
@@ -51,6 +52,7 @@
           <v-text-field
             label="Gateway"
             v-model="gateway"
+            :disabled="!isValidPublicIP"
             required
             outlined
             dense
@@ -132,9 +134,10 @@ export default class CreateIP extends Vue {
   open = false;
   showIPs = false;
   inRange: boolean = true;
+  isValidPublicIP = false;
 
   @Prop({ required: true }) loadingCreate!: boolean;
-
+  @Watch("publicIP", { immediate: true })
   @Watch("gateway", { immediate: true })
   onChangeGateway() {
     try {
