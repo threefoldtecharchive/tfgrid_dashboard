@@ -26,9 +26,9 @@ class FarmPage:
     view_bootstrap_button=(By.XPATH ,'//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr[2]/td/div/div[7]/div[2]/div/a')
     public_ip_list=(By.XPATH ,'//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr[2]/td/div/div[8]/div/button/div')
     add_ip_button=(By.XPATH ,'//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr[2]/td/div/div[8]/div/div/div/div/header/div/div/button/span')
-    ip_text_field=(By.XPATH ,'/html/body/div[1]/div[5]/div/div/div[2]/div[2]/div/div[1]/div/input')
+    ip_text_field=(By.XPATH ,'/html/body/div[1]/div[5]/div/div/div[2]/form/div/div/div[1]/div/input')
     path=(By.XPATH,'/html/body/div[1]/div[5]/div/div/div[1]/form/div/div/div[1]/div/input')
-    gateway_text_field=(By.XPATH ,'/html/body/div[1]/div[5]/div/div/div[2]/div[3]/div/div[1]/div/input')
+    gateway_text_field=(By.XPATH ,'/html/body/div[1]/div[5]/div/div/div[2]/div[2]/div/div[1]/div/input')
     save_button=(By.XPATH ,'//*[@id="app"]/div[5]/div/div/div[3]/button[3]')
     close_button=(By.XPATH ,'//*[@id="app"]/div[5]/div/div/div[3]/button[1]')
     delete_button=(By.XPATH, "//div[contains(@class, 'v-card__actions')]//button[contains(@class, 'red--text')]")
@@ -38,9 +38,9 @@ class FarmPage:
     stellar_payout_address = (By.XPATH,'//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr[2]/td/div/div[6]/div[2]/div/div/span')
     ip_dropdown = (By.XPATH,'//*[@id="app"]/div[5]/div/div/div[2]/div[1]/div/div[1]/div[1]/div')
     range_selection=(By.XPATH, "//*[contains(text(), 'Range')]")
-    from_ip_input = (By.XPATH, "/html/body/div[1]/div[5]/div/div/div[2]/div[2]/div/div[1]/div/input") 
-    to_ip_input = (By.XPATH, "/html/body/div[1]/div[5]/div/div/div[2]/div[3]/div/div[1]/div/input") 
-    gateway_range_input = (By.XPATH, "/html/body/div[1]/div[5]/div/div/div[2]/div[4]/div/div[1]/div/input") 
+    from_ip_input = (By.XPATH, "/html/body/div[1]/div[5]/div/div/div[2]/form/div/div/div[1]/div/input") 
+    to_ip_input = (By.XPATH, "/html/body/div[1]/div[5]/div/div/div[2]/div[2]/div/div[1]/div/input") 
+    gateway_range_input = (By.XPATH, "/html/body/div[1]/div[5]/div/div/div[2]/div[3]/div/div[1]/div/input") 
     table_row = '//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr['
     farm_public_ips = '//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr[2]/td/div/div[8]/div/div/div/div/div/table/tbody/tr'
     node_expand_details = '//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr[2]/td/div/div['
@@ -220,6 +220,7 @@ class FarmPage:
         self.browser.find_element(*self.details_arrow).click()
         self.browser.find_element(*self.public_ip_list).click()
         self.browser.find_element(*self.add_ip_button).click()
+        self.add_ip(data+'/16')
         self.browser.find_element(*self.gateway_text_field).send_keys(data)
 
     def add_ip(self, data):
