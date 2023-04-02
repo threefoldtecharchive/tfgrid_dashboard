@@ -10,7 +10,7 @@
 
         <v-spacer></v-spacer>
         <div class="d-flex">
-          <FundsCard v-if="$store.state.credentials.initialized" />
+          <FundsCard v-if="$store.state.credentials.initialized && $store.state.credentials.balance" />
           <div class="d-flex" style="align-items: center">
             <v-btn icon @click="toggle_dark_mode">
               <v-icon>mdi-theme-light-dark</v-icon>

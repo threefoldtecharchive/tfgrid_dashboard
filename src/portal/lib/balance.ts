@@ -2,6 +2,7 @@ import { Keyring } from "@polkadot/keyring";
 export interface balanceInterface {
   free: number;
   reserved: number;
+  transferable: number;
 }
 
 export async function getBalance(
@@ -22,7 +23,11 @@ export async function getBalance(
 ) {
   const res = await api.query.system.account(address);
 
-  return { free: res.data.free.toJSON() / 1e7, reserved: res.data.feeFrozen.toJSON() / 1e7 };
+  return {
+    free: res.data.free.toJSON() / 1e7,
+    transferable: (res.data.free.toJSON() - res.data.feeFrozen.toJSON()) / 1e7,
+    reserved: res.data.feeFrozen.toJSON() / 1e7,
+  };
 }
 
 export async function getMoreFunds(
