@@ -236,6 +236,7 @@ export default class Dashboard extends Vue {
     this.accounts = this.$store.state.portal.accounts;
     if (this.$route.path === "/" && !this.$api) {
       Vue.prototype.$api = await connect();
+      if (this.$api) this.$store.commit("portal/setApi", { api: this.$api });
       this.loadingAPI = false;
     }
     const theme = localStorage.getItem("dark_theme");
