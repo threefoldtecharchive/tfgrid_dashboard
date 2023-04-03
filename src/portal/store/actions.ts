@@ -47,7 +47,7 @@ export default {
     votedP.forEach(index => {
       active.splice(index, 1);
     });
-    console.log(active);
+
     commit("setProposals", { proposals: active.length });
   },
 };
