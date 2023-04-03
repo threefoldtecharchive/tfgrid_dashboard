@@ -199,11 +199,13 @@ def test_ip(browser):
     farm_page.close_ip()
     farm_page.close_detail()
     ip, gateway = randomize_public_ipv4()
-    farm_page.setup_gateway(gateway, farm_name)
-    cases = [ip, '2.0.0.1/32',  '3.0.0.0/16', '139.255.255.255/17', '59.15.35.78/25']
+    cases = [gateway, '2.0.0.1',  '3.0.0.0', '139.255.255.255', '59.15.35.78']
     for case in cases:
-        assert farm_page.add_ip(case).is_enabled()==True
+        farm_page.setup_gateway(case, farm_name)
         assert farm_page.wait_for('IP address in CIDR format xxx.xxx.xxx.xxx/xx')
+        farm_page.close_ip()
+        farm_page.close_detail()
+    farm_page.setup_gateway(gateway, farm_name)
     farm_page.add_ip(ip).click()
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('IP created!')
@@ -239,15 +241,17 @@ def test_gateway(browser):
     cases = [generate_inavalid_gateway(), '1.0.0.',  '1:1:1:1', '522.255.255.255', '.239.35.78', '1.1.1.1/16', '239.15.35.78.5', ' ', '*.#.@.!|+-']
     for case in cases:
         assert farm_page.add_gateway(case).is_enabled()==False
-        assert farm_page.wait_for('Gateway is not formatted correctly')
+        assert farm_page.wait_for('Gateway IP not in the provided IP range')
     farm_page.close_ip()
     farm_page.close_detail()
     ip, gateway = randomize_public_ipv4()
-    farm_page.setup_ip(ip, farm_name)
-    cases = [gateway, '1.0.0.1',  '1.0.0.0', '255.255.255.255', '239.15.35.78', '1.1.1.1']
+    cases = [gateway, '1.0.0.1',  '1.0.0.0', '25.255.255.255', '239.15.35.78', '1.1.1.1']
     for case in cases:
+        farm_page.setup_ip(case+'/16', farm_name)
         assert farm_page.add_gateway(case).is_enabled()==True
         assert farm_page.wait_for('Gateway for the IP in ipv4 format')
+        farm_page.close_ip()
+        farm_page.close_detail()
 
 
 def test_range_ips(browser):
@@ -304,10 +308,10 @@ def test_range_ips(browser):
         assert farm_page.add_range_ips(0, case, 0).is_enabled()==False
         assert farm_page.wait_for('To IP must be bigger than From IP')
     assert farm_page.add_range_ips('1.1.1.1/16', '1.1.1.3/16', '1.1.1.1').is_enabled()==True
-    cases = [generate_inavalid_gateway(), '1.0.0.',  '1:1:1:1', '522.255.255.255', '.239.35.78', '1.1.1.1/16', '239.15.35.78.5', ' ', '*.#.@.!|+-']
+    cases = [generate_inavalid_gateway(), '1.0.0.',  '1:1:1:1', '522.255.255.255', '.239.35.78', '1.1.1.1/1', '239.15.35.78.5', ' ', '*.#.@.!|+-']
     for case in cases:
         assert farm_page.add_range_ips(0, 0, case).is_enabled()==False
-        assert farm_page.wait_for('Gateway is not formatted correctly')
+        assert farm_page.wait_for('Gateway IP not in the provided IP range')
     farm_page.add_range_ips('1.2.3.4/16', '1.2.3.6/16', '1.2.3.4').click()
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('IP created!')
