@@ -29,7 +29,7 @@
         <v-list-item-content>
           <v-list-item-title> Stellar Address </v-list-item-title>
         </v-list-item-content>
-        {{ farm.stellarAddress || "None" }}
+        <span style="width: 60%">{{ farm.stellarAddress || "None" }}</span>
       </v-list-item>
     </v-list>
   </v-container>
