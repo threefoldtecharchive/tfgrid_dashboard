@@ -26,25 +26,25 @@ export default {
       return value.id;
     });
 
-    const votedP: number[] = [];
+    const voted: number[] = [];
     active.forEach((proposal, index) => {
       let inYes = false;
       proposal.ayes.forEach(({ farmId }) => {
         if (farmIds.includes(farmId)) {
           inYes = true;
-          votedP.push(index);
+          voted.push(index);
           return;
         }
       });
       if (inYes) return;
       proposal.nayes.forEach(({ farmId }) => {
         if (farmIds.includes(farmId)) {
-          votedP.push(index);
+          voted.push(index);
           return;
         }
       });
     });
-    votedP.forEach(index => {
+    voted.forEach(index => {
       active.splice(index, 1);
     });
 
