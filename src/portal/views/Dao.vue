@@ -46,24 +46,25 @@
                     {{ proposal.action.toUpperCase() }}
                   </v-card-title>
                   <v-card-subtitle class="pb-0">
-                    Proposal hash:
-                    <div class="pl-2">
-                      <p class="text--secondary">{{ proposal.hash }}</p>
-                    </div>
+                    <p class="font-weight-bold">
+                      Proposal hash: <span class="text--secondary">{{ proposal.hash }}</span>
+                    </p>
                   </v-card-subtitle>
                   <v-card-text class="pb-0">
-                    Description:
-                    <div class="pl-2">
-                      <p class="text--secondary">
+                    <p class="font-weight-bold">
+                      Description:
+                      <span class="text--secondary">
                         {{ proposal.description }}
                         <a v-bind:href="proposal.link" v-bind:target="'blank'">More details</a>
-                      </p>
-                    </div>
-                    <p v-if="proposal.end > Date.now()">
+                      </span>
+                    </p>
+                    <p class="font-weight-bold" v-if="proposal.end > Date.now()">
                       You can vote until:
                       <span class="text--secondary">{{ proposal.end }}</span>
                     </p>
-                    <p v-else>Voting ended on: {{ proposal.end }}</p>
+                    <p class="font-weight-bold" v-else>
+                      Voting ended on: <span class="text--secondary">{{ proposal.end }}</span>
+                    </p>
                   </v-card-text>
                   <v-container class="votes">
                     <div v-if="proposal.end > Date.now()" class="d-flex justify-space-between my-3 mx-8">
