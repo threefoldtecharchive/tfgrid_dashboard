@@ -100,6 +100,7 @@ def test_farm_table_sorting(browser):
         farm_page.search_functionality(farm_name)
         assert farm_page.wait_for(farm_name)
         farm_page.search_functionality("")
+    farm_page.display_all_farms()
     #sort by ID
     id,sorted,rows = farm_page.farm_table_sorting_by_id()
     assert id == sorted

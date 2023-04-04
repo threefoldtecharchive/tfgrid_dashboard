@@ -1,3 +1,4 @@
+import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -44,6 +45,8 @@ class FarmPage:
     table_row = '//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr['
     farm_public_ips = '//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr[2]/td/div/div[8]/div/div/div/div/div/table/tbody/tr'
     node_expand_details = '//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[1]/table/tbody/tr[2]/td/div/div['
+    rows_per_page = (By.XPATH, '//*[@id="app"]/div[1]/div[3]/div/div/div[4]/div[2]/div[1]/div/div/div')
+    all_rows_per_page = (By.XPATH, '/html/body/div[1]/div[3]/div/div[4]/div/div')
   
     def __init__(self, browser):
         self.browser = browser
@@ -77,6 +80,11 @@ class FarmPage:
         while('loading farms' in table):
             table = self.browser.find_element(*self.table).text
         return table
+
+    def display_all_farms(self):
+        self.browser.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+        self.browser.find_element(*self.rows_per_page).click()
+        self.browser.find_element(*self.all_rows_per_page).click()
 
     def farm_table_sorting_by_id(self):
         WebDriverWait(self.browser, 30).until(EC.visibility_of_element_located(self.table_farm_name))
