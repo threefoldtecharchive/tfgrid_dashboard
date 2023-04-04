@@ -99,7 +99,7 @@
                           }"
                         >
                           <template>
-                            <strong
+                            <strong v-if="proposal.ayesProgress >= 20"
                               >{{
                                 !!(proposal.ayesProgress % 1)
                                   ? proposal.ayesProgress.toFixed(2)
@@ -121,7 +121,7 @@
                           }"
                         >
                           <template>
-                            <strong
+                            <strong v-if="proposal.nayesProgress >= 20"
                               >{{
                                 !!(proposal.nayesProgress % 1)
                                   ? proposal.nayesProgress.toFixed(2)
