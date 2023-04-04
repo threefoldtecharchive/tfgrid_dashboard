@@ -4,8 +4,8 @@
       <v-card-text style="padding: 5px" class="pr-0">
         <v-tooltip>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn @click="openBalance = true" v-bind="attrs" v-on="on" class="d-flex align-center">
-              <p class="mr-1">{{ $store.state.credentials.balance.free }}</p>
+            <v-btn @click="(openBalance = true), setBalance()" v-bind="attrs" v-on="on" class="d-flex align-center">
+              <p class="mr-1">{{ round($store.state.credentials.balance.free) }}</p>
               <p class="font-weight-black">TFT</p>
             </v-btn>
           </template>
@@ -16,13 +16,14 @@
         <v-btn @click="addTFT()" style="max-width: 90px" :loading="loadingAddTFT">GET TFT</v-btn>
       </v-card-actions>
     </v-card>
-    <v-dialog v-model="openBalance" max-width="600">
+    <v-dialog v-if="openBalance" v-model="openBalance" max-width="600">
       <v-card>
         <v-toolbar color="primary"> Balance Summary </v-toolbar>
         <v-card-text class="pa-5">
           <v-container>
-            <v-row> Free: {{ $store.state.credentials.balance.free }} TFT </v-row>
-            <v-row> Reserved (Locked): {{ $store.state.credentials.balance.reserved }} TFT </v-row>
+            <v-row> Total: {{ balance.free }} TFT </v-row>
+            <v-row> Transferable: {{ balance.transferable }} TFT </v-row>
+            <v-row> Reserved (Locked): {{ balance.reserved }} TFT </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions class="justify-end">
@@ -34,8 +35,8 @@
 </template>
 <script lang="ts">
 import config from "@/portal/config";
-import { getBalance, getMoreFunds } from "@/portal/lib/balance";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { balanceInterface, getBalance, getMoreFunds } from "@/portal/lib/balance";
+import { Component, Vue } from "vue-property-decorator";
 
 @Component({
   name: "FundsCard",
@@ -44,6 +45,18 @@ export default class FundsCard extends Vue {
   loadingAddTFT = false;
   $api: any;
   openBalance = false;
+  balance!: balanceInterface;
+
+  setBalance() {
+    this.balance = this.$store.state.credentials.balance;
+    this.balance.free = this.round(this.balance.free);
+    this.balance.reserved = this.round(this.balance.reserved);
+    this.balance.transferable = this.round(this.balance.transferable);
+  }
+
+  round(value: number) {
+    return Math.round((value + Number.EPSILON) * 100) / 100;
+  }
 
   async addTFT() {
     if (config.network !== "dev" && config.network !== "qa") {

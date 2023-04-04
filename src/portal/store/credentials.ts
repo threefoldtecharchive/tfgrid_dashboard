@@ -55,7 +55,7 @@ export const credentialsStore = {
       state.initialized = false;
       state.loading = true;
       state.twin = { id: "", relay: "", pk: "" };
-      state.balance = { free: 0, reserved: 0 };
+      state.balance = { free: 0, reserved: 0, transferable: 0 };
       state.account = {
         address: "",
         meta: { genesisHash: "", name: "", source: "" },
