@@ -22,7 +22,7 @@
         <v-card-text class="pa-5">
           <v-container>
             <v-row> Total: {{ balance.free }} TFT </v-row>
-            <v-row> transferable: {{ balance.transferable }} TFT </v-row>
+            <v-row> Transferable: {{ balance.transferable }} TFT </v-row>
             <v-row> Reserved (Locked): {{ balance.reserved }} TFT </v-row>
           </v-container>
         </v-card-text>
