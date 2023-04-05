@@ -21,12 +21,12 @@ export function inputValidation(value: string, key: string): string {
     "total_cru",
     "pricingPolicyId",
   ];
-  const textualFields: string[] = ["farmingPolicyName", "certificationType", "farmName", "farm_name"];
+  const textualFields: string[] = ["farmingPolicyName", "certificationType"];
+  const textNumbersFields: string[] = ["farm_name"];
 
   const countryFields: string[] = ["countryFullName", "country"];
   const specialChars = /[ `!@#$%^&*()+\-=[\]{};':"\\|,.<>/?~]/;
   const countryRegex = /^[A-Za-z][A-Za-z\s]*$/;
-
   let errorMsg = "";
 
   if (numericFields.includes(key)) {
@@ -37,6 +37,11 @@ export function inputValidation(value: string, key: string): string {
   } else if (countryFields.includes(key)) {
     if (!countryRegex.test(value)) {
       return (errorMsg = "Country name should not contain special characters or numbers.");
+    }
+  } else if (textNumbersFields.includes(key)) {
+    if (specialChars.test(value)) {
+      errorMsg = "This field does not accept special characters.";
+      return errorMsg;
     }
   } else if (textualFields.includes(key)) {
     if (specialChars.test(value)) {
