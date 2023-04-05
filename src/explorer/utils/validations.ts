@@ -21,7 +21,7 @@ export function inputValidation(value: string, key: string): string {
     "total_cru",
     "pricingPolicyId",
   ];
-  const textualFields: string[] = ["farmingPolicyName", "certificationType", "farmName"];
+  const textualFields: string[] = ["farmingPolicyName", "certificationType", "farm_name"];
   const textNumbersFields: string[] = ["farm_name"];
 
   const countryFields: string[] = ["countryFullName", "country"];

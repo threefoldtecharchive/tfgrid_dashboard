@@ -7,7 +7,7 @@ export function inputValidation(value: string, key: string): string {
     "countryFullName",
     "farmingPolicyName",
     "certificationType",
-    "farmName",
+    "farm_name",
     "pricingPolicyId",
   ];
   const specialChars = /[ `!@#$%^&*()+\-=[\]{};':"\\|,.<>/?~]/;

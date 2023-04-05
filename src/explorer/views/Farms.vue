@@ -255,7 +255,7 @@ export default class Farms extends Vue {
       value: [],
       multiple: false,
       symbol: "name_in",
-      key: "farmName",
+      key: "farm_name",
     },
     {
       component: InFilterV2,
