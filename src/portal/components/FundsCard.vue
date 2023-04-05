@@ -5,7 +5,7 @@
         <v-tooltip>
           <template v-slot:activator="{ on, attrs }">
             <v-btn @click="(openBalance = true), setBalance()" v-bind="attrs" v-on="on" class="d-flex align-center">
-              <p class="mr-1">{{ round($store.state.credentials.balance.free) }}</p>
+              <p class="mr-1">{{ $store.state.credentials.balance.free }}</p>
               <p class="font-weight-black">TFT</p>
             </v-btn>
           </template>
@@ -49,13 +49,6 @@ export default class FundsCard extends Vue {
 
   setBalance() {
     this.balance = this.$store.state.credentials.balance;
-    this.balance.free = this.round(this.balance.free);
-    this.balance.reserved = this.round(this.balance.reserved);
-    this.balance.transferable = this.round(this.balance.transferable);
-  }
-
-  round(value: number) {
-    return Math.round((value + Number.EPSILON) * 100) / 100;
   }
 
   async addTFT() {
