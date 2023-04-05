@@ -40,7 +40,9 @@ def test_create_farm(browser):
     farm_page.create_farm(farm_name)
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
+    farm_page.search_functionality(farm_name)
     assert farm_page.wait_for(farm_name)
+    farm_page.search_functionality("")
     assert farm_name in farm_page.search_functionality(farm_name) 
     assert farm_name in farm_page.search_functionality(farm_name[:len(farm_name)//2]) 
     assert farm_name in farm_page.search_functionality(farm_name[len(farm_name)//2:])
@@ -95,7 +97,10 @@ def test_farm_table_sorting(browser):
         farm_page.create_farm(farm_name + generate_string())
         polka_page.authenticate_with_pass(password)
         assert farm_page.wait_for('Farm created!')
+        farm_page.search_functionality(farm_name)
         assert farm_page.wait_for(farm_name)
+        farm_page.search_functionality("")
+    farm_page.display_all_farms()
     #sort by ID
     id,sorted,rows = farm_page.farm_table_sorting_by_id()
     assert id == sorted
@@ -143,7 +148,9 @@ def test_farmpayout_address(browser):
     farm_page.create_farm(farm_name)
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
+    farm_page.search_functionality(farm_name)
     assert farm_page.wait_for(farm_name)
+    farm_page.search_functionality("")    
     farm_page.setup_farmpayout_address(farm_name)
     cases = [' ', 'dgdd',generate_string(), 'gdhjP6TF3UXYXTNEZ2P36J5FH7W4BJJQ4AYYAXC66I2Q2AH5B6O6Bcfg']
     for case in cases:
@@ -188,7 +195,9 @@ def test_ip(browser):
     farm_page.create_farm(farm_name)
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
+    farm_page.search_functionality(farm_name)
     assert farm_page.wait_for(farm_name)
+    farm_page.search_functionality("")    
     cases = [generate_inavalid_ip(), '1.0.0.0/66', '239.255.255/17', '239.15.35.78.5/25', '239.15.35.78.5', ' ', '*.#.@.!|+-']
     farm_page.setup_gateway(generate_gateway(), farm_name)
     for case in cases:
@@ -236,7 +245,9 @@ def test_gateway(browser):
     farm_page.create_farm(farm_name)
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
+    farm_page.search_functionality(farm_name)
     assert farm_page.wait_for(farm_name)
+    farm_page.search_functionality("")    
     farm_page.setup_ip(generate_ip(), farm_name)
     cases = [generate_inavalid_gateway(), '1.0.0.',  '1:1:1:1', '522.255.255.255', '.239.35.78', '1.1.1.1/16', '239.15.35.78.5', ' ', '*.#.@.!|+-']
     for case in cases:
@@ -279,7 +290,9 @@ def test_range_ips(browser):
     farm_page.create_farm(farm_name)
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
+    farm_page.search_functionality(farm_name)
     assert farm_page.wait_for(farm_name)
+    farm_page.search_functionality("")    
     farm_page.change_to_range_ip(farm_name)
     cases = [generate_inavalid_ip(), '1.0.0.0/66', '239.255.255/17', '239.15.35.78.5/25', '239.15.35.78.5', ' ', '*.#.@.!|+-']
     for case in cases:
@@ -337,7 +350,9 @@ def test_farm_details(browser):
     farm_page.create_farm(farm_name)
     polka_page.authenticate_with_pass(password)
     assert farm_page.wait_for('Farm created!')
+    farm_page.search_functionality(farm_name)
     assert farm_page.wait_for(farm_name)
+    farm_page.search_functionality("")    
     case = "GDHJP6TF3UXYXTNEZ2P36J5FH7W4BJJQ4AYYAXC66I2Q2AH5B6O6BCFG"
     farm_page.setup_farmpayout_address(farm_name)
     farm_page.add_farmpayout_address(case).click()
