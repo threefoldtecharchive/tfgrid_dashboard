@@ -1,3 +1,4 @@
+import { ApiPromise } from "@polkadot/api";
 import { PortalState } from "./state";
 
 export enum PortalMutationTypes {
@@ -9,5 +10,11 @@ export default {
   },
   removeAccounts(state: PortalState) {
     state.accounts = [];
+  },
+  setProposals(state: PortalState, payload: { proposals: number }) {
+    state.proposals = payload.proposals;
+  },
+  setApi(state: PortalState, payload: { api: ApiPromise }) {
+    state.api = payload.api;
   },
 };
