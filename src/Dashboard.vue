@@ -410,7 +410,7 @@ export default class Dashboard extends Vue {
         },
         {
           label: "Simulator",
-          path: "simulator/",
+          path: "simulator",
           icon: "chart-line",
           showBeforeLogIn: false,
           children: [
