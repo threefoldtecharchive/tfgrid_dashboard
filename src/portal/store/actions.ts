@@ -22,6 +22,12 @@ export default {
     const active = (await getProposals(state.api)).active;
     if (!active.length) return;
     const farms = await getFarm(state.api, parseFloat(`${twin}`));
+
+    // only users who own a farm should get the notification
+    if (!farms.length) {
+      commit("setProposals", { proposals: 0 });
+      return;
+    }
     const farmIds = farms.map(function (value) {
       return value.id;
     });
@@ -47,7 +53,6 @@ export default {
     voted.forEach(index => {
       active.splice(index, 1);
     });
-
     commit("setProposals", { proposals: active.length });
   },
 };
