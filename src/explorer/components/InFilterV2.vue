@@ -12,6 +12,7 @@
       @keydown="search"
       v-model="content"
       :multiple="options.multiple"
+      @click:clear="() => (errorMsg = '')"
       @input.native="validated($event.srcElement.value, options.key)"
     />
     <v-alert dense type="error" v-if="errorMsg">
