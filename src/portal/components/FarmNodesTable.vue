@@ -728,8 +728,8 @@ export default class FarmNodesTable extends Vue {
     return getNodeUptimePercentage(node);
   }
   getStatus(node: { status: string }) {
-    if (node.status === "up") return { color: "green", status: "up" };
-    else return { color: "red", status: "down" };
+    if (node.status === "up") return { color: "green", status: "Up" };
+    else return { color: "red", status: "Down" };
   }
 
   deleteItem() {
