@@ -32,14 +32,15 @@ export default class PortalView extends Vue {
   @Watch("$store.state.credentials.twin.id")
   async getProposals() {
     if (!this.$store.state.credentials.twin.id) return;
-    await this.$store.dispatch("portal/getProposal", this.$store.state.credentials.twin.id);
+    let twin = this.$store.state.credentials.twin.id;
+    await this.$store.dispatch("portal/getProposal", twin);
     this.proposals = this.$store.state.portal.proposals;
     if (!this.proposals) return;
     this.voteMsg =
       this.proposals > 1
         ? `You have ${this.proposals} pending proposals to vote!`
         : `You have a pending proposal to vote!`;
-    this.openProposalDialog = true;
+    if (twin === this.$store.state.credentials.twin.id) this.openProposalDialog = true;
   }
   daoRedirect() {
     this.openProposalDialog = false;
