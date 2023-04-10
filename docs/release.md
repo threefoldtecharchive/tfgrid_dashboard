@@ -4,7 +4,8 @@ To create a new release there are some steps is required:
 
 ## 1. Update Charts file
 
-In [charts.yaml](../charts/tfgrid-dashboard/Chart.yaml) replace the value of `appVersion` with the new release tag.
+- In [charts.yaml](../charts/tfgrid-dashboard/Chart.yaml) replace the value of `appVersion` with the new release tag.
+- In [values.yaml](../charts/tfgrid-dashboard/values.yaml) replace the value of `tag` with the new release tag.
 
 > NOTE: You can release or prerelease on ANY network. No tags are needed for releases & use x.x.x-rcx for prereleases.
 
