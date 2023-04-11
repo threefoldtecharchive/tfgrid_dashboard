@@ -263,16 +263,6 @@ export default class DaoView extends Vue {
       });
     }
   }
-  async updated() {
-    if (this.$api) {
-      this.farms = await getFarm(this.$api, parseFloat(`${this.$store.state.credentials.twin.id}`));
-    } else {
-      this.$router.push({
-        name: "accounts",
-        path: "/",
-      });
-    }
-  }
 
   unmounted() {
     this.$store.commit("UNSET_CREDENTIALS");
