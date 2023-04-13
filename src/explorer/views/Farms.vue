@@ -118,8 +118,8 @@ export default class Farms extends Vue {
     { text: "ID", value: "id" },
     { text: "NAME", value: "name" },
     { text: "Total Public IPs", value: "totalPublicIp", align: "center", sortable: false },
-    { text: "Free Public IPs", value: "freePublicIp", align: "center", sortable: false },
-    { text: "Used Public IPs", value: "usedPublicIp", align: "center", sortable: false },
+    { text: "Free Public IPs", value: "freePublicIp", align: "center"},
+    { text: "Used Public IPs", value: "usedPublicIp", align: "center"},
     { text: "CERTIFICATION TYPE", value: "certificationType", align: "center", sortable: false },
     { text: "PRICING POLICY", value: "pricingPolicyId", align: "center", sortable: false },
   ];
@@ -212,6 +212,20 @@ export default class Farms extends Vue {
         }
         return res;
       }, {} as { [key: string]: any });
+    const orderBy: string[] = [];
+    for (let i = 0; i < this.sort.by.length; i++) {
+      const by = this.sort.by[i];
+      const desc = this.sort.desc[i];
+      switch (by) {
+        case "id":
+          orderBy.push(desc ? "farmID_DESC" : "farmID_ASC");
+          break;
+        case "name":
+          orderBy.push(desc ? "name_DESC" : "name_ASC");
+          break;
+      }
+    }
+    _vars.orderBy = orderBy.length === 0 ? undefined : orderBy;
     this._vars = _vars;
     this.$store.state.explorer.farms = {
       total: 0,
